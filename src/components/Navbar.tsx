@@ -21,10 +21,12 @@ const Navbar = () => {
           <Link to="/contact" className="text-gray-600 hover:text-blue-600 transition-colors">
             Contact
           </Link>
-          <Button variant="outline" className="mr-2">
-            Log In
+          <Button variant="outline" className="mr-2" asChild>
+            <Link to="/signin">Log In</Link>
           </Button>
-          <Button>Sign Up</Button>
+          <Button asChild>
+            <Link to="/signup">Sign Up</Link>
+          </Button>
         </div>
         <div className="md:hidden">
           {/* Mobile menu button would go here */}
