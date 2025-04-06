@@ -1,5 +1,5 @@
 
-import { Users, Tool, Truck } from "lucide-react";
+import { Users, Wrench, Truck } from "lucide-react";
 
 const ValueProposition = () => {
   const values = [
@@ -9,7 +9,7 @@ const ValueProposition = () => {
       description: "Find verified experts fast",
     },
     {
-      icon: <Tool className="h-12 w-12 text-blue-600 mx-auto mb-4" />,
+      icon: <Wrench className="h-12 w-12 text-blue-600 mx-auto mb-4" />,
       title: "Vendors",
       description: "Access quality services",
     },
