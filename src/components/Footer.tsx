@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Linkedin, Twitter } from "lucide-react";
+import { Linkedin, Twitter, Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -10,16 +10,24 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-1">
             <h3 className="text-xl font-bold mb-4">diligince.ai</h3>
             <p className="text-gray-400 text-sm">
-              Revolutionizing industrial services with artificial intelligence.
+              Connecting industrial ecosystems with artificial intelligence.
             </p>
+            <div className="flex space-x-4 mt-4">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                <Linkedin size={20} />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                <Twitter size={20} />
+              </a>
+            </div>
           </div>
           
           <div className="col-span-1">
             <h4 className="text-lg font-semibold mb-4">Company</h4>
             <ul className="space-y-2">
               <li><Link to="/about" className="text-gray-400 hover:text-white transition-colors">About</Link></li>
-              <li><Link to="/team" className="text-gray-400 hover:text-white transition-colors">Team</Link></li>
               <li><Link to="/careers" className="text-gray-400 hover:text-white transition-colors">Careers</Link></li>
+              <li><a href="mailto:careers@diligince.ai" className="text-gray-400 hover:text-white transition-colors">Join us!</a></li>
             </ul>
           </div>
           
@@ -27,22 +35,25 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Resources</h4>
             <ul className="space-y-2">
               <li><Link to="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link></li>
-              <li><Link to="/support" className="text-gray-400 hover:text-white transition-colors">Support</Link></li>
               <li><Link to="/pricing" className="text-gray-400 hover:text-white transition-colors">Pricing</Link></li>
+              <li><span className="text-gray-400">Freemium + Pro tier</span></li>
             </ul>
           </div>
           
           <div className="col-span-1">
             <h4 className="text-lg font-semibold mb-4">Contact</h4>
             <ul className="space-y-2">
-              <li><Link to="/contact" className="text-gray-400 hover:text-white transition-colors">Contact Us</Link></li>
-              <li className="flex space-x-4 mt-4">
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-                  <Linkedin size={20} />
-                </a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-                  <Twitter size={20} />
-                </a>
+              <li className="flex items-start space-x-2">
+                <MapPin size={18} className="text-gray-400 mt-1 flex-shrink-0" />
+                <span className="text-gray-400">Visakhapatnam, Andhra Pradesh, India</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <Phone size={18} className="text-gray-400 flex-shrink-0" />
+                <a href="tel:+919848756956" className="text-gray-400 hover:text-white transition-colors">+91 9848756956</a>
+              </li>
+              <li className="flex items-center space-x-2">
+                <Mail size={18} className="text-gray-400 flex-shrink-0" />
+                <a href="mailto:support@diligince.ai" className="text-gray-400 hover:text-white transition-colors">support@diligince.ai</a>
               </li>
             </ul>
           </div>

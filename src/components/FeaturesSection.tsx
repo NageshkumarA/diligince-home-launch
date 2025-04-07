@@ -7,22 +7,22 @@ const FeaturesSection = () => {
     {
       icon: <BrainCircuit className="h-8 w-8 text-blue-600" />,
       title: "AI Matching",
-      description: "Our intelligent system connects you with the perfect industrial service providers based on your specific needs.",
+      description: "Our intelligent system analyzes requirements and capabilities to connect industries with the perfect service providers, considering expertise, location, availability, and past performance.",
     },
     {
       icon: <Workflow className="h-8 w-8 text-blue-600" />,
       title: "Project Management",
-      description: "Streamline your industrial projects with our comprehensive management tools and dashboards.",
+      description: "Track requirements, schedules, and payments seamlessly with our comprehensive industrial project management tools, customized dashboards, and automated milestone tracking.",
     },
     {
       icon: <ShieldCheck className="h-8 w-8 text-blue-600" />,
       title: "Quality Control",
-      description: "Maintain high standards with our built-in verification and quality assurance processes.",
+      description: "Verify services with real feedback and ratings from other industries, ensuring reliability through our transparent verification system and performance history tracking.",
     },
     {
       icon: <LineChart className="h-8 w-8 text-blue-600" />,
       title: "Real-Time Tools",
-      description: "Access analytics and insights to make data-driven decisions for your industrial operations.",
+      description: "Make data-driven decisions with live analytics on service performance, costs, and timelines, giving you actionable insights into your industrial operations and vendor relationships.",
     },
   ];
 
@@ -36,13 +36,17 @@ const FeaturesSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
-            <Card key={index} className="transition-all duration-300 hover:shadow-lg hover:scale-105">
+            <Card 
+              key={index} 
+              className="transition-all duration-300 hover:shadow-lg hover:scale-105 animate-fade-in"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <CardHeader>
                 <div className="mb-2">{feature.icon}</div>
                 <CardTitle>{feature.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>{feature.description}</CardDescription>
+                <CardDescription className="text-sm md:text-base">{feature.description}</CardDescription>
               </CardContent>
             </Card>
           ))}

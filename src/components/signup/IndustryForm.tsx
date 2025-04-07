@@ -8,39 +8,58 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
-  industryType: z.string().min(1, { message: "Please select an industry type" }),
-  companyName: z.string().min(2, { message: "Company name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  phone: z.string().min(10, { message: "Please enter a valid phone number" }),
+  companyName: z.string().min(2, { message: "Company name is required" }),
+  industryType: z.string().min(1, { message: "Industry type is required" }),
+  location: z.string().min(2, { message: "Location is required" }),
+  contactEmail: z.string().email({ message: "Please enter a valid email address" }),
+  contactPhone: z.string().min(10, { message: "Please enter a valid phone number" }),
+  description: z.string().optional(),
   termsAccepted: z.boolean().refine(val => val === true, {
     message: "You must accept the terms and conditions",
   }),
 });
 
-export const IndustryForm = () => {
+export function IndustryForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      industryType: "",
       companyName: "",
-      email: "",
-      phone: "",
+      industryType: "",
+      location: "",
+      contactEmail: "",
+      contactPhone: "",
+      description: "",
       termsAccepted: false,
     },
   });
-  
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    toast.success("Account created successfully!", {
+    toast.success("Industry account created successfully!", {
       description: "Welcome to diligince.ai",
     });
     console.log(values);
   }
-  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="companyName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter your company name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="industryType"
@@ -50,27 +69,26 @@ export const IndustryForm = () => {
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select industry type" />
+                    <SelectValue placeholder="Select your industry type" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="power">Power & Energy</SelectItem>
-                  <SelectItem value="oil">Oil & Gas</SelectItem>
-                  <SelectItem value="manufacturing">Manufacturing</SelectItem>
-                  <SelectItem value="construction">Construction</SelectItem>
-                  <SelectItem value="mining">Mining</SelectItem>
-                  <SelectItem value="steel">Steel & Metals</SelectItem>
-                  <SelectItem value="chemical">Chemical & Petrochemical</SelectItem>
+                  <SelectItem value="sugar">Sugar Mill</SelectItem>
+                  <SelectItem value="cement">Cement Plant</SelectItem>
+                  <SelectItem value="steel">Steel Plant</SelectItem>
+                  <SelectItem value="paper">Paper Mill</SelectItem>
+                  <SelectItem value="power">Power Plant</SelectItem>
+                  <SelectItem value="oil-gas">Oil & Gas</SelectItem>
+                  <SelectItem value="chemical">Chemical</SelectItem>
                   <SelectItem value="pharmaceutical">Pharmaceutical</SelectItem>
+                  <SelectItem value="textile">Textile</SelectItem>
+                  <SelectItem value="food-processing">Food Processing</SelectItem>
                   <SelectItem value="automotive">Automotive</SelectItem>
-                  <SelectItem value="aerospace">Aerospace & Defense</SelectItem>
-                  <SelectItem value="semiconductor">Semiconductor & Electronics</SelectItem>
-                  <SelectItem value="food">Food & Beverage</SelectItem>
-                  <SelectItem value="textile">Textile & Apparel</SelectItem>
-                  <SelectItem value="paper">Paper & Pulp</SelectItem>
-                  <SelectItem value="cement">Cement & Building Materials</SelectItem>
-                  <SelectItem value="water">Water & Wastewater</SelectItem>
-                  <SelectItem value="renewable">Renewable Energy</SelectItem>
+                  <SelectItem value="mining">Mining</SelectItem>
+                  <SelectItem value="electronics">Electronics</SelectItem>
+                  <SelectItem value="plastics">Plastics & Polymers</SelectItem>
+                  <SelectItem value="water-treatment">Water Treatment</SelectItem>
+                  <SelectItem value="renewable-energy">Renewable Energy</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
@@ -78,49 +96,67 @@ export const IndustryForm = () => {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
-          name="companyName"
+          name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Company Name</FormLabel>
+              <FormLabel>Location</FormLabel>
               <FormControl>
-                <Input placeholder="Enter company name" {...field} />
+                <Input placeholder="City, State, Country" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
-          name="email"
+          name="contactEmail"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Contact Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="you@company.com" {...field} />
+                <Input type="email" placeholder="contact@company.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
-          name="phone"
+          name="contactPhone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone</FormLabel>
+              <FormLabel>Contact Phone</FormLabel>
               <FormControl>
-                <Input type="tel" placeholder="+1 (555) 000-0000" {...field} />
+                <Input type="tel" placeholder="+91 98765 43210" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company Description (Optional)</FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Tell us about your company..." 
+                  {...field} 
+                  className="resize-none min-h-[100px]"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="termsAccepted"
@@ -141,9 +177,9 @@ export const IndustryForm = () => {
             </FormItem>
           )}
         />
-        
-        <Button type="submit" className="w-full">Sign Up</Button>
+
+        <Button type="submit" className="w-full hover:scale-105 transition-transform duration-200">Register as Industry</Button>
       </form>
     </Form>
   );
-};
+}

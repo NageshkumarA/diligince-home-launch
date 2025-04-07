@@ -73,6 +73,10 @@ export const ProfessionalForm = () => {
                   <SelectItem value="operations">Operations</SelectItem>
                   <SelectItem value="safety">Safety</SelectItem>
                   <SelectItem value="project-management">Project Management</SelectItem>
+                  <SelectItem value="electrical">Electrical</SelectItem>
+                  <SelectItem value="mechanical">Mechanical</SelectItem>
+                  <SelectItem value="automation">Automation</SelectItem>
+                  <SelectItem value="quality-control">Quality Control</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
@@ -130,7 +134,7 @@ export const ProfessionalForm = () => {
           )}
         />
         
-        <Button type="submit" className="w-full">Sign Up</Button>
+        <Button type="submit" className="w-full hover:scale-105 transition-transform duration-200">Sign Up</Button>
       </form>
     </Form>
   );
