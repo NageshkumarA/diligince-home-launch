@@ -1,15 +1,13 @@
 
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { UploadCloud } from "lucide-react";
 
 const formSchema = z.object({
   industryType: z.string().min(1, { message: "Please select an industry type" }),
@@ -22,8 +20,6 @@ const formSchema = z.object({
 });
 
 export const IndustryForm = () => {
-  const [isUploading, setIsUploading] = useState(false);
-  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,29 +37,6 @@ export const IndustryForm = () => {
     });
     console.log(values);
   }
-  
-  const handleFileDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsUploading(true);
-    
-    // Simulate file upload
-    setTimeout(() => {
-      setIsUploading(false);
-      toast.success("Documents uploaded successfully");
-    }, 2000);
-  };
-  
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setIsUploading(true);
-      
-      // Simulate file upload
-      setTimeout(() => {
-        setIsUploading(false);
-        toast.success("Documents uploaded successfully");
-      }, 2000);
-    }
-  };
   
   return (
     <Form {...form}>
@@ -86,6 +59,18 @@ export const IndustryForm = () => {
                   <SelectItem value="manufacturing">Manufacturing</SelectItem>
                   <SelectItem value="construction">Construction</SelectItem>
                   <SelectItem value="mining">Mining</SelectItem>
+                  <SelectItem value="steel">Steel & Metals</SelectItem>
+                  <SelectItem value="chemical">Chemical & Petrochemical</SelectItem>
+                  <SelectItem value="pharmaceutical">Pharmaceutical</SelectItem>
+                  <SelectItem value="automotive">Automotive</SelectItem>
+                  <SelectItem value="aerospace">Aerospace & Defense</SelectItem>
+                  <SelectItem value="semiconductor">Semiconductor & Electronics</SelectItem>
+                  <SelectItem value="food">Food & Beverage</SelectItem>
+                  <SelectItem value="textile">Textile & Apparel</SelectItem>
+                  <SelectItem value="paper">Paper & Pulp</SelectItem>
+                  <SelectItem value="cement">Cement & Building Materials</SelectItem>
+                  <SelectItem value="water">Water & Wastewater</SelectItem>
+                  <SelectItem value="renewable">Renewable Energy</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
@@ -135,30 +120,6 @@ export const IndustryForm = () => {
             </FormItem>
           )}
         />
-        
-        <div
-          className={`border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition-colors ${
-            isUploading ? "bg-blue-50 border-blue-300" : "border-gray-300 hover:border-primary hover:bg-blue-50"
-          }`}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleFileDrop}
-          onClick={() => document.getElementById("file-upload")?.click()}
-        >
-          <input
-            id="file-upload"
-            type="file"
-            multiple
-            className="hidden"
-            onChange={handleFileSelect}
-          />
-          <UploadCloud className="mx-auto h-12 w-12 text-primary mb-2" />
-          <p className="text-sm font-medium">
-            {isUploading ? "Uploading..." : "Upload Documents"}
-          </p>
-          <p className="text-xs text-gray-500 mt-1">
-            Drag and drop files here or click to browse
-          </p>
-        </div>
         
         <FormField
           control={form.control}

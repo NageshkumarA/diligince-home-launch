@@ -1,15 +1,13 @@
 
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { UploadCloud } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -22,8 +20,6 @@ const formSchema = z.object({
 });
 
 export const ProfessionalForm = () => {
-  const [isUploading, setIsUploading] = useState(false);
-  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,29 +37,6 @@ export const ProfessionalForm = () => {
     });
     console.log(values);
   }
-  
-  const handleFileDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsUploading(true);
-    
-    // Simulate file upload
-    setTimeout(() => {
-      setIsUploading(false);
-      toast.success("Certifications uploaded successfully");
-    }, 2000);
-  };
-  
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setIsUploading(true);
-      
-      // Simulate file upload
-      setTimeout(() => {
-        setIsUploading(false);
-        toast.success("Certifications uploaded successfully");
-      }, 2000);
-    }
-  };
   
   return (
     <Form {...form}>
@@ -107,30 +80,6 @@ export const ProfessionalForm = () => {
             </FormItem>
           )}
         />
-        
-        <div
-          className={`border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition-colors ${
-            isUploading ? "bg-blue-50 border-blue-300" : "border-gray-300 hover:border-primary hover:bg-blue-50"
-          }`}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleFileDrop}
-          onClick={() => document.getElementById("cert-upload")?.click()}
-        >
-          <input
-            id="cert-upload"
-            type="file"
-            multiple
-            className="hidden"
-            onChange={handleFileSelect}
-          />
-          <UploadCloud className="mx-auto h-12 w-12 text-primary mb-2" />
-          <p className="text-sm font-medium">
-            {isUploading ? "Uploading..." : "Upload Certifications"}
-          </p>
-          <p className="text-xs text-gray-500 mt-1">
-            Drag and drop files here or click to browse
-          </p>
-        </div>
         
         <FormField
           control={form.control}
