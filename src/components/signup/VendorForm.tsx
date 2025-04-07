@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 const formSchema = z.object({
   companyName: z.string().min(2, { message: "Company name is required" }),
   serviceType: z.string().min(1, { message: "Service type is required" }),
+  vendorCategory: z.string().min(1, { message: "Vendor category is required" }),
   contactEmail: z.string().email({ message: "Please enter a valid email address" }),
   contactPhone: z.string().min(10, { message: "Please enter a valid phone number" }),
   description: z.string().min(10, { message: "Description must be at least 10 characters" }),
@@ -28,6 +29,7 @@ export function VendorForm() {
     defaultValues: {
       companyName: "",
       serviceType: "",
+      vendorCategory: "",
       contactEmail: "",
       contactPhone: "",
       description: "",
@@ -62,23 +64,76 @@ export function VendorForm() {
 
         <FormField
           control={form.control}
-          name="serviceType"
+          name="vendorCategory"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Service Type</FormLabel>
+              <FormLabel>Vendor Category</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select your primary service" />
+                    <SelectValue placeholder="Select vendor category" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="maintenance">Maintenance Services</SelectItem>
-                  <SelectItem value="equipment">Equipment Provider</SelectItem>
-                  <SelectItem value="parts">Spare Parts Supplier</SelectItem>
-                  <SelectItem value="repair">Repair Services</SelectItem>
-                  <SelectItem value="logistics">Logistics</SelectItem>
-                  <SelectItem value="consulting">Consulting</SelectItem>
+                  <SelectItem value="service">Service Vendor</SelectItem>
+                  <SelectItem value="product">Product Vendor</SelectItem>
+                  <SelectItem value="logistics">Logistics Vendor</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="serviceType"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Specialization</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your primary specialization" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent className="max-h-80">
+                  {/* Service Vendors */}
+                  <SelectItem value="maintenance">Plant Maintenance Services</SelectItem>
+                  <SelectItem value="repair">Equipment Repair & Overhaul</SelectItem>
+                  <SelectItem value="installation">Installation & Commissioning</SelectItem>
+                  <SelectItem value="engineering">Engineering & Design</SelectItem>
+                  <SelectItem value="automation">Automation & Control Systems</SelectItem>
+                  <SelectItem value="testing">Testing & Quality Assurance</SelectItem>
+                  <SelectItem value="calibration">Calibration Services</SelectItem>
+                  <SelectItem value="inspection">Industrial Inspection</SelectItem>
+                  <SelectItem value="consulting">Technical Consulting</SelectItem>
+                  <SelectItem value="training">Technical Training</SelectItem>
+                  
+                  {/* Product Vendors */}
+                  <SelectItem value="machinery">Industrial Machinery</SelectItem>
+                  <SelectItem value="equipment">Processing Equipment</SelectItem>
+                  <SelectItem value="parts">Spare Parts & Components</SelectItem>
+                  <SelectItem value="tools">Specialized Tools</SelectItem>
+                  <SelectItem value="consumables">Industrial Consumables</SelectItem>
+                  <SelectItem value="electrical">Electrical Equipment</SelectItem>
+                  <SelectItem value="instruments">Instrumentation & Controls</SelectItem>
+                  <SelectItem value="safety">Safety Equipment</SelectItem>
+                  <SelectItem value="chemicals">Industrial Chemicals</SelectItem>
+                  <SelectItem value="materials">Raw Materials</SelectItem>
+                  
+                  {/* Logistics Vendors */}
+                  <SelectItem value="transport">Industrial Transport</SelectItem>
+                  <SelectItem value="heavyLifting">Heavy Lifting & Crane Services</SelectItem>
+                  <SelectItem value="warehouse">Warehousing & Storage</SelectItem>
+                  <SelectItem value="distribution">Distribution Services</SelectItem>
+                  <SelectItem value="supplyChain">Supply Chain Management</SelectItem>
+                  <SelectItem value="heavyEquipment">Heavy Equipment Rentals</SelectItem>
+                  <SelectItem value="projectLogistics">Project Logistics</SelectItem>
+                  <SelectItem value="freight">Freight Forwarding</SelectItem>
+                  <SelectItem value="customs">Customs Clearance</SelectItem>
+                  <SelectItem value="fleetManagement">Fleet Management</SelectItem>
+                  
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
