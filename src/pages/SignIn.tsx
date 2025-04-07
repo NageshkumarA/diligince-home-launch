@@ -3,8 +3,8 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -24,12 +25,15 @@ const formSchema = z.object({
     message: "Password is required",
   }),
   rememberMe: z.boolean().default(false),
+  role: z.enum(["industry", "professional", "vendor"]).default("industry"),
 });
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const roleParam = searchParams.get("role");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,6 +41,7 @@ const SignIn = () => {
       email: "",
       password: "",
       rememberMe: false,
+      role: (roleParam as "industry" | "professional" | "vendor") || "industry",
     },
   });
 
@@ -51,9 +56,21 @@ const SignIn = () => {
         description: "Welcome back to diligince.ai",
       });
       
-      // Simulate redirect after successful login (in a real app, this would redirect to a dashboard)
+      // Redirect based on user role
       setTimeout(() => {
-        navigate("/");
+        switch (values.role) {
+          case "industry":
+            navigate("/industry-profile");
+            break;
+          case "professional":
+            navigate("/professional-profile");
+            break;
+          case "vendor":
+            navigate("/vendor-profile");
+            break;
+          default:
+            navigate("/");
+        }
       }, 1500);
     }, 1000);
   }
@@ -130,6 +147,29 @@ const SignIn = () => {
                           </button>
                         </div>
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>User Type</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select user type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="industry">Industry</SelectItem>
+                          <SelectItem value="professional">Professional</SelectItem>
+                          <SelectItem value="vendor">Vendor</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
