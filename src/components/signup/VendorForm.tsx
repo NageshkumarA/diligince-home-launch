@@ -76,7 +76,7 @@ const formSchema = z.object({
   vendorCategory: z.string().min(1, { message: "Please select a vendor category" }),
   serviceType: z.string().min(1, { message: "Please select a service type" }),
   industry: z.string().min(1, { message: "Please select your primary industry" }),
-  certifications: z.array(z.string()).optional(),
+  certifications: z.array(z.string()).default([]),
   email: z.string().email({ message: "Please enter a valid email address" }),
   phone: z.string().min(10, { message: "Please enter a valid phone number" }),
   termsAccepted: z.boolean().refine(val => val === true, {
@@ -214,7 +214,7 @@ export const VendorForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {selectedCategory && vendorCategories[selectedCategory as keyof typeof vendorCategories].subcategories.map((subcategory) => (
+                    {selectedCategory && vendorCategories[selectedCategory as keyof typeof vendorCategories]?.subcategories.map((subcategory) => (
                       <SelectItem key={subcategory.value} value={subcategory.value}>
                         {subcategory.label}
                       </SelectItem>
