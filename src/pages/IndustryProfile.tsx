@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -15,36 +15,26 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { industries } from "@/components/signup/IndustryForm"; // Import the shared industries array
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const formSchema = z.object({
   companyName: z.string().min(1, { message: "Company name is required" }),
   industryType: z.string().min(1, { message: "Industry type is required" }),
+  customIndustryType: z.string().optional(),
   plantLocation: z.string().min(1, { message: "Plant location is required" }),
   employees: z.string().min(1, { message: "Number of employees is required" }),
   revenue: z.string().min(1, { message: "Annual revenue is required" }),
   primaryNeeds: z.array(z.string()).min(1, { message: "Select at least one primary need" }),
   documentUpload: z.any().optional(),
-});
-
-const industryTypes = [
-  "Sugar Mill",
-  "Cement Plant",
-  "Steel Plant",
-  "Pharmaceutical",
-  "Food Processing",
-  "Automotive",
-  "Chemical",
-  "Textile",
-  "Refinery",
-  "Power Plant",
-  "Paper Mill",
-  "Mining",
-  "Aerospace",
-  "Construction",
-  "Electronics",
-];
+}).refine(
+  (data) => data.industryType !== "Others" || (data.customIndustryType && data.customIndustryType.length > 0),
+  {
+    message: "Please specify your industry type",
+    path: ["customIndustryType"],
+  }
+);
 
 const primaryNeedsOptions = [
   { id: "maintenance", label: "Maintenance Services" },
@@ -66,6 +56,7 @@ const IndustryProfile = () => {
     defaultValues: {
       companyName: "",
       industryType: "",
+      customIndustryType: "",
       plantLocation: "",
       employees: "",
       revenue: "",
@@ -74,12 +65,21 @@ const IndustryProfile = () => {
     },
   });
 
+  // Watch the industry type to show/hide the custom field
+  const selectedIndustryType = form.watch("industryType");
+  const showCustomIndustryField = selectedIndustryType === "Others";
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     
+    // Capture the effective industry type (either selected or custom)
+    const effectiveIndustryType = values.industryType === "Others" 
+      ? values.customIndustryType 
+      : values.industryType;
+    
     // Simulate API call delay
     setTimeout(() => {
-      console.log("Industry profile values:", values);
+      console.log("Industry profile values:", {...values, effectiveIndustryType});
       setIsLoading(false);
       toast.success("Profile saved successfully!", {
         description: "Your industry profile has been created.",
@@ -161,7 +161,7 @@ const IndustryProfile = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {industryTypes.map((type) => (
+                            {industries.map((type) => (
                               <SelectItem key={type} value={type}>{type}</SelectItem>
                             ))}
                           </SelectContent>
@@ -170,6 +170,29 @@ const IndustryProfile = () => {
                       </FormItem>
                     )}
                   />
+
+                  {showCustomIndustryField && (
+                    <FormField
+                      control={form.control}
+                      name="customIndustryType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Specify Industry Type</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Building className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                              <Input 
+                                placeholder="Please specify your industry type" 
+                                className="pl-10" 
+                                {...field} 
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
 
                   <FormField
                     control={form.control}

@@ -19,32 +19,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const formSchema = z.object({
-  companyName: z.string().min(1, {
-    message: "Company name is required",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address",
-  }),
-  phone: z.string().min(10, {
-    message: "Phone number must be at least 10 digits",
-  }),
-  industryType: z.string().min(1, {
-    message: "Industry type is required",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters",
-  }),
-  confirmPassword: z.string(),
-  acceptTerms: z.boolean().refine((value) => value === true, {
-    message: "You must accept the terms and conditions",
-  }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
-const industries = [
+// Define industry types array to be shared between signup and profile pages
+export const industries = [
   "Sugar Manufacturing",
   "Rice Mills",
   "Coal Mining",
@@ -64,8 +40,42 @@ const industries = [
   "Lumber and Wood Products",
   "Fertilizer Production",
   "Power Generation",
-  "Water Treatment"
+  "Water Treatment",
+  "Manufacturing", // Added Manufacturing
+  "Others" // Added Others option
 ];
+
+const formSchema = z.object({
+  companyName: z.string().min(1, {
+    message: "Company name is required",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address",
+  }),
+  phone: z.string().min(10, {
+    message: "Phone number must be at least 10 digits",
+  }),
+  industryType: z.string().min(1, {
+    message: "Industry type is required",
+  }),
+  customIndustryType: z.string().optional(),
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters",
+  }),
+  confirmPassword: z.string(),
+  acceptTerms: z.boolean().refine((value) => value === true, {
+    message: "You must accept the terms and conditions",
+  }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+}).refine(
+  (data) => data.industryType !== "Others" || (data.customIndustryType && data.customIndustryType.length > 0),
+  {
+    message: "Please specify your industry type",
+    path: ["customIndustryType"],
+  }
+);
 
 export function IndustryForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -80,25 +90,35 @@ export function IndustryForm() {
       email: "",
       phone: "",
       industryType: "",
+      customIndustryType: "",
       password: "",
       confirmPassword: "",
       acceptTerms: false,
     },
   });
 
+  const selectedIndustryType = form.watch("industryType");
+  const showCustomIndustryField = selectedIndustryType === "Others";
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     
+    // Capture the effective industry type (either selected or custom)
+    const effectiveIndustryType = values.industryType === "Others" 
+      ? values.customIndustryType 
+      : values.industryType;
+    
+    console.log("Form values:", {...values, effectiveIndustryType});
+    
     // Simulate API call delay
     setTimeout(() => {
-      console.log("Form values:", values);
       setIsSubmitting(false);
       toast.success("Sign-up successful!", {
         description: "Welcome to diligince.ai",
       });
       
       // Redirect to sign-in page after successful sign-up
-      navigate("/signin?role=industry");
+      navigate(`/signin?role=industry`);
     }, 1500);
   }
 
@@ -182,6 +202,25 @@ export function IndustryForm() {
             </FormItem>
           )}
         />
+
+        {showCustomIndustryField && (
+          <FormField
+            control={form.control}
+            name="customIndustryType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Specify Industry Type</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Please specify your industry type" 
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}
