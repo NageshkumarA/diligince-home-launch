@@ -1,51 +1,110 @@
 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formSchema = z.object({
-  companyName: z.string().min(2, { message: "Company name is required" }),
-  industryType: z.string().min(1, { message: "Industry type is required" }),
-  location: z.string().min(2, { message: "Location is required" }),
-  contactEmail: z.string().email({ message: "Please enter a valid email address" }),
-  contactPhone: z.string().min(10, { message: "Please enter a valid phone number" }),
-  description: z.string().optional(),
-  termsAccepted: z.boolean().refine(val => val === true, {
+  companyName: z.string().min(1, {
+    message: "Company name is required",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address",
+  }),
+  phone: z.string().min(10, {
+    message: "Phone number must be at least 10 digits",
+  }),
+  industryType: z.string().min(1, {
+    message: "Industry type is required",
+  }),
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters",
+  }),
+  confirmPassword: z.string(),
+  acceptTerms: z.boolean().refine((value) => value === true, {
     message: "You must accept the terms and conditions",
   }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
 
+const industries = [
+  "Sugar Manufacturing",
+  "Rice Mills",
+  "Coal Mining",
+  "Steel Manufacturing",
+  "Cement Production",
+  "Oil Refining",
+  "Natural Gas Processing",
+  "Textile Manufacturing",
+  "Paper Mills",
+  "Chemical Manufacturing",
+  "Pharmaceutical Production",
+  "Food Processing",
+  "Automotive Manufacturing",
+  "Electronics Manufacturing",
+  "Plastics Manufacturing",
+  "Glass Production",
+  "Lumber and Wood Products",
+  "Fertilizer Production",
+  "Power Generation",
+  "Water Treatment"
+];
+
 export function IndustryForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       companyName: "",
+      email: "",
+      phone: "",
       industryType: "",
-      location: "",
-      contactEmail: "",
-      contactPhone: "",
-      description: "",
-      termsAccepted: false,
+      password: "",
+      confirmPassword: "",
+      acceptTerms: false,
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    toast.success("Industry account created successfully!", {
-      description: "Welcome to diligince.ai",
-    });
-    console.log(values);
+    setIsSubmitting(true);
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      console.log("Form values:", values);
+      setIsSubmitting(false);
+      toast.success("Sign-up successful!", {
+        description: "Welcome to diligince.ai",
+      });
+      
+      // Redirect to sign-in page after successful sign-up
+      navigate("/signin?role=industry");
+    }, 1500);
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-fade-in">
         <FormField
           control={form.control}
           name="companyName"
@@ -53,13 +112,52 @@ export function IndustryForm() {
             <FormItem>
               <FormLabel>Company Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your company name" {...field} />
+                <Input placeholder="e.g. Steel Industries Ltd." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
+        
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input 
+                    placeholder="you@example.com" 
+                    className="pl-10" 
+                    {...field} 
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone Number</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="e.g. 9876543210" 
+                  type="tel"
+                  {...field} 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
         <FormField
           control={form.control}
           name="industryType"
@@ -73,23 +171,11 @@ export function IndustryForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="sugar">Sugar Mill</SelectItem>
-                  <SelectItem value="cement">Cement Plant</SelectItem>
-                  <SelectItem value="steel">Steel Plant</SelectItem>
-                  <SelectItem value="paper">Paper Mill</SelectItem>
-                  <SelectItem value="power">Power Plant</SelectItem>
-                  <SelectItem value="oil-gas">Oil & Gas</SelectItem>
-                  <SelectItem value="chemical">Chemical</SelectItem>
-                  <SelectItem value="pharmaceutical">Pharmaceutical</SelectItem>
-                  <SelectItem value="textile">Textile</SelectItem>
-                  <SelectItem value="food-processing">Food Processing</SelectItem>
-                  <SelectItem value="automotive">Automotive</SelectItem>
-                  <SelectItem value="mining">Mining</SelectItem>
-                  <SelectItem value="electronics">Electronics</SelectItem>
-                  <SelectItem value="plastics">Plastics & Polymers</SelectItem>
-                  <SelectItem value="water-treatment">Water Treatment</SelectItem>
-                  <SelectItem value="renewable-energy">Renewable Energy</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  {industries.map((industry) => (
+                    <SelectItem key={industry} value={industry}>
+                      {industry}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -99,12 +185,31 @@ export function IndustryForm() {
 
         <FormField
           control={form.control}
-          name="location"
+          name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Location</FormLabel>
+              <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="City, State, Country" {...field} />
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input 
+                    type={showPassword ? "text" : "password"} 
+                    placeholder="••••••••" 
+                    className="pl-10" 
+                    {...field} 
+                  />
+                  <button 
+                    type="button"
+                    className="absolute right-3 top-3 text-muted-foreground"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -113,55 +218,42 @@ export function IndustryForm() {
 
         <FormField
           control={form.control}
-          name="contactEmail"
+          name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Contact Email</FormLabel>
+              <FormLabel>Confirm Password</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="contact@company.com" {...field} />
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input 
+                    type={showConfirmPassword ? "text" : "password"} 
+                    placeholder="••••••••" 
+                    className="pl-10" 
+                    {...field} 
+                  />
+                  <button 
+                    type="button"
+                    className="absolute right-3 top-3 text-muted-foreground"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
+        
         <FormField
           control={form.control}
-          name="contactPhone"
+          name="acceptTerms"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Contact Phone</FormLabel>
-              <FormControl>
-                <Input type="tel" placeholder="+91 98765 43210" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Company Description (Optional)</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="Tell us about your company..." 
-                  {...field} 
-                  className="resize-none min-h-[100px]"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="termsAccepted"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
               <FormControl>
                 <Checkbox
                   checked={field.value}
@@ -170,15 +262,22 @@ export function IndustryForm() {
               </FormControl>
               <div className="space-y-1 leading-none">
                 <FormLabel>
-                  I agree to the <a href="/terms" className="text-primary hover:underline">Terms and Conditions</a>
+                  I accept the 
+                  <a href="/terms" className="text-primary hover:underline ml-1">terms and conditions</a>
                 </FormLabel>
                 <FormMessage />
               </div>
             </FormItem>
           )}
         />
-
-        <Button type="submit" className="w-full hover:scale-105 transition-transform duration-200">Register as Industry</Button>
+        
+        <Button 
+          type="submit" 
+          className="w-full hover:scale-105 transition-transform duration-200"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Creating Account..." : "Create Account"}
+        </Button>
       </form>
     </Form>
   );
