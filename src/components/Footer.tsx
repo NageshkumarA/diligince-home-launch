@@ -1,7 +1,6 @@
 
 import { Link } from "react-router-dom";
 import { Linkedin, Twitter, Mail, Phone, MapPin } from "lucide-react";
-import Logo from "./Logo";
 
 const Footer = () => {
   return (
@@ -9,8 +8,8 @@ const Footer = () => {
       <div className="container mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-1">
-            <Logo className="mb-6" size="medium" showTextLogo={true} />
-            <p className="text-gray-400 text-sm mt-4">
+            <h3 className="text-xl font-bold mb-4">diligince.ai</h3>
+            <p className="text-gray-400 text-sm">
               Connecting industrial ecosystems with artificial intelligence.
             </p>
             <div className="flex space-x-4 mt-4">

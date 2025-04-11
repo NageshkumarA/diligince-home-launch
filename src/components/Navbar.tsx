@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import Logo from "./Logo";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,12 +34,14 @@ const Navbar = () => {
   }, [location]);
 
   return (
-    <nav className={`w-full py-3 px-4 md:px-8 fixed top-0 z-50 transition-all duration-300 ${
+    <nav className={`w-full py-4 px-4 md:px-8 fixed top-0 z-50 transition-all duration-300 ${
       scrolled ? "bg-white shadow-md" : "bg-white border-b border-gray-100"
     }`}>
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
-          <Logo size="small" showTextLogo={false} className="py-1" />
+          <Link to="/" className="text-xl font-bold text-blue-600">
+            diligince.ai
+          </Link>
         </div>
         
         {/* Desktop navigation */}
