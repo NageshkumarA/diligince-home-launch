@@ -1,17 +1,28 @@
 
-<svg width="200" height="80" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M60 40C60 51.0457 51.0457 60 40 60C28.9543 60 20 51.0457 20 40C20 28.9543 28.9543 20 40 20C51.0457 20 60 28.9543 60 40Z" fill="#212121" stroke="white" stroke-width="2"/>
-  <path fill-rule="evenodd" clip-rule="evenodd" d="M37.5 30H42.5V35H47.5V40H42.5V50H37.5V30Z" fill="#212121"/>
-  <path d="M37.5 30H42.5M42.5 30V35M42.5 35H47.5M47.5 35V40M47.5 40H42.5M42.5 40V50M42.5 50H37.5M37.5 50V30" stroke="white" stroke-width="1"/>
-  <rect x="35" y="38" width="2" height="2" fill="white"/>
-  <rect x="35" y="42" width="2" height="2" fill="white"/>
-  <rect x="43" y="38" width="2" height="2" fill="white"/>
-  <rect x="43" y="42" width="2" height="2" fill="white"/>
-  <rect x="43" y="46" width="2" height="2" fill="white"/>
-  <rect x="47" y="42" width="2" height="2" fill="white"/>
-  <rect x="31" y="42" width="2" height="2" fill="white"/>
-  <rect x="31" y="38" width="2" height="2" fill="white"/>
-  <rect x="39" y="34" width="2" height="2" fill="white"/>
-  <text x="70" y="45" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white">diligince.ai</text>
-  <text x="70" y="60" font-family="Arial, sans-serif" font-size="12" fill="#AAA">Where Industry Meets Intelligence</text>
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Hexagon with circuit background -->
+  <path d="M150 30L255 90V210L150 270L45 210V90L150 30Z" fill="#003A70" stroke="#FFFFFF" stroke-width="8"/>
+  
+  <!-- Circuit pattern background -->
+  <path d="M150 40L245 95V205L150 260L55 205V95L150 40Z" fill="#0064C8" fill-opacity="0.6"/>
+  
+  <!-- Circuit lines and nodes -->
+  <path d="M80 110C80 110 95 125 110 125M110 125C125 125 125 155 110 170M110 125C110 125 135 100 165 100M165 100C180 100 195 115 195 130M165 100C165 100 180 85 215 100" stroke="#FFFFFF" stroke-width="2.5"/>
+  <circle cx="80" cy="110" r="5" fill="#FFFFFF"/>
+  <circle cx="110" cy="125" r="5" fill="#FFFFFF"/>
+  <circle cx="110" cy="170" r="5" fill="#FFFFFF"/>
+  <circle cx="165" cy="100" r="5" fill="#FFFFFF"/>
+  <circle cx="195" cy="130" r="5" fill="#FFFFFF"/>
+  <circle cx="215" cy="100" r="5" fill="#FFFFFF"/>
+  
+  <!-- Gear icon -->
+  <path d="M95 170C95 170 90 175 95 180C100 185 105 180 105 180" stroke="#FFFFFF" stroke-width="2.5"/>
+  <circle cx="100" cy="175" r="8" stroke="#FFFFFF" stroke-width="2.5" fill="none"/>
+  
+  <!-- Large D -->
+  <path d="M125 90H165C190 90 210 120 210 150C210 180 190 210 165 210H125V90Z" fill="#00AAFF" stroke="#FFFFFF" stroke-width="6"/>
+  
+  <!-- Company name and tagline below the logo -->
+  <text x="150" y="290" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#FFFFFF">diligince.ai</text>
+  <text x="150" y="320" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#CCCCCC">Where Industry Meets Intelligence</text>
 </svg>

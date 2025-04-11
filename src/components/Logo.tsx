@@ -6,10 +6,11 @@ import logoDark from "../assets/logo-dark.svg";
 
 interface LogoProps {
   className?: string;
-  size?: "small" | "medium" | "large" | "xlarge";
+  size?: "tiny" | "small" | "medium" | "large" | "xlarge";
+  showTextLogo?: boolean;
 }
 
-const Logo = ({ className = "", size = "medium" }: LogoProps) => {
+const Logo = ({ className = "", size = "medium", showTextLogo = true }: LogoProps) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   
   // Check for dark mode preference
@@ -25,20 +26,24 @@ const Logo = ({ className = "", size = "medium" }: LogoProps) => {
     return () => darkModeMediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  // Determine logo size - increased all sizes for better visibility
+  // Determine logo size - optimized for different contexts
   const sizeClass = {
-    small: "h-10 md:h-12",
-    medium: "h-12 md:h-16",
-    large: "h-16 md:h-20",
-    xlarge: "h-24 md:h-32"
+    tiny: "h-8 md:h-10",
+    small: "h-10 md:h-14",
+    medium: "h-14 md:h-18",
+    large: "h-20 md:h-24",
+    xlarge: "h-32 md:h-40"
   }[size];
+
+  // Display content based on viewport width
+  const aspectRatio = showTextLogo ? "aspect-[3/3.5]" : "aspect-[3/2.5]";
 
   return (
     <Link to="/" className={`inline-block ${className}`}>
       <img 
         src={isDarkMode ? logoDark : logoLight} 
         alt="Diligince.ai Logo"
-        className={`${sizeClass} w-auto transition-all duration-300 hover:opacity-90 hover:scale-105`}
+        className={`${sizeClass} ${aspectRatio} w-auto object-contain transition-all duration-300 hover:opacity-90 hover:scale-105`}
       />
     </Link>
   );
