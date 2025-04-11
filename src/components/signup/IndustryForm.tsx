@@ -37,7 +37,7 @@ export const industries = [
   "Electronics Manufacturing",
   "Plastics Manufacturing",
   "Glass Production",
-  "Lumber and Wood Products",
+  "Plumber and Wood Products",
   "Fertilizer Production",
   "Power Generation",
   "Water Treatment",
