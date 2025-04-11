@@ -40,7 +40,7 @@ const Navbar = () => {
     }`}>
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
-          <Logo size="medium" />
+          <Logo size="large" className="py-2" />
         </div>
         
         {/* Desktop navigation */}
