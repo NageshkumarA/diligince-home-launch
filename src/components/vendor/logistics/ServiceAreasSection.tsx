@@ -24,8 +24,11 @@ const serviceAreaSchema = z.object({
   specialConditions: z.string().optional(),
 });
 
+// Define a type based on the zod schema
+type ServiceArea = z.infer<typeof serviceAreaSchema> & { id: string };
+
 // Mock data for the service areas
-const mockServiceAreas = [
+const mockServiceAreas: ServiceArea[] = [
   {
     id: "1",
     location: "Mumbai",
@@ -69,7 +72,7 @@ const indianStates = [
 ];
 
 export const ServiceAreasSection = () => {
-  const [serviceAreas, setServiceAreas] = useState(mockServiceAreas);
+  const [serviceAreas, setServiceAreas] = useState<ServiceArea[]>(mockServiceAreas);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentAreaId, setCurrentAreaId] = useState<string | null>(null);
