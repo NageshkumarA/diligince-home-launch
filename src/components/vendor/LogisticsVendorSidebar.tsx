@@ -17,8 +17,8 @@ import { FleetEquipmentSection } from "@/components/vendor/logistics/FleetEquipm
 import { ServiceAreasSection } from "@/components/vendor/logistics/ServiceAreasSection";
 import { LicensesPermitsSection } from "@/components/vendor/logistics/LicensesPermitsSection";
 import { DriversPersonnelSection } from "@/components/vendor/logistics/DriversPersonnelSection";
-import { PaymentSettingsForm } from "@/components/vendor/forms/PaymentSettingsForm";
-import { AccountSettingsForm } from "@/components/vendor/forms/AccountSettingsForm";
+import PaymentSettingsForm from "@/components/vendor/forms/PaymentSettingsForm";
+import AccountSettingsForm from "@/components/vendor/forms/AccountSettingsForm";
 
 type MenuSection = 
   | "company-info" 
