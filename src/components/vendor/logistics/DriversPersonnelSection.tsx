@@ -28,8 +28,11 @@ const personnelSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }).optional(),
 });
 
+// Define a type based on the zod schema
+type Personnel = z.infer<typeof personnelSchema> & { id: string };
+
 // Mock data for drivers and personnel
-const mockPersonnel = [
+const mockPersonnel: Personnel[] = [
   {
     id: "1",
     name: "Rajesh Kumar",
@@ -99,7 +102,7 @@ const availabilityStatuses = [
 ];
 
 export const DriversPersonnelSection = () => {
-  const [personnel, setPersonnel] = useState(mockPersonnel);
+  const [personnel, setPersonnel] = useState<Personnel[]>(mockPersonnel);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentPersonnelId, setCurrentPersonnelId] = useState<string | null>(null);

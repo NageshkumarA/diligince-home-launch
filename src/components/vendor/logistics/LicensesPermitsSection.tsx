@@ -24,8 +24,11 @@ const licenseSchema = z.object({
   verificationStatus: z.string().min(1, { message: "Verification status is required" }),
 });
 
+// Define a type based on the zod schema
+type License = z.infer<typeof licenseSchema> & { id: string };
+
 // Mock data for licenses and permits
-const mockLicenses = [
+const mockLicenses: License[] = [
   {
     id: "1",
     licenseType: "Commercial Vehicle Permit",
@@ -76,7 +79,7 @@ const verificationStatuses = [
 ];
 
 export const LicensesPermitsSection = () => {
-  const [licenses, setLicenses] = useState(mockLicenses);
+  const [licenses, setLicenses] = useState<License[]>(mockLicenses);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentLicenseId, setCurrentLicenseId] = useState<string | null>(null);

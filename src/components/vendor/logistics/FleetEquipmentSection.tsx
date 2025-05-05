@@ -30,6 +30,9 @@ const equipmentSchema = z.object({
   status: z.string().min(1, { message: "Status is required" }),
 });
 
+// Define a type based on the zod schema
+type Equipment = z.infer<typeof equipmentSchema> & { id: string };
+
 const equipmentTypes = [
   "Heavy Duty Trucks",
   "Low-bed Trailers",
@@ -61,7 +64,7 @@ const availabilityStatuses = [
 ];
 
 // Mock data for the equipment list
-const mockEquipment = [
+const mockEquipment: Equipment[] = [
   {
     id: "1",
     equipmentType: "Heavy Duty Trucks",
@@ -107,7 +110,7 @@ const mockEquipment = [
 ];
 
 export const FleetEquipmentSection = () => {
-  const [equipment, setEquipment] = useState(mockEquipment);
+  const [equipment, setEquipment] = useState<Equipment[]>(mockEquipment);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentEquipmentId, setCurrentEquipmentId] = useState<string | null>(null);
