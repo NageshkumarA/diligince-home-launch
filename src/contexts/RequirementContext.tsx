@@ -30,7 +30,7 @@ export interface RequirementFormData {
   // Product
   productSpecifications?: string;
   quantity?: number;
-  deliveryDate?: Date | null;
+  productDeliveryDate?: Date | null;
   qualityRequirements?: string;
   
   // Service

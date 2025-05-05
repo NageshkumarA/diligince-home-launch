@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { Button } from "@/components/ui/button";
@@ -313,12 +312,12 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
                     variant="outline"
                     className={cn(
                       "w-full justify-start text-left font-normal",
-                      !formData.deliveryDate && "text-muted-foreground"
+                      !formData.productDeliveryDate && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.deliveryDate ? (
-                      format(formData.deliveryDate, "PPP")
+                    {formData.productDeliveryDate ? (
+                      format(formData.productDeliveryDate, "PPP")
                     ) : (
                       <span>Select date</span>
                     )}
@@ -327,8 +326,8 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
                 <PopoverContent className="w-auto p-0">
                   <Calendar
                     mode="single"
-                    selected={formData.deliveryDate || undefined}
-                    onSelect={(date) => updateFormData({ deliveryDate: date })}
+                    selected={formData.productDeliveryDate || undefined}
+                    onSelect={(date) => updateFormData({ productDeliveryDate: date })}
                     initialFocus
                   />
                 </PopoverContent>
