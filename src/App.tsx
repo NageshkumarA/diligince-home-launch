@@ -12,6 +12,7 @@ import SignIn from "./pages/SignIn";
 import IndustryProfile from "./pages/IndustryProfile";
 import ProfessionalProfile from "./pages/ProfessionalProfile";
 import VendorProfile from "./pages/VendorProfile";
+import VendorDashboard from "./pages/VendorDashboard";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/industry-profile" element={<IndustryProfile />} />
             <Route path="/professional-profile" element={<ProfessionalProfile />} />
             <Route path="/vendor-profile" element={<VendorProfile />} />
+            <Route path="/vendor-dashboard" element={<VendorDashboard />} />
             <Route path="/professional-dashboard" element={<ProfessionalProfile />} /> {/* Added for redirection */}
             
             {/* New routes */}
