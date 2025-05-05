@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { User, Home, Calendar, Award, Briefcase, Wallet, Settings, LayoutGrid, MessageSquare } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
 import ExpertHeader from "@/components/expert/ExpertHeader";
 import ExpertSidebar from "@/components/expert/ExpertSidebar";
 import PersonalInfoForm from "@/components/expert/forms/PersonalInfoForm";
@@ -11,7 +12,6 @@ import ExperienceForm from "@/components/expert/forms/ExperienceForm";
 import AvailabilityCalendar from "@/components/expert/forms/AvailabilityCalendar";
 import PaymentSettingsForm from "@/components/expert/forms/PaymentSettingsForm";
 import AccountSettingsForm from "@/components/expert/forms/AccountSettingsForm";
-import { toast } from "sonner";
 
 // Types for the navigation menu
 export type SidebarMenuItem = {
