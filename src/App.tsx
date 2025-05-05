@@ -34,6 +34,7 @@ const App = () => (
           <Route path="/industry-profile" element={<IndustryProfile />} />
           <Route path="/professional-profile" element={<ProfessionalProfile />} />
           <Route path="/vendor-profile" element={<VendorProfile />} />
+          <Route path="/professional-dashboard" element={<ProfessionalProfile />} /> {/* Added for redirection */}
           
           {/* New routes */}
           <Route path="/about" element={<About />} />

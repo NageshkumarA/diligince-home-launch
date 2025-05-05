@@ -283,7 +283,7 @@ const AccountSettingsForm = () => {
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">Push Notifications</FormLabel>
                             <FormDescription>
-                              Receive notifications in-app
+                              Receive in-app notifications
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -310,7 +310,7 @@ const AccountSettingsForm = () => {
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">Platform Updates</FormLabel>
                             <FormDescription>
-                              Receive updates about platform changes and new features
+                              Receive emails about platform updates and new features
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -331,7 +331,7 @@ const AccountSettingsForm = () => {
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">New Opportunities</FormLabel>
                             <FormDescription>
-                              Receive emails about new job opportunities that match your skills
+                              Receive emails about new job opportunities matching your skills
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -368,7 +368,7 @@ const AccountSettingsForm = () => {
                 </div>
 
                 <div className="flex justify-end space-x-4 pt-4">
-                  <Button type="submit">Save Preferences</Button>
+                  <Button type="submit">Save Notification Preferences</Button>
                 </div>
               </form>
             </Form>
@@ -387,9 +387,9 @@ const AccountSettingsForm = () => {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Show Profile to Companies</FormLabel>
+                            <FormLabel className="text-base">Public Profile</FormLabel>
                             <FormDescription>
-                              Make your profile visible to companies looking for experts
+                              Make your profile visible to potential clients
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -408,9 +408,9 @@ const AccountSettingsForm = () => {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Show Contact Information</FormLabel>
+                            <FormLabel className="text-base">Contact Information</FormLabel>
                             <FormDescription>
-                              Allow companies to see your contact details before connecting
+                              Show your contact details to verified clients
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -429,7 +429,7 @@ const AccountSettingsForm = () => {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Show Rate Information</FormLabel>
+                            <FormLabel className="text-base">Rate Visibility</FormLabel>
                             <FormDescription>
                               Display your daily/hourly rate on your profile
                             </FormDescription>
