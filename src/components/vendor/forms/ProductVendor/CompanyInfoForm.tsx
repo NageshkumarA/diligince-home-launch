@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -12,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import MultiSelect from "@/components/vendor/ui/MultiSelect";
+import { MultiSelect } from "@/components/vendor/ui/MultiSelect";
 
 const companySchema = z.object({
   companyName: z.string().min(1, { message: "Company name is required" }),

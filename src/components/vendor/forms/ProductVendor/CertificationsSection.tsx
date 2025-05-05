@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -15,7 +14,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
-import MultiSelect from "@/components/vendor/ui/MultiSelect";
+import { MultiSelect } from "@/components/vendor/ui/MultiSelect";
 
 const certificationSchema = z.object({
   certificateName: z.string().min(1, { message: "Certificate name is required" }),
