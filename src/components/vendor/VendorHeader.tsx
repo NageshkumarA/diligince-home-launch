@@ -1,5 +1,5 @@
 
-import { Bell, MessageSquare, FileText, LayoutGrid, Briefcase, User, Home } from "lucide-react";
+import { Bell, MessageSquare, FileText, LayoutGrid, ShoppingCart, User, Home } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
@@ -8,14 +8,14 @@ const VendorHeader = () => {
   const navItems = [
     { label: "Dashboard", icon: <Home size={18} />, href: "#" },
     { label: "RFQs", icon: <FileText size={18} />, href: "#" },
-    { label: "Services", icon: <LayoutGrid size={18} />, href: "#" },
-    { label: "Projects", icon: <Briefcase size={18} />, href: "#" },
+    { label: "Catalog", icon: <LayoutGrid size={18} />, href: "#" },
+    { label: "Orders", icon: <ShoppingCart size={18} />, href: "#" },
     { label: "Messages", icon: <MessageSquare size={18} />, href: "#" },
     { label: "Profile", icon: <User size={18} />, href: "#", active: true }
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-[#fa8c16] text-white z-10 shadow-md">
+    <header className="fixed top-0 left-0 right-0 h-16 bg-[#faad14] text-white z-10 shadow-md">
       <div className="container mx-auto h-full flex items-center justify-between px-4">
         <div className="flex items-center gap-10">
           <h1 className="text-xl font-bold">diligince.ai</h1>
@@ -28,7 +28,7 @@ const VendorHeader = () => {
                 className={`flex items-center gap-2 text-sm ${
                   item.active 
                     ? "text-white font-medium" 
-                    : "text-orange-100 hover:text-white transition-colors"
+                    : "text-yellow-100 hover:text-white transition-colors"
                 }`}
               >
                 {item.icon}
@@ -39,11 +39,11 @@ const VendorHeader = () => {
         </div>
         
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" className="text-orange-100 hover:text-white hover:bg-orange-600">
+          <Button variant="ghost" size="icon" className="text-yellow-100 hover:text-white hover:bg-yellow-600">
             <Bell size={20} />
           </Button>
           
-          <Avatar className="h-8 w-8 bg-orange-700 border-2 border-orange-300">
+          <Avatar className="h-8 w-8 bg-yellow-700 border-2 border-yellow-300">
             <AvatarFallback className="text-white text-sm">TS</AvatarFallback>
           </Avatar>
         </div>
