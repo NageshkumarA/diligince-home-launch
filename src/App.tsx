@@ -16,6 +16,7 @@ import ServiceVendorProfile from "./pages/ServiceVendorProfile";
 import ProductVendorProfile from "./pages/ProductVendorProfile";
 import LogisticsVendorProfile from "./pages/LogisticsVendorProfile";
 import CreateRequirement from "./pages/CreateRequirement";
+import CreatePurchaseOrder from "./pages/CreatePurchaseOrder";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/product-vendor-profile" element={<ProductVendorProfile />} />
             <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
             <Route path="/create-requirement" element={<CreateRequirement />} />
+            <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
             
             {/* New routes */}
             <Route path="/about" element={<About />} />
