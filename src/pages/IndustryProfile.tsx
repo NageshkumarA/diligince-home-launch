@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Building, 
   FileText, 
@@ -16,7 +16,9 @@ import {
   Globe,
   Calendar,
   Save,
-  X
+  X,
+  Home,
+  User
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -24,8 +26,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { Link } from "react-router-dom";
 import { 
   Table,
@@ -35,6 +35,16 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
+import Footer from "@/components/Footer";
+
+// Types for the content
+export type ContentType = 
+  | "Company Profile" 
+  | "Team Members" 
+  | "Documents & Certification" 
+  | "Payment Settings" 
+  | "Notification Preferences" 
+  | "Security & Login";
 
 const IndustryProfile = () => {
   const [companyName, setCompanyName] = useState("Steel Plant Ltd.");
@@ -49,7 +59,7 @@ const IndustryProfile = () => {
   const [address, setAddress] = useState("Plot No. 123, Industrial Area, Mumbai, Maharashtra, India - 400001");
   const [website, setWebsite] = useState("https://steelplant.com");
   const [yearEstablished, setYearEstablished] = useState("1995");
-  const [activeMenu, setActiveMenu] = useState("Company Profile");
+  const [activeMenu, setActiveMenu] = useState<ContentType>("Company Profile");
   const [profileCompletion, setProfileCompletion] = useState(90);
   
   // Mock data for team members
@@ -87,6 +97,15 @@ const IndustryProfile = () => {
     { name: "Payment Settings", icon: <CreditCard className="w-5 h-5" /> },
     { name: "Notification Preferences", icon: <Bell className="w-5 h-5" /> },
     { name: "Security & Login", icon: <Lock className="w-5 h-5" /> },
+  ];
+
+  // Header navigation items
+  const headerNavItems = [
+    { label: "Dashboard", path: "/industry-dashboard", icon: <Home size={18} /> },
+    { label: "Requirements", path: "/create-requirement", icon: <FileText size={18} /> },
+    { label: "Stakeholders", path: "/vendors", icon: <Users size={18} /> },
+    { label: "Messages", path: "/messages", icon: <Mail size={18} /> },
+    { label: "Profile", path: "/industry-profile", icon: <User size={18} />, active: true },
   ];
 
   // Handle team member form submission
@@ -834,13 +853,14 @@ const IndustryProfile = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f0f2f5]">
-      {/* Custom header with Diligince.ai branding */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-[#1890ff] flex items-center justify-between px-4 lg:px-8 z-10">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Header with navigation */}
+      <header className="fixed top-0 left-0 right-0 h-16 bg-blue-600 flex items-center justify-between px-4 lg:px-8 z-10">
         <div className="flex items-center">
-          <h1 className="text-xl md:text-2xl font-bold text-white">Diligince.ai</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-white">diligince.ai</h1>
         </div>
         
+        {/* Navigation Links */}
         <nav className="hidden md:flex items-center space-x-6">
           <Link to="/industry-dashboard" className="text-white hover:text-blue-100">Dashboard</Link>
           <Link to="/create-requirement" className="text-white hover:text-blue-100">Requirements</Link>
@@ -849,71 +869,74 @@ const IndustryProfile = () => {
           <Link to="/documents" className="text-white hover:text-blue-100">Documents</Link>
         </nav>
         
+        {/* User Profile */}
         <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#1890ff] font-bold">
+          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-blue-600 font-bold">
             {getInitials(companyName)}
           </div>
         </div>
       </header>
 
-      <main className="flex-grow py-8 px-4 lg:px-8 mt-16">
-        <div className="container mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Profile & Settings</h1>
-
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Profile Sidebar */}
-            <Card className="lg:col-span-1 p-6 flex flex-col items-center">
-              {/* Profile Photo */}
-              <div className="w-32 h-32 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-4xl font-bold mb-4">
-                {getInitials(companyName)}
+      {/* Main content area with sidebar and main panel */}
+      <div className="flex flex-grow pt-16">
+        {/* Sidebar */}
+        <aside className="hidden lg:block w-64 bg-white border-r border-gray-200 p-6 space-y-6">
+          {/* Profile Section */}
+          <div className="flex flex-col items-center text-center">
+            <div className="w-24 h-24 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-3xl font-bold mb-4">
+              {getInitials(companyName)}
+            </div>
+            
+            <h2 className="text-lg font-bold text-gray-800 mb-2">{companyName}</h2>
+            
+            <span className="bg-blue-50 text-blue-500 text-sm px-4 py-1 rounded-full border border-blue-200 mb-6">
+              {industryType.split(" - ")[0]}
+            </span>
+            
+            {/* Profile Completion */}
+            <div className="w-full mb-6">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm text-gray-600">Profile Completion</span>
+                <span className="text-sm text-blue-500">{profileCompletion}%</span>
               </div>
-              
-              {/* Company Name */}
-              <h2 className="text-xl font-bold text-gray-800 mb-2">{companyName}</h2>
-              
-              {/* Industry Type */}
-              <span className="bg-blue-50 text-blue-500 text-sm px-4 py-1 rounded-full border border-blue-200 mb-6">
-                {industryType.split(" - ")[0]}
-              </span>
-              
-              {/* Profile Completion */}
-              <div className="w-full mb-6">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm text-gray-600">Profile Completion</span>
-                  <span className="text-sm text-blue-500">{profileCompletion}%</span>
-                </div>
-                <Progress value={profileCompletion} className="h-2" />
-              </div>
-              
-              {/* Menu Items */}
-              <nav className="w-full mt-2">
-                <ul className="space-y-1 w-full">
-                  {menuItems.map((item) => (
-                    <li key={item.name}>
-                      <button
-                        className={`w-full flex items-center px-4 py-3 rounded-md text-left ${
-                          activeMenu === item.name
-                            ? "bg-blue-50 text-blue-600 font-medium"
-                            : "text-gray-600 hover:bg-gray-100"
-                        }`}
-                        onClick={() => setActiveMenu(item.name)}
-                      >
-                        <span className="mr-3">{item.icon}</span>
-                        {item.name}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            </Card>
+              <Progress value={profileCompletion} className="h-2" />
+            </div>
+          </div>
+          
+          {/* Navigation Menu */}
+          <nav className="w-full">
+            <ul className="space-y-1 w-full">
+              {menuItems.map((item) => (
+                <li key={item.name}>
+                  <button
+                    className={`w-full flex items-center px-4 py-3 rounded-md text-left ${
+                      activeMenu === item.name
+                        ? "bg-blue-50 text-blue-600 font-medium"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                    onClick={() => setActiveMenu(item.name as ContentType)}
+                  >
+                    <span className="mr-3">{item.icon}</span>
+                    {item.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
 
-            {/* Content Area */}
-            <Card className="lg:col-span-3 p-6">
+        {/* Main Content */}
+        <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
+          {/* Title and Content */}
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Profile & Settings</h1>
+            
+            <Card className="w-full p-6">
               {renderContent()}
             </Card>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
 
       <Footer />
     </div>
