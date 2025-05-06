@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Helmet } from "react-helmet";
-import { PurchaseOrderHeader } from "@/components/purchase-order/PurchaseOrderHeader";
+import PurchaseOrderHeader from "@/components/purchase-order/PurchaseOrderHeader";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
