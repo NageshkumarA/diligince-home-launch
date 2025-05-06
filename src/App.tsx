@@ -26,6 +26,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Vendors from "./pages/Vendors";
 import Experts from "./pages/Experts";
+import WorkCompletionPayment from "./pages/WorkCompletionPayment";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,8 @@ const App = () => (
             <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
             <Route path="/vendors" element={<Vendors />} />
             <Route path="/experts" element={<Experts />} />
+            <Route path="/work-completion-payment/:id" element={<WorkCompletionPayment />} />
+            <Route path="/work-completion-payment" element={<WorkCompletionPayment />} />
             
             {/* New routes */}
             <Route path="/about" element={<About />} />

@@ -39,10 +39,15 @@ const Vendors = () => {
                   <p>Rating: {(Math.random() * 2 + 3).toFixed(1)} / 5</p>
                   <p>Projects Completed: {Math.floor(Math.random() * 20) + 5}</p>
                 </div>
-                <div className="mt-4 flex justify-end">
+                <div className="mt-4 flex justify-end space-x-2">
                   <Button variant="outline" size="sm" asChild>
                     <Link to={`/vendor-details/${index}`}>View Details</Link>
                   </Button>
+                  {index === 1 && (
+                    <Button size="sm" asChild>
+                      <Link to="/work-completion-payment">Review & Pay</Link>
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
