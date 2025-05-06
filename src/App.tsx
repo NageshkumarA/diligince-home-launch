@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -53,7 +54,7 @@ const App = () => (
             <Route path="/work-completion-payment/:id" element={<WorkCompletionPayment />} />
             <Route path="/work-completion-payment" element={<WorkCompletionPayment />} />
             
-            {/* Other routes */}
+            {/* New routes */}
             <Route path="/about" element={<About />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/contact" element={<Contact />} />
@@ -62,7 +63,7 @@ const App = () => (
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             
-            {/* Catch-all route */}
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
