@@ -64,10 +64,7 @@ const Navbar = () => {
           <Button className="hover:scale-105 transition-transform duration-200" asChild>
             <Link to="/signup">Sign Up</Link>
           </Button>
-          {/* Dashboard link for logged-in users */}
-          <Button variant="secondary" className="hover:scale-105 transition-transform duration-200" asChild>
-            <Link to="/industry-dashboard">Dashboard</Link>
-          </Button>
+          {/* Dashboard button removed */}
         </div>
         
         {/* Mobile menu button */}
@@ -101,9 +98,7 @@ const Navbar = () => {
               <Button asChild>
                 <Link to="/signup">Sign Up</Link>
               </Button>
-              <Button variant="secondary" asChild>
-                <Link to="/industry-dashboard">Dashboard</Link>
-              </Button>
+              {/* Dashboard button removed */}
             </div>
           </div>
         </div>
