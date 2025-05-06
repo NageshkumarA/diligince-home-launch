@@ -24,18 +24,18 @@ const PurchaseOrderHeader: React.FC = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-8">
-            <Link to="/dashboard" className="flex items-center">
+            <Link to="/industry-dashboard" className="flex items-center">
               <span className="text-xl font-bold">Diligince.ai</span>
             </Link>
             
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <Link to="/dashboard">
+                  <Link to="/industry-dashboard">
                     <NavigationMenuLink className={cn(
                       navigationMenuTriggerStyle(), 
                       "text-white bg-transparent hover:bg-blue-600",
-                      isActive("/dashboard") && "bg-blue-600"
+                      isActive("/industry-dashboard") && "bg-blue-600"
                     )}>
                       Dashboard
                     </NavigationMenuLink>

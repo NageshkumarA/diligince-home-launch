@@ -66,7 +66,7 @@ const Navbar = () => {
           </Button>
           {/* Dashboard link for logged-in users */}
           <Button variant="secondary" className="hover:scale-105 transition-transform duration-200" asChild>
-            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/industry-dashboard">Dashboard</Link>
           </Button>
         </div>
         
@@ -102,7 +102,7 @@ const Navbar = () => {
                 <Link to="/signup">Sign Up</Link>
               </Button>
               <Button variant="secondary" asChild>
-                <Link to="/dashboard">Dashboard</Link>
+                <Link to="/industry-dashboard">Dashboard</Link>
               </Button>
             </div>
           </div>
