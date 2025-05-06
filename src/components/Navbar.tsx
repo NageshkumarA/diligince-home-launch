@@ -64,6 +64,10 @@ const Navbar = () => {
           <Button className="hover:scale-105 transition-transform duration-200" asChild>
             <Link to="/signup">Sign Up</Link>
           </Button>
+          {/* Dashboard link for logged-in users */}
+          <Button variant="secondary" className="hover:scale-105 transition-transform duration-200" asChild>
+            <Link to="/dashboard">Dashboard</Link>
+          </Button>
         </div>
         
         {/* Mobile menu button */}
@@ -96,6 +100,9 @@ const Navbar = () => {
               </Button>
               <Button asChild>
                 <Link to="/signup">Sign Up</Link>
+              </Button>
+              <Button variant="secondary" asChild>
+                <Link to="/dashboard">Dashboard</Link>
               </Button>
             </div>
           </div>

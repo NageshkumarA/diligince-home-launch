@@ -27,6 +27,7 @@ import Terms from "./pages/Terms";
 import Vendors from "./pages/Vendors";
 import Experts from "./pages/Experts";
 import WorkCompletionPayment from "./pages/WorkCompletionPayment";
+import IndustryDashboard from "./pages/IndustryDashboard";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<IndustryDashboard />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/industry-profile" element={<IndustryProfile />} />
