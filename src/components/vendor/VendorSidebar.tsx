@@ -3,7 +3,7 @@ import { Building, Users, Briefcase, Award, FolderOpen, CreditCard, Settings } f
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ContentType } from "@/pages/VendorDashboard";
+import { ContentType } from "@/pages/ServiceVendorProfile";
 
 interface VendorSidebarProps {
   vendorData: {

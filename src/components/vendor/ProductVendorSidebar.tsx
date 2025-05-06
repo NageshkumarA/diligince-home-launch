@@ -3,7 +3,7 @@ import { Building, Tag, Award, CreditCard, Settings, Box, Truck } from "lucide-r
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ContentType } from "@/pages/ProductVendorDashboard";
+import { ContentType } from "@/pages/ProductVendorProfile";
 
 interface ProductVendorSidebarProps {
   vendorData: {
