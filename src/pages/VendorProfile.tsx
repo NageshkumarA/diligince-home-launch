@@ -125,9 +125,21 @@ const VendorProfile = () => {
         description: "Your vendor profile has been created.",
       });
       
-      // Redirect after successful profile creation
+      // Route to the appropriate vendor profile page based on vendor category
       setTimeout(() => {
-        navigate("/service-vendor-profile");
+        switch (values.vendorCategory) {
+          case "Service Vendors":
+            navigate("/service-vendor-profile");
+            break;
+          case "Product Vendors":
+            navigate("/product-vendor-profile");
+            break;
+          case "Logistics Vendors":
+            navigate("/logistics-vendor-profile");
+            break;
+          default:
+            navigate("/service-vendor-profile"); // Fallback to service vendor profile
+        }
       }, 1500);
     }, 1000);
   };
