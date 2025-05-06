@@ -7,8 +7,8 @@ import {
   SidebarFooter, 
   SidebarHeader, 
   SidebarMenu, 
-  SidebarMenuButton, 
-  SidebarMenuItem
+  SidebarMenuItem,
+  SidebarMenuButton
 } from "@/components/ui/sidebar";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +34,7 @@ export const LogisticsVendorSidebar = () => {
   const profileCompletion = 65; // Profile completion percentage (mock data)
 
   return (
-    <>
+    <div className="flex w-full">
       <aside className="h-full">
         <Sidebar>
           <SidebarHeader className="pb-0">
@@ -140,7 +140,7 @@ export const LogisticsVendorSidebar = () => {
 
       {/* Main content area with full width */}
       <main className="flex-1 p-6 overflow-auto">
-        <div className="w-full">
+        <div className="w-full max-w-4xl mx-auto">
           {activeSection === "company-info" && <CompanyInfoForm />}
           {activeSection === "fleet-equipment" && <FleetEquipmentSection />}
           {activeSection === "service-areas" && <ServiceAreasSection />}
@@ -150,6 +150,6 @@ export const LogisticsVendorSidebar = () => {
           {activeSection === "account-settings" && <AccountSettingsForm />}
         </div>
       </main>
-    </>
+    </div>
   );
 };

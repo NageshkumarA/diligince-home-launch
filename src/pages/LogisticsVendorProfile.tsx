@@ -10,7 +10,7 @@ const LogisticsVendorProfile = () => {
       <LogisticsVendorHeader />
       <div className="flex-1">
         <SidebarProvider>
-          <div className="flex min-h-[calc(100vh-4rem)] w-full">
+          <div className="grid grid-cols-1 min-h-[calc(100vh-4rem)] w-full">
             <LogisticsVendorSidebar />
           </div>
         </SidebarProvider>

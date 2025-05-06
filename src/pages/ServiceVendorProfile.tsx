@@ -20,7 +20,7 @@ export type ContentType =
   | "payment-settings" 
   | "account-settings";
 
-const VendorDashboard = () => {
+const ServiceVendorProfile = () => {
   // State to track active content
   const [activeContent, setActiveContent] = useState<ContentType>("company-info");
   const [profileCompletion, setProfileCompletion] = useState(65); // Example value
@@ -80,4 +80,4 @@ const VendorDashboard = () => {
   );
 };
 
-export default VendorDashboard;
+export default ServiceVendorProfile;

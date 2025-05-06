@@ -12,8 +12,8 @@ import SignIn from "./pages/SignIn";
 import IndustryProfile from "./pages/IndustryProfile";
 import ProfessionalProfile from "./pages/ProfessionalProfile";
 import VendorProfile from "./pages/VendorProfile";
-import VendorDashboard from "./pages/VendorDashboard";
-import ProductVendorDashboard from "./pages/ProductVendorDashboard";
+import ServiceVendorProfile from "./pages/ServiceVendorProfile";
+import ProductVendorProfile from "./pages/ProductVendorProfile";
 import LogisticsVendorProfile from "./pages/LogisticsVendorProfile";
 import CreateRequirement from "./pages/CreateRequirement";
 import About from "./pages/About";
@@ -38,10 +38,9 @@ const App = () => (
             <Route path="/industry-profile" element={<IndustryProfile />} />
             <Route path="/professional-profile" element={<ProfessionalProfile />} />
             <Route path="/vendor-profile" element={<VendorProfile />} />
-            <Route path="/vendor-dashboard" element={<VendorDashboard />} />
-            <Route path="/product-vendor-dashboard" element={<ProductVendorDashboard />} />
+            <Route path="/service-vendor-profile" element={<ServiceVendorProfile />} />
+            <Route path="/product-vendor-profile" element={<ProductVendorProfile />} />
             <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
-            <Route path="/professional-dashboard" element={<ProfessionalProfile />} />
             <Route path="/create-requirement" element={<CreateRequirement />} />
             
             {/* New routes */}

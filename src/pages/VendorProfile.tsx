@@ -127,7 +127,7 @@ const VendorProfile = () => {
       
       // Redirect after successful profile creation
       setTimeout(() => {
-        navigate("/vendor-dashboard");
+        navigate("/service-vendor-profile");
       }, 1500);
     }, 1000);
   };
