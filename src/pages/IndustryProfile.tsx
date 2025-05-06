@@ -26,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Link } from "react-router-dom";
 import { 
   Table,
   TableBody,
@@ -841,11 +842,11 @@ const IndustryProfile = () => {
         </div>
         
         <nav className="hidden md:flex items-center space-x-6">
-          <a href="#" className="text-white hover:text-blue-100">Dashboard</a>
-          <a href="#" className="text-white hover:text-blue-100">Requirements</a>
-          <a href="#" className="text-white hover:text-blue-100">Stakeholders</a>
-          <a href="#" className="text-white hover:text-blue-100">Messages</a>
-          <a href="#" className="text-white hover:text-blue-100">Documents</a>
+          <Link to="/industry-dashboard" className="text-white hover:text-blue-100">Dashboard</Link>
+          <Link to="/create-requirement" className="text-white hover:text-blue-100">Requirements</Link>
+          <Link to="/vendors" className="text-white hover:text-blue-100">Stakeholders</Link>
+          <Link to="/messages" className="text-white hover:text-blue-100">Messages</Link>
+          <Link to="/documents" className="text-white hover:text-blue-100">Documents</Link>
         </nav>
         
         <div className="flex items-center">
@@ -920,4 +921,3 @@ const IndustryProfile = () => {
 };
 
 export default IndustryProfile;
-
