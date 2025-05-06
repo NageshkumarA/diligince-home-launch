@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Edit,
@@ -833,6 +832,9 @@ const IndustryProfile = () => {
         return <p>Select an option from the sidebar</p>;
     }
   };
+
+  // Force a re-render of the component
+  console.log("Rendering IndustryProfile component", { activeMenu, companyName });
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
