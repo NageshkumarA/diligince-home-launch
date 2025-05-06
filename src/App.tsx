@@ -24,6 +24,8 @@ import Blog from "./pages/Blog";
 import Careers from "./pages/Careers";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import Vendors from "./pages/Vendors";
+import Experts from "./pages/Experts";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +46,8 @@ const App = () => (
             <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
             <Route path="/create-requirement" element={<CreateRequirement />} />
             <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
+            <Route path="/vendors" element={<Vendors />} />
+            <Route path="/experts" element={<Experts />} />
             
             {/* New routes */}
             <Route path="/about" element={<About />} />
