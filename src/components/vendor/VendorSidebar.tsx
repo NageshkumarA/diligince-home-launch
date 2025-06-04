@@ -23,7 +23,9 @@ const VendorSidebar = ({
   onMenuItemClick,
   profileCompletion,
 }: VendorSidebarProps) => {
-  // Sidebar menu items
+  console.log("VendorSidebar rendering with props:", { vendorData, activeMenuItem, profileCompletion });
+  
+  // Sidebar menu items - ensure this is always defined
   const menuItems = [
     { id: "company-info", label: "Company Info", icon: <Building size={18} /> },
     { id: "team-members", label: "Team Members", icon: <Users size={18} /> },
@@ -34,61 +36,92 @@ const VendorSidebar = ({
     { id: "account-settings", label: "Account Settings", icon: <Settings size={18} /> },
   ];
 
-  return (
-    <aside className="w-64 bg-white border-r border-gray-200 shrink-0 hidden md:block overflow-y-auto h-[calc(100vh-4rem)]">
-      <div className="flex flex-col items-center py-8 px-4 border-b border-gray-200">
-        <Avatar className="h-24 w-24 mb-4 bg-orange-100">
-          <AvatarFallback className="text-orange-600 text-2xl font-medium">
-            {vendorData.initials}
-          </AvatarFallback>
-        </Avatar>
-        
-        <h2 className="text-lg font-semibold text-gray-800">{vendorData.companyName}</h2>
-        
-        <div className="flex flex-col items-center gap-2 mt-2">
-          <Badge variant="secondary" className="bg-orange-100 text-orange-600 hover:bg-orange-200 border-orange-200">
-            {vendorData.specialization}
-          </Badge>
+  console.log("Menu items:", menuItems);
+
+  // Defensive checks
+  if (!vendorData) {
+    console.error("vendorData is undefined");
+    return <div>Loading...</div>;
+  }
+
+  if (!menuItems || !Array.isArray(menuItems)) {
+    console.error("menuItems is not a valid array");
+    return <div>Loading...</div>;
+  }
+
+  try {
+    return (
+      <aside className="w-64 bg-white border-r border-gray-200 shrink-0 hidden md:block overflow-y-auto h-[calc(100vh-4rem)]">
+        <div className="flex flex-col items-center py-8 px-4 border-b border-gray-200">
+          <Avatar className="h-24 w-24 mb-4 bg-orange-100">
+            <AvatarFallback className="text-orange-600 text-2xl font-medium">
+              {vendorData?.initials || "??"}
+            </AvatarFallback>
+          </Avatar>
           
-          {vendorData.isVerified && (
-            <Badge variant="secondary" className="bg-green-100 text-green-600 hover:bg-green-200 border-green-200">
-              ✓ Verified
+          <h2 className="text-lg font-semibold text-gray-800">{vendorData?.companyName || "Unknown Company"}</h2>
+          
+          <div className="flex flex-col items-center gap-2 mt-2">
+            <Badge variant="secondary" className="bg-orange-100 text-orange-600 hover:bg-orange-200 border-orange-200">
+              {vendorData?.specialization || "No Specialization"}
             </Badge>
-          )}
+            
+            {vendorData?.isVerified && (
+              <Badge variant="secondary" className="bg-green-100 text-green-600 hover:bg-green-200 border-green-200">
+                ✓ Verified
+              </Badge>
+            )}
+          </div>
+          
+          <div className="w-full mt-6 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Profile Completion</span>
+              <span className="text-orange-600 font-medium">{profileCompletion || 0}%</span>
+            </div>
+            <Progress value={profileCompletion || 0} className="h-2 bg-orange-100" indicatorClassName="bg-orange-600" />
+          </div>
         </div>
         
-        <div className="w-full mt-6 space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Profile Completion</span>
-            <span className="text-orange-600 font-medium">{profileCompletion}%</span>
-          </div>
-          <Progress value={profileCompletion} className="h-2 bg-orange-100" indicatorClassName="bg-orange-600" />
+        <nav className="py-4">
+          <ul className="space-y-1">
+            {menuItems?.map((item) => {
+              if (!item || !item.id) {
+                console.warn("Invalid menu item:", item);
+                return null;
+              }
+              
+              return (
+                <li key={item.id}>
+                  <button
+                    onClick={() => onMenuItemClick(item.id as ContentType)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 text-sm ${
+                      activeMenuItem === item.id
+                        ? "bg-orange-50 text-orange-700 border-r-4 border-orange-600 font-medium"
+                        : "text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    <span className={activeMenuItem === item.id ? "text-orange-600" : "text-gray-500"}>
+                      {item.icon}
+                    </span>
+                    <span>{item.label}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </aside>
+    );
+  } catch (error) {
+    console.error("Error rendering VendorSidebar:", error);
+    return (
+      <aside className="w-64 bg-white border-r border-gray-200 shrink-0 hidden md:block overflow-y-auto h-[calc(100vh-4rem)]">
+        <div className="flex items-center justify-center h-full">
+          <p className="text-gray-500">Loading sidebar...</p>
         </div>
-      </div>
-      
-      <nav className="py-4">
-        <ul className="space-y-1">
-          {menuItems.map((item) => (
-            <li key={item.id}>
-              <button
-                onClick={() => onMenuItemClick(item.id as ContentType)}
-                className={`w-full flex items-center gap-3 px-4 py-3 text-sm ${
-                  activeMenuItem === item.id
-                    ? "bg-orange-50 text-orange-700 border-r-4 border-orange-600 font-medium"
-                    : "text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <span className={activeMenuItem === item.id ? "text-orange-600" : "text-gray-500"}>
-                  {item.icon}
-                </span>
-                <span>{item.label}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </aside>
-  );
+      </aside>
+    );
+  }
 };
 
 export default VendorSidebar;
