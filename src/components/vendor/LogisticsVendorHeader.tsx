@@ -16,16 +16,16 @@ export const LogisticsVendorHeader = () => {
             <span>Diligince.ai</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
-            <Link to="/logistics-vendor-profile" className="text-sm font-medium opacity-90 hover:opacity-100">
+            <Link to="/logistics-vendor-dashboard" className="text-sm font-medium opacity-90 hover:opacity-100">
               Dashboard
             </Link>
-            <Link to="/logistics-vendor-profile" className="text-sm font-medium opacity-90 hover:opacity-100">
+            <Link to="/logistics-vendor-dashboard" className="text-sm font-medium opacity-90 hover:opacity-100">
               Opportunities
             </Link>
-            <Link to="/logistics-vendor-profile" className="text-sm font-medium opacity-90 hover:opacity-100">
+            <Link to="/logistics-vendor-dashboard" className="text-sm font-medium opacity-90 hover:opacity-100">
               Equipment
             </Link>
-            <Link to="/logistics-vendor-profile" className="text-sm font-medium opacity-90 hover:opacity-100">
+            <Link to="/logistics-vendor-dashboard" className="text-sm font-medium opacity-90 hover:opacity-100">
               Messages
             </Link>
             <Link to="/logistics-vendor-profile" className="text-sm font-medium opacity-90 hover:opacity-100">
