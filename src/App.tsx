@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider, NotificationProvider, UserProvider } from "@/contexts";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import SignUp from "./pages/SignUp";
@@ -38,46 +39,52 @@ const queryClient = new QueryClient();
 const App = () => (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/industry-dashboard" element={<IndustryDashboard />} />
-            <Route path="/expert-dashboard" element={<ExpertDashboard />} />
-            <Route path="/service-vendor-dashboard" element={<ServiceVendorDashboard />} />
-            <Route path="/product-vendor-dashboard" element={<ProductVendorDashboard />} />
-            <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/industry-profile" element={<IndustryProfile />} />
-            <Route path="/professional-profile" element={<ProfessionalProfile />} />
-            <Route path="/vendor-profile" element={<VendorProfile />} />
-            <Route path="/service-vendor-profile" element={<ServiceVendorProfile />} />
-            <Route path="/product-vendor-profile" element={<ProductVendorProfile />} />
-            <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
-            <Route path="/create-requirement" element={<CreateRequirement />} />
-            <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
-            <Route path="/vendors" element={<Vendors />} />
-            <Route path="/experts" element={<Experts />} />
-            <Route path="/work-completion-payment/:id" element={<WorkCompletionPayment />} />
-            <Route path="/work-completion-payment" element={<WorkCompletionPayment />} />
-            
-            {/* New routes */}
-            <Route path="/about" element={<About />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-        <Toaster />
-        <Sonner />
-      </TooltipProvider>
+      <ThemeProvider>
+        <UserProvider>
+          <NotificationProvider>
+            <TooltipProvider>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/industry-dashboard" element={<IndustryDashboard />} />
+                  <Route path="/expert-dashboard" element={<ExpertDashboard />} />
+                  <Route path="/service-vendor-dashboard" element={<ServiceVendorDashboard />} />
+                  <Route path="/product-vendor-dashboard" element={<ProductVendorDashboard />} />
+                  <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
+                  <Route path="/signup" element={<SignUp />} />
+                  <Route path="/signin" element={<SignIn />} />
+                  <Route path="/industry-profile" element={<IndustryProfile />} />
+                  <Route path="/professional-profile" element={<ProfessionalProfile />} />
+                  <Route path="/vendor-profile" element={<VendorProfile />} />
+                  <Route path="/service-vendor-profile" element={<ServiceVendorProfile />} />
+                  <Route path="/product-vendor-profile" element={<ProductVendorProfile />} />
+                  <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
+                  <Route path="/create-requirement" element={<CreateRequirement />} />
+                  <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
+                  <Route path="/vendors" element={<Vendors />} />
+                  <Route path="/experts" element={<Experts />} />
+                  <Route path="/work-completion-payment/:id" element={<WorkCompletionPayment />} />
+                  <Route path="/work-completion-payment" element={<WorkCompletionPayment />} />
+                  
+                  {/* New routes */}
+                  <Route path="/about" element={<About />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/careers" element={<Careers />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/terms" element={<Terms />} />
+                  
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+              <Toaster />
+              <Sonner />
+            </TooltipProvider>
+          </NotificationProvider>
+        </UserProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </React.StrictMode>
 );

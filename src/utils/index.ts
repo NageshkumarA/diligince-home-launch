@@ -38,3 +38,7 @@ export { useModal } from '../hooks/useModal';
 export { useSearch } from '../hooks/useSearch';
 export { usePagination } from '../hooks/usePagination';
 export { useNotifications } from '../hooks/useNotifications';
+
+// Re-export contexts and types
+export * from '../contexts';
+export * from '../types/shared';
