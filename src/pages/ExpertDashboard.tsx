@@ -138,11 +138,11 @@ const ExpertDashboard = () => {
 
   // Header navigation items
   const headerNavItems = [
-    { label: "Dashboard", icon: <Home size={18} />, active: true },
-    { label: "Opportunities", icon: <Briefcase size={18} /> },
-    { label: "Calendar", icon: <Calendar size={18} /> },
-    { label: "Messages", icon: <MessageSquare size={18} /> },
-    { label: "Profile", icon: <User size={18} /> },
+    { label: "Dashboard", icon: <Home size={18} />, href: "/expert-dashboard", active: true },
+    { label: "Opportunities", icon: <Briefcase size={18} />, href: "/expert-opportunities" },
+    { label: "Calendar", icon: <Calendar size={18} />, href: "/expert-calendar" },
+    { label: "Messages", icon: <MessageSquare size={18} />, href: "/expert-messages" },
+    { label: "Profile", icon: <User size={18} />, href: "/expert-profile" },
   ];
 
   const handleMessageReply = (messageId: number, reply: string) => {
