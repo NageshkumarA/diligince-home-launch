@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ShoppingCart, Package, Truck, Eye, Calendar } from "lucide-react";
 import { OrderDetailsModal } from "./OrderDetailsModal";
+import { getStatusColor, getPaymentStatusColor, getPriorityColor } from "@/utils/shared";
 
 const activeOrders = [
   {
@@ -53,47 +53,6 @@ export const OrdersManagement = () => {
   const handleViewOrder = (order: any) => {
     setSelectedOrder(order);
     setIsOrderModalOpen(true);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "shipped":
-        return "bg-blue-100 text-blue-800";
-      case "processing":
-        return "bg-orange-100 text-orange-800";
-      case "delivered":
-        return "bg-green-100 text-green-800";
-      case "cancelled":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getPaymentStatusColor = (status: string) => {
-    switch (status) {
-      case "paid":
-        return "bg-green-100 text-green-800";
-      case "pending":
-        return "bg-orange-100 text-orange-800";
-      case "overdue":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 text-red-800";
-      case "medium":
-        return "bg-orange-100 text-orange-800";
-      case "low":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
   };
 
   return (

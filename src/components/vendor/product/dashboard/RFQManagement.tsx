@@ -1,10 +1,10 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, MapPin, Calendar, Package, Clock } from "lucide-react";
 import { QuotationModal } from "./QuotationModal";
+import { getPriorityColor, getDaysRemaining } from "@/utils/shared";
 
 const rfqData = [
   {
@@ -48,27 +48,6 @@ export const RFQManagement = () => {
   const handleQuoteNow = (rfq: any) => {
     setSelectedRFQ(rfq);
     setIsQuotationModalOpen(true);
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "urgent":
-        return "bg-red-100 text-red-800";
-      case "medium":
-        return "bg-orange-100 text-orange-800";
-      case "low":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getDaysRemaining = (deadline: string) => {
-    const deadlineDate = new Date(deadline);
-    const today = new Date();
-    const diffTime = deadlineDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
   };
 
   return (
