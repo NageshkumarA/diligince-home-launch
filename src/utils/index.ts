@@ -39,6 +39,19 @@ export { useSearch } from '../hooks/useSearch';
 export { usePagination } from '../hooks/usePagination';
 export { useNotifications } from '../hooks/useNotifications';
 
-// Re-export contexts and types
-export * from '../contexts';
-export * from '../types/shared';
+// Re-export contexts and types - being explicit to avoid conflicts
+export { ThemeProvider, useTheme } from '../contexts/ThemeContext';
+export { NotificationProvider, useNotificationContext } from '../contexts/NotificationContext';
+export { UserProvider, useUser } from '../contexts/UserContext';
+
+// Export types from shared - being explicit about which types to avoid conflicts
+export type { 
+  BaseMessage,
+  StatItem,
+  BaseModal,
+  UserProfile,
+  UserRole,
+  BaseNotification,
+  ThemeConfig,
+  ThemeColors as SharedThemeColors
+} from '../types/shared';
