@@ -1,6 +1,6 @@
 
 import React from "react";
-import { MessageSquare, Briefcase, FileText, Package } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 export interface MessageConfig {
   title: string;
@@ -11,6 +11,17 @@ export interface MessageConfig {
     headerTextColor: string;
     iconColor: string;
   };
+}
+
+export interface MessageCenterConfig {
+  title: string;
+  theme: string;
+  showSearch: boolean;
+  showFilters: boolean;
+  showReply: boolean;
+  showCallActions: boolean;
+  messageTypes: Record<string, { label: string; icon: string; color: string }>;
+  filters: Array<{ key: string; label: string }>;
 }
 
 export const professionalMessageConfig: MessageConfig = {
@@ -24,35 +35,59 @@ export const professionalMessageConfig: MessageConfig = {
   }
 };
 
-export const serviceVendorMessageConfig: MessageConfig = {
+export const serviceVendorMessageConfig: MessageCenterConfig = {
   title: "Messages Hub",
-  icon: React.createElement(MessageSquare, { size: 20 }),
-  emptyStateMessage: "No messages yet. Stay tuned for RFQ notifications and project communications!",
-  theme: {
-    bgColor: "bg-[#faad14]",
-    headerTextColor: "text-white",
-    iconColor: "text-yellow-600"
-  }
+  theme: "yellow-600",
+  showSearch: true,
+  showFilters: true,
+  showReply: true,
+  showCallActions: true,
+  messageTypes: {
+    "rfq-notification": { label: "RFQ", icon: "📋", color: "blue" },
+    "project-update": { label: "Project Update", icon: "🔧", color: "green" },
+    "system-notification": { label: "System", icon: "🔔", color: "gray" }
+  },
+  filters: [
+    { key: "all", label: "All" },
+    { key: "unread", label: "Unread" },
+    { key: "urgent", label: "Urgent" }
+  ]
 };
 
-export const productVendorMessageConfig: MessageConfig = {
+export const productVendorMessageConfig: MessageCenterConfig = {
   title: "Messages Hub",
-  icon: React.createElement(MessageSquare, { size: 20 }),
-  emptyStateMessage: "No messages yet. Stay tuned for RFQ notifications and order communications!",
-  theme: {
-    bgColor: "bg-[#faad14]",
-    headerTextColor: "text-white",
-    iconColor: "text-yellow-600"
-  }
+  theme: "yellow-600",
+  showSearch: true,
+  showFilters: true,
+  showReply: true,
+  showCallActions: true,
+  messageTypes: {
+    "order-notification": { label: "Order", icon: "📦", color: "blue" },
+    "rfq-notification": { label: "RFQ", icon: "📋", color: "green" },
+    "system-notification": { label: "System", icon: "🔔", color: "gray" }
+  },
+  filters: [
+    { key: "all", label: "All" },
+    { key: "unread", label: "Unread" },
+    { key: "urgent", label: "Urgent" }
+  ]
 };
 
-export const logisticsVendorMessageConfig: MessageConfig = {
+export const logisticsVendorMessageConfig: MessageCenterConfig = {
   title: "Messages Hub",
-  icon: React.createElement(MessageSquare, { size: 20 }),
-  emptyStateMessage: "No messages yet. Stay tuned for transport requests and delivery updates!",
-  theme: {
-    bgColor: "bg-[#eb2f96]",
-    headerTextColor: "text-white",
-    iconColor: "text-pink-600"
-  }
+  theme: "pink-600",
+  showSearch: true,
+  showFilters: true,
+  showReply: true,
+  showCallActions: true,
+  messageTypes: {
+    "transport-request": { label: "Transport", icon: "🚛", color: "blue" },
+    "delivery-update": { label: "Delivery", icon: "📦", color: "green" },
+    "system-notification": { label: "System", icon: "🔔", color: "gray" }
+  },
+  filters: [
+    { key: "all", label: "All" },
+    { key: "unread", label: "Unread" },
+    { key: "urgent", label: "Urgent" }
+  ]
 };

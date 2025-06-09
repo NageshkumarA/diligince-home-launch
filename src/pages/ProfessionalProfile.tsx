@@ -2,15 +2,15 @@ import { useState, useEffect } from "react";
 import { User, Home, Calendar, Award, Briefcase, Wallet, Settings, LayoutGrid, MessageSquare } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import ExpertHeader from "@/components/expert/ExpertHeader";
-import ExpertSidebar from "@/components/expert/ExpertSidebar";
-import PersonalInfoForm from "@/components/expert/forms/PersonalInfoForm";
-import SkillsForm from "@/components/expert/forms/SkillsForm";
-import CertificationsForm from "@/components/expert/forms/CertificationsForm";
-import ExperienceForm from "@/components/expert/forms/ExperienceForm";
-import AvailabilityCalendar from "@/components/expert/forms/AvailabilityCalendar";
-import PaymentSettingsForm from "@/components/expert/forms/PaymentSettingsForm";
-import AccountSettingsForm from "@/components/expert/forms/AccountSettingsForm";
+import ProfessionalHeader from "@/components/professional/ProfessionalHeader";
+import ProfessionalSidebar from "@/components/professional/ProfessionalSidebar";
+import PersonalInfoForm from "@/components/professional/forms/PersonalInfoForm";
+import SkillsForm from "@/components/professional/forms/SkillsForm";
+import CertificationsForm from "@/components/professional/forms/CertificationsForm";
+import ExperienceForm from "@/components/professional/forms/ExperienceForm";
+import AvailabilityCalendar from "@/components/professional/forms/AvailabilityCalendar";
+import PaymentSettingsForm from "@/components/professional/forms/PaymentSettingsForm";
+import AccountSettingsForm from "@/components/professional/forms/AccountSettingsForm";
 
 // Types for the navigation menu
 export type SidebarMenuItem = {
@@ -95,10 +95,10 @@ const ProfessionalProfile = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <ExpertHeader navItems={headerNavItems} />
+      <ProfessionalHeader navItems={headerNavItems} />
       
       <div className="flex flex-grow pt-16">
-        <ExpertSidebar 
+        <ProfessionalSidebar 
           expertData={expertData}
           menuItems={menuItems}
           activeMenuItem={activeContent}
