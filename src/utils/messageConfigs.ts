@@ -1,97 +1,57 @@
 
-import { MessageCenterConfig, MessageTypeConfig } from "@/components/shared/messages/MessageCenter";
+import { MessageSquare, Briefcase, FileText, Package } from "lucide-react";
 
-// Message type configurations
-const messageTypes = {
-  // Expert message types
-  "project-update": { label: "Project Update", icon: "🔧", color: "blue" },
-  "project-preparation": { label: "Project Prep", icon: "📋", color: "green" },
-  "job-response": { label: "Job Response", icon: "💼", color: "purple" },
-  "job-inquiry": { label: "Job Inquiry", icon: "❓", color: "orange" },
-  "system-notification": { label: "System", icon: "🔔", color: "gray" },
+export interface MessageConfig {
+  title: string;
+  icon: React.ReactNode;
+  emptyStateMessage: string;
+  theme: {
+    bgColor: string;
+    headerTextColor: string;
+    iconColor: string;
+  };
+}
 
-  // Product vendor message types
-  "order-inquiry": { label: "Order", icon: "📦", color: "blue" },
-  "stock-inquiry": { label: "Stock", icon: "📊", color: "green" },
-  "urgent-request": { label: "Urgent", icon: "🚨", color: "red" },
-  "technical-inquiry": { label: "Technical", icon: "🔧", color: "purple" },
-
-  // Service vendor message types
-  "project-inquiry": { label: "Project", icon: "🏗️", color: "blue" },
-  "proposal-response": { label: "Proposal", icon: "📋", color: "green" },
-  "consultation-request": { label: "Consultation", icon: "💼", color: "purple" },
-
-  // Logistics message types
-  "delivery-update": { label: "Delivery", icon: "🚚", color: "blue" },
-  "route-planning": { label: "Route", icon: "🗺️", color: "green" },
-  "urgent-transport": { label: "Urgent", icon: "🚨", color: "red" },
-
-  // General message types
-  "general": { label: "General", icon: "💬", color: "gray" }
-} as Record<string, MessageTypeConfig>;
-
-// Expert message center configuration
-export const expertMessageConfig: MessageCenterConfig = {
-  title: "Messages",
-  theme: "[#722ed1]",
-  showSearch: true,
-  showFilters: true,
-  showReply: true,
-  showCallActions: true,
-  messageTypes,
-  filters: [
-    { key: "all", label: "All" },
-    { key: "unread", label: "Unread" },
-    { key: "urgent", label: "Urgent" },
-    { key: "project-update", label: "Projects" },
-    { key: "job-response", label: "Jobs" }
-  ]
+export const professionalMessageConfig: MessageConfig = {
+  title: "Message Center",
+  icon: MessageSquare,
+  emptyStateMessage: "No messages yet. Stay tuned for job opportunities and project updates!",
+  theme: {
+    bgColor: "bg-[#722ed1]",
+    headerTextColor: "text-white",
+    iconColor: "text-purple-600"
+  }
 };
 
-// Product vendor message center configuration
-export const productVendorMessageConfig: MessageCenterConfig = {
-  title: "Messages Center",
-  theme: "[#faad14]",
-  showSearch: true,
-  showFilters: true,
-  showReply: false,
-  showCallActions: false,
-  messageTypes,
-  filters: [
-    { key: "all", label: "All" },
-    { key: "unread", label: "Unread" },
-    { key: "urgent", label: "Urgent" },
-    { key: "order-inquiry", label: "Orders" },
-    { key: "stock-inquiry", label: "Stock" },
-    { key: "technical-inquiry", label: "Technical" }
-  ]
+export const serviceVendorMessageConfig: MessageConfig = {
+  title: "Messages Hub",
+  icon: MessageSquare,
+  emptyStateMessage: "No messages yet. Stay tuned for RFQ notifications and project communications!",
+  theme: {
+    bgColor: "bg-[#faad14]",
+    headerTextColor: "text-white",
+    iconColor: "text-yellow-600"
+  }
 };
 
-// Service vendor message center configuration
-export const serviceVendorMessageConfig: MessageCenterConfig = {
-  title: "Messages",
-  theme: "[#fa8c16]",
-  showSearch: true,
-  showFilters: true,
-  showReply: true,
-  showCallActions: false,
-  messageTypes,
-  filters: [
-    { key: "all", label: "All Types" },
-    { key: "project-update", label: "Project Updates" },
-    { key: "proposal-response", label: "Proposal Responses" },
-    { key: "consultation-request", label: "Consultations" }
-  ]
+export const productVendorMessageConfig: MessageConfig = {
+  title: "Messages Hub",
+  icon: MessageSquare,
+  emptyStateMessage: "No messages yet. Stay tuned for RFQ notifications and order communications!",
+  theme: {
+    bgColor: "bg-[#faad14]",
+    headerTextColor: "text-white",
+    iconColor: "text-yellow-600"
+  }
 };
 
-// Logistics vendor message center configuration
-export const logisticsVendorMessageConfig: MessageCenterConfig = {
-  title: "Recent Messages",
-  theme: "[#52c41a]",
-  showSearch: false,
-  showFilters: false,
-  showReply: false,
-  showCallActions: false,
-  messageTypes,
-  filters: []
+export const logisticsVendorMessageConfig: MessageConfig = {
+  title: "Messages Hub",
+  icon: MessageSquare,
+  emptyStateMessage: "No messages yet. Stay tuned for transport requests and delivery updates!",
+  theme: {
+    bgColor: "bg-[#eb2f96]",
+    headerTextColor: "text-white",
+    iconColor: "text-pink-600"
+  }
 };

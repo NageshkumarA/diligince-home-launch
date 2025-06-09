@@ -72,7 +72,7 @@ export const serviceVendorStats: StatItem[] = [
   }
 ];
 
-export const expertStats: StatItem[] = [
+export const professionalStats: StatItem[] = [
   {
     title: "Available Jobs",
     value: "8",
