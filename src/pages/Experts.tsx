@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 
 const Experts = () => {
-  // Sample skills for the experts
+  // Sample skills for the professionals
   const skillsList = [
     ["Manufacturing", "Quality Control", "Six Sigma"],
     ["Supply Chain", "Logistics", "Procurement"],
@@ -21,31 +21,31 @@ const Experts = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Industry Experts | Diligince.ai</title>
+        <title>Industry Professionals | Diligince.ai</title>
       </Helmet>
       
       <PurchaseOrderHeader />
       
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Industry Experts</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Industry Professionals</h1>
           <Button asChild>
-            <Link to="/professional-profile">Become an Expert</Link>
+            <Link to="/professional-profile">Become a Professional</Link>
           </Button>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Sample expert cards */}
+          {/* Sample professional cards */}
           {[1, 2, 3, 4, 5, 6].map((index) => (
             <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="pb-2">
-                <CardTitle>Expert Name {index}</CardTitle>
+                <CardTitle>Professional Name {index}</CardTitle>
                 <CardDescription>
                   {index % 3 === 0 
                     ? "Manufacturing Specialist" 
                     : index % 3 === 1 
                       ? "Supply Chain Consultant" 
-                      : "Quality Assurance Expert"}
+                      : "Quality Assurance Professional"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -56,7 +56,7 @@ const Experts = () => {
                     <p className="mb-1">Expertise:</p>
                     <div className="flex flex-wrap gap-1">
                       {skillsList[index % skillsList.length].map((skill, i) => (
-                        <Badge key={i} variant="outline" className="bg-blue-50">
+                        <Badge key={i} variant="outline" className="bg-purple-50">
                           {skill}
                         </Badge>
                       ))}
@@ -65,7 +65,7 @@ const Experts = () => {
                 </div>
                 <div className="mt-4 flex justify-end">
                   <Button variant="outline" size="sm" asChild>
-                    <Link to={`/expert-details/${index}`}>View Profile</Link>
+                    <Link to={`/professional-details/${index}`}>View Profile</Link>
                   </Button>
                 </div>
               </CardContent>

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Home, Briefcase, Calendar, MessageSquare, User, FileText, LayoutGrid, ShoppingCart, Truck, Settings } from "lucide-react";
 
@@ -28,30 +29,10 @@ export const professionalHeaderConfig: HeaderConfig = {
   brandHref: "/",
   navItems: [
     { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/professional-dashboard", active: true },
-    { label: "Opportunities", icon: React.createElement(Briefcase, { size: 18 }), href: "#" },
-    { label: "Calendar", icon: React.createElement(Calendar, { size: 18 }), href: "#" },
-    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "#" },
-    { label: "Profile", icon: React.createElement(User, { size: 18 }), href: "#" },
-  ],
-  avatarInitials: "RS",
-  theme: {
-    bgColor: "bg-[#722ed1]",
-    textColor: "text-white",
-    hoverColor: "text-purple-200 hover:text-white",
-    avatarBgColor: "bg-purple-800",
-    buttonHoverColor: "hover:text-white hover:bg-purple-600"
-  }
-};
-
-export const expertHeaderConfig: HeaderConfig = {
-  brandName: "diligince.ai",
-  brandHref: "/",
-  navItems: [
-    { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/expert-dashboard", active: true },
-    { label: "Opportunities", icon: React.createElement(Briefcase, { size: 18 }), href: "#" },
-    { label: "Calendar", icon: React.createElement(Calendar, { size: 18 }), href: "#" },
-    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "#" },
-    { label: "Profile", icon: React.createElement(User, { size: 18 }), href: "#" },
+    { label: "Opportunities", icon: React.createElement(Briefcase, { size: 18 }), href: "/professional-opportunities" },
+    { label: "Calendar", icon: React.createElement(Calendar, { size: 18 }), href: "/professional-calendar" },
+    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "/professional-messages" },
+    { label: "Profile", icon: React.createElement(User, { size: 18 }), href: "/professional-profile" },
   ],
   avatarInitials: "RS",
   theme: {
@@ -130,8 +111,8 @@ export const logisticsVendorHeaderConfig: HeaderConfig = {
 };
 
 export const getHeaderConfigByPath = (pathname: string): HeaderConfig => {
-  if (pathname.includes('expert')) {
-    return expertHeaderConfig;
+  if (pathname.includes('professional')) {
+    return professionalHeaderConfig;
   } else if (pathname.includes('product-vendor')) {
     return productVendorHeaderConfig;
   } else if (pathname.includes('logistics-vendor')) {

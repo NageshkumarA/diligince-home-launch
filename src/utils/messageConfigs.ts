@@ -24,15 +24,27 @@ export interface MessageCenterConfig {
   filters: Array<{ key: string; label: string }>;
 }
 
-export const professionalMessageConfig: MessageConfig = {
+export const professionalMessageConfig: MessageCenterConfig = {
   title: "Message Center",
-  icon: React.createElement(MessageSquare, { size: 20 }),
-  emptyStateMessage: "No messages yet. Stay tuned for job opportunities and project updates!",
-  theme: {
-    bgColor: "bg-[#722ed1]",
-    headerTextColor: "text-white",
-    iconColor: "text-purple-600"
-  }
+  theme: "purple-600",
+  showSearch: true,
+  showFilters: true,
+  showReply: true,
+  showCallActions: true,
+  messageTypes: {
+    "project-update": { label: "Project Update", icon: "🔧", color: "blue" },
+    "project-preparation": { label: "Project Prep", icon: "📋", color: "green" },
+    "job-response": { label: "Job Response", icon: "💼", color: "orange" },
+    "job-inquiry": { label: "Job Inquiry", icon: "🔍", color: "purple" },
+    "system-notification": { label: "System", icon: "🔔", color: "gray" }
+  },
+  filters: [
+    { key: "all", label: "All" },
+    { key: "unread", label: "Unread" },
+    { key: "urgent", label: "Urgent" },
+    { key: "project-update", label: "Projects" },
+    { key: "job-response", label: "Jobs" }
+  ]
 };
 
 export const serviceVendorMessageConfig: MessageCenterConfig = {

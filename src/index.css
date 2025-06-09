@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -57,17 +56,17 @@
     --industry-900: 258 66% 29%;
     --industry-foreground: 0 0% 100%;
 
-    --expert-50: 45 100% 98%;
-    --expert-100: 45 100% 93%;
-    --expert-200: 45 98% 85%;
-    --expert-300: 45 96% 74%;
-    --expert-400: 45 93% 62%;
-    --expert-500: 45 90% 51%;
-    --expert-600: 45 83% 45%;
-    --expert-700: 45 75% 39%;
-    --expert-800: 45 69% 32%;
-    --expert-900: 45 65% 26%;
-    --expert-foreground: 0 0% 100%;
+    --professional-50: 258 100% 98%;
+    --professional-100: 258 100% 94%;
+    --professional-200: 258 96% 87%;
+    --professional-300: 258 94% 77%;
+    --professional-400: 258 92% 65%;
+    --professional-500: 258 90% 53%;
+    --professional-600: 258 83% 47%;
+    --professional-700: 258 75% 42%;
+    --professional-800: 258 69% 35%;
+    --professional-900: 258 66% 29%;
+    --professional-foreground: 0 0% 100%;
 
     --vendor-50: 120 60% 98%;
     --vendor-100: 120 60% 93%;
@@ -143,9 +142,9 @@
     --industry-500: 258 90% 70%;
     --industry-foreground: 259 100% 98%;
 
-    --expert-50: 45 65% 8%;
-    --expert-500: 45 90% 70%;
-    --expert-foreground: 45 100% 98%;
+    --professional-50: 258 66% 8%;
+    --professional-500: 258 90% 70%;
+    --professional-foreground: 258 100% 98%;
 
     --vendor-50: 120 28% 8%;
     --vendor-500: 120 50% 70%;
@@ -194,8 +193,8 @@
     @apply bg-industry-50 border-industry-200 text-industry-900;
   }
 
-  .card-expert {
-    @apply bg-expert-50 border-expert-200 text-expert-900;
+  .card-professional {
+    @apply bg-professional-50 border-professional-200 text-professional-900;
   }
 
   .card-vendor {
@@ -211,8 +210,8 @@
     @apply bg-industry-500 hover:bg-industry-600 text-industry-foreground border-industry-600;
   }
 
-  .btn-expert {
-    @apply bg-expert-500 hover:bg-expert-600 text-expert-foreground border-expert-600;
+  .btn-professional {
+    @apply bg-professional-500 hover:bg-professional-600 text-professional-foreground border-professional-600;
   }
 
   .btn-vendor {

@@ -22,10 +22,10 @@ export const themeColors: ThemeColors = {
 };
 
 // User type color utilities
-export const getUserTypeColors = (userType: 'industry' | 'expert' | 'vendor' | 'admin'): string => {
+export const getUserTypeColors = (userType: 'industry' | 'professional' | 'vendor' | 'admin'): string => {
   const colorMap = {
     industry: 'bg-industry-500 text-industry-foreground',
-    expert: 'bg-expert-500 text-expert-foreground',
+    professional: 'bg-[#722ed1] text-white',
     vendor: 'bg-vendor-500 text-vendor-foreground',
     admin: 'bg-admin-500 text-admin-foreground',
   };
@@ -33,10 +33,10 @@ export const getUserTypeColors = (userType: 'industry' | 'expert' | 'vendor' | '
   return colorMap[userType] || colorMap.industry;
 };
 
-export const getUserTypeBadgeColors = (userType: 'industry' | 'expert' | 'vendor' | 'admin'): string => {
+export const getUserTypeBadgeColors = (userType: 'industry' | 'professional' | 'vendor' | 'admin'): string => {
   const colorMap = {
     industry: 'bg-industry-100 text-industry-800 border-industry-200',
-    expert: 'bg-expert-100 text-expert-800 border-expert-200',
+    professional: 'bg-purple-100 text-purple-800 border-purple-200',
     vendor: 'bg-vendor-100 text-vendor-800 border-vendor-200',
     admin: 'bg-admin-100 text-admin-800 border-admin-200',
   };

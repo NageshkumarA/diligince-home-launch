@@ -35,8 +35,8 @@ const ProfessionalProfile = () => {
   const [profileCompletion, setProfileCompletion] = useState(35); // Example profile completion percentage
   
   useEffect(() => {
-    // Notify the user that the expert profile is loaded
-    toast.success("Expert profile loaded successfully");
+    // Notify the user that the professional profile is loaded
+    toast.success("Professional profile loaded successfully");
   }, []);
   
   // Mock professional data (renamed from expertData)
