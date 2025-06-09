@@ -3,12 +3,12 @@ import React, { useState, useEffect } from "react";
 import { Home, Briefcase, Calendar, MessageSquare, User, Bell } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import ExpertHeader from "@/components/expert/ExpertHeader";
-import { DashboardStats } from "@/components/expert/dashboard/DashboardStats";
-import { AvailabilityCalendar } from "@/components/expert/dashboard/AvailabilityCalendar";
-import { JobOpportunities } from "@/components/expert/dashboard/JobOpportunities";
-import { OngoingProjects } from "@/components/expert/dashboard/OngoingProjects";
-import { MessageCenter } from "@/components/expert/dashboard/MessageCenter";
+import ProfessionalHeader from "@/components/professional/ProfessionalHeader";
+import { DashboardStats } from "@/components/professional/dashboard/DashboardStats";
+import { AvailabilityCalendar } from "@/components/professional/dashboard/AvailabilityCalendar";
+import { JobOpportunities } from "@/components/professional/dashboard/JobOpportunities";
+import { OngoingProjects } from "@/components/professional/dashboard/OngoingProjects";
+import { MessageCenter } from "@/components/professional/dashboard/MessageCenter";
 
 // Mock data
 const mockMessages = [
@@ -127,22 +127,22 @@ const mockJobs = [
   }
 ];
 
-const ExpertDashboard = () => {
+const ProfessionalDashboard = () => {
   const [messages, setMessages] = useState(mockMessages);
   const [projects, setProjects] = useState(mockProjects);
   const [jobs, setJobs] = useState(mockJobs);
 
   useEffect(() => {
-    toast.success("Welcome to your Expert Dashboard");
+    toast.success("Welcome to your Professional Dashboard");
   }, []);
 
   // Header navigation items
   const headerNavItems = [
-    { label: "Dashboard", icon: <Home size={18} />, href: "/expert-dashboard", active: true },
-    { label: "Opportunities", icon: <Briefcase size={18} />, href: "/expert-opportunities" },
-    { label: "Calendar", icon: <Calendar size={18} />, href: "/expert-calendar" },
-    { label: "Messages", icon: <MessageSquare size={18} />, href: "/expert-messages" },
-    { label: "Profile", icon: <User size={18} />, href: "/expert-profile" },
+    { label: "Dashboard", icon: <Home size={18} />, href: "/professional-dashboard", active: true },
+    { label: "Opportunities", icon: <Briefcase size={18} />, href: "/professional-opportunities" },
+    { label: "Calendar", icon: <Calendar size={18} />, href: "/professional-calendar" },
+    { label: "Messages", icon: <MessageSquare size={18} />, href: "/professional-messages" },
+    { label: "Profile", icon: <User size={18} />, href: "/professional-profile" },
   ];
 
   const handleMessageReply = (messageId: number, reply: string) => {
@@ -166,14 +166,14 @@ const ExpertDashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <ExpertHeader navItems={headerNavItems} />
+      <ProfessionalHeader navItems={headerNavItems} />
       
       <main className="pt-16 p-6 lg:p-8">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Welcome Section */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-            <p className="text-gray-600">Welcome back, Rahul! Here's your expert activity overview.</p>
+            <p className="text-gray-600">Welcome back, Rahul! Here's your professional activity overview.</p>
           </div>
 
           {/* Stats Cards */}
@@ -208,4 +208,4 @@ const ExpertDashboard = () => {
   );
 };
 
-export default ExpertDashboard;
+export default ProfessionalDashboard;

@@ -56,7 +56,6 @@ export const ProjectDetailsModal = ({
       isOpen={isOpen}
       onClose={onClose}
       title="Project Details"
-      description="View and manage your project details"
       maxWidth="2xl"
     >
       <div className="space-y-6">
