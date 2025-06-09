@@ -11,6 +11,7 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import IndustryProfile from "./pages/IndustryProfile";
 import ProfessionalProfile from "./pages/ProfessionalProfile";
+import ExpertDashboard from "./pages/ExpertDashboard";
 import VendorProfile from "./pages/VendorProfile";
 import ServiceVendorProfile from "./pages/ServiceVendorProfile";
 import ProductVendorProfile from "./pages/ProductVendorProfile";
@@ -40,6 +41,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/industry-dashboard" element={<IndustryDashboard />} />
+            <Route path="/expert-dashboard" element={<ExpertDashboard />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/industry-profile" element={<IndustryProfile />} />
