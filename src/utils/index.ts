@@ -1,9 +1,20 @@
 
 // Export all utility functions and hooks for easy importing
 export * from './colorUtils';
-export * from './dateUtils';
 export * from './navigationConfigs';
 export * from './dashboardConfigs';
+
+// Export specific functions from dateUtils
+export { 
+  formatDate,
+  formatDateRange,
+  getDaysRemaining,
+  isOverdue,
+  getDeadlineStatus,
+  formatTimeAgo,
+  addBusinessDays,
+  type DateFormatOptions
+} from './dateUtils';
 
 // Export specific functions from statusUtils to avoid conflicts
 export { 
