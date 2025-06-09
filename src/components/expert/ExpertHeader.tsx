@@ -2,13 +2,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { GenericHeader } from "@/components/shared/layout/GenericHeader";
-import { expertHeaderConfig } from "@/utils/navigationConfigs";
-
-type NavItem = {
-  label: string;
-  icon: React.ReactNode;
-  active?: boolean;
-};
+import { expertHeaderConfig, NavItem } from "@/utils/navigationConfigs";
 
 interface ExpertHeaderProps {
   navItems?: NavItem[];
