@@ -16,6 +16,7 @@ import VendorProfile from "./pages/VendorProfile";
 import ServiceVendorProfile from "./pages/ServiceVendorProfile";
 import ServiceVendorDashboard from "./pages/ServiceVendorDashboard";
 import ProductVendorProfile from "./pages/ProductVendorProfile";
+import ProductVendorDashboard from "./pages/ProductVendorDashboard";
 import LogisticsVendorProfile from "./pages/LogisticsVendorProfile";
 import LogisticsVendorDashboard from "./pages/LogisticsVendorDashboard";
 import CreateRequirement from "./pages/CreateRequirement";
