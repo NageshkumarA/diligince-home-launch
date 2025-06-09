@@ -12,21 +12,44 @@ export interface ThemeColors {
 }
 
 export const themeColors: ThemeColors = {
-  primary: 'bg-[#722ed1] text-white',
-  secondary: 'bg-[#faad14] text-white',
+  primary: 'bg-primary text-primary-foreground',
+  secondary: 'bg-secondary text-secondary-foreground',
   success: 'bg-green-600 text-white',
-  warning: 'bg-orange-600 text-white',
+  warning: 'bg-yellow-600 text-white',
   error: 'bg-red-600 text-white',
   info: 'bg-blue-600 text-white',
   neutral: 'bg-gray-600 text-white',
 };
 
+// User type color utilities
+export const getUserTypeColors = (userType: 'industry' | 'expert' | 'vendor' | 'admin'): string => {
+  const colorMap = {
+    industry: 'bg-industry-500 text-industry-foreground',
+    expert: 'bg-expert-500 text-expert-foreground',
+    vendor: 'bg-vendor-500 text-vendor-foreground',
+    admin: 'bg-admin-500 text-admin-foreground',
+  };
+  
+  return colorMap[userType] || colorMap.industry;
+};
+
+export const getUserTypeBadgeColors = (userType: 'industry' | 'expert' | 'vendor' | 'admin'): string => {
+  const colorMap = {
+    industry: 'bg-industry-100 text-industry-800 border-industry-200',
+    expert: 'bg-expert-100 text-expert-800 border-expert-200',
+    vendor: 'bg-vendor-100 text-vendor-800 border-vendor-200',
+    admin: 'bg-admin-100 text-admin-800 border-admin-200',
+  };
+  
+  return colorMap[userType] || colorMap.industry;
+};
+
 export const getBadgeColors = (variant: keyof ThemeColors): string => {
   const colorMap: Record<keyof ThemeColors, string> = {
-    primary: 'bg-[#722ed1]/10 text-[#722ed1] border-[#722ed1]/20',
-    secondary: 'bg-[#faad14]/10 text-[#faad14] border-[#faad14]/20',
+    primary: 'bg-primary/10 text-primary border-primary/20',
+    secondary: 'bg-secondary/10 text-secondary border-secondary/20',
     success: 'bg-green-100 text-green-800 border-green-200',
-    warning: 'bg-orange-100 text-orange-800 border-orange-200',
+    warning: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     error: 'bg-red-100 text-red-800 border-red-200',
     info: 'bg-blue-100 text-blue-800 border-blue-200',
     neutral: 'bg-gray-100 text-gray-800 border-gray-200',
@@ -37,10 +60,10 @@ export const getBadgeColors = (variant: keyof ThemeColors): string => {
 
 export const getButtonColors = (variant: keyof ThemeColors): string => {
   const colorMap: Record<keyof ThemeColors, string> = {
-    primary: 'bg-[#722ed1] hover:bg-[#722ed1]/90 text-white',
-    secondary: 'bg-[#faad14] hover:bg-[#faad14]/90 text-white',
+    primary: 'bg-primary hover:bg-primary/90 text-primary-foreground',
+    secondary: 'bg-secondary hover:bg-secondary/90 text-secondary-foreground',
     success: 'bg-green-600 hover:bg-green-700 text-white',
-    warning: 'bg-orange-600 hover:bg-orange-700 text-white',
+    warning: 'bg-yellow-600 hover:bg-yellow-700 text-white',
     error: 'bg-red-600 hover:bg-red-700 text-white',
     info: 'bg-blue-600 hover:bg-blue-700 text-white',
     neutral: 'bg-gray-600 hover:bg-gray-700 text-white',
@@ -51,10 +74,10 @@ export const getButtonColors = (variant: keyof ThemeColors): string => {
 
 export const getTextColors = (variant: keyof ThemeColors): string => {
   const colorMap: Record<keyof ThemeColors, string> = {
-    primary: 'text-[#722ed1]',
-    secondary: 'text-[#faad14]',
+    primary: 'text-primary',
+    secondary: 'text-secondary',
     success: 'text-green-600',
-    warning: 'text-orange-600',
+    warning: 'text-yellow-600',
     error: 'text-red-600',
     info: 'text-blue-600',
     neutral: 'text-gray-600',
@@ -65,10 +88,10 @@ export const getTextColors = (variant: keyof ThemeColors): string => {
 
 export const getHoverColors = (variant: keyof ThemeColors): string => {
   const colorMap: Record<keyof ThemeColors, string> = {
-    primary: 'hover:bg-[#722ed1]/10',
-    secondary: 'hover:bg-[#faad14]/10',
+    primary: 'hover:bg-primary/10',
+    secondary: 'hover:bg-secondary/10',
     success: 'hover:bg-green-50',
-    warning: 'hover:bg-orange-50',
+    warning: 'hover:bg-yellow-50',
     error: 'hover:bg-red-50',
     info: 'hover:bg-blue-50',
     neutral: 'hover:bg-gray-50',
@@ -76,3 +99,31 @@ export const getHoverColors = (variant: keyof ThemeColors): string => {
   
   return colorMap[variant] || colorMap.neutral;
 };
+
+// Status color utilities
+export const getStatusColors = (status: string): string => {
+  const statusMap: Record<string, string> = {
+    success: 'text-green-600',
+    completed: 'text-green-600',
+    active: 'text-green-600',
+    warning: 'text-yellow-600',
+    pending: 'text-yellow-600',
+    error: 'text-red-600',
+    failed: 'text-red-600',
+    cancelled: 'text-red-600',
+    info: 'text-blue-600',
+    draft: 'text-gray-600',
+    inactive: 'text-gray-600',
+  };
+  
+  return statusMap[status.toLowerCase()] || statusMap.info;
+};
+
+// Semantic color functions for consistent theming
+export const getSemanticColors = () => ({
+  success: 'hsl(var(--status-success))',
+  warning: 'hsl(var(--status-warning))',
+  error: 'hsl(var(--status-error))',
+  info: 'hsl(var(--status-info))',
+  pending: 'hsl(var(--status-pending))',
+});
