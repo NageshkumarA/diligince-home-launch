@@ -39,8 +39,8 @@ const ProfessionalProfile = () => {
     toast.success("Expert profile loaded successfully");
   }, []);
   
-  // Mock expert data
-  const expertData = {
+  // Mock professional data (renamed from expertData)
+  const professionalData = {
     name: "Rahul Sharma",
     expertise: "Mechanical Engineering",
     initials: "RS",
@@ -99,7 +99,7 @@ const ProfessionalProfile = () => {
       
       <div className="flex flex-grow pt-16">
         <ProfessionalSidebar 
-          expertData={expertData}
+          professionalData={professionalData}
           menuItems={menuItems}
           activeMenuItem={activeContent}
           onMenuItemClick={handleMenuItemClick}
