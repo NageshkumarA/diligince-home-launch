@@ -38,7 +38,6 @@ export * from "./sheet"
 export * from "./sidebar"
 export * from "./skeleton"
 export * from "./slider"
-export * from "./sonner"
 export * from "./switch"
 export * from "./table"
 export * from "./tabs"
@@ -56,6 +55,9 @@ export * from "./container"
 export * from "./section"
 export * from "./status-badge"
 export * from "./user-avatar"
+
+// Sonner Toaster (aliased to avoid conflicts)
+export { Toaster as SonnerToaster } from "./sonner"
 
 // Hooks
 export * from "./use-toast"

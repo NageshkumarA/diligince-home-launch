@@ -41,7 +41,6 @@ const StatusBadge = React.forwardRef<HTMLDivElement, StatusBadgeProps>(
       <Badge
         variant="outline"
         className={cn(statusBadgeVariants({ status, size, className }))}
-        ref={ref}
         {...props}
       >
         {children}

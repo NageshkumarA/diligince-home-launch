@@ -36,21 +36,23 @@ const headingVariants = cva("font-heading font-bold tracking-tight", {
 })
 
 export interface HeadingProps
-  extends React.HTMLAttributes<HTMLHeadingElement>,
-    VariantProps<typeof headingVariants> {}
+  extends Omit<React.HTMLAttributes<HTMLHeadingElement>, 'className'>,
+    VariantProps<typeof headingVariants> {
+  className?: string
+}
 
 const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
   ({ className, level = 1, variant, align, children, ...props }, ref) => {
-    const Component = `h${level}` as keyof JSX.IntrinsicElements
+    const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 
-    return (
-      <Component
-        className={cn(headingVariants({ level, variant, align, className }))}
-        ref={ref}
-        {...props}
-      >
-        {children}
-      </Component>
+    return React.createElement(
+      HeadingTag,
+      {
+        className: cn(headingVariants({ level, variant, align, className })),
+        ref,
+        ...props,
+      },
+      children
     )
   }
 )
