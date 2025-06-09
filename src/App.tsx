@@ -14,6 +14,7 @@ import ProfessionalProfile from "./pages/ProfessionalProfile";
 import ExpertDashboard from "./pages/ExpertDashboard";
 import VendorProfile from "./pages/VendorProfile";
 import ServiceVendorProfile from "./pages/ServiceVendorProfile";
+import ServiceVendorDashboard from "./pages/ServiceVendorDashboard";
 import ProductVendorProfile from "./pages/ProductVendorProfile";
 import LogisticsVendorProfile from "./pages/LogisticsVendorProfile";
 import LogisticsVendorDashboard from "./pages/LogisticsVendorDashboard";
@@ -42,6 +43,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/industry-dashboard" element={<IndustryDashboard />} />
             <Route path="/expert-dashboard" element={<ExpertDashboard />} />
+            <Route path="/service-vendor-dashboard" element={<ServiceVendorDashboard />} />
+            <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/industry-profile" element={<IndustryProfile />} />
@@ -50,7 +53,6 @@ const App = () => (
             <Route path="/service-vendor-profile" element={<ServiceVendorProfile />} />
             <Route path="/product-vendor-profile" element={<ProductVendorProfile />} />
             <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
-            <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
             <Route path="/create-requirement" element={<CreateRequirement />} />
             <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
             <Route path="/vendors" element={<Vendors />} />

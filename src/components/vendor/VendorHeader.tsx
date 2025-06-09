@@ -2,38 +2,41 @@
 import { Bell, MessageSquare, FileText, LayoutGrid, ShoppingCart, User, Home } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Link, useLocation } from "react-router-dom";
 
 const VendorHeader = () => {
+  const location = useLocation();
+  
   // Navigation menu items
   const navItems = [
-    { label: "Dashboard", icon: <Home size={18} />, href: "#" },
+    { label: "Dashboard", icon: <Home size={18} />, href: "/service-vendor-dashboard" },
     { label: "RFQs", icon: <FileText size={18} />, href: "#" },
-    { label: "Catalog", icon: <LayoutGrid size={18} />, href: "#" },
-    { label: "Orders", icon: <ShoppingCart size={18} />, href: "#" },
+    { label: "Services", icon: <LayoutGrid size={18} />, href: "#" },
+    { label: "Projects", icon: <ShoppingCart size={18} />, href: "#" },
     { label: "Messages", icon: <MessageSquare size={18} />, href: "#" },
-    { label: "Profile", icon: <User size={18} />, href: "#", active: true }
+    { label: "Profile", icon: <User size={18} />, href: "/service-vendor-profile" }
   ];
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-[#faad14] text-white z-10 shadow-md">
       <div className="container mx-auto h-full flex items-center justify-between px-4">
         <div className="flex items-center gap-10">
-          <h1 className="text-xl font-bold">diligince.ai</h1>
+          <Link to="/" className="text-xl font-bold">diligince.ai</Link>
           
           <nav className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
-              <a 
+              <Link 
                 key={item.label} 
-                href={item.href} 
+                to={item.href} 
                 className={`flex items-center gap-2 text-sm ${
-                  item.active 
+                  location.pathname === item.href
                     ? "text-white font-medium" 
                     : "text-yellow-100 hover:text-white transition-colors"
                 }`}
               >
                 {item.icon}
                 <span>{item.label}</span>
-              </a>
+              </Link>
             ))}
           </nav>
         </div>
