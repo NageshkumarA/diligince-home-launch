@@ -25,6 +25,7 @@ import IndustryMessages from "./pages/IndustryMessages";
 import IndustryDocuments from "./pages/IndustryDocuments";
 import ProfessionalDashboard from "./pages/ProfessionalDashboard";
 import ProfessionalProfile from "./pages/ProfessionalProfile";
+import ProfessionalCalendar from "./pages/ProfessionalCalendar";
 import ServiceVendorDashboard from "./pages/ServiceVendorDashboard";
 import ServiceVendorProfile from "./pages/ServiceVendorProfile";
 import ProductVendorDashboard from "./pages/ProductVendorDashboard";
@@ -59,6 +60,7 @@ const App = () => (
                   <Route path="/experts" element={<Experts />} />
                   <Route path="/industry-dashboard" element={<IndustryDashboard />} />
                   <Route path="/professional-dashboard" element={<ProfessionalDashboard />} />
+                  <Route path="/professional-calendar" element={<ProfessionalCalendar />} />
                   <Route path="/service-vendor-dashboard" element={<ServiceVendorDashboard />} />
                   <Route path="/product-vendor-dashboard" element={<ProductVendorDashboard />} />
                   <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
