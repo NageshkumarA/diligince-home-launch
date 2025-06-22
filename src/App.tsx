@@ -21,6 +21,8 @@ import Vendors from "./pages/Vendors";
 import Experts from "./pages/Experts";
 import IndustryDashboard from "./pages/IndustryDashboard";
 import IndustryProfile from "./pages/IndustryProfile";
+import IndustryMessages from "./pages/IndustryMessages";
+import IndustryDocuments from "./pages/IndustryDocuments";
 import ProfessionalDashboard from "./pages/ProfessionalDashboard";
 import ProfessionalProfile from "./pages/ProfessionalProfile";
 import ServiceVendorDashboard from "./pages/ServiceVendorDashboard";
@@ -60,6 +62,8 @@ const App = () => (
                   <Route path="/service-vendor-dashboard" element={<ServiceVendorDashboard />} />
                   <Route path="/product-vendor-dashboard" element={<ProductVendorDashboard />} />
                   <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
+                  <Route path="/messages" element={<IndustryMessages />} />
+                  <Route path="/documents" element={<IndustryDocuments />} />
                   <Route path="/signup" element={<SignUp />} />
                   <Route path="/signin" element={<SignIn />} />
                   <Route path="/industry-profile" element={<IndustryProfile />} />
@@ -73,7 +77,7 @@ const App = () => (
                   <Route path="/work-completion-payment" element={<WorkCompletionPayment />} />
                   
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
+                  <Route path="*" element={<Not Found />} />
                 </Routes>
               </BrowserRouter>
               <Toaster />
