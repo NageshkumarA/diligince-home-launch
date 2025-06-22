@@ -77,7 +77,7 @@ const App = () => (
                   <Route path="/work-completion-payment" element={<WorkCompletionPayment />} />
                   
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<Not Found />} />
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
               <Toaster />
