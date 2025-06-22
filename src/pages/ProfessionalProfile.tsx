@@ -8,7 +8,7 @@ import PersonalInfoForm from "@/components/professional/forms/PersonalInfoForm";
 import SkillsForm from "@/components/professional/forms/SkillsForm";
 import CertificationsForm from "@/components/professional/forms/CertificationsForm";
 import ExperienceForm from "@/components/professional/forms/ExperienceForm";
-import AvailabilityCalendar from "@/components/professional/forms/AvailabilityCalendar";
+import EnhancedAvailabilityCalendar from "@/components/professional/calendar/EnhancedAvailabilityCalendar";
 import PaymentSettingsForm from "@/components/professional/forms/PaymentSettingsForm";
 import AccountSettingsForm from "@/components/professional/forms/AccountSettingsForm";
 
@@ -83,7 +83,7 @@ const ProfessionalProfile = () => {
       case "experience":
         return <ExperienceForm />;
       case "availability":
-        return <AvailabilityCalendar />;
+        return <EnhancedAvailabilityCalendar />;
       case "payment":
         return <PaymentSettingsForm />;
       case "account":
