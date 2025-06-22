@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Home, Briefcase, Calendar, MessageSquare, User, Download, Settings, Grid, List, ChevronLeft, ChevronRight, Filter, Bell, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,10 +6,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import ProfessionalHeader from "@/components/professional/ProfessionalHeader";
 import EnhancedAvailabilityCalendar from "@/components/professional/calendar/EnhancedAvailabilityCalendar";
+import WeekView from "@/components/professional/calendar/WeekView";
+import DayView from "@/components/professional/calendar/DayView";
+import FilterModal from "@/components/professional/calendar/FilterModal";
+import BulkAvailabilityModal from "@/components/professional/calendar/BulkAvailabilityModal";
+import CalendarTemplatesModal from "@/components/professional/calendar/CalendarTemplatesModal";
+import CalendarSyncModal from "@/components/professional/calendar/CalendarSyncModal";
+import { useModal } from "@/hooks/useModal";
 
 const ProfessionalCalendar = () => {
   const [calendarView, setCalendarView] = useState<'month' | 'week' | 'day'>('month');
-  const [showFilters, setShowFilters] = useState(false);
+  
+  // Modal controls using the useModal hook
+  const filterModal = useModal();
+  const bulkModal = useModal();
+  const templatesModal = useModal();
+  const syncModal = useModal();
 
   // Header navigation items
   const headerNavItems = [
@@ -25,12 +36,8 @@ const ProfessionalCalendar = () => {
     toast.success("Exporting calendar to Google Calendar, Outlook, and iCal formats");
   };
 
-  const handleBulkAvailability = () => {
-    toast.success("Opening bulk availability settings for multiple days");
-  };
-
-  const handleCalendarSync = () => {
-    toast.success("Opening calendar sync settings with external calendars");
+  const handleImportCalendar = () => {
+    toast.success("Opening calendar import wizard");
   };
 
   const handleViewChange = (view: 'month' | 'week' | 'day') => {
@@ -38,23 +45,16 @@ const ProfessionalCalendar = () => {
     toast.success(`Switched to ${view} view`);
   };
 
-  const handleImportCalendar = () => {
-    toast.success("Calendar import functionality will be implemented");
-  };
-
-  const handleCalendarTemplates = () => {
-    toast.success("Calendar templates functionality will be implemented");
-  };
-
   const handleNotificationSettings = () => {
-    toast.success("Notification settings will be implemented");
+    toast.success("Opening notification settings");
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <ProfessionalHeader navItems={headerNavItems} />
       
-      <main className="pt-16 p-6 lg:p-8">
+      {/* Fixed main content with proper padding to avoid navbar overlap */}
+      <main className="pt-20 p-6 lg:p-8 flex-1">
         <div className="max-w-7xl mx-auto">
           {/* Enhanced Page Header */}
           <div className="mb-6">
@@ -74,7 +74,7 @@ const ProfessionalCalendar = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setShowFilters(!showFilters)}
+                  onClick={filterModal.openModal}
                   className="flex items-center gap-2"
                 >
                   <Filter className="h-4 w-4" />
@@ -83,7 +83,7 @@ const ProfessionalCalendar = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={handleCalendarTemplates}
+                  onClick={templatesModal.openModal}
                   className="flex items-center gap-2"
                 >
                   <Grid className="h-4 w-4" />
@@ -92,7 +92,7 @@ const ProfessionalCalendar = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={handleBulkAvailability}
+                  onClick={bulkModal.openModal}
                   className="flex items-center gap-2"
                 >
                   <Clock className="h-4 w-4" />
@@ -110,7 +110,7 @@ const ProfessionalCalendar = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={handleCalendarSync}
+                  onClick={syncModal.openModal}
                   className="flex items-center gap-2"
                 >
                   <Settings className="h-4 w-4" />
@@ -241,81 +241,14 @@ const ProfessionalCalendar = () => {
               </TabsContent>
 
               <TabsContent value="week" className="mt-0">
-                <Card className="p-6">
-                  <div className="text-center py-12">
-                    <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Week View</h3>
-                    <p className="text-gray-600 mb-4">Enhanced week view with time slots and detailed scheduling</p>
-                    <Button onClick={() => toast.success("Week view will be implemented")}>
-                      Coming Soon
-                    </Button>
-                  </div>
-                </Card>
+                <WeekView />
               </TabsContent>
 
               <TabsContent value="day" className="mt-0">
-                <Card className="p-6">
-                  <div className="text-center py-12">
-                    <Clock className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Day View</h3>
-                    <p className="text-gray-600 mb-4">Detailed day view with hourly time slots and meeting management</p>
-                    <Button onClick={() => toast.success("Day view will be implemented")}>
-                      Coming Soon
-                    </Button>
-                  </div>
-                </Card>
+                <DayView />
               </TabsContent>
             </Tabs>
           </div>
-
-          {/* Optional Filters Panel */}
-          {showFilters && (
-            <Card className="mb-6 p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Calendar Filters</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowFilters(false)}
-                >
-                  <span className="sr-only">Close filters</span>
-                  ×
-                </Button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Status</label>
-                  <select className="w-full p-2 border border-gray-300 rounded-md">
-                    <option>All Statuses</option>
-                    <option>Available</option>
-                    <option>Busy</option>
-                    <option>Unavailable</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Price Range</label>
-                  <select className="w-full p-2 border border-gray-300 rounded-md">
-                    <option>All Ranges</option>
-                    <option>$50-100/hr</option>
-                    <option>$100-150/hr</option>
-                    <option>$150+/hr</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Project Type</label>
-                  <select className="w-full p-2 border border-gray-300 rounded-md">
-                    <option>All Projects</option>
-                    <option>Consulting</option>
-                    <option>Development</option>
-                    <option>Meetings</option>
-                  </select>
-                </div>
-                <div className="flex items-end">
-                  <Button className="w-full">Apply Filters</Button>
-                </div>
-              </div>
-            </Card>
-          )}
 
           {/* Calendar Analytics Summary */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -367,11 +300,11 @@ const ProfessionalCalendar = () => {
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-2">
-                <Button variant="outline" size="sm" className="w-full justify-start" onClick={handleBulkAvailability}>
+                <Button variant="outline" size="sm" className="w-full justify-start" onClick={bulkModal.openModal}>
                   <Grid className="h-4 w-4 mr-2" />
                   Set Weekly Pattern
                 </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start" onClick={handleCalendarSync}>
+                <Button variant="outline" size="sm" className="w-full justify-start" onClick={syncModal.openModal}>
                   <Settings className="h-4 w-4 mr-2" />
                   Sync Calendar
                 </Button>
@@ -384,6 +317,12 @@ const ProfessionalCalendar = () => {
           </div>
         </div>
       </main>
+
+      {/* All Modals */}
+      <FilterModal isOpen={filterModal.isOpen} onClose={filterModal.closeModal} />
+      <BulkAvailabilityModal isOpen={bulkModal.isOpen} onClose={bulkModal.closeModal} />
+      <CalendarTemplatesModal isOpen={templatesModal.isOpen} onClose={templatesModal.closeModal} />
+      <CalendarSyncModal isOpen={syncModal.isOpen} onClose={syncModal.closeModal} />
     </div>
   );
 };
