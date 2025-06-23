@@ -8,10 +8,8 @@ import {
   ShoppingCart, 
   MessageSquare, 
   FolderOpen, 
-  User,
-  ArrowLeft 
+  User
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const IndustryHeader = () => {
   const location = useLocation();
@@ -81,15 +79,6 @@ const IndustryHeader = () => {
               </Link>
             ))}
           </nav>
-        </div>
-        
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm" asChild className="text-blue-100 hover:text-white hover:bg-blue-700">
-            <Link to="/industry-dashboard" className="flex items-center gap-2">
-              <ArrowLeft size={16} />
-              Back to Dashboard
-            </Link>
-          </Button>
         </div>
       </div>
     </header>

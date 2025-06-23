@@ -1,7 +1,6 @@
-
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
-import PurchaseOrderHeader from "@/components/purchase-order/PurchaseOrderHeader";
+import IndustryHeader from "@/components/industry/IndustryHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -140,7 +139,7 @@ const IndustryDocuments = () => {
         <title>Documents | Industry Dashboard</title>
       </Helmet>
       
-      <PurchaseOrderHeader />
+      <IndustryHeader />
       
       <main className="flex-1 container mx-auto px-4 py-8 pt-20">
         <div className="mb-6">

@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Helmet } from "react-helmet";
-import PurchaseOrderHeader from "@/components/purchase-order/PurchaseOrderHeader";
+import IndustryHeader from "@/components/industry/IndustryHeader";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,11 +13,11 @@ const Vendors = () => {
         <title>Vendors | Diligince.ai</title>
       </Helmet>
       
-      <PurchaseOrderHeader />
+      <IndustryHeader />
       
-      <main className="flex-1 container mx-auto px-4 py-8 mt-12">
+      <main className="flex-1 container mx-auto px-4 py-8 pt-20">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Vendors</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Stakeholders</h1>
           <Button asChild>
             <Link to="/vendor-profile">Add Vendor</Link>
           </Button>

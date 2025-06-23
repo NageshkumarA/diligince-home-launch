@@ -1,7 +1,6 @@
-
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
-import PurchaseOrderHeader from "@/components/purchase-order/PurchaseOrderHeader";
+import IndustryHeader from "@/components/industry/IndustryHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -245,7 +244,7 @@ const IndustryMessages = () => {
         <title>Messages | Industry Dashboard</title>
       </Helmet>
       
-      <PurchaseOrderHeader />
+      <IndustryHeader />
       
       <div className="pt-16 flex-1 flex">
         {/* Conversations Sidebar */}
