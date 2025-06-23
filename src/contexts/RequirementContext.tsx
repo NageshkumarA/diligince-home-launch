@@ -166,7 +166,7 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
     };
     setFormData(prev => ({
       ...prev,
-      auditTrail: [...prev.auditTrail, entry]
+      auditTrail: [...(prev.auditTrail || []), entry]
     }));
   };
 

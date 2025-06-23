@@ -74,7 +74,7 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
 
   const removeApprovalStep = (stepId: string) => {
     updateFormData({
-      approvalSteps: formData.approvalSteps.filter(step => step.id !== step)
+      approvalSteps: formData.approvalSteps.filter(step => step.id !== stepId)
     });
     toast.success("Approval step removed");
   };
@@ -243,7 +243,7 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
                   {formData.estimatedBudget > 50000 && (
                     <div className="flex items-center gap-2">
                       <CheckCircle className="h-3 w-3 text-green-500" />
-                      <span>Senior management approval (Budget > $50K)</span>
+                      <span>Senior management approval (Budget &gt; $50K)</span>
                     </div>
                   )}
                   {formData.priority === "critical" && (
@@ -269,7 +269,7 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
             </CardHeader>
             <CardContent className="text-sm text-gray-600 space-y-2">
               <p>• Include department manager for all requests</p>
-              <p>• Add finance approval for budgets > $10K</p>
+              <p>• Add finance approval for budgets &gt; $10K</p>
               <p>• Include compliance officer for regulated items</p>
               <p>• Set up parallel approvals to reduce delays</p>
             </CardContent>
