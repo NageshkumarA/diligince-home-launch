@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Check, CheckCircle, CreditCard, MapPin, Package, Settings, Truck, User, Users } from "lucide-react";
 import { 
@@ -34,10 +33,10 @@ export const LogisticsVendorSidebar = () => {
   const profileCompletion = 65; // Profile completion percentage (mock data)
 
   return (
-    <div className="flex w-full pt-32">
+    <div className="flex w-full">
       <aside className="h-full">
         <Sidebar>
-          <SidebarHeader className="pb-0">
+          <SidebarHeader className="pb-0 pt-32">
             <div className="flex flex-col items-center space-y-2 py-4">
               <div className="relative">
                 <div className="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-bold text-gray-600">
@@ -139,7 +138,7 @@ export const LogisticsVendorSidebar = () => {
       </aside>
 
       {/* Main content area with full width */}
-      <main className="flex-1 p-6 overflow-auto pt-8">
+      <main className="flex-1 p-6 overflow-auto pt-32">
         <div className="w-full max-w-4xl mx-auto">
           {activeSection === "company-info" && <CompanyInfoForm />}
           {activeSection === "fleet-equipment" && <FleetEquipmentSection />}
