@@ -1,10 +1,11 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider, NotificationProvider, UserProvider } from "@/contexts";
+import { ThemeProvider, NotificationProvider, UserProvider, VendorSpecializationProvider } from "@/contexts";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import SignUp from "./pages/SignUp";
@@ -57,64 +58,66 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <UserProvider>
-          <NotificationProvider>
-            <TooltipProvider>
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/careers" element={<Careers />} />
-                  <Route path="/pricing" element={<Pricing />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/privacy" element={<Privacy />} />
-                  <Route path="/vendors" element={<Vendors />} />
-                  <Route path="/experts" element={<Experts />} />
-                  <Route path="/industry-dashboard" element={<IndustryDashboard />} />
-                  <Route path="/professional-dashboard" element={<ProfessionalDashboard />} />
-                  <Route path="/professional-calendar" element={<ProfessionalCalendar />} />
-                  <Route path="/professional-opportunities" element={<ProfessionalOpportunities />} />
-                  <Route path="/professional-messages" element={<ProfessionalMessages />} />
-                  <Route path="/service-vendor-dashboard" element={<ServiceVendorDashboard />} />
-                  <Route path="/service-vendor-rfqs" element={<ServiceVendorRFQs />} />
-                  <Route path="/service-vendor-services" element={<ServiceVendorServices />} />
-                  <Route path="/service-vendor-projects" element={<ServiceVendorProjects />} />
-                  <Route path="/service-vendor-messages" element={<ServiceVendorMessages />} />
-                  <Route path="/product-vendor-dashboard" element={<ProductVendorDashboard />} />
-                  <Route path="/product-vendor-rfqs" element={<ProductVendorRFQs />} />
-                  <Route path="/product-vendor-catalog" element={<ProductVendorCatalog />} />
-                  <Route path="/product-vendor-orders" element={<ProductVendorOrders />} />
-                  <Route path="/product-vendor-messages" element={<ProductVendorMessages />} />
-                  <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
-                  <Route path="/messages" element={<IndustryMessages />} />
-                  <Route path="/documents" element={<IndustryDocuments />} />
-                  <Route path="/signup" element={<SignUp />} />
-                  <Route path="/signin" element={<SignIn />} />
-                  <Route path="/industry-profile" element={<IndustryProfile />} />
-                  <Route path="/professional-profile" element={<ProfessionalProfile />} />
-                  <Route path="/service-vendor-profile" element={<ServiceVendorProfile />} />
-                  <Route path="/product-vendor-profile" element={<ProductVendorProfile />} />
-                  <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
-                  <Route path="/vendor-profile" element={<VendorProfile />} />
-                  <Route path="/create-requirement" element={<CreateRequirement />} />
-                  <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
-                  <Route path="/work-completion-payment" element={<WorkCompletionPayment />} />
-                  <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
-                  <Route path="/logistics-vendor-requests" element={<LogisticsVendorRequests />} />
-                  <Route path="/logistics-vendor-fleet" element={<LogisticsVendorFleet />} />
-                  <Route path="/logistics-vendor-deliveries" element={<LogisticsVendorDeliveries />} />
-                  <Route path="/logistics-vendor-messages" element={<LogisticsVendorMessages />} />
-                  <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
-                  
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
-              <Toaster />
-              <Sonner />
-            </TooltipProvider>
-          </NotificationProvider>
+          <VendorSpecializationProvider>
+            <NotificationProvider>
+              <TooltipProvider>
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/blog" element={<Blog />} />
+                    <Route path="/careers" element={<Careers />} />
+                    <Route path="/pricing" element={<Pricing />} />
+                    <Route path="/terms" element={<Terms />} />
+                    <Route path="/privacy" element={<Privacy />} />
+                    <Route path="/vendors" element={<Vendors />} />
+                    <Route path="/experts" element={<Experts />} />
+                    <Route path="/industry-dashboard" element={<IndustryDashboard />} />
+                    <Route path="/professional-dashboard" element={<ProfessionalDashboard />} />
+                    <Route path="/professional-calendar" element={<ProfessionalCalendar />} />
+                    <Route path="/professional-opportunities" element={<ProfessionalOpportunities />} />
+                    <Route path="/professional-messages" element={<ProfessionalMessages />} />
+                    <Route path="/service-vendor-dashboard" element={<ServiceVendorDashboard />} />
+                    <Route path="/service-vendor-rfqs" element={<ServiceVendorRFQs />} />
+                    <Route path="/service-vendor-services" element={<ServiceVendorServices />} />
+                    <Route path="/service-vendor-projects" element={<ServiceVendorProjects />} />
+                    <Route path="/service-vendor-messages" element={<ServiceVendorMessages />} />
+                    <Route path="/product-vendor-dashboard" element={<ProductVendorDashboard />} />
+                    <Route path="/product-vendor-rfqs" element={<ProductVendorRFQs />} />
+                    <Route path="/product-vendor-catalog" element={<ProductVendorCatalog />} />
+                    <Route path="/product-vendor-orders" element={<ProductVendorOrders />} />
+                    <Route path="/product-vendor-messages" element={<ProductVendorMessages />} />
+                    <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
+                    <Route path="/messages" element={<IndustryMessages />} />
+                    <Route path="/documents" element={<IndustryDocuments />} />
+                    <Route path="/signup" element={<SignUp />} />
+                    <Route path="/signin" element={<SignIn />} />
+                    <Route path="/industry-profile" element={<IndustryProfile />} />
+                    <Route path="/professional-profile" element={<ProfessionalProfile />} />
+                    <Route path="/service-vendor-profile" element={<ServiceVendorProfile />} />
+                    <Route path="/product-vendor-profile" element={<ProductVendorProfile />} />
+                    <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
+                    <Route path="/vendor-profile" element={<VendorProfile />} />
+                    <Route path="/create-requirement" element={<CreateRequirement />} />
+                    <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
+                    <Route path="/work-completion-payment" element={<WorkCompletionPayment />} />
+                    <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
+                    <Route path="/logistics-vendor-requests" element={<LogisticsVendorRequests />} />
+                    <Route path="/logistics-vendor-fleet" element={<LogisticsVendorFleet />} />
+                    <Route path="/logistics-vendor-deliveries" element={<LogisticsVendorDeliveries />} />
+                    <Route path="/logistics-vendor-messages" element={<LogisticsVendorMessages />} />
+                    <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
+                    
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </BrowserRouter>
+                <Toaster />
+                <Sonner />
+              </TooltipProvider>
+            </NotificationProvider>
+          </VendorSpecializationProvider>
         </UserProvider>
       </ThemeProvider>
     </QueryClientProvider>
