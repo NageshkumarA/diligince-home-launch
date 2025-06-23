@@ -1,8 +1,7 @@
-
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
-import PurchaseOrderHeader from "@/components/purchase-order/PurchaseOrderHeader";
+import IndustryHeader from "@/components/industry/IndustryHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -102,7 +101,7 @@ const IndustryDashboard = () => {
         <title>Industry Dashboard | Diligince.ai</title>
       </Helmet>
       
-      <PurchaseOrderHeader />
+      <IndustryHeader />
       
       <main className="flex-1 container mx-auto px-4 py-8 pt-20">
         <div className="mb-6">

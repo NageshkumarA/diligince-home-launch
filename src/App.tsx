@@ -74,6 +74,9 @@ const App = () => (
                     <Route path="/vendors" element={<Vendors />} />
                     <Route path="/experts" element={<Experts />} />
                     <Route path="/industry-dashboard" element={<IndustryDashboard />} />
+                    <Route path="/industry-profile" element={<IndustryProfile />} />
+                    <Route path="/industry-messages" element={<IndustryMessages />} />
+                    <Route path="/industry-documents" element={<IndustryDocuments />} />
                     <Route path="/professional-dashboard" element={<ProfessionalDashboard />} />
                     <Route path="/professional-calendar" element={<ProfessionalCalendar />} />
                     <Route path="/professional-opportunities" element={<ProfessionalOpportunities />} />
@@ -93,7 +96,6 @@ const App = () => (
                     <Route path="/documents" element={<IndustryDocuments />} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/signin" element={<SignIn />} />
-                    <Route path="/industry-profile" element={<IndustryProfile />} />
                     <Route path="/professional-profile" element={<ProfessionalProfile />} />
                     <Route path="/service-vendor-profile" element={<ServiceVendorProfile />} />
                     <Route path="/product-vendor-profile" element={<ProductVendorProfile />} />
