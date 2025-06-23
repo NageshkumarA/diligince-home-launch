@@ -1,12 +1,11 @@
-
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Briefcase, MapPin, Clock, Trophy } from "lucide-react";
 
 const Careers = () => {
-  // Sample job openings
+  // ... keep existing code (job openings array and component logic)
   const jobs = [
     {
       id: 1,
