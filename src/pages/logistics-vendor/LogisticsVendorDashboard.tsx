@@ -186,7 +186,7 @@ const LogisticsVendorDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />
-                    <Tooltip formatter={(value) => `₹${(value / 1000).toFixed(0)}K`} />
+                    <Tooltip formatter={(value) => `₹${(Number(value) / 1000).toFixed(0)}K`} />
                     <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -253,7 +253,7 @@ const LogisticsVendorDashboard = () => {
           </Card>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 md: grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Button className="h-16 flex flex-col items-center justify-center bg-[#eb2f96] hover:bg-[#eb2f96]/90">
               <Package className="h-6 w-6 mb-1" />
               New Request
