@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { LogisticsVendorHeader } from "@/components/vendor/LogisticsVendorHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,10 +6,25 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Truck, MapPin, Clock, Package, CheckCircle, AlertCircle, Search, Navigation, Phone } from "lucide-react";
+import { RouteOptimizerModal } from "@/components/vendor/logistics/modals/RouteOptimizerModal";
+import { EquipmentDeploymentModal } from "@/components/vendor/logistics/modals/EquipmentDeploymentModal";
+import { LiveTrackingModal } from "@/components/vendor/logistics/modals/LiveTrackingModal";
+import { ContactDriverModal } from "@/components/vendor/logistics/modals/ContactDriverModal";
+import { UpdateDeliveryStatusModal } from "@/components/vendor/logistics/modals/UpdateDeliveryStatusModal";
+import { useVendorSpecialization } from "@/contexts/VendorSpecializationContext";
 
 const LogisticsVendorDeliveries = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const { needsRouteOptimizer, specialization } = useVendorSpecialization();
+  
+  // Modal states
+  const [isRouteOptimizerModalOpen, setIsRouteOptimizerModalOpen] = useState(false);
+  const [isEquipmentDeploymentModalOpen, setIsEquipmentDeploymentModalOpen] = useState(false);
+  const [isLiveTrackingModalOpen, setIsLiveTrackingModalOpen] = useState(false);
+  const [isContactDriverModalOpen, setIsContactDriverModalOpen] = useState(false);
+  const [isUpdateStatusModalOpen, setIsUpdateStatusModalOpen] = useState(false);
+  const [selectedDelivery, setSelectedDelivery] = useState<any>(null);
 
   const deliveries = [
     {
@@ -113,6 +127,35 @@ const LogisticsVendorDeliveries = () => {
     return matchesSearch && matchesFilter;
   });
 
+  const handleLiveTrack = (delivery: any) => {
+    setSelectedDelivery(delivery);
+    setIsLiveTrackingModalOpen(true);
+  };
+
+  const handleCallDriver = (delivery: any) => {
+    setSelectedDelivery(delivery);
+    setIsContactDriverModalOpen(true);
+  };
+
+  const handleUpdateStatus = (delivery: any) => {
+    setSelectedDelivery(delivery);
+    setIsUpdateStatusModalOpen(true);
+  };
+
+  const getHeaderButtonText = () => {
+    if (needsRouteOptimizer) return "Route Optimizer";
+    if (specialization === 'heavy-equipment' || specialization === 'crane-services') return "Equipment Deployment";
+    return "Fleet Manager";
+  };
+
+  const handleHeaderButtonClick = () => {
+    if (needsRouteOptimizer) {
+      setIsRouteOptimizerModalOpen(true);
+    } else {
+      setIsEquipmentDeploymentModalOpen(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <LogisticsVendorHeader />
@@ -125,9 +168,12 @@ const LogisticsVendorDeliveries = () => {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Active Deliveries</h1>
               <p className="text-gray-600">Track and manage ongoing transport and delivery operations.</p>
             </div>
-            <Button className="bg-[#eb2f96] hover:bg-[#eb2f96]/90">
+            <Button 
+              className="bg-[#eb2f96] hover:bg-[#eb2f96]/90"
+              onClick={handleHeaderButtonClick}
+            >
               <Navigation className="h-4 w-4 mr-2" />
-              Route Optimizer
+              {getHeaderButtonText()}
             </Button>
           </div>
 
@@ -279,15 +325,27 @@ const LogisticsVendorDeliveries = () => {
                     </div>
                     
                     <div className="flex flex-col gap-2 ml-4">
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleLiveTrack(delivery)}
+                      >
                         <Navigation className="h-4 w-4 mr-1" />
                         Live Track
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleCallDriver(delivery)}
+                      >
                         <Phone className="h-4 w-4 mr-1" />
                         Call Driver
                       </Button>
-                      <Button className="bg-[#eb2f96] hover:bg-[#eb2f96]/90" size="sm">
+                      <Button 
+                        className="bg-[#eb2f96] hover:bg-[#eb2f96]/90" 
+                        size="sm"
+                        onClick={() => handleUpdateStatus(delivery)}
+                      >
                         Update Status
                       </Button>
                     </div>
@@ -298,6 +356,39 @@ const LogisticsVendorDeliveries = () => {
           </div>
         </div>
       </main>
+
+      {/* Modals */}
+      {needsRouteOptimizer && (
+        <RouteOptimizerModal
+          isOpen={isRouteOptimizerModalOpen}
+          onClose={() => setIsRouteOptimizerModalOpen(false)}
+        />
+      )}
+      
+      {!needsRouteOptimizer && (
+        <EquipmentDeploymentModal
+          isOpen={isEquipmentDeploymentModalOpen}
+          onClose={() => setIsEquipmentDeploymentModalOpen(false)}
+        />
+      )}
+      
+      <LiveTrackingModal
+        isOpen={isLiveTrackingModalOpen}
+        onClose={() => setIsLiveTrackingModalOpen(false)}
+        delivery={selectedDelivery}
+      />
+      
+      <ContactDriverModal
+        isOpen={isContactDriverModalOpen}
+        onClose={() => setIsContactDriverModalOpen(false)}
+        delivery={selectedDelivery}
+      />
+      
+      <UpdateDeliveryStatusModal
+        isOpen={isUpdateStatusModalOpen}
+        onClose={() => setIsUpdateStatusModalOpen(false)}
+        delivery={selectedDelivery}
+      />
     </div>
   );
 };
