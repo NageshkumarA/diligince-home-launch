@@ -34,7 +34,7 @@ export const LogisticsVendorSidebar = () => {
   const profileCompletion = 65; // Profile completion percentage (mock data)
 
   return (
-    <div className="flex w-full">
+    <div className="flex w-full pt-32">
       <aside className="h-full">
         <Sidebar>
           <SidebarHeader className="pb-0">
@@ -139,7 +139,7 @@ export const LogisticsVendorSidebar = () => {
       </aside>
 
       {/* Main content area with full width */}
-      <main className="flex-1 p-6 overflow-auto">
+      <main className="flex-1 p-6 overflow-auto pt-8">
         <div className="w-full max-w-4xl mx-auto">
           {activeSection === "company-info" && <CompanyInfoForm />}
           {activeSection === "fleet-equipment" && <FleetEquipmentSection />}
