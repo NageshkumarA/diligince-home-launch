@@ -3,7 +3,6 @@
 export { ThemeProvider, useTheme } from './ThemeContext';
 export { NotificationProvider, useNotificationContext } from './NotificationContext';
 export { UserProvider, useUser } from './UserContext';
-export { VendorSpecializationProvider, useVendorSpecialization } from './VendorSpecializationContext';
 
 // Export types
 export type { 
@@ -16,5 +15,3 @@ export type {
   ThemeConfig,
   ThemeColors
 } from '../types/shared';
-
-export type { VendorSpecialization } from './VendorSpecializationContext';

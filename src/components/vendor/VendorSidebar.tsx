@@ -1,8 +1,9 @@
+
 import { Building, Users, Briefcase, Award, FolderOpen, CreditCard, Settings } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ContentType } from "@/pages/service-vendor/ServiceVendorProfile";
+import { ContentType } from "@/pages/ServiceVendorProfile";
 
 interface VendorSidebarProps {
   vendorData: {

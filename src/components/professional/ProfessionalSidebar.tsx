@@ -1,7 +1,8 @@
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { SidebarMenuItem, ContentType } from "@/pages/professional/ProfessionalProfile";
+import { SidebarMenuItem, ContentType } from "@/pages/ProfessionalProfile";
 
 interface ProfessionalSidebarProps {
   professionalData: {

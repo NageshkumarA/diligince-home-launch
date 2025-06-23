@@ -40,7 +40,7 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <Link to="/" className="text-xl font-bold text-blue-600">
-            Diligince.ai
+            diligince.ai
           </Link>
         </div>
         

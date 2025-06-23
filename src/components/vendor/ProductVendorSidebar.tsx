@@ -1,8 +1,9 @@
+
 import { Building, Tag, Award, CreditCard, Settings, Box, Truck } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ContentType } from "@/pages/product-vendor/ProductVendorProfile";
+import { ContentType } from "@/pages/ProductVendorProfile";
 
 interface ProductVendorSidebarProps {
   vendorData: {

@@ -36,7 +36,6 @@ import {
 } from "@/components/ui/table";
 import Footer from "@/components/Footer";
 import EnterpriseTeamMembers from "@/components/industry/EnterpriseTeamMembers";
-import IndustryHeader from "@/components/industry/IndustryHeader";
 
 // Types for the content
 export type ContentType = 
@@ -98,6 +97,15 @@ const IndustryProfile = () => {
     { name: "Payment Settings", icon: <CreditCard className="w-5 h-5" /> },
     { name: "Notification Preferences", icon: <Bell className="w-5 h-5" /> },
     { name: "Security & Login", icon: <Lock className="w-5 h-5" /> },
+  ];
+
+  // Header navigation items
+  const headerNavItems = [
+    { label: "Dashboard", path: "/industry-dashboard", icon: <Home size={18} /> },
+    { label: "Requirements", path: "/create-requirement", icon: <FileText size={18} /> },
+    { label: "Stakeholders", path: "/vendors", icon: <Users size={18} /> },
+    { label: "Messages", path: "/messages", icon: <Mail size={18} /> },
+    { label: "Profile", path: "/industry-profile", icon: <User size={18} />, active: true },
   ];
 
   // Handle team member form submission
@@ -746,7 +754,28 @@ const IndustryProfile = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <IndustryHeader />
+      {/* Header with navigation */}
+      <header className="fixed top-0 left-0 right-0 h-16 bg-blue-600 flex items-center justify-between px-4 lg:px-8 z-10">
+        <div className="flex items-center">
+          <h1 className="text-xl md:text-2xl font-bold text-white">diligince.ai</h1>
+        </div>
+        
+        {/* Navigation Links */}
+        <nav className="hidden md:flex items-center space-x-6">
+          <Link to="/industry-dashboard" className="text-white hover:text-blue-100">Dashboard</Link>
+          <Link to="/create-requirement" className="text-white hover:text-blue-100">Requirements</Link>
+          <Link to="/vendors" className="text-white hover:text-blue-100">Stakeholders</Link>
+          <Link to="/messages" className="text-white hover:text-blue-100">Messages</Link>
+          <Link to="/documents" className="text-white hover:text-blue-100">Documents</Link>
+        </nav>
+        
+        {/* User Profile */}
+        <div className="flex items-center">
+          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-blue-600 font-bold">
+            {getInitials(companyName)}
+          </div>
+        </div>
+      </header>
 
       {/* Main content area with sidebar and main panel */}
       <div className="flex flex-grow pt-16">
