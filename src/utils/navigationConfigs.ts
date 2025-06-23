@@ -70,10 +70,10 @@ export const productVendorHeaderConfig: HeaderConfig = {
   brandHref: "/",
   navItems: [
     { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/product-vendor-dashboard" },
-    { label: "RFQs", icon: React.createElement(FileText, { size: 18 }), href: "#" },
-    { label: "Catalog", icon: React.createElement(LayoutGrid, { size: 18 }), href: "#" },
-    { label: "Orders", icon: React.createElement(ShoppingCart, { size: 18 }), href: "#" },
-    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "#" },
+    { label: "RFQs", icon: React.createElement(FileText, { size: 18 }), href: "/product-vendor-rfqs" },
+    { label: "Catalog", icon: React.createElement(LayoutGrid, { size: 18 }), href: "/product-vendor-catalog" },
+    { label: "Orders", icon: React.createElement(ShoppingCart, { size: 18 }), href: "/product-vendor-orders" },
+    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "/product-vendor-messages" },
     { label: "Profile", icon: React.createElement(User, { size: 18 }), href: "/product-vendor-profile" }
   ],
   avatarInitials: "PP",
