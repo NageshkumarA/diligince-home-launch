@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Bell, Menu, X } from "lucide-react";
@@ -20,7 +19,7 @@ export const GenericHeader = ({ config, className = "" }: GenericHeaderProps) =>
   };
 
   return (
-    <header className={`fixed top-0 left-0 right-0 h-16 ${config.theme.bgColor} ${config.theme.textColor} z-10 shadow-md ${className}`}>
+    <header className={`fixed top-0 left-0 right-0 h-16 ${config.theme.bgColor} ${config.theme.textColor} z-50 shadow-md ${className}`}>
       <div className="container mx-auto h-full flex items-center justify-between px-4">
         <div className="flex items-center gap-10">
           <Link to={config.brandHref} className="text-xl font-bold">
