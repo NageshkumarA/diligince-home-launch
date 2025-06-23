@@ -7,10 +7,8 @@ import {
   Info, 
   FileText, 
   Upload, 
-  CheckCircle2, 
   Eye, 
   Send,
-  Circle,
   Check
 } from "lucide-react";
 
@@ -101,87 +99,65 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
     <div className="w-full py-8">
       {/* Desktop version */}
       <div className="hidden lg:block">
-        <div className="relative">
-          {/* Progress line background */}
-          <div className="absolute top-12 left-0 right-0 h-1 bg-gradient-to-r from-gray-200 via-gray-200 to-gray-200 rounded-full">
-            {/* Active progress line */}
-            <div 
-              className="h-full bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 rounded-full transition-all duration-700 ease-out"
-              style={{ 
-                width: `${Math.max(0, ((currentStep - 1) / (steps.length - 1)) * 100)}%` 
-              }}
-            />
-          </div>
-
-          {/* Steps */}
-          <div className="relative flex justify-between">
+        <div className="relative max-w-4xl mx-auto">
+          <div className="flex items-center justify-between">
             {steps.map((step, index) => {
               const status = getStepStatus(step.id);
               const Icon = step.icon;
               const isAccessible = isStepAccessible(step.id);
+              const isLastStep = index === steps.length - 1;
               
               return (
-                <div key={step.id} className="flex flex-col items-center group">
-                  {/* Step circle */}
-                  <button
-                    type="button"
-                    onClick={() => isAccessible && onStepClick(step.id as StepType)}
-                    disabled={!isAccessible}
-                    className={cn(
-                      "relative flex items-center justify-center w-24 h-24 rounded-full border-4 transition-all duration-300 transform group-hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-200",
-                      status === "completed" && "bg-gradient-to-br from-green-500 to-emerald-600 border-green-500 text-white shadow-lg shadow-green-200",
-                      status === "current" && "bg-gradient-to-br from-blue-500 to-indigo-600 border-blue-500 text-white shadow-xl shadow-blue-200 animate-pulse",
-                      status === "upcoming" && isAccessible && "bg-white border-gray-300 text-gray-600 hover:border-blue-300 hover:shadow-lg",
-                      status === "upcoming" && !isAccessible && "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50"
-                    )}
-                  >
-                    {/* Background glow effect for current step */}
-                    {status === "current" && (
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 opacity-75 animate-ping" />
-                    )}
-                    
-                    {/* Icon or check mark */}
-                    <div className="relative z-10">
-                      {status === "completed" ? (
-                        <Check className="w-8 h-8" />
-                      ) : (
-                        <Icon className="w-8 h-8" />
+                <div key={step.id} className="flex items-center">
+                  {/* Step circle and content */}
+                  <div className="flex flex-col items-center">
+                    <button
+                      type="button"
+                      onClick={() => isAccessible && onStepClick(step.id as StepType)}
+                      disabled={!isAccessible}
+                      className={cn(
+                        "w-12 h-12 rounded-full border-2 flex items-center justify-center transition-colors duration-200",
+                        status === "completed" && "bg-green-500 border-green-500 text-white",
+                        status === "current" && "bg-blue-500 border-blue-500 text-white",
+                        status === "upcoming" && isAccessible && "bg-white border-gray-300 text-gray-600 hover:border-blue-400",
+                        status === "upcoming" && !isAccessible && "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
                       )}
-                    </div>
-
-                    {/* Step number badge */}
-                    <div className={cn(
-                      "absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300",
-                      status === "completed" && "bg-green-600 border-green-400 text-white",
-                      status === "current" && "bg-blue-600 border-blue-400 text-white",
-                      status === "upcoming" && "bg-gray-200 border-gray-300 text-gray-600"
-                    )}>
-                      {step.id}
-                    </div>
-                  </button>
-
-                  {/* Step info */}
-                  <div className="mt-6 text-center max-w-32">
-                    <h3 className={cn(
-                      "text-sm font-semibold transition-colors duration-200",
-                      status === "completed" && "text-green-700",
-                      status === "current" && "text-blue-700",
-                      status === "upcoming" && "text-gray-600"
-                    )}>
-                      {step.name}
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-1 leading-tight">
-                      {step.description}
-                    </p>
-                  </div>
-
-                  {/* Hover tooltip */}
-                  <div className="absolute top-32 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                    <div className="bg-gray-900 text-white text-xs py-2 px-3 rounded-lg shadow-lg whitespace-nowrap">
-                      {step.description}
-                      <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45" />
+                    >
+                      {status === "completed" ? (
+                        <Check className="w-5 h-5" />
+                      ) : (
+                        <Icon className="w-5 h-5" />
+                      )}
+                    </button>
+                    
+                    <div className="mt-3 text-center">
+                      <h3 className={cn(
+                        "text-sm font-medium",
+                        status === "completed" && "text-green-600",
+                        status === "current" && "text-blue-600",
+                        status === "upcoming" && "text-gray-500"
+                      )}>
+                        {step.name}
+                      </h3>
+                      <p className="text-xs text-gray-400 mt-1 max-w-24">
+                        {step.description}
+                      </p>
                     </div>
                   </div>
+
+                  {/* Connecting line */}
+                  {!isLastStep && (
+                    <div className="flex-1 mx-4 h-0.5 bg-gray-200 relative">
+                      <div 
+                        className={cn(
+                          "h-full transition-colors duration-300",
+                          status === "completed" || (status === "current" && index < currentStep - 1) 
+                            ? "bg-green-500" 
+                            : "bg-gray-200"
+                        )}
+                      />
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -191,44 +167,51 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
 
       {/* Tablet version */}
       <div className="hidden md:block lg:hidden">
-        <div className="relative">
-          <div className="absolute top-8 left-0 right-0 h-1 bg-gray-200 rounded-full">
-            <div 
-              className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full transition-all duration-500"
-              style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
-            />
-          </div>
-
-          <div className="relative flex justify-between">
-            {steps.map((step) => {
+        <div className="relative max-w-2xl mx-auto">
+          <div className="flex items-center justify-between">
+            {steps.map((step, index) => {
               const status = getStepStatus(step.id);
               const Icon = step.icon;
               const isAccessible = isStepAccessible(step.id);
+              const isLastStep = index === steps.length - 1;
               
               return (
-                <div key={step.id} className="flex flex-col items-center">
-                  <button
-                    onClick={() => isAccessible && onStepClick(step.id as StepType)}
-                    disabled={!isAccessible}
-                    className={cn(
-                      "w-16 h-16 rounded-full border-3 flex items-center justify-center transition-all duration-200",
-                      status === "completed" && "bg-green-500 border-green-500 text-white",
-                      status === "current" && "bg-blue-500 border-blue-500 text-white shadow-lg",
-                      status === "upcoming" && isAccessible && "bg-white border-gray-300 text-gray-600 hover:border-blue-300",
-                      status === "upcoming" && !isAccessible && "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50"
-                    )}
-                  >
-                    {status === "completed" ? (
-                      <Check className="w-5 h-5" />
-                    ) : (
-                      <Icon className="w-5 h-5" />
-                    )}
-                  </button>
-                  <div className="mt-3 text-center">
-                    <span className="text-xs font-medium text-gray-600">
+                <div key={step.id} className="flex items-center">
+                  <div className="flex flex-col items-center">
+                    <button
+                      onClick={() => isAccessible && onStepClick(step.id as StepType)}
+                      disabled={!isAccessible}
+                      className={cn(
+                        "w-10 h-10 rounded-full border-2 flex items-center justify-center transition-colors duration-200",
+                        status === "completed" && "bg-green-500 border-green-500 text-white",
+                        status === "current" && "bg-blue-500 border-blue-500 text-white",
+                        status === "upcoming" && isAccessible && "bg-white border-gray-300 text-gray-600 hover:border-blue-400",
+                        status === "upcoming" && !isAccessible && "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
+                      )}
+                    >
+                      {status === "completed" ? (
+                        <Check className="w-4 h-4" />
+                      ) : (
+                        <Icon className="w-4 h-4" />
+                      )}
+                    </button>
+                    <span className="text-xs font-medium text-gray-600 mt-2">
                       {step.name}
                     </span>
                   </div>
+
+                  {!isLastStep && (
+                    <div className="flex-1 mx-3 h-0.5 bg-gray-200">
+                      <div 
+                        className={cn(
+                          "h-full transition-colors duration-300",
+                          status === "completed" || (status === "current" && index < currentStep - 1) 
+                            ? "bg-green-500" 
+                            : "bg-gray-200"
+                        )}
+                      />
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -257,17 +240,15 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
           </div>
           
           {/* Mobile progress bar */}
-          <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
+          <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
             <div 
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full transition-all duration-500 flex items-center justify-end pr-1"
+              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
               style={{ width: `${Math.max(8, ((currentStep - 1) / (steps.length - 1)) * 100)}%` }}
-            >
-              <div className="w-2 h-2 bg-white rounded-full shadow-sm" />
-            </div>
+            />
           </div>
 
           {/* Step dots */}
-          <div className="flex justify-center space-x-2">
+          <div className="flex justify-center space-x-3">
             {steps.map((step) => {
               const status = getStepStatus(step.id);
               return (
@@ -276,9 +257,9 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
                   onClick={() => isStepAccessible(step.id) && onStepClick(step.id as StepType)}
                   disabled={!isStepAccessible(step.id)}
                   className={cn(
-                    "w-3 h-3 rounded-full transition-all duration-200",
+                    "w-3 h-3 rounded-full transition-colors duration-200",
                     status === "completed" && "bg-green-500",
-                    status === "current" && "bg-blue-500 ring-2 ring-blue-200",
+                    status === "current" && "bg-blue-500",
                     status === "upcoming" && "bg-gray-300"
                   )}
                 />
