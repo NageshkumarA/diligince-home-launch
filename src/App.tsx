@@ -6,66 +6,50 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider, NotificationProvider, UserProvider, VendorSpecializationProvider } from "@/contexts";
-
-// Common pages
-import Index from "./pages/common/Index";
-import About from "./pages/common/About";
-import Contact from "./pages/common/Contact";
-import Blog from "./pages/common/Blog";
-import Careers from "./pages/common/Careers";
-import Pricing from "./pages/common/Pricing";
-import Terms from "./pages/common/Terms";
-import Privacy from "./pages/common/Privacy";
-import Vendors from "./pages/common/Vendors";
-import Experts from "./pages/common/Experts";
-import WorkCompletionPayment from "./pages/common/WorkCompletionPayment";
-
-// Auth pages
-import SignUp from "./pages/auth/SignUp";
-import SignIn from "./pages/auth/SignIn";
-
-// Industry pages
-import IndustryDashboard from "./pages/industry/IndustryDashboard";
-import IndustryProfile from "./pages/industry/IndustryProfile";
-import IndustryMessages from "./pages/industry/IndustryMessages";
-import IndustryDocuments from "./pages/industry/IndustryDocuments";
-import CreateRequirement from "./pages/industry/CreateRequirement";
-import CreatePurchaseOrder from "./pages/industry/CreatePurchaseOrder";
-
-// Professional pages
-import ProfessionalDashboard from "./pages/professional/ProfessionalDashboard";
-import ProfessionalProfile from "./pages/professional/ProfessionalProfile";
-import ProfessionalCalendar from "./pages/professional/ProfessionalCalendar";
-import ProfessionalOpportunities from "./pages/professional/ProfessionalOpportunities";
-import ProfessionalMessages from "./pages/professional/ProfessionalMessages";
-
-// Service vendor pages
-import ServiceVendorDashboard from "./pages/service-vendor/ServiceVendorDashboard";
-import ServiceVendorProfile from "./pages/service-vendor/ServiceVendorProfile";
-import ServiceVendorRFQs from "./pages/service-vendor/ServiceVendorRFQs";
-import ServiceVendorServices from "./pages/service-vendor/ServiceVendorServices";
-import ServiceVendorProjects from "./pages/service-vendor/ServiceVendorProjects";
-import ServiceVendorMessages from "./pages/service-vendor/ServiceVendorMessages";
-
-// Product vendor pages
-import ProductVendorDashboard from "./pages/product-vendor/ProductVendorDashboard";
-import ProductVendorProfile from "./pages/product-vendor/ProductVendorProfile";
-import ProductVendorRFQs from "./pages/product-vendor/ProductVendorRFQs";
-import ProductVendorCatalog from "./pages/product-vendor/ProductVendorCatalog";
-import ProductVendorOrders from "./pages/product-vendor/ProductVendorOrders";
-import ProductVendorMessages from "./pages/product-vendor/ProductVendorMessages";
-
-// Logistics vendor pages
-import LogisticsVendorDashboard from "./pages/logistics-vendor/LogisticsVendorDashboard";
-import LogisticsVendorProfile from "./pages/logistics-vendor/LogisticsVendorProfile";
-import LogisticsVendorRequests from "./pages/logistics-vendor/LogisticsVendorRequests";
-import LogisticsVendorFleet from "./pages/logistics-vendor/LogisticsVendorFleet";
-import LogisticsVendorDeliveries from "./pages/logistics-vendor/LogisticsVendorDeliveries";
-import LogisticsVendorMessages from "./pages/logistics-vendor/LogisticsVendorMessages";
-
-// Shared pages
-import NotFound from "./pages/shared/NotFound";
-import VendorProfile from "./pages/shared/VendorProfile";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Blog from "./pages/Blog";
+import Careers from "./pages/Careers";
+import Pricing from "./pages/Pricing";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Vendors from "./pages/Vendors";
+import Experts from "./pages/Experts";
+import IndustryDashboard from "./pages/IndustryDashboard";
+import IndustryProfile from "./pages/IndustryProfile";
+import IndustryMessages from "./pages/IndustryMessages";
+import IndustryDocuments from "./pages/IndustryDocuments";
+import ProfessionalDashboard from "./pages/ProfessionalDashboard";
+import ProfessionalProfile from "./pages/ProfessionalProfile";
+import ProfessionalCalendar from "./pages/ProfessionalCalendar";
+import ProfessionalOpportunities from "./pages/ProfessionalOpportunities";
+import ProfessionalMessages from "./pages/ProfessionalMessages";
+import ServiceVendorDashboard from "./pages/ServiceVendorDashboard";
+import ServiceVendorProfile from "./pages/ServiceVendorProfile";
+import ServiceVendorRFQs from "./pages/ServiceVendorRFQs";
+import ServiceVendorServices from "./pages/ServiceVendorServices";
+import ServiceVendorProjects from "./pages/ServiceVendorProjects";
+import ServiceVendorMessages from "./pages/ServiceVendorMessages";
+import ProductVendorDashboard from "./pages/ProductVendorDashboard";
+import ProductVendorProfile from "./pages/ProductVendorProfile";
+import ProductVendorRFQs from "./pages/ProductVendorRFQs";
+import ProductVendorCatalog from "./pages/ProductVendorCatalog";
+import ProductVendorOrders from "./pages/ProductVendorOrders";
+import ProductVendorMessages from "./pages/ProductVendorMessages";
+import LogisticsVendorDashboard from "./pages/LogisticsVendorDashboard";
+import LogisticsVendorProfile from "./pages/LogisticsVendorProfile";
+import VendorProfile from "./pages/VendorProfile";
+import CreateRequirement from "./pages/CreateRequirement";
+import CreatePurchaseOrder from "./pages/CreatePurchaseOrder";
+import WorkCompletionPayment from "./pages/WorkCompletionPayment";
+import LogisticsVendorRequests from "./pages/LogisticsVendorRequests";
+import LogisticsVendorFleet from "./pages/LogisticsVendorFleet";
+import LogisticsVendorDeliveries from "./pages/LogisticsVendorDeliveries";
+import LogisticsVendorMessages from "./pages/LogisticsVendorMessages";
 
 const queryClient = new QueryClient();
 

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Helmet } from "react-helmet";
 import IndustryHeader from "@/components/industry/IndustryHeader";
@@ -45,6 +46,7 @@ const Vendors = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Sample vendor cards */}
               {[1, 2, 3, 4, 5, 6].map((index) => (
                 <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
                   <CardHeader className="pb-2">
@@ -83,6 +85,7 @@ const Vendors = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Sample expert cards */}
               {[1, 2, 3, 4, 5, 6].map((index) => (
                 <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
                   <CardHeader className="pb-2">
