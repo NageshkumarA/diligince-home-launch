@@ -1,72 +1,95 @@
 
-import { useState } from "react";
-import IndustryHeader from "@/components/industry/IndustryHeader";
-import IndustrySidebar from "@/components/industry/IndustrySidebar";
-import CompanyInfoForm from "@/components/industry/forms/CompanyInfoForm";
-import LocationsForm from "@/components/industry/forms/LocationsForm";
-import ContactsForm from "@/components/industry/forms/ContactsForm";
-import CertificationsForm from "@/components/industry/forms/CertificationsForm";
-import PaymentSettingsForm from "@/components/industry/forms/PaymentSettingsForm";
-import AccountSettingsForm from "@/components/industry/forms/AccountSettingsForm";
-
-export type ContentType = 
-  | "company-info" 
-  | "locations" 
-  | "contacts" 
-  | "certifications" 
-  | "payment-settings" 
-  | "account-settings";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const IndustryProfile = () => {
-  const [activeContent, setActiveContent] = useState<ContentType>("company-info");
-  const [profileCompletion, setProfileCompletion] = useState(75);
-  
-  const industryData = {
-    companyName: "SteelWorks Manufacturing",
-    industry: "Steel Production",
-    initials: "SM",
-    isVerified: true
-  };
-
-  const handleMenuItemClick = (contentType: ContentType) => {
-    setActiveContent(contentType);
-  };
-
-  const renderContent = () => {
-    switch (activeContent) {
-      case "company-info":
-        return <CompanyInfoForm />;
-      case "locations":
-        return <LocationsForm />;
-      case "contacts":
-        return <ContactsForm />;
-      case "certifications":
-        return <CertificationsForm />;
-      case "payment-settings":
-        return <PaymentSettingsForm />;
-      case "account-settings":
-        return <AccountSettingsForm />;
-      default:
-        return <CompanyInfoForm />;
-    }
-  };
-
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <IndustryHeader />
-      
-      <div className="flex flex-grow pt-16">
-        <IndustrySidebar
-          industryData={industryData}
-          activeMenuItem={activeContent}
-          onMenuItemClick={handleMenuItemClick}
-          profileCompletion={profileCompletion}
-        />
-        
-        <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
-          {renderContent()}
-        </main>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <main className="p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Industry Profile</h1>
+            <p className="text-gray-600">Manage your company information and settings.</p>
+          </div>
+
+          <Tabs defaultValue="company" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-6">
+              <TabsTrigger value="company">Company Info</TabsTrigger>
+              <TabsTrigger value="locations">Locations</TabsTrigger>
+              <TabsTrigger value="contacts">Contacts</TabsTrigger>
+              <TabsTrigger value="certifications">Certifications</TabsTrigger>
+              <TabsTrigger value="payment">Payment</TabsTrigger>
+              <TabsTrigger value="account">Account</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="company" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Company Information</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">Update your company details and business information.</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="locations" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Business Locations</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">Manage your business locations and operational areas.</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="contacts" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Contact Information</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">Update contact details and key personnel information.</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="certifications" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Certifications & Licenses</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">Manage your business certifications and licenses.</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="payment" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Payment Settings</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">Configure payment methods and billing information.</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="account" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Account Settings</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">Manage account preferences and security settings.</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </main>
     </div>
   );
 };
