@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -124,6 +123,14 @@ export function VendorFormEnhanced() {
     setTimeout(() => {
       console.log("Form values:", values);
       
+      // Generate initials from business name
+      const initials = values.businessName
+        .split(' ')
+        .map(word => word.charAt(0))
+        .join('')
+        .substring(0, 2)
+        .toUpperCase();
+      
       // Create user profile
       const userProfile = {
         id: Math.random().toString(36).substr(2, 9),
@@ -131,6 +138,8 @@ export function VendorFormEnhanced() {
         name: values.businessName,
         role: 'logistics_vendor' as const,
         avatar: '',
+        initials: initials,
+        status: 'active' as const,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         preferences: {
