@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Search, Send, Paperclip, Phone, Video, MoreVertical, Star, Archive } from "lucide-react";
+import { Search, Send, Paperclip, Phone, Video, MoreVertical, Star, Archive, Filter, MessageSquare } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const ServiceVendorMessages = () => {
@@ -116,18 +116,26 @@ const ServiceVendorMessages = () => {
   };
 
   const selectedConv = conversations.find(c => c.id === selectedConversation);
+  const unreadCount = conversations.filter(c => c.unread > 0).reduce((sum, c) => sum + c.unread, 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <VendorHeader />
       
-      <main className="pt-16 h-screen">
+      <main className="pt-20 h-screen">
         <div className="h-full flex">
           {/* Conversations Sidebar */}
           <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
             {/* Header */}
             <div className="p-4 border-b border-gray-200">
-              <h1 className="text-xl font-semibold text-gray-900 mb-4">Messages</h1>
+              <div className="flex items-center justify-between mb-4">
+                <h1 className="text-xl font-semibold text-gray-900">Messages</h1>
+                {unreadCount > 0 && (
+                  <Badge className="bg-yellow-600 hover:bg-yellow-700">
+                    {unreadCount} unread
+                  </Badge>
+                )}
+              </div>
               
               {/* Search */}
               <div className="relative mb-4">
@@ -319,7 +327,7 @@ const ServiceVendorMessages = () => {
                 <div className="text-center">
                   <div className="mb-4">
                     <div className="h-16 w-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto">
-                      <Send className="h-8 w-8 text-yellow-600" />
+                      <MessageSquare className="h-8 w-8 text-yellow-600" />
                     </div>
                   </div>
                   <h3 className="text-lg font-medium text-gray-900 mb-2">Select a conversation</h3>

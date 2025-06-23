@@ -8,10 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Search, Filter, Calendar, Users, DollarSign, Clock, Eye, MessageSquare, CheckCircle, AlertCircle, Plus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ProjectDetailsModal } from "@/components/vendor/service/modals/ProjectDetailsModal";
 
 const ServiceVendorProjects = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [showProjectDetails, setShowProjectDetails] = useState(false);
 
   // Mock projects data
   const projects = [
@@ -111,11 +114,23 @@ const ServiceVendorProjects = () => {
     return "bg-blue-500";
   };
 
+  const handleViewProject = (project: any) => {
+    setSelectedProject(project);
+    setShowProjectDetails(true);
+  };
+
+  const filteredProjects = projects.filter(project => {
+    const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         project.client.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = statusFilter === "all" || project.status === statusFilter;
+    return matchesSearch && matchesFilter;
+  });
+
   return (
     <div className="min-h-screen bg-gray-50">
       <VendorHeader />
       
-      <main className="pt-16 p-6 lg:p-8">
+      <main className="pt-20 p-6 lg:p-8">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -225,7 +240,7 @@ const ServiceVendorProjects = () => {
 
           {/* Projects List */}
           <div className="space-y-4">
-            {projects.map((project) => (
+            {filteredProjects.map((project) => (
               <Card key={project.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex flex-col lg:flex-row gap-6">
@@ -303,7 +318,7 @@ const ServiceVendorProjects = () => {
                       </div>
 
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="flex-1">
+                        <Button variant="outline" size="sm" className="flex-1" onClick={() => handleViewProject(project)}>
                           <Eye className="mr-2 h-4 w-4" />
                           View
                         </Button>
@@ -320,6 +335,15 @@ const ServiceVendorProjects = () => {
           </div>
         </div>
       </main>
+
+      {/* Project Details Modal */}
+      {selectedProject && (
+        <ProjectDetailsModal
+          isOpen={showProjectDetails}
+          onClose={() => setShowProjectDetails(false)}
+          project={selectedProject}
+        />
+      )}
     </div>
   );
 };

@@ -7,10 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Calendar, DollarSign, Clock, Eye, Send, FileText } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RFQDetailsModal } from "@/components/vendor/service/modals/RFQDetailsModal";
+import { ProposalCreationModal } from "@/components/vendor/service/modals/ProposalCreationModal";
 
 const ServiceVendorRFQs = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedRFQ, setSelectedRFQ] = useState<any>(null);
+  const [showRFQDetails, setShowRFQDetails] = useState(false);
+  const [showProposalModal, setShowProposalModal] = useState(false);
+  const [proposalRFQTitle, setProposalRFQTitle] = useState("");
 
   // Mock RFQ data
   const rfqs = [
@@ -74,11 +80,28 @@ const ServiceVendorRFQs = () => {
     }
   };
 
+  const handleViewDetails = (rfq: any) => {
+    setSelectedRFQ(rfq);
+    setShowRFQDetails(true);
+  };
+
+  const handleCreateProposal = (rfq: any) => {
+    setProposalRFQTitle(rfq.title);
+    setShowProposalModal(true);
+  };
+
+  const filteredRFQs = rfqs.filter(rfq => {
+    const matchesSearch = rfq.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         rfq.company.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = statusFilter === "all" || rfq.status === statusFilter;
+    return matchesSearch && matchesFilter;
+  });
+
   return (
     <div className="min-h-screen bg-gray-50">
       <VendorHeader />
       
-      <main className="pt-16 p-6 lg:p-8">
+      <main className="pt-20 p-6 lg:p-8">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -188,7 +211,7 @@ const ServiceVendorRFQs = () => {
 
           {/* RFQ List */}
           <div className="space-y-4">
-            {rfqs.map((rfq) => (
+            {filteredRFQs.map((rfq) => (
               <Card key={rfq.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -233,12 +256,12 @@ const ServiceVendorRFQs = () => {
                     </div>
 
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => handleViewDetails(rfq)}>
                         <Eye className="mr-2 h-4 w-4" />
                         View Details
                       </Button>
                       {rfq.status === "open" && (
-                        <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700">
+                        <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700" onClick={() => handleCreateProposal(rfq)}>
                           <Send className="mr-2 h-4 w-4" />
                           Submit Proposal
                         </Button>
@@ -251,6 +274,21 @@ const ServiceVendorRFQs = () => {
           </div>
         </div>
       </main>
+
+      {/* Modals */}
+      {selectedRFQ && (
+        <RFQDetailsModal
+          isOpen={showRFQDetails}
+          onClose={() => setShowRFQDetails(false)}
+          rfq={selectedRFQ}
+        />
+      )}
+
+      <ProposalCreationModal
+        isOpen={showProposalModal}
+        onClose={() => setShowProposalModal(false)}
+        rfqTitle={proposalRFQTitle}
+      />
     </div>
   );
 };
