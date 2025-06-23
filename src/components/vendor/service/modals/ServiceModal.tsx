@@ -62,7 +62,7 @@ export const ServiceModal = ({ isOpen, onClose, service, isEdit = false }: Servi
   };
 
   const handleSave = () => {
-    console.log("Saving service:", { serviceData, skills, portfolio });
+    console.log("Saving industrial service:", { serviceData, skills, portfolio });
     onClose();
   };
 
@@ -71,7 +71,7 @@ export const ServiceModal = ({ isOpen, onClose, service, isEdit = false }: Servi
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
-            {isEdit ? "Edit Service" : "Add New Service"}
+            {isEdit ? "Edit Industrial Service" : "Add New Industrial Service"}
           </DialogTitle>
         </DialogHeader>
         
@@ -83,7 +83,7 @@ export const ServiceModal = ({ isOpen, onClose, service, isEdit = false }: Servi
                 id="name"
                 value={serviceData.name}
                 onChange={(e) => setServiceData({...serviceData, name: e.target.value})}
-                placeholder="e.g., Custom Software Development"
+                placeholder="e.g., Industrial Equipment Maintenance"
               />
             </div>
             <div>
@@ -93,13 +93,13 @@ export const ServiceModal = ({ isOpen, onClose, service, isEdit = false }: Servi
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="software-development">Software Development</SelectItem>
-                  <SelectItem value="web-development">Web Development</SelectItem>
-                  <SelectItem value="mobile-development">Mobile Development</SelectItem>
-                  <SelectItem value="digital-marketing">Digital Marketing</SelectItem>
-                  <SelectItem value="design">Design & Branding</SelectItem>
-                  <SelectItem value="consulting">Business Consulting</SelectItem>
-                  <SelectItem value="data-analytics">Data & Analytics</SelectItem>
+                  <SelectItem value="equipment-maintenance">Equipment Maintenance & Repair</SelectItem>
+                  <SelectItem value="industrial-automation">Industrial Automation & Control Systems</SelectItem>
+                  <SelectItem value="safety-compliance">Safety & Compliance Auditing</SelectItem>
+                  <SelectItem value="process-optimization">Manufacturing Process Optimization</SelectItem>
+                  <SelectItem value="quality-control">Quality Control & Testing</SelectItem>
+                  <SelectItem value="facility-management">Facility Management</SelectItem>
+                  <SelectItem value="equipment-installation">Industrial Equipment Installation</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -111,7 +111,7 @@ export const ServiceModal = ({ isOpen, onClose, service, isEdit = false }: Servi
               id="description"
               value={serviceData.description}
               onChange={(e) => setServiceData({...serviceData, description: e.target.value})}
-              placeholder="Describe your service in detail..."
+              placeholder="Describe your industrial service in detail..."
               className="min-h-[100px]"
             />
           </div>
@@ -128,6 +128,7 @@ export const ServiceModal = ({ isOpen, onClose, service, isEdit = false }: Servi
                   <SelectItem value="fixed">Fixed Price</SelectItem>
                   <SelectItem value="milestone">Milestone-based</SelectItem>
                   <SelectItem value="retainer">Monthly Retainer</SelectItem>
+                  <SelectItem value="maintenance-contract">Maintenance Contract</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -138,22 +139,23 @@ export const ServiceModal = ({ isOpen, onClose, service, isEdit = false }: Servi
                   <SelectValue placeholder="Select experience" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1-2">1-2 years</SelectItem>
                   <SelectItem value="3-5">3-5 years</SelectItem>
-                  <SelectItem value="5-10">5-10 years</SelectItem>
-                  <SelectItem value="10+">10+ years</SelectItem>
+                  <SelectItem value="5-8">5-8 years</SelectItem>
+                  <SelectItem value="8-12">8-12 years</SelectItem>
+                  <SelectItem value="12-20">12-20 years</SelectItem>
+                  <SelectItem value="20+">20+ years</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div>
-            <Label>Skills & Technologies</Label>
+            <Label>Industrial Skills & Technologies</Label>
             <div className="flex gap-2 mt-2 mb-3">
               <Input
                 value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
-                placeholder="Add a skill..."
+                placeholder="Add a skill (e.g., PLC Programming)..."
                 onKeyPress={(e) => e.key === 'Enter' && addSkill()}
               />
               <Button type="button" onClick={addSkill} variant="outline">
@@ -176,12 +178,12 @@ export const ServiceModal = ({ isOpen, onClose, service, isEdit = false }: Servi
           </div>
 
           <div>
-            <Label>Portfolio Links</Label>
+            <Label>Portfolio Projects</Label>
             <div className="flex gap-2 mt-2 mb-3">
               <Input
                 value={newPortfolioItem}
                 onChange={(e) => setNewPortfolioItem(e.target.value)}
-                placeholder="Add portfolio link or project name..."
+                placeholder="Add portfolio project or client reference..."
                 onKeyPress={(e) => e.key === 'Enter' && addPortfolioItem()}
               />
               <Button type="button" onClick={addPortfolioItem} variant="outline">

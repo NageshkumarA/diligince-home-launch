@@ -48,7 +48,7 @@ export const RFQDetailsModal = ({ isOpen, onClose, rfq }: RFQDetailsModalProps) 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">RFQ Details</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Industrial RFQ Details</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-6">
@@ -96,12 +96,12 @@ export const RFQDetailsModal = ({ isOpen, onClose, rfq }: RFQDetailsModalProps) 
           <Separator />
 
           <div>
-            <h3 className="font-semibold mb-2">Description</h3>
+            <h3 className="font-semibold mb-2">Project Description</h3>
             <p className="text-gray-600">{rfq.description}</p>
           </div>
 
           <div>
-            <h3 className="font-semibold mb-2">Required Skills</h3>
+            <h3 className="font-semibold mb-2">Required Industrial Skills</h3>
             <div className="flex flex-wrap gap-2">
               {rfq.skills.map((skill, index) => (
                 <Badge key={index} variant="secondary" className="bg-yellow-50 text-yellow-700">

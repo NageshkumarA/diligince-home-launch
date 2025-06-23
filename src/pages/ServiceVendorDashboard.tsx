@@ -14,12 +14,12 @@ const ServiceVendorDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       <VendorHeader />
       
-      <main className="pt-16 p-6 lg:p-8">
+      <main className="pt-20 p-6 lg:p-8">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Welcome Section */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Service Dashboard</h1>
-            <p className="text-gray-600">Welcome back! Here's what's happening with your service operations.</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Industrial Service Dashboard</h1>
+            <p className="text-gray-600">Welcome back! Here's what's happening with your industrial service operations.</p>
           </div>
 
           {/* Stats Cards */}

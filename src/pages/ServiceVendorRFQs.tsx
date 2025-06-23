@@ -18,46 +18,72 @@ const ServiceVendorRFQs = () => {
   const [showProposalModal, setShowProposalModal] = useState(false);
   const [proposalRFQTitle, setProposalRFQTitle] = useState("");
 
-  // Mock RFQ data
+  // Industrial RFQ data
   const rfqs = [
     {
       id: "RFQ-001",
-      title: "Digital Marketing Campaign for Tech Startup",
-      company: "TechFlow Inc.",
-      budget: "$15,000 - $25,000",
-      deadline: "2024-01-15",
+      title: "Industrial Equipment Maintenance Contract",
+      company: "SteelWorks Manufacturing",
+      budget: "$45,000 - $65,000",
+      deadline: "2024-01-25",
       status: "open",
       priority: "high",
-      description: "Looking for comprehensive digital marketing services including SEO, content marketing, and social media management.",
-      skills: ["Digital Marketing", "SEO", "Content Creation"],
+      description: "Seeking comprehensive maintenance services for steel production equipment including preventive maintenance, emergency repairs, and equipment calibration.",
+      skills: ["Equipment Maintenance", "Hydraulic Systems", "PLC Programming"],
       submittedDate: "2024-01-08",
-      responses: 12
-    },
-    {
-      id: "RFQ-002", 
-      title: "Custom Software Development",
-      company: "InnovateCore",
-      budget: "$50,000 - $80,000",
-      deadline: "2024-02-01",
-      status: "pending",
-      priority: "medium",
-      description: "Need a team to develop a custom CRM solution with advanced reporting capabilities.",
-      skills: ["Software Development", "Database Design", "API Integration"],
-      submittedDate: "2024-01-10",
       responses: 8
     },
     {
+      id: "RFQ-002",
+      title: "Safety Audit & Compliance Assessment",
+      company: "ChemProcess Industries",
+      budget: "$25,000 - $35,000",
+      deadline: "2024-02-05",
+      status: "pending",
+      priority: "medium",
+      description: "Complete safety audit for chemical processing facility including OSHA compliance assessment and safety management system implementation.",
+      skills: ["Safety Auditing", "OSHA Standards", "Risk Assessment"],
+      submittedDate: "2024-01-10",
+      responses: 12
+    },
+    {
       id: "RFQ-003",
-      title: "Brand Identity & Website Design",
-      company: "StartupXYZ",
-      budget: "$8,000 - $12,000",
-      deadline: "2024-01-20",
+      title: "Automation System Upgrade",
+      company: "AutoMfg Corporation",
+      budget: "$85,000 - $120,000",
+      deadline: "2024-02-15",
       status: "submitted",
-      priority: "low",
-      description: "Complete brand identity package including logo design, brand guidelines, and responsive website.",
-      skills: ["Graphic Design", "Web Development", "Branding"],
+      priority: "high",
+      description: "Upgrade existing manufacturing line with modern PLC systems and SCADA implementation for automotive parts production facility.",
+      skills: ["Industrial Automation", "SCADA Systems", "PLC Programming"],
       submittedDate: "2024-01-05",
-      responses: 15
+      responses: 6
+    },
+    {
+      id: "RFQ-004",
+      title: "Quality Control System Implementation",
+      company: "Pharmaceutical Corp",
+      budget: "$55,000 - $75,000",
+      deadline: "2024-01-30",
+      status: "open",
+      priority: "high",
+      description: "Implementation of comprehensive quality control and testing systems for pharmaceutical manufacturing facility to meet FDA regulations.",
+      skills: ["Quality Control", "FDA Compliance", "Testing Systems"],
+      submittedDate: "2024-01-12",
+      responses: 4
+    },
+    {
+      id: "RFQ-005",
+      title: "Production Line Optimization",
+      company: "FoodTech Processing",
+      budget: "$35,000 - $50,000",
+      deadline: "2024-02-20",
+      status: "open",
+      priority: "medium",
+      description: "Lean manufacturing implementation and process optimization for food processing production lines to improve efficiency and reduce waste.",
+      skills: ["Lean Manufacturing", "Process Optimization", "Production Planning"],
+      submittedDate: "2024-01-14",
+      responses: 9
     }
   ];
 
@@ -106,8 +132,8 @@ const ServiceVendorRFQs = () => {
           {/* Header Section */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">RFQ Management</h1>
-              <p className="text-gray-600 mt-1">Manage and respond to Request for Quotes</p>
+              <h1 className="text-3xl font-bold text-gray-900">Industrial RFQ Management</h1>
+              <p className="text-gray-600 mt-1">Manage and respond to industrial service Request for Quotes</p>
             </div>
             <Button className="bg-yellow-600 hover:bg-yellow-700">
               <Send className="mr-2 h-4 w-4" />
@@ -125,7 +151,7 @@ const ServiceVendorRFQs = () => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-600">Total RFQs</p>
-                    <p className="text-2xl font-bold text-gray-900">24</p>
+                    <p className="text-2xl font-bold text-gray-900">47</p>
                   </div>
                 </div>
               </CardContent>
@@ -139,7 +165,7 @@ const ServiceVendorRFQs = () => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-600">Open RFQs</p>
-                    <p className="text-2xl font-bold text-gray-900">8</p>
+                    <p className="text-2xl font-bold text-gray-900">15</p>
                   </div>
                 </div>
               </CardContent>
@@ -153,7 +179,7 @@ const ServiceVendorRFQs = () => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-600">Pending</p>
-                    <p className="text-2xl font-bold text-gray-900">5</p>
+                    <p className="text-2xl font-bold text-gray-900">8</p>
                   </div>
                 </div>
               </CardContent>
@@ -167,7 +193,7 @@ const ServiceVendorRFQs = () => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-600">Win Rate</p>
-                    <p className="text-2xl font-bold text-gray-900">68%</p>
+                    <p className="text-2xl font-bold text-gray-900">74%</p>
                   </div>
                 </div>
               </CardContent>
@@ -182,7 +208,7 @@ const ServiceVendorRFQs = () => {
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input 
-                      placeholder="Search RFQs..." 
+                      placeholder="Search industrial RFQs..." 
                       className="pl-10"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
