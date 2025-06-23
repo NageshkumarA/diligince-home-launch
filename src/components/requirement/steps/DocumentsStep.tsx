@@ -30,7 +30,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
   const { formData, updateFormData } = useRequirement();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
-  const [newDocumentType, setNewDocumentType] = useState<"specification" | "drawing" | "reference" | "other">("specification");
+  const [newDocumentType, setNewDocumentType] = useState<"specification" | "drawing" | "reference" | "compliance" | "other">("specification");
 
   const handleNext = () => {
     onNext();
@@ -75,7 +75,10 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
         type: file.type,
         size: file.size,
         url,
-        documentType: newDocumentType
+        documentType: newDocumentType,
+        version: 1,
+        uploadedAt: new Date(),
+        uploadedBy: "Current User" // Would be replaced with actual user context
       };
     });
 
