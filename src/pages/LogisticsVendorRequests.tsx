@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { LogisticsVendorHeader } from "@/components/vendor/LogisticsVendorHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,10 +6,17 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar, MapPin, Package, Truck, Clock, DollarSign, Filter, Search } from "lucide-react";
+import { RequestDetailsModal } from "@/components/vendor/logistics/modals/RequestDetailsModal";
+import { CustomQuoteModal } from "@/components/vendor/logistics/modals/CustomQuoteModal";
+import { QuoteModal } from "@/components/vendor/logistics/dashboard/QuoteModal";
 
 const LogisticsVendorRequests = () => {
   const [filterType, setFilterType] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
+  const [showCustomQuoteModal, setShowCustomQuoteModal] = useState(false);
 
   const requests = [
     {
@@ -96,6 +102,25 @@ const LogisticsVendorRequests = () => {
     return matchesSearch && matchesFilter;
   });
 
+  const handleViewDetails = (request: any) => {
+    setSelectedRequest(request);
+    setShowDetailsModal(true);
+  };
+
+  const handleSubmitQuote = (request: any) => {
+    setSelectedRequest(request);
+    setShowQuoteModal(true);
+  };
+
+  const handleCreateCustomQuote = () => {
+    setShowCustomQuoteModal(true);
+  };
+
+  const handleQuoteFromDetails = () => {
+    setShowDetailsModal(false);
+    setShowQuoteModal(true);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <LogisticsVendorHeader />
@@ -108,7 +133,10 @@ const LogisticsVendorRequests = () => {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Transport Requests</h1>
               <p className="text-gray-600">Manage incoming logistics and transport requests from industrial clients.</p>
             </div>
-            <Button className="bg-[#eb2f96] hover:bg-[#eb2f96]/90">
+            <Button 
+              className="bg-[#eb2f96] hover:bg-[#eb2f96]/90"
+              onClick={handleCreateCustomQuote}
+            >
               <Package className="h-4 w-4 mr-2" />
               Create Custom Quote
             </Button>
@@ -232,10 +260,18 @@ const LogisticsVendorRequests = () => {
                     </div>
                     
                     <div className="flex gap-2 ml-4">
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleViewDetails(request)}
+                      >
                         View Details
                       </Button>
-                      <Button className="bg-[#eb2f96] hover:bg-[#eb2f96]/90" size="sm">
+                      <Button 
+                        className="bg-[#eb2f96] hover:bg-[#eb2f96]/90" 
+                        size="sm"
+                        onClick={() => handleSubmitQuote(request)}
+                      >
                         Submit Quote
                       </Button>
                     </div>
@@ -246,6 +282,25 @@ const LogisticsVendorRequests = () => {
           </div>
         </div>
       </main>
+
+      {/* Modals */}
+      <RequestDetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+        request={selectedRequest}
+        onSubmitQuote={handleQuoteFromDetails}
+      />
+
+      <QuoteModal
+        isOpen={showQuoteModal}
+        onClose={() => setShowQuoteModal(false)}
+        request={selectedRequest}
+      />
+
+      <CustomQuoteModal
+        isOpen={showCustomQuoteModal}
+        onClose={() => setShowCustomQuoteModal(false)}
+      />
     </div>
   );
 };
