@@ -1,7 +1,6 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import RequirementHeader from "@/components/requirement/RequirementHeader";
+import IndustryHeader from "@/components/industry/IndustryHeader";
 import RequirementStepIndicator from "@/components/requirement/RequirementStepIndicator";
 import EnhancedBasicInfoStep from "@/components/requirement/steps/EnhancedBasicInfoStep";
 import DetailsStep from "@/components/requirement/steps/DetailsStep";
@@ -38,7 +37,7 @@ const CreateRequirement = () => {
   return (
     <RequirementProvider>
       <div className="flex min-h-screen flex-col bg-gradient-to-br from-gray-50 to-gray-100">
-        <RequirementHeader />
+        <IndustryHeader />
         <div className="container mx-auto px-4 py-8 md:px-6">
           <div className="mb-8">
             <div className="flex items-center justify-between">

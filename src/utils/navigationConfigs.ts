@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Home, Briefcase, Calendar, MessageSquare, User, FileText, LayoutGrid, ShoppingCart, Truck, Settings } from "lucide-react";
 
@@ -24,7 +25,7 @@ export interface HeaderConfig {
 }
 
 export const professionalHeaderConfig: HeaderConfig = {
-  brandName: "diligince.ai",
+  brandName: "Diligince.ai",
   brandHref: "/",
   navItems: [
     { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/professional-dashboard", active: true },
@@ -44,7 +45,7 @@ export const professionalHeaderConfig: HeaderConfig = {
 };
 
 export const serviceVendorHeaderConfig: HeaderConfig = {
-  brandName: "diligince.ai",
+  brandName: "Diligince.ai",
   brandHref: "/",
   navItems: [
     { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/service-vendor-dashboard" },
@@ -66,7 +67,7 @@ export const serviceVendorHeaderConfig: HeaderConfig = {
 };
 
 export const productVendorHeaderConfig: HeaderConfig = {
-  brandName: "diligince.ai",
+  brandName: "Diligince.ai",
   brandHref: "/",
   navItems: [
     { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/product-vendor-dashboard" },
@@ -88,14 +89,14 @@ export const productVendorHeaderConfig: HeaderConfig = {
 };
 
 export const logisticsVendorHeaderConfig: HeaderConfig = {
-  brandName: "diligince.ai",
+  brandName: "Diligince.ai",
   brandHref: "/",
   navItems: [
     { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/logistics-vendor-dashboard" },
-    { label: "Requests", icon: React.createElement(FileText, { size: 18 }), href: "#" },
-    { label: "Fleet", icon: React.createElement(Truck, { size: 18 }), href: "#" },
-    { label: "Deliveries", icon: React.createElement(ShoppingCart, { size: 18 }), href: "#" },
-    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "#" },
+    { label: "Requests", icon: React.createElement(FileText, { size: 18 }), href: "/logistics-vendor-requests" },
+    { label: "Fleet", icon: React.createElement(Truck, { size: 18 }), href: "/logistics-vendor-fleet" },
+    { label: "Deliveries", icon: React.createElement(ShoppingCart, { size: 18 }), href: "/logistics-vendor-deliveries" },
+    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "/logistics-vendor-messages" },
     { label: "Profile", icon: React.createElement(User, { size: 18 }), href: "/logistics-vendor-profile" }
   ],
   avatarInitials: "LL",

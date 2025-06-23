@@ -1,8 +1,7 @@
+
 import React, { useState } from "react";
-import { Helmet } from "react-helmet";
-import IndustryHeader from "@/components/industry/IndustryHeader";
+import { LogisticsVendorHeader } from "@/components/vendor/LogisticsVendorHeader";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -36,67 +35,102 @@ import {
   Star,
   MoreHorizontal,
   Paperclip,
-  Mail
+  Mail,
+  Truck
 } from "lucide-react";
 import { toast } from "sonner";
 
-// Mock message data with enhanced structure
-const messageThreads = [
+// Mock conversation threads for logistics vendor
+const conversationThreads = [
   {
     id: 1,
-    sender: "TechValve Solutions",
-    initials: "TV",
-    subject: "Valve Procurement - Quote Update",
-    preview: "We've updated our quote for the industrial valve set. Please review the new specifications and pricing...",
-    lastMessage: "The updated quote includes the new safety specifications you requested. Please review and let us know if you need any modifications.",
+    sender: "Steel Industries Ltd.",
+    initials: "SI",
+    subject: "Crane Transport - Urgent Request",
+    preview: "We need to confirm the crane availability for our plant expansion project. The equipment must be delivered by January 20th...",
+    lastMessage: "We need to confirm the crane availability for our plant expansion project. The equipment must be delivered by January 20th for the installation schedule.",
     time: "10 min ago",
     timestamp: "2:30 PM",
     unread: true,
     priority: "high",
-    category: "Product Vendor",
-    avatar: "bg-blue-100 text-blue-600"
+    category: "Transport Request",
+    avatar: "bg-green-100 text-green-600",
+    messageType: "transport-request"
   },
   {
     id: 2,
-    sender: "EngiConsult Group",
-    initials: "EG",
-    subject: "Pipeline Inspection Schedule",
-    preview: "Our engineer is available for the inspection on Friday. We'll need access to the facility from 9 AM...",
-    lastMessage: "Our engineer is available for the inspection on Friday. We'll need access to the facility from 9 AM. Please confirm the arrangements.",
+    sender: "Chemical Corp",
+    initials: "CC",
+    subject: "Chemical Tank Delivery Update",
+    preview: "Please provide an update on the chemical tank delivery. Our production team needs to know the exact ETA...",
+    lastMessage: "Please provide an update on the chemical tank delivery. Our production team needs to know the exact ETA for coordination with safety protocols.",
     time: "2 hours ago",
     timestamp: "12:30 PM",
     unread: true,
-    priority: "medium",
-    category: "Professional",
-    avatar: "bg-green-100 text-green-600"
+    priority: "urgent",
+    category: "Delivery Update",
+    avatar: "bg-blue-100 text-blue-600",
+    messageType: "delivery-update"
   },
   {
     id: 3,
-    sender: "Service Pro Maintenance",
-    initials: "SP",
-    subject: "Safety Audit Completion",
-    preview: "The safety audit has been completed successfully. Please find the detailed report attached...",
-    lastMessage: "The safety audit has been completed successfully. All systems are operating within safety parameters. Report attached.",
+    sender: "Power Generation Co.",
+    initials: "PG",
+    subject: "Turbine Components - Delivery Complete",
+    preview: "Thank you for the successful delivery of turbine components. The quality of transport and handling was excellent...",
+    lastMessage: "Thank you for the successful delivery of turbine components. The quality of transport and handling was excellent. We'll have more projects coming up.",
     time: "1 day ago",
     timestamp: "Yesterday",
     unread: false,
     priority: "low",
-    category: "Service Vendor",
-    avatar: "bg-purple-100 text-purple-600"
+    category: "Delivery Feedback",
+    avatar: "bg-orange-100 text-orange-600",
+    messageType: "delivery-update"
   },
   {
     id: 4,
-    sender: "FastTrack Logistics",
-    initials: "FL",
-    subject: "Delivery Schedule Confirmation",
-    preview: "Your equipment shipment is scheduled for delivery next Tuesday. Please confirm the receiving time...",
-    lastMessage: "Your equipment shipment is scheduled for delivery next Tuesday. Please confirm the receiving time and ensure someone is available.",
+    sender: "Auto Manufacturing",
+    initials: "AM",
+    subject: "Factory Relocation Quote Request",
+    preview: "We're planning a complete factory relocation next quarter. Could you provide a detailed quote for moving...",
+    lastMessage: "We're planning a complete factory relocation next quarter. Could you provide a detailed quote for moving our production equipment?",
     time: "2 days ago",
     timestamp: "2 days ago",
     unread: false,
     priority: "medium",
-    category: "Logistics",
-    avatar: "bg-orange-100 text-orange-600"
+    category: "Quote Request",
+    avatar: "bg-pink-100 text-pink-600",
+    messageType: "transport-request"
+  },
+  {
+    id: 5,
+    sender: "Mining Operations Ltd.",
+    initials: "MO",
+    subject: "Heavy Equipment Transport",
+    preview: "We need specialized transport for our excavator and bulldozers from our closed site to the new mining location...",
+    lastMessage: "We need specialized transport for our excavator and bulldozers from our closed site to the new mining location. Heavy equipment transport required.",
+    time: "3 days ago",
+    timestamp: "3 days ago",
+    unread: false,
+    priority: "medium",
+    category: "Transport Request",
+    avatar: "bg-purple-100 text-purple-600",
+    messageType: "transport-request"
+  },
+  {
+    id: 6,
+    sender: "Cement Industries",
+    initials: "CI",
+    subject: "Route Optimization Suggestion",
+    preview: "Could we use the new highway bypass for faster delivery of raw materials? It might reduce transit time...",
+    lastMessage: "Route optimization suggestion: Could we use the new highway bypass for faster delivery of raw materials? It might reduce transit time by 3 hours.",
+    time: "4 days ago",
+    timestamp: "4 days ago",
+    unread: false,
+    priority: "low",
+    category: "Route Planning",
+    avatar: "bg-indigo-100 text-indigo-600",
+    messageType: "delivery-update"
   }
 ];
 
@@ -105,29 +139,29 @@ const detailedMessages = {
   1: [
     {
       id: 1,
-      sender: "TechValve Solutions",
-      content: "Hello, we've prepared the updated quote for your industrial valve procurement request. The specifications have been modified based on your feedback.",
+      sender: "Steel Industries Ltd.",
+      content: "Hello, we have an urgent requirement for crane transport for our plant expansion project. We need a 200-ton mobile crane delivered to our facility.",
       timestamp: "10:30 AM",
       isFromContact: true
     },
     {
       id: 2,
       sender: "You",
-      content: "Thank you for the quick turnaround. Can you provide more details about the safety certifications for these valves?",
+      content: "Thank you for reaching out. I can confirm we have a 200-ton Liebherr mobile crane available. What's your delivery timeline and location?",
       timestamp: "11:00 AM",
       isFromContact: false
     },
     {
       id: 3,
-      sender: "TechValve Solutions",
-      content: "Absolutely! All valves come with ISO 9001 and API 6D certifications. We can also provide additional safety documentation if needed.",
+      sender: "Steel Industries Ltd.",
+      content: "Perfect! We need it delivered to our Pune facility by January 20th. The crane will be used for installing heavy structural components.",
       timestamp: "11:15 AM",
       isFromContact: true
     },
     {
       id: 4,
-      sender: "TechValve Solutions",
-      content: "The updated quote includes the new safety specifications you requested. Please review and let us know if you need any modifications.",
+      sender: "Steel Industries Ltd.",
+      content: "We need to confirm the crane availability for our plant expansion project. The equipment must be delivered by January 20th for the installation schedule.",
       timestamp: "2:30 PM",
       isFromContact: true
     }
@@ -135,29 +169,29 @@ const detailedMessages = {
   2: [
     {
       id: 1,
-      sender: "EngiConsult Group",
-      content: "Good morning! We're ready to schedule the pipeline inspection for your facility. Our senior engineer is available this week.",
+      sender: "Chemical Corp",
+      content: "Good morning! We have a chemical tank that needs to be transported from Mumbai to our Chennai facility. It's a specialized transport requirement.",
       timestamp: "9:00 AM",
       isFromContact: true
     },
     {
       id: 2,
       sender: "You",
-      content: "That sounds great. What preparation do we need to do on our end before the inspection?",
+      content: "We specialize in chemical transport with all necessary safety certifications. Can you provide the tank specifications and hazmat details?",
       timestamp: "9:30 AM",
       isFromContact: false
     },
     {
       id: 3,
-      sender: "EngiConsult Group",
-      content: "Our engineer is available for the inspection on Friday. We'll need access to the facility from 9 AM. Please confirm the arrangements.",
+      sender: "Chemical Corp",
+      content: "Please provide an update on the chemical tank delivery. Our production team needs to know the exact ETA for coordination with safety protocols.",
       timestamp: "12:30 PM",
       isFromContact: true
     }
   ]
 };
 
-const IndustryMessages = () => {
+const LogisticsVendorMessages = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterBy, setFilterBy] = useState("all");
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
@@ -170,6 +204,7 @@ const IndustryMessages = () => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high": return "bg-red-100 text-red-800";
+      case "urgent": return "bg-red-200 text-red-900";
       case "medium": return "bg-yellow-100 text-yellow-800";
       case "low": return "bg-green-100 text-green-800";
       default: return "bg-gray-100 text-gray-800";
@@ -178,18 +213,21 @@ const IndustryMessages = () => {
 
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
-      case "high": return <AlertCircle className="w-4 h-4" />;
+      case "high":
+      case "urgent": return <AlertCircle className="w-4 h-4" />;
       case "medium": return <Clock className="w-4 h-4" />;
       case "low": return <CheckCircle2 className="w-4 h-4" />;
       default: return null;
     }
   };
 
-  const filteredMessages = messageThreads.filter(message => {
-    if (filterBy === "unread" && !message.unread) return false;
-    if (filterBy === "urgent" && message.priority !== "high") return false;
-    if (searchTerm && !message.subject.toLowerCase().includes(searchTerm.toLowerCase()) && 
-        !message.sender.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+  const filteredConversations = conversationThreads.filter(conversation => {
+    if (filterBy === "unread" && !conversation.unread) return false;
+    if (filterBy === "urgent" && !["high", "urgent"].includes(conversation.priority)) return false;
+    if (filterBy === "transport-request" && conversation.messageType !== "transport-request") return false;
+    if (filterBy === "delivery-update" && conversation.messageType !== "delivery-update") return false;
+    if (searchTerm && !conversation.subject.toLowerCase().includes(searchTerm.toLowerCase()) && 
+        !conversation.sender.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     return true;
   });
 
@@ -197,9 +235,9 @@ const IndustryMessages = () => {
     setSelectedConversation(conversation);
     setMessages(detailedMessages[conversation.id] || []);
     // Mark as read
-    const threadIndex = messageThreads.findIndex(thread => thread.id === conversation.id);
+    const threadIndex = conversationThreads.findIndex(thread => thread.id === conversation.id);
     if (threadIndex !== -1) {
-      messageThreads[threadIndex].unread = false;
+      conversationThreads[threadIndex].unread = false;
     }
   };
 
@@ -216,10 +254,10 @@ const IndustryMessages = () => {
       setNewMessage("");
       
       // Update the last message in the thread
-      const threadIndex = messageThreads.findIndex(thread => thread.id === selectedConversation.id);
+      const threadIndex = conversationThreads.findIndex(thread => thread.id === selectedConversation.id);
       if (threadIndex !== -1) {
-        messageThreads[threadIndex].lastMessage = newMessage;
-        messageThreads[threadIndex].time = "Just now";
+        conversationThreads[threadIndex].lastMessage = newMessage;
+        conversationThreads[threadIndex].time = "Just now";
       }
       
       toast.success("Message sent successfully");
@@ -228,7 +266,6 @@ const IndustryMessages = () => {
 
   const handleSendEmail = () => {
     if (emailSubject.trim() && emailContent.trim() && selectedConversation) {
-      // In a real app, this would integrate with an email service
       toast.success(`Email sent to ${selectedConversation.sender}`);
       setEmailSubject("");
       setEmailContent("");
@@ -236,15 +273,11 @@ const IndustryMessages = () => {
     }
   };
 
-  const unreadCount = messageThreads.filter(thread => thread.unread).length;
+  const unreadCount = conversationThreads.filter(thread => thread.unread).length;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Helmet>
-        <title>Messages | Industry Dashboard</title>
-      </Helmet>
-      
-      <IndustryHeader />
+    <div className="min-h-screen bg-gray-50">
+      <LogisticsVendorHeader />
       
       <div className="pt-16 flex-1 flex">
         {/* Conversations Sidebar */}
@@ -252,7 +285,7 @@ const IndustryMessages = () => {
           {/* Header */}
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-semibold text-gray-900">Messages</h1>
+              <h1 className="text-xl font-semibold text-gray-900">Messages Hub</h1>
               <div className="flex items-center gap-2">
                 {unreadCount > 0 && (
                   <Badge className="bg-red-100 text-red-800">
@@ -261,7 +294,7 @@ const IndustryMessages = () => {
                 )}
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button size="sm">
+                    <Button size="sm" className="bg-pink-600 hover:bg-pink-700">
                       <Plus className="h-4 w-4 mr-2" />
                       New
                     </Button>
@@ -273,11 +306,11 @@ const IndustryMessages = () => {
                     <div className="space-y-4">
                       <div>
                         <label className="text-sm font-medium">To</label>
-                        <Input placeholder="Select recipient..." />
+                        <Input placeholder="Select client..." />
                       </div>
                       <div>
                         <label className="text-sm font-medium">Subject</label>
-                        <Input placeholder="Message subject..." />
+                        <Input placeholder="Transport request, delivery update..." />
                       </div>
                       <div>
                         <label className="text-sm font-medium">Message</label>
@@ -285,7 +318,7 @@ const IndustryMessages = () => {
                       </div>
                       <div className="flex justify-end space-x-2">
                         <Button variant="outline">Save Draft</Button>
-                        <Button>
+                        <Button className="bg-pink-600 hover:bg-pink-700">
                           <Send className="w-4 h-4 mr-2" />
                           Send Message
                         </Button>
@@ -316,6 +349,8 @@ const IndustryMessages = () => {
                   <SelectItem value="all">All Messages</SelectItem>
                   <SelectItem value="unread">Unread</SelectItem>
                   <SelectItem value="urgent">Urgent</SelectItem>
+                  <SelectItem value="transport-request">Transport Requests</SelectItem>
+                  <SelectItem value="delivery-update">Delivery Updates</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -323,12 +358,12 @@ const IndustryMessages = () => {
 
           {/* Conversations List */}
           <div className="flex-1 overflow-y-auto">
-            {filteredMessages.map((conversation) => (
+            {filteredConversations.map((conversation) => (
               <div
                 key={conversation.id}
                 className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
-                  selectedConversation?.id === conversation.id ? "bg-blue-50 border-l-4 border-l-blue-600" : ""
-                } ${conversation.unread ? "bg-blue-25" : ""}`}
+                  selectedConversation?.id === conversation.id ? "bg-pink-50 border-l-4 border-l-pink-600" : ""
+                } ${conversation.unread ? "bg-pink-25" : ""}`}
                 onClick={() => handleConversationSelect(conversation)}
               >
                 <div className="flex items-start gap-3">
@@ -354,6 +389,7 @@ const IndustryMessages = () => {
                     
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs">
+                        <Truck className="w-3 h-3 mr-1" />
                         {conversation.category}
                       </Badge>
                       <Badge className={getPriorityColor(conversation.priority)}>
@@ -361,7 +397,7 @@ const IndustryMessages = () => {
                         <span className="ml-1 capitalize">{conversation.priority}</span>
                       </Badge>
                       {conversation.unread && (
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
                       )}
                     </div>
                   </div>
@@ -425,11 +461,11 @@ const IndustryMessages = () => {
                     <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                       message.isFromContact
                         ? "bg-gray-100 text-gray-900"
-                        : "bg-blue-600 text-white"
+                        : "bg-pink-600 text-white"
                     }`}>
                       <p className="text-sm">{message.content}</p>
                       <p className={`text-xs mt-1 ${
-                        message.isFromContact ? "text-gray-500" : "text-blue-200"
+                        message.isFromContact ? "text-gray-500" : "text-pink-200"
                       }`}>
                         {message.timestamp}
                       </p>
@@ -459,7 +495,7 @@ const IndustryMessages = () => {
                   <Button 
                     onClick={handleSendMessage}
                     disabled={!newMessage.trim()}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-pink-600 hover:bg-pink-700"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
@@ -471,7 +507,7 @@ const IndustryMessages = () => {
               <div className="text-center">
                 <MessageSquare className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-xl font-medium text-gray-900 mb-2">Select a conversation</h3>
-                <p className="text-gray-500">Choose a conversation from the sidebar to start messaging</p>
+                <p className="text-gray-500">Choose a conversation from the sidebar to start messaging with your logistics clients</p>
               </div>
             </div>
           )}
@@ -488,7 +524,7 @@ const IndustryMessages = () => {
             <div>
               <label className="text-sm font-medium">Subject</label>
               <Input 
-                placeholder="Email subject..."
+                placeholder="Transport quote, delivery confirmation..."
                 value={emailSubject}
                 onChange={(e) => setEmailSubject(e.target.value)}
               />
@@ -506,7 +542,7 @@ const IndustryMessages = () => {
               <Button variant="outline" onClick={() => setShowEmailModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSendEmail}>
+              <Button onClick={handleSendEmail} className="bg-pink-600 hover:bg-pink-700">
                 <Mail className="w-4 h-4 mr-2" />
                 Send Email
               </Button>
@@ -518,4 +554,4 @@ const IndustryMessages = () => {
   );
 };
 
-export default IndustryMessages;
+export default LogisticsVendorMessages;

@@ -1,7 +1,6 @@
-
 import React from "react";
 import { Helmet } from "react-helmet";
-import PurchaseOrderHeader from "@/components/purchase-order/PurchaseOrderHeader";
+import IndustryHeader from "@/components/industry/IndustryHeader";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,18 +23,17 @@ const Experts = () => {
         <title>Industry Professionals | Diligince.ai</title>
       </Helmet>
       
-      <PurchaseOrderHeader />
+      <IndustryHeader />
       
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className="flex-1 container mx-auto px-4 py-8 pt-20">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Industry Professionals</h1>
           <Button asChild>
-            <Link to="/professional-profile">Become a Professional</Link>
+            <Link to="/professional-profile">Add Expert</Link>
           </Button>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Sample professional cards */}
           {[1, 2, 3, 4, 5, 6].map((index) => (
             <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="pb-2">
@@ -56,7 +54,7 @@ const Experts = () => {
                     <p className="mb-1">Expertise:</p>
                     <div className="flex flex-wrap gap-1">
                       {skillsList[index % skillsList.length].map((skill, i) => (
-                        <Badge key={i} variant="outline" className="bg-purple-50">
+                        <Badge key={i} variant="outline" className="bg-blue-50">
                           {skill}
                         </Badge>
                       ))}
