@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -48,7 +47,6 @@ const SignIn = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     
-    // Simulate API call delay
     setTimeout(() => {
       console.log("Sign in values:", values);
       setIsLoading(false);
@@ -56,17 +54,16 @@ const SignIn = () => {
         description: "Welcome back to diligince.ai",
       });
       
-      // Redirect based on user role
       setTimeout(() => {
         switch (values.role) {
           case "industry":
-            navigate("/industry-profile");
+            navigate("/industry-dashboard");
             break;
           case "professional":
-            navigate("/professional-profile");
+            navigate("/professional-dashboard");
             break;
           case "vendor":
-            navigate("/vendor-profile");
+            navigate("/service-vendor-dashboard");
             break;
           default:
             navigate("/");
@@ -75,7 +72,6 @@ const SignIn = () => {
     }, 1000);
   }
 
-  // Handle social login
   const handleSocialLogin = (provider: string) => {
     toast.info(`${provider} Sign-In clicked`, {
       description: "This feature will be available soon",

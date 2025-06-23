@@ -16,7 +16,6 @@ const SignUp = () => {
       <Navbar />
       
       <div className="flex flex-col md:flex-row flex-grow mt-16">
-        {/* Left Column - Blue Background */}
         <div className="bg-primary text-white p-8 flex flex-col items-center justify-between md:w-2/5">
           <div className="pt-10 md:pt-20 text-center max-w-md mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">Join the Industrial Revolution</h2>
@@ -34,7 +33,6 @@ const SignUp = () => {
           </div>
         </div>
         
-        {/* Right Column - Form Area */}
         <div className="bg-background p-8 md:w-3/5 flex flex-col items-center">
           <div className="w-full max-w-md py-8">
             <h1 className="text-2xl font-bold text-center text-primary mb-8">Create Your Account</h1>

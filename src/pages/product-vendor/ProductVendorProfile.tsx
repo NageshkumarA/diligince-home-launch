@@ -1,28 +1,76 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import VendorHeader from "@/components/vendor/VendorHeader";
+import ProductVendorSidebar from "@/components/vendor/ProductVendorSidebar";
+import CompanyInfoForm from "@/components/vendor/forms/ProductVendor/CompanyInfoForm";
+import ProductCatalogSection from "@/components/vendor/forms/ProductVendor/ProductCatalogSection";
+import BrandsPartnersSection from "@/components/vendor/forms/ProductVendor/BrandsPartnersSection";
+import CertificationsSection from "@/components/vendor/forms/ProductVendor/CertificationsSection";
+import ShippingReturnsSection from "@/components/vendor/forms/ProductVendor/ShippingReturnsSection";
+import PaymentSettingsForm from "@/components/vendor/forms/PaymentSettingsForm";
+import AccountSettingsForm from "@/components/vendor/forms/AccountSettingsForm";
+
+export type ContentType = 
+  | "company-info" 
+  | "product-catalog" 
+  | "brands-partners" 
+  | "certifications" 
+  | "shipping-returns" 
+  | "payment-settings" 
+  | "account-settings";
 
 const ProductVendorProfile = () => {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Product Vendor Profile</h1>
-            <p className="text-gray-600">Manage your product vendor profile and specifications.</p>
-          </div>
+  const [activeContent, setActiveContent] = useState<ContentType>("company-info");
+  const [profileCompletion, setProfileCompletion] = useState(65);
+  
+  const vendorData = {
+    companyName: "TechPro Supplies",
+    specialization: "Industrial Components",
+    initials: "TS",
+    isVerified: true
+  };
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Company Profile</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">
-                Update your product vendor information and capabilities.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+  const handleMenuItemClick = (contentType: ContentType) => {
+    setActiveContent(contentType);
+  };
+
+  const renderContent = () => {
+    switch (activeContent) {
+      case "company-info":
+        return <CompanyInfoForm />;
+      case "product-catalog":
+        return <ProductCatalogSection />;
+      case "brands-partners":
+        return <BrandsPartnersSection />;
+      case "certifications":
+        return <CertificationsSection />;
+      case "shipping-returns":
+        return <ShippingReturnsSection />;
+      case "payment-settings":
+        return <PaymentSettingsForm />;
+      case "account-settings":
+        return <AccountSettingsForm />;
+      default:
+        return <CompanyInfoForm />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <VendorHeader />
+      
+      <div className="flex flex-grow pt-16">
+        <ProductVendorSidebar
+          vendorData={vendorData}
+          activeMenuItem={activeContent}
+          onMenuItemClick={handleMenuItemClick}
+          profileCompletion={profileCompletion}
+        />
+        
+        <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
+          {renderContent()}
+        </main>
+      </div>
     </div>
   );
 };
