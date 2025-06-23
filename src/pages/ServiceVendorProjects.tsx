@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Search, Filter, Calendar, Users, DollarSign, Clock, Eye, MessageSquare, CheckCircle, AlertCircle } from "lucide-react";
+import { Search, Filter, Calendar, Users, DollarSign, Clock, Eye, MessageSquare, CheckCircle, AlertCircle, Plus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const ServiceVendorProjects = () => {
