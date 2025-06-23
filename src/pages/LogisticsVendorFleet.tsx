@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { LogisticsVendorHeader } from "@/components/vendor/LogisticsVendorHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,10 +6,21 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Truck, Wrench, Users, MapPin, Calendar, Fuel, Search, Plus, AlertCircle } from "lucide-react";
+import { VehicleDetailsModal } from "@/components/vendor/logistics/modals/VehicleDetailsModal";
+import { AddVehicleModal } from "@/components/vendor/logistics/modals/AddVehicleModal";
+import { AddDriverModal } from "@/components/vendor/logistics/modals/AddDriverModal";
+import { VehicleTrackingModal } from "@/components/vendor/logistics/modals/VehicleTrackingModal";
 
 const LogisticsVendorFleet = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  
+  // Modal states
+  const [isVehicleDetailsModalOpen, setIsVehicleDetailsModalOpen] = useState(false);
+  const [isAddVehicleModalOpen, setIsAddVehicleModalOpen] = useState(false);
+  const [isAddDriverModalOpen, setIsAddDriverModalOpen] = useState(false);
+  const [isVehicleTrackingModalOpen, setIsVehicleTrackingModalOpen] = useState(false);
+  const [selectedVehicle, setSelectedVehicle] = useState<any>(null);
 
   const fleet = [
     {
@@ -112,6 +122,16 @@ const LogisticsVendorFleet = () => {
     return matchesSearch && matchesFilter;
   });
 
+  const handleVehicleDetails = (vehicle: any) => {
+    setSelectedVehicle(vehicle);
+    setIsVehicleDetailsModalOpen(true);
+  };
+
+  const handleVehicleTracking = (vehicle: any) => {
+    setSelectedVehicle(vehicle);
+    setIsVehicleTrackingModalOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <LogisticsVendorHeader />
@@ -124,7 +144,10 @@ const LogisticsVendorFleet = () => {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Fleet Management</h1>
               <p className="text-gray-600">Monitor and manage your logistics fleet, equipment, and drivers.</p>
             </div>
-            <Button className="bg-[#eb2f96] hover:bg-[#eb2f96]/90">
+            <Button 
+              className="bg-[#eb2f96] hover:bg-[#eb2f96]/90"
+              onClick={() => setIsAddVehicleModalOpen(true)}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Add Vehicle
             </Button>
@@ -262,11 +285,19 @@ const LogisticsVendorFleet = () => {
                       </div>
                       
                       <div className="flex gap-2 ml-4">
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleVehicleTracking(vehicle)}
+                        >
                           <MapPin className="h-4 w-4 mr-1" />
                           Track
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleVehicleDetails(vehicle)}
+                        >
                           Details
                         </Button>
                       </div>
@@ -300,7 +331,11 @@ const LogisticsVendorFleet = () => {
                       </div>
                     ))}
                   </div>
-                  <Button className="w-full mt-4 bg-[#eb2f96] hover:bg-[#eb2f96]/90" size="sm">
+                  <Button 
+                    className="w-full mt-4 bg-[#eb2f96] hover:bg-[#eb2f96]/90" 
+                    size="sm"
+                    onClick={() => setIsAddDriverModalOpen(true)}
+                  >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Driver
                   </Button>
@@ -335,6 +370,29 @@ const LogisticsVendorFleet = () => {
           </div>
         </div>
       </main>
+
+      {/* Modals */}
+      <VehicleDetailsModal
+        isOpen={isVehicleDetailsModalOpen}
+        onClose={() => setIsVehicleDetailsModalOpen(false)}
+        vehicle={selectedVehicle}
+      />
+      
+      <AddVehicleModal
+        isOpen={isAddVehicleModalOpen}
+        onClose={() => setIsAddVehicleModalOpen(false)}
+      />
+      
+      <AddDriverModal
+        isOpen={isAddDriverModalOpen}
+        onClose={() => setIsAddDriverModalOpen(false)}
+      />
+      
+      <VehicleTrackingModal
+        isOpen={isVehicleTrackingModalOpen}
+        onClose={() => setIsVehicleTrackingModalOpen(false)}
+        vehicle={selectedVehicle}
+      />
     </div>
   );
 };
