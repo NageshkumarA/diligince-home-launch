@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { format, differenceInDays } from 'date-fns';
@@ -34,7 +33,7 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PurchaseOrderStepIndicator from '@/components/purchase-order/PurchaseOrderStepIndicator';
-import PurchaseOrderHeader from '@/components/purchase-order/PurchaseOrderHeader';
+import IndustryHeader from '@/components/industry/IndustryHeader';
 
 // Define step type
 export type POStepType = 1 | 2 | 3 | 4 | 5;
@@ -221,9 +220,9 @@ const CreatePurchaseOrder: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <PurchaseOrderHeader />
+      <IndustryHeader />
       
-      <main className="flex-1 container max-w-7xl mx-auto px-4 py-8">
+      <main className="flex-1 container max-w-7xl mx-auto px-4 py-8 pt-20">
         <h1 className="text-3xl font-bold mb-8">Create Purchase Order</h1>
         
         <div className="mb-10">

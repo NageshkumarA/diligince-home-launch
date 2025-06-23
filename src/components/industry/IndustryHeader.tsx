@@ -8,8 +8,11 @@ import {
   ShoppingCart, 
   MessageSquare, 
   FolderOpen, 
-  User
+  User,
+  Bell
 } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 const IndustryHeader = () => {
   const location = useLocation();
@@ -79,6 +82,21 @@ const IndustryHeader = () => {
               </Link>
             ))}
           </nav>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="sm" className="text-blue-100 hover:text-white hover:bg-blue-700 relative">
+            <Bell size={18} />
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              3
+            </span>
+          </Button>
+          
+          <Avatar className="h-8 w-8">
+            <AvatarFallback className="bg-blue-100 text-blue-600 font-medium">
+              JD
+            </AvatarFallback>
+          </Avatar>
         </div>
       </div>
     </header>
