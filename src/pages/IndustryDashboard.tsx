@@ -110,6 +110,40 @@ const IndustryDashboard = () => {
           <p className="text-gray-600">Welcome back to your procurement dashboard</p>
         </div>
         
+        {/* Quick Actions Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Button asChild className="h-16 justify-start text-left">
+              <Link to="/create-requirement" className="flex items-center gap-3">
+                <FileText className="h-6 w-6" />
+                <div>
+                  <div className="font-semibold">Post New Requirement</div>
+                  <div className="text-sm opacity-90">Find vendors and services</div>
+                </div>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="h-16 justify-start text-left">
+              <Link to="/create-purchase-order" className="flex items-center gap-3">
+                <ShoppingCart className="h-6 w-6" />
+                <div>
+                  <div className="font-semibold">Create Purchase Order</div>
+                  <div className="text-sm text-gray-600">Generate new PO</div>
+                </div>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="h-16 justify-start text-left">
+              <Link to="/industry-messages" className="flex items-center gap-3">
+                <MessageSquare className="h-6 w-6" />
+                <div>
+                  <div className="font-semibold">View Messages</div>
+                  <div className="text-sm text-gray-600">Check communications</div>
+                </div>
+              </Link>
+            </Button>
+          </div>
+        </div>
+        
         {/* Key Metrics Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {metrics.map((metric, index) => (
@@ -149,6 +183,7 @@ const IndustryDashboard = () => {
                     <TableHead>Category</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Date</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -171,6 +206,13 @@ const IndustryDashboard = () => {
                       </TableCell>
                       <TableCell className="text-muted-foreground">
                         {req.date}
+                      </TableCell>
+                      <TableCell>
+                        {req.status === "Completed" && (
+                          <Button size="sm" variant="outline" asChild>
+                            <Link to="/create-purchase-order">Create PO</Link>
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -202,9 +244,14 @@ const IndustryDashboard = () => {
                   <Badge className={`mb-3 ${getCategoryColor(stakeholder.type)}`}>
                     {stakeholder.type}
                   </Badge>
-                  <Button variant="outline" size="sm" className="mt-2" asChild>
-                    <Link to={`/vendor-details/${stakeholder.id}`}>View Profile</Link>
-                  </Button>
+                  <div className="flex gap-2 mt-2">
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to={`/vendor-details/${stakeholder.id}`}>View Profile</Link>
+                    </Button>
+                    <Button size="sm" asChild>
+                      <Link to="/create-purchase-order">Create PO</Link>
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -244,7 +291,15 @@ const IndustryDashboard = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-gray-800">Recent Orders</h2>
-            <Button variant="outline">View All Orders</Button>
+            <div className="flex gap-2">
+              <Button variant="outline">View All Orders</Button>
+              <Button asChild>
+                <Link to="/create-purchase-order">
+                  <Plus className="mr-1 h-4 w-4" />
+                  Create New PO
+                </Link>
+              </Button>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -269,12 +324,17 @@ const IndustryDashboard = () => {
                     <Progress value={order.progress} className="h-2" />
                   </div>
                   
-                  <div className="flex justify-end">
-                    <Button size="sm" asChild>
+                  <div className="flex justify-between gap-2">
+                    <Button size="sm" variant="outline" asChild>
                       <Link to={`/work-completion-payment/${order.id}`}>
                         {order.progress === 100 ? "Review & Pay" : "View Details"}
                       </Link>
                     </Button>
+                    {order.progress < 100 && (
+                      <Button size="sm" variant="ghost" asChild>
+                        <Link to="/create-purchase-order">Duplicate PO</Link>
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
