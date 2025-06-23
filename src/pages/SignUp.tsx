@@ -3,11 +3,10 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { IndustryForm } from "@/components/signup/IndustryForm";
 import { ProfessionalForm } from "@/components/signup/ProfessionalForm";
-import { VendorForm } from "@/components/signup/VendorForm";
+import { VendorFormEnhanced } from "@/components/signup/VendorFormEnhanced";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { UploadCloud } from "lucide-react";
 
 const SignUp = () => {
   const [activeTab, setActiveTab] = useState("industry");
@@ -61,7 +60,7 @@ const SignUp = () => {
               </TabsContent>
               
               <TabsContent value="vendor">
-                <VendorForm />
+                <VendorFormEnhanced />
               </TabsContent>
             </Tabs>
             

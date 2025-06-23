@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Check, CheckCircle, CreditCard, MapPin, Package, Settings, Truck, User, Users } from "lucide-react";
 import { 
@@ -18,6 +19,9 @@ import { LicensesPermitsSection } from "@/components/vendor/logistics/LicensesPe
 import { DriversPersonnelSection } from "@/components/vendor/logistics/DriversPersonnelSection";
 import PaymentSettingsForm from "@/components/vendor/forms/PaymentSettingsForm";
 import AccountSettingsForm from "@/components/vendor/forms/AccountSettingsForm";
+import { useVendorSpecialization } from "@/contexts/VendorSpecializationContext";
+import { useUser } from "@/contexts/UserContext";
+import { getSpecializationDisplayName, getSpecializationBadgeColor } from "@/utils/vendorSpecializationMapping";
 
 type MenuSection = 
   | "company-info" 
@@ -30,7 +34,12 @@ type MenuSection =
 
 export const LogisticsVendorSidebar = () => {
   const [activeSection, setActiveSection] = useState<MenuSection>("company-info");
-  const profileCompletion = 65; // Profile completion percentage (mock data)
+  const { specialization } = useVendorSpecialization();
+  const { user } = useUser();
+  const profileCompletion = 65;
+
+  const displayName = getSpecializationDisplayName(specialization);
+  const badgeColor = getSpecializationBadgeColor(specialization);
 
   return (
     <div className="flex w-full">
@@ -40,15 +49,18 @@ export const LogisticsVendorSidebar = () => {
             <div className="flex flex-col items-center space-y-2 py-4">
               <div className="relative">
                 <div className="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-bold text-gray-600">
-                  TL
+                  {user?.name?.charAt(0) || "TL"}
                 </div>
                 <div className="absolute bottom-1 right-1 bg-green-500 text-white rounded-full p-1">
                   <CheckCircle className="h-4 w-4" />
                 </div>
               </div>
-              <h2 className="text-xl font-semibold mt-2">TransLog India</h2>
-              <div className="flex space-x-2">
+              <h2 className="text-xl font-semibold mt-2">{user?.name || "TransLog India"}</h2>
+              <div className="flex flex-col space-y-2 items-center">
                 <Badge className="bg-[#eb2f96] hover:bg-[#eb2f96]/90">Logistics Provider</Badge>
+                <Badge className={`${badgeColor} flex items-center gap-1`}>
+                  {displayName}
+                </Badge>
                 <Badge className="bg-green-600 hover:bg-green-700 flex items-center gap-1">
                   <Check className="h-3 w-3" /> Verified
                 </Badge>
@@ -79,7 +91,12 @@ export const LogisticsVendorSidebar = () => {
                   onClick={() => setActiveSection("fleet-equipment")}
                 >
                   <Truck className="h-5 w-5" />
-                  <span>Fleet & Equipment</span>
+                  <span>
+                    {specialization === 'heavy-equipment' || specialization === 'crane-services' 
+                      ? 'Equipment & Fleet' 
+                      : 'Fleet & Equipment'
+                    }
+                  </span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -106,7 +123,12 @@ export const LogisticsVendorSidebar = () => {
                   onClick={() => setActiveSection("drivers-personnel")}
                 >
                   <Users className="h-5 w-5" />
-                  <span>Drivers & Personnel</span>
+                  <span>
+                    {specialization === 'heavy-equipment' || specialization === 'crane-services'
+                      ? 'Operators & Personnel'
+                      : 'Drivers & Personnel'
+                    }
+                  </span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
