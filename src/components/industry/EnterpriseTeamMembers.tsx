@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -307,11 +306,14 @@ const EnterpriseTeamMembers = () => {
     const roleTemplate = roleTemplates.find(r => r.role === data.role as IndustrialRole);
     const newMember: TeamMember = {
       id: `${Date.now()}`,
-      ...data,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
       role: data.role as IndustrialRole,
       department: data.department as Department,
       status: 'pending',
       joinDate: new Date().toISOString().split('T')[0],
+      managerId: data.managerId === 'no-manager' ? undefined : data.managerId,
       permissions: roleTemplate?.permissions || [],
       invitationStatus: 'sent'
     };
@@ -328,9 +330,12 @@ const EnterpriseTeamMembers = () => {
     const roleTemplate = roleTemplates.find(r => r.role === data.role as IndustrialRole);
     const updatedMember: TeamMember = {
       ...selectedMember,
-      ...data,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
       role: data.role as IndustrialRole,
       department: data.department as Department,
+      managerId: data.managerId === 'no-manager' ? undefined : data.managerId,
       permissions: roleTemplate?.permissions || selectedMember.permissions
     };
 
@@ -569,7 +574,7 @@ const EnterpriseTeamMembers = () => {
                               phone: member.phone,
                               role: member.role,
                               department: member.department,
-                              managerId: member.managerId
+                              managerId: member.managerId || 'no-manager'
                             });
                             setIsEditDialogOpen(true);
                           }}
@@ -738,7 +743,7 @@ const EnterpriseTeamMembers = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">No manager</SelectItem>
+                          <SelectItem value="no-manager">No manager</SelectItem>
                           {teamMembers
                             .filter(m => m.status === 'active')
                             .map((manager) => (
@@ -888,7 +893,7 @@ const EnterpriseTeamMembers = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">No manager</SelectItem>
+                          <SelectItem value="no-manager">No manager</SelectItem>
                           {teamMembers
                             .filter(m => m.status === 'active' && m.id !== selectedMember?.id)
                             .map((manager) => (
