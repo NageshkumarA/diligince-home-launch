@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Home, Briefcase, Calendar, MessageSquare, User, FileText, LayoutGrid, ShoppingCart, Truck, Settings } from "lucide-react";
 
@@ -49,10 +48,10 @@ export const serviceVendorHeaderConfig: HeaderConfig = {
   brandHref: "/",
   navItems: [
     { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/service-vendor-dashboard" },
-    { label: "RFQs", icon: React.createElement(FileText, { size: 18 }), href: "#" },
-    { label: "Services", icon: React.createElement(LayoutGrid, { size: 18 }), href: "#" },
-    { label: "Projects", icon: React.createElement(ShoppingCart, { size: 18 }), href: "#" },
-    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "#" },
+    { label: "RFQs", icon: React.createElement(FileText, { size: 18 }), href: "/service-vendor-rfqs" },
+    { label: "Services", icon: React.createElement(LayoutGrid, { size: 18 }), href: "/service-vendor-services" },
+    { label: "Projects", icon: React.createElement(ShoppingCart, { size: 18 }), href: "/service-vendor-projects" },
+    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "/service-vendor-messages" },
     { label: "Profile", icon: React.createElement(User, { size: 18 }), href: "/service-vendor-profile" }
   ],
   avatarInitials: "TS",

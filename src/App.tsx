@@ -30,6 +30,10 @@ import ProfessionalOpportunities from "./pages/ProfessionalOpportunities";
 import ProfessionalMessages from "./pages/ProfessionalMessages";
 import ServiceVendorDashboard from "./pages/ServiceVendorDashboard";
 import ServiceVendorProfile from "./pages/ServiceVendorProfile";
+import ServiceVendorRFQs from "./pages/ServiceVendorRFQs";
+import ServiceVendorServices from "./pages/ServiceVendorServices";
+import ServiceVendorProjects from "./pages/ServiceVendorProjects";
+import ServiceVendorMessages from "./pages/ServiceVendorMessages";
 import ProductVendorDashboard from "./pages/ProductVendorDashboard";
 import ProductVendorProfile from "./pages/ProductVendorProfile";
 import LogisticsVendorDashboard from "./pages/LogisticsVendorDashboard";
@@ -66,6 +70,10 @@ const App = () => (
                   <Route path="/professional-opportunities" element={<ProfessionalOpportunities />} />
                   <Route path="/professional-messages" element={<ProfessionalMessages />} />
                   <Route path="/service-vendor-dashboard" element={<ServiceVendorDashboard />} />
+                  <Route path="/service-vendor-rfqs" element={<ServiceVendorRFQs />} />
+                  <Route path="/service-vendor-services" element={<ServiceVendorServices />} />
+                  <Route path="/service-vendor-projects" element={<ServiceVendorProjects />} />
+                  <Route path="/service-vendor-messages" element={<ServiceVendorMessages />} />
                   <Route path="/product-vendor-dashboard" element={<ProductVendorDashboard />} />
                   <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
                   <Route path="/messages" element={<IndustryMessages />} />
