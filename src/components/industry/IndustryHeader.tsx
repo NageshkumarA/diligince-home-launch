@@ -64,7 +64,7 @@ const IndustryHeader = () => {
       <div className="container mx-auto h-full flex items-center justify-between px-4">
         <div className="flex items-center gap-4">
           <Link to="/industry-dashboard" className="text-xl font-bold text-white">
-            diligince.ai
+            Diligince.ai
           </Link>
           <nav className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
