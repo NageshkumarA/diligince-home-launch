@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -46,6 +45,10 @@ import VendorProfile from "./pages/VendorProfile";
 import CreateRequirement from "./pages/CreateRequirement";
 import CreatePurchaseOrder from "./pages/CreatePurchaseOrder";
 import WorkCompletionPayment from "./pages/WorkCompletionPayment";
+import LogisticsVendorRequests from "./pages/LogisticsVendorRequests";
+import LogisticsVendorFleet from "./pages/LogisticsVendorFleet";
+import LogisticsVendorDeliveries from "./pages/LogisticsVendorDeliveries";
+import LogisticsVendorMessages from "./pages/LogisticsVendorMessages";
 
 const queryClient = new QueryClient();
 
@@ -97,6 +100,12 @@ const App = () => (
                   <Route path="/create-requirement" element={<CreateRequirement />} />
                   <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
                   <Route path="/work-completion-payment" element={<WorkCompletionPayment />} />
+                  <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
+                  <Route path="/logistics-vendor-requests" element={<LogisticsVendorRequests />} />
+                  <Route path="/logistics-vendor-fleet" element={<LogisticsVendorFleet />} />
+                  <Route path="/logistics-vendor-deliveries" element={<LogisticsVendorDeliveries />} />
+                  <Route path="/logistics-vendor-messages" element={<LogisticsVendorMessages />} />
+                  <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
                   
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
