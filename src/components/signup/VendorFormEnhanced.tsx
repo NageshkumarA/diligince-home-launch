@@ -136,7 +136,7 @@ export function VendorFormEnhanced() {
         id: Math.random().toString(36).substr(2, 9),
         email: values.email,
         name: values.businessName,
-        role: 'logistics_vendor' as const,
+        role: 'vendor' as const,
         avatar: '',
         initials: initials,
         status: 'active' as const,
