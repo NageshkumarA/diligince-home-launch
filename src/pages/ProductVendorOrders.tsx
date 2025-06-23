@@ -12,8 +12,32 @@ import { Textarea } from "@/components/ui/textarea";
 import { Search, Eye, Truck, CheckCircle, Clock, Package, AlertCircle, MapPin } from "lucide-react";
 import { toast } from "sonner";
 
+interface Product {
+  name: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+}
+
+interface Order {
+  id: string;
+  orderNumber: string;
+  customer: string;
+  customerEmail: string;
+  products: Product[];
+  totalAmount: number;
+  orderDate: string;
+  expectedDelivery: string;
+  status: string;
+  priority: string;
+  shippingAddress: string;
+  notes: string;
+  trackingNumber?: string;
+  deliveredDate?: string;
+}
+
 // Mock orders data
-const mockOrders = [
+const mockOrders: Order[] = [
   {
     id: "ORD-001",
     orderNumber: "PO-12456",
@@ -85,10 +109,10 @@ const mockOrders = [
 ];
 
 const ProductVendorOrders = () => {
-  const [orders, setOrders] = useState(mockOrders);
+  const [orders, setOrders] = useState<Order[]>(mockOrders);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [trackingInfo, setTrackingInfo] = useState("");
 
   const getStatusColor = (status: string) => {
