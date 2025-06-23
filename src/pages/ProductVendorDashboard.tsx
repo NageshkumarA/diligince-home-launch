@@ -14,8 +14,8 @@ const ProductVendorDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       <VendorHeader />
       
-      <main className="pt-24 p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto space-y-6 mt-4">
+      <main className="pt-32 p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6 mt-8">
           {/* Welcome Section */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Product Dashboard</h1>
