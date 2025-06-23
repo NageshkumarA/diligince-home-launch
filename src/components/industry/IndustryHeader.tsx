@@ -34,7 +34,7 @@ const IndustryHeader = () => {
       href: "/vendors" 
     },
     { 
-      label: "Purchase Orders", 
+      label: "Create PO", 
       icon: <ShoppingCart size={18} />, 
       href: "/create-purchase-order" 
     },
@@ -94,7 +94,7 @@ const IndustryHeader = () => {
           
           <Avatar className="h-8 w-8">
             <AvatarFallback className="bg-blue-100 text-blue-600 font-medium">
-              JD
+              SPL
             </AvatarFallback>
           </Avatar>
         </div>
