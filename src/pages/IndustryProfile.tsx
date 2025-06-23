@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { 
   Building, 
@@ -36,6 +35,7 @@ import {
   TableRow
 } from "@/components/ui/table";
 import Footer from "@/components/Footer";
+import EnterpriseTeamMembers from "@/components/industry/EnterpriseTeamMembers";
 
 // Types for the content
 export type ContentType = 
@@ -306,107 +306,7 @@ const IndustryProfile = () => {
         );
         
       case "Team Members":
-        return (
-          <>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-gray-800">Team Members</h2>
-              <Button onClick={() => {
-                setNewTeamMember({ name: "", role: "", email: "" });
-                setEditingTeamMember(null);
-                setShowTeamMemberForm(true);
-              }}>
-                <Plus className="w-4 h-4 mr-2" />
-                Add Team Member
-              </Button>
-            </div>
-            
-            <hr className="mb-6" />
-            
-            {showTeamMemberForm && (
-              <Card className="p-4 mb-6">
-                <h3 className="text-lg font-semibold mb-4">
-                  {editingTeamMember ? "Edit Team Member" : "Add New Team Member"}
-                </h3>
-                <form onSubmit={handleTeamMemberSubmit}>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Name
-                      </label>
-                      <Input
-                        value={newTeamMember.name}
-                        onChange={(e) => setNewTeamMember({...newTeamMember, name: e.target.value})}
-                        required
-                        className="w-full"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Role
-                      </label>
-                      <Input
-                        value={newTeamMember.role}
-                        onChange={(e) => setNewTeamMember({...newTeamMember, role: e.target.value})}
-                        required
-                        className="w-full"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email
-                      </label>
-                      <Input
-                        type="email"
-                        value={newTeamMember.email}
-                        onChange={(e) => setNewTeamMember({...newTeamMember, email: e.target.value})}
-                        required
-                        className="w-full"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button type="button" variant="outline" onClick={() => setShowTeamMemberForm(false)}>
-                      Cancel
-                    </Button>
-                    <Button type="submit">
-                      {editingTeamMember ? "Update Member" : "Add Member"}
-                    </Button>
-                  </div>
-                </form>
-              </Card>
-            )}
-            
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {teamMembers.map((member) => (
-                  <TableRow key={member.id}>
-                    <TableCell className="font-medium">{member.name}</TableCell>
-                    <TableCell>{member.role}</TableCell>
-                    <TableCell>{member.email}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="sm" onClick={() => editTeamMember(member)}>
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => deleteTeamMember(member.id)}>
-                          <Trash className="w-4 h-4 text-red-500" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </>
-        );
+        return <EnterpriseTeamMembers />;
         
       case "Documents & Certification":
         return (
@@ -928,12 +828,16 @@ const IndustryProfile = () => {
         {/* Main Content */}
         <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
           {/* Title and Content */}
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Profile & Settings</h1>
             
-            <Card className="w-full p-6">
-              {renderContent()}
-            </Card>
+            {activeMenu === "Team Members" ? (
+              renderContent()
+            ) : (
+              <Card className="w-full p-6">
+                {renderContent()}
+              </Card>
+            )}
           </div>
         </main>
       </div>
