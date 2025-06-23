@@ -97,7 +97,7 @@ const ProductVendorCatalog = () => {
   const outOfStockCount = products.filter(p => p.stock === 0).length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Helmet>
         <title>Product Catalog | Product Vendor Dashboard</title>
       </Helmet>
