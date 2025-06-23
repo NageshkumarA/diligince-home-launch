@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import VendorHeader from "@/components/vendor/VendorHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -211,8 +210,8 @@ const ServiceVendorServices = () => {
     <div className="min-h-screen bg-gray-50">
       <VendorHeader />
       
-      <main className="pt-20 p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto space-y-6">
+      <main className="pt-32 p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6 mt-8">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
