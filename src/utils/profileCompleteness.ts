@@ -10,7 +10,7 @@ const REQUIRED_FIELDS = {
     product: ['businessName', 'specialization'],
     logistics: ['businessName', 'specialization']
   }
-} as const;
+};
 
 // Define completion thresholds
 export const PROFILE_COMPLETION_THRESHOLD = 80;
@@ -36,10 +36,12 @@ export const calculateProfileCompleteness = (user: UserProfile): ProfileCompleti
   
   // Get role-specific required fields
   if (user.role === 'vendor' && user.profile.vendorCategory) {
-    const vendorFields = REQUIRED_FIELDS.vendor[user.profile.vendorCategory as keyof typeof REQUIRED_FIELDS.vendor];
-    requiredFields = vendorFields || ['businessName', 'specialization'];
-  } else {
-    requiredFields = REQUIRED_FIELDS[user.role as keyof typeof REQUIRED_FIELDS] as string[] || [];
+    const vendorCategory = user.profile.vendorCategory as keyof typeof REQUIRED_FIELDS.vendor;
+    const vendorFields = REQUIRED_FIELDS.vendor[vendorCategory];
+    requiredFields = vendorFields ? [...vendorFields] : ['businessName', 'specialization'];
+  } else if (user.role === 'industry' || user.role === 'professional') {
+    const roleFields = REQUIRED_FIELDS[user.role];
+    requiredFields = roleFields ? [...roleFields] : [];
   }
 
   const profile = user.profile;
