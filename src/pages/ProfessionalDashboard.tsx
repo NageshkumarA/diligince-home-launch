@@ -241,7 +241,6 @@ const ProfessionalDashboard = () => {
             <JobOpportunities 
               jobs={jobs}
               onApplicationSubmit={handleJobApplication}
-              loading={dashboardLoading}
             />
           </div>
 
@@ -249,14 +248,12 @@ const ProfessionalDashboard = () => {
           <OngoingProjects 
             projects={projects}
             onProjectUpdate={handleProjectUpdate}
-            loading={dashboardLoading}
           />
 
           {/* Message Center */}
           <MessageCenter 
             messages={messages}
             onReply={handleMessageReply}
-            loading={dashboardLoading}
           />
         </div>
       </main>
