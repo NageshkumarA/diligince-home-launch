@@ -8,8 +8,9 @@ import { LicensesPermitsSection } from "@/components/vendor/logistics/LicensesPe
 import { DriversPersonnelSection } from "@/components/vendor/logistics/DriversPersonnelSection";
 import PaymentSettingsForm from "@/components/vendor/forms/PaymentSettingsForm";
 import AccountSettingsForm from "@/components/vendor/forms/AccountSettingsForm";
-import { LogisticsVendorCustomSidebar } from "@/components/vendor/logistics/LogisticsVendorCustomSidebar";
+import { LogisticsVendorSidebar as StandardizedLogisticsVendorSidebar } from "@/components/vendor/logistics/LogisticsVendorSidebar";
 import { SpecializationFeatures } from "@/components/vendor/logistics/SpecializationFeatures";
+import { useUser } from "@/contexts/UserContext";
 
 type MenuSection = 
   | "company-info" 
@@ -22,6 +23,15 @@ type MenuSection =
 
 export const LogisticsVendorSidebar = () => {
   const [activeSection, setActiveSection] = useState<MenuSection>("company-info");
+  const { user } = useUser();
+  const profileCompletion = 65;
+
+  const vendorData = {
+    companyName: user?.name || "TransLog India",
+    specialization: "Logistics Provider", // This will be enhanced by the sidebar component
+    initials: user?.name?.charAt(0) || "TL",
+    isVerified: true
+  };
 
   const getSectionTitle = () => {
     switch (activeSection) {
@@ -67,9 +77,11 @@ export const LogisticsVendorSidebar = () => {
 
   return (
     <div className="flex w-full min-h-screen bg-gray-50">
-      <LogisticsVendorCustomSidebar 
+      <StandardizedLogisticsVendorSidebar 
         activeSection={activeSection}
         onSectionChange={setActiveSection}
+        vendorData={vendorData}
+        profileCompletion={profileCompletion}
       />
 
       {/* Main content area */}

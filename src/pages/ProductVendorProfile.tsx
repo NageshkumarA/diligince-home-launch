@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import VendorHeader from "@/components/vendor/VendorHeader";
-import ProductVendorSidebar from "@/components/vendor/ProductVendorSidebar";
+import { ProductVendorSidebar } from "@/components/vendor/product/ProductVendorSidebar";
 import CompanyInfoForm from "@/components/vendor/forms/ProductVendor/CompanyInfoForm";
 import ProductCatalogSection from "@/components/vendor/forms/ProductVendor/ProductCatalogSection";
 import BrandsPartnersSection from "@/components/vendor/forms/ProductVendor/BrandsPartnersSection";
@@ -21,11 +21,9 @@ export type ContentType =
   | "account-settings";
 
 const ProductVendorProfile = () => {
-  // State to track active content
   const [activeContent, setActiveContent] = useState<ContentType>("company-info");
-  const [profileCompletion, setProfileCompletion] = useState(65); // Example value
+  const [profileCompletion, setProfileCompletion] = useState(65);
   
-  // Mock vendor data
   const vendorData = {
     companyName: "TechPro Supplies",
     specialization: "Industrial Components",
@@ -33,12 +31,10 @@ const ProductVendorProfile = () => {
     isVerified: true
   };
 
-  // Function to handle menu item click
   const handleMenuItemClick = (contentType: ContentType) => {
     setActiveContent(contentType);
   };
 
-  // Render active content based on selection
   const renderContent = () => {
     switch (activeContent) {
       case "company-info":
@@ -66,9 +62,9 @@ const ProductVendorProfile = () => {
       
       <div className="flex flex-grow pt-16">
         <ProductVendorSidebar
+          activeSection={activeContent}
+          onSectionChange={handleMenuItemClick}
           vendorData={vendorData}
-          activeMenuItem={activeContent}
-          onMenuItemClick={handleMenuItemClick}
           profileCompletion={profileCompletion}
         />
         
