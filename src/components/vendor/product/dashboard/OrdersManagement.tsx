@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,14 +58,20 @@ export const OrdersManagement = () => {
 
   return (
     <>
-      <Card>
+      <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5" />
+            <CardTitle className="text-lg font-semibold flex items-center gap-3">
+              <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                <ShoppingCart className="h-4 w-4 text-orange-600" />
+              </div>
               Orders Management
             </CardTitle>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="border-orange-200 text-orange-600 hover:bg-orange-50"
+            >
               View All Orders
             </Button>
           </div>
@@ -73,16 +80,16 @@ export const OrdersManagement = () => {
         <CardContent>
           <div className="space-y-4">
             {activeOrders.map((order) => (
-              <div key={order.id} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+              <div key={order.id} className="p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-medium text-gray-900">{order.id}</h4>
+                      <h4 className="font-medium text-gray-900 text-sm">{order.id}</h4>
                       <Badge className={getPriorityColor(order.priority)}>
                         {order.priority}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-600 mb-1">{order.title} • {order.client}</p>
+                    <p className="text-sm text-gray-600 mb-2">{order.title} • {order.client}</p>
                     <div className="flex items-center gap-4 text-xs text-gray-500">
                       <span className="flex items-center gap-1">
                         <Package className="h-3 w-3" />
@@ -101,7 +108,7 @@ export const OrdersManagement = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-gray-900">{order.value}</p>
+                    <p className="font-semibold text-gray-900 text-sm">{order.value}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Badge className={getStatusColor(order.status)}>
                         {order.status}
@@ -114,11 +121,15 @@ export const OrdersManagement = () => {
                 </div>
                 
                 <div className="mb-3">
-                  <div className="flex justify-between text-sm mb-1">
+                  <div className="flex justify-between text-sm mb-2">
                     <span className="text-gray-600">Order Progress</span>
                     <span className="text-gray-900 font-medium">{order.progress}%</span>
                   </div>
-                  <Progress value={order.progress} className="h-2" />
+                  <Progress 
+                    value={order.progress} 
+                    className="h-2 bg-gray-100" 
+                    indicatorClassName="bg-orange-500"
+                  />
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -129,7 +140,7 @@ export const OrdersManagement = () => {
                     size="sm" 
                     variant="outline"
                     onClick={() => handleViewOrder(order)}
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1 border-gray-200 hover:bg-gray-50"
                   >
                     <Eye className="h-3 w-3" />
                     View Details
@@ -139,7 +150,7 @@ export const OrdersManagement = () => {
             ))}
           </div>
           
-          <Button className="w-full mt-4 bg-[#faad14] hover:bg-[#faad14]/90">
+          <Button className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white">
             View All Orders
           </Button>
         </CardContent>

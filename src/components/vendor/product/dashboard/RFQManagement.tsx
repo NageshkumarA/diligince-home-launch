@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -52,26 +53,32 @@ export const RFQManagement = () => {
 
   return (
     <>
-      <Card className="h-fit">
+      <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <FileText className="h-5 w-5" />
+            <CardTitle className="text-lg font-semibold flex items-center gap-3">
+              <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                <FileText className="h-4 w-4 text-orange-600" />
+              </div>
               RFQ Management
             </CardTitle>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="border-orange-200 text-orange-600 hover:bg-orange-50"
+            >
               View All RFQs
             </Button>
           </div>
         </CardHeader>
         
         <CardContent>
-          <div className="space-y-4 max-h-96 overflow-y-auto">
+          <div className="space-y-4 max-h-80 overflow-y-auto">
             {rfqData.map((rfq) => (
-              <div key={rfq.id} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+              <div key={rfq.id} className="p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h4 className="font-medium text-gray-900 mb-1">{rfq.title}</h4>
+                    <h4 className="font-medium text-gray-900 mb-1 text-sm">{rfq.title}</h4>
                     <p className="text-sm text-gray-600">{rfq.company}</p>
                   </div>
                   <Badge className={getPriorityColor(rfq.priority)}>
@@ -110,7 +117,7 @@ export const RFQManagement = () => {
                   <Button 
                     size="sm" 
                     onClick={() => handleQuoteNow(rfq)}
-                    className="bg-[#faad14] hover:bg-[#faad14]/90"
+                    className="bg-orange-500 hover:bg-orange-600 text-white"
                   >
                     Quote Now
                   </Button>
@@ -119,7 +126,7 @@ export const RFQManagement = () => {
             ))}
           </div>
           
-          <Button className="w-full mt-4 bg-[#faad14] hover:bg-[#faad14]/90">
+          <Button className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white">
             View All RFQs
           </Button>
         </CardContent>

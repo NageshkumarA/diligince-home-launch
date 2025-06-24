@@ -63,13 +63,13 @@ export const ProductCatalogView = () => {
   const getStockColor = (stock: string) => {
     switch (stock) {
       case "In Stock":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 border-green-200";
       case "Low Stock":
-        return "bg-orange-100 text-orange-800";
+        return "bg-orange-100 text-orange-800 border-orange-200";
       case "Out of Stock":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 text-red-800 border-red-200";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -91,14 +91,20 @@ export const ProductCatalogView = () => {
   );
 
   return (
-    <Card className="h-fit">
+    <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
       <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Package className="h-5 w-5" />
+        <div className="flex items-center justify-between mb-4">
+          <CardTitle className="text-lg font-semibold flex items-center gap-3">
+            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+              <Package className="h-4 w-4 text-orange-600" />
+            </div>
             Product Catalog
           </CardTitle>
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="border-orange-200 text-orange-600 hover:bg-orange-50"
+          >
             Manage Catalog
           </Button>
         </div>
@@ -108,18 +114,18 @@ export const ProductCatalogView = () => {
             placeholder="Search products..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 border-gray-200 focus:border-orange-300 focus:ring-orange-200"
           />
         </div>
       </CardHeader>
       
       <CardContent>
-        <div className="space-y-4 max-h-96 overflow-y-auto">
+        <div className="space-y-4 max-h-80 overflow-y-auto">
           {filteredProducts.map((product) => (
-            <div key={product.id} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-              <div className="flex items-start justify-between mb-2">
+            <div key={product.id} className="p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
+              <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 mb-1">{product.name}</h4>
+                  <h4 className="font-medium text-gray-900 mb-1 text-sm">{product.name}</h4>
                   <p className="text-sm text-gray-600">{product.brand} • {product.category}</p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -144,14 +150,18 @@ export const ProductCatalogView = () => {
                 </div>
               </div>
               
-              <Button size="sm" variant="outline" className="w-full">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="w-full border-gray-200 hover:bg-gray-50"
+              >
                 View Details
               </Button>
             </div>
           ))}
         </div>
         
-        <Button className="w-full mt-4 bg-[#faad14] hover:bg-[#faad14]/90">
+        <Button className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white">
           View All Products
         </Button>
       </CardContent>

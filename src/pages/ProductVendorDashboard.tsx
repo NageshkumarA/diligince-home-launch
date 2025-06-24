@@ -27,8 +27,8 @@ const ProductVendorDashboard = () => {
       <div className="min-h-screen bg-gray-50">
         <VendorHeader />
         
-        <main className="pt-32 p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto space-y-6 mt-8">
+        <main className="pt-24 px-4 sm:px-6 lg:px-8 pb-8">
+          <div className="max-w-7xl mx-auto space-y-8">
             <LoadingState message="Loading your product dashboard..." size="lg" />
             
             {/* Loading skeleton */}
@@ -54,12 +54,12 @@ const ProductVendorDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       <VendorHeader />
       
-      <main className="pt-32 p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto space-y-6 mt-8">
-          {/* Welcome Section */}
+      <main className="pt-24 px-4 sm:px-6 lg:px-8 pb-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Welcome Section with optimized typography */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Product Dashboard</h1>
-            <p className="text-gray-600">Welcome back! Here's what's happening with your product business.</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-3">Product Dashboard</h1>
+            <p className="text-base text-gray-600">Welcome back! Here's what's happening with your product business.</p>
           </div>
 
           {/* Stats Cards */}

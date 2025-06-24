@@ -35,58 +35,70 @@ const ProductVendorSidebar = ({
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 shrink-0 hidden md:block overflow-y-auto h-[calc(100vh-4rem)]">
-      <div className="flex flex-col items-center py-8 px-4 border-b border-gray-200">
-        <Avatar className="h-24 w-24 mb-4 bg-yellow-100">
-          <AvatarFallback className="text-yellow-600 text-2xl font-medium">
+    <aside className="w-80 bg-white border-r border-gray-200 shrink-0 hidden md:block overflow-y-auto h-[calc(100vh-4rem)]">
+      <div className="flex flex-col items-center py-12 px-6 border-b border-gray-200">
+        <Avatar className="h-32 w-32 mb-6 bg-orange-100">
+          <AvatarFallback className="text-orange-600 text-3xl font-semibold">
             {vendorData.initials}
           </AvatarFallback>
         </Avatar>
         
-        <h2 className="text-lg font-semibold text-gray-800">{vendorData.companyName}</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+          {vendorData.companyName}
+        </h2>
         
-        <div className="flex flex-col items-center gap-2 mt-2">
-          <Badge variant="secondary" className="bg-yellow-100 text-yellow-600 hover:bg-yellow-200 border-yellow-200">
+        <div className="flex flex-col items-center gap-3 mb-8">
+          <Badge variant="secondary" className="bg-orange-100 text-orange-600 hover:bg-orange-200 border-orange-200 px-4 py-2 text-sm font-medium">
             {vendorData.specialization}
           </Badge>
           
           {vendorData.isVerified && (
-            <Badge variant="secondary" className="bg-green-100 text-green-600 hover:bg-green-200 border-green-200">
+            <Badge className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm font-medium">
               ✓ Verified
             </Badge>
           )}
         </div>
         
-        <div className="w-full mt-6 space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Profile Completion</span>
-            <span className="text-yellow-600 font-medium">{profileCompletion}%</span>
+        <div className="w-full space-y-3">
+          <div className="flex justify-between text-sm font-medium">
+            <span className="text-gray-700">Profile Completion</span>
+            <span className="text-orange-600">{profileCompletion}%</span>
           </div>
-          <Progress value={profileCompletion} className="h-2 bg-yellow-100" indicatorClassName="bg-yellow-600" />
+          <Progress 
+            value={profileCompletion} 
+            className="h-3 bg-orange-100" 
+            indicatorClassName="bg-orange-600" 
+          />
         </div>
       </div>
       
-      <nav className="py-4">
-        <ul className="space-y-1">
+      <nav className="py-6">
+        <ul className="space-y-2 px-4">
           {menuItems.map((item) => (
             <li key={item.id}>
               <button
                 onClick={() => onMenuItemClick(item.id as ContentType)}
-                className={`w-full flex items-center gap-3 px-4 py-3 text-sm ${
+                className={`w-full flex items-center gap-4 px-6 py-4 text-left rounded-lg transition-all duration-200 ${
                   activeMenuItem === item.id
-                    ? "bg-yellow-50 text-yellow-700 border-r-4 border-yellow-600 font-medium"
-                    : "text-gray-600 hover:bg-gray-50"
+                    ? "bg-orange-50 text-orange-700 border-r-4 border-orange-600 font-medium shadow-sm"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
               >
-                <span className={activeMenuItem === item.id ? "text-yellow-600" : "text-gray-500"}>
+                <span className={activeMenuItem === item.id ? "text-orange-600" : "text-gray-500"}>
                   {item.icon}
                 </span>
-                <span>{item.label}</span>
+                <span className="text-sm">{item.label}</span>
               </button>
             </li>
           ))}
         </ul>
       </nav>
+      
+      <div className="px-6 py-4 border-t border-gray-200 mt-auto">
+        <div className="text-xs text-gray-500">
+          Last updated: May 5, 2025
+        </div>
+      </div>
     </aside>
   );
 };
