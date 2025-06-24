@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
@@ -65,14 +66,14 @@ const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case "active":
     case "in progress":
-      return "bg-green-100 text-green-800 hover:bg-green-200";
+      return "bg-green-100 text-green-800 hover:bg-green-200 border-green-200";
     case "pending":
-      return "bg-amber-100 text-amber-800 hover:bg-amber-200";
+      return "bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-200";
     case "completed":
     case "delivered":
-      return "bg-blue-100 text-blue-800 hover:bg-blue-200";
+      return "bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200";
     default:
-      return "bg-gray-100 text-gray-800 hover:bg-gray-200";
+      return "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200";
   }
 };
 
@@ -81,16 +82,16 @@ const getCategoryColor = (category: string) => {
   switch (category.toLowerCase()) {
     case "product":
     case "product vendor":
-      return "bg-purple-100 text-purple-800 hover:bg-purple-200";
+      return "bg-purple-100 text-purple-800 hover:bg-purple-200 border-purple-200";
     case "service":
     case "service vendor":
-      return "bg-blue-100 text-blue-800 hover:bg-blue-200";
+      return "bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200";
     case "expert":
-      return "bg-green-100 text-green-800 hover:bg-green-200";
+      return "bg-green-100 text-green-800 hover:bg-green-200 border-green-200";
     case "logistics":
-      return "bg-amber-100 text-amber-800 hover:bg-amber-200";
+      return "bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-200";
     default:
-      return "bg-gray-100 text-gray-800 hover:bg-gray-200";
+      return "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200";
   }
 };
 
@@ -104,16 +105,16 @@ const IndustryDashboard = () => {
       <IndustryHeader />
       
       <main className="flex-1 container mx-auto px-4 py-8 pt-20">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Industry Dashboard</h1>
-          <p className="text-gray-600">Welcome back to your procurement dashboard</p>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Industry Dashboard</h1>
+          <p className="text-gray-700 text-lg">Welcome back to your procurement dashboard</p>
         </div>
         
         {/* Quick Actions Section */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button asChild className="h-16 justify-start text-left">
+            <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
               <Link to="/create-requirement" className="flex items-center gap-3">
                 <FileText className="h-6 w-6" />
                 <div>
@@ -122,21 +123,21 @@ const IndustryDashboard = () => {
                 </div>
               </Link>
             </Button>
-            <Button asChild variant="outline" className="h-16 justify-start text-left">
+            <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
               <Link to="/create-purchase-order" className="flex items-center gap-3">
                 <ShoppingCart className="h-6 w-6" />
                 <div>
                   <div className="font-semibold">Create Purchase Order</div>
-                  <div className="text-sm text-gray-600">Generate new PO</div>
+                  <div className="text-sm opacity-90">Generate new PO</div>
                 </div>
               </Link>
             </Button>
-            <Button asChild variant="outline" className="h-16 justify-start text-left">
+            <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
               <Link to="/industry-messages" className="flex items-center gap-3">
                 <MessageSquare className="h-6 w-6" />
                 <div>
                   <div className="font-semibold">View Messages</div>
-                  <div className="text-sm text-gray-600">Check communications</div>
+                  <div className="text-sm opacity-90">Check communications</div>
                 </div>
               </Link>
             </Button>
@@ -144,17 +145,21 @@ const IndustryDashboard = () => {
         </div>
         
         {/* Key Metrics Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {metrics.map((metric, index) => (
-            <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
-              <CardContent className="p-5 flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-bold">{metric.count}</div>
-                  <div className="text-gray-600 font-medium">{metric.title}</div>
-                  <div className="text-sm text-gray-500">{metric.subtitle}</div>
-                </div>
-                <div>
-                  {metric.icon}
+            <Card key={index} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">{metric.title}</p>
+                    <p className="text-3xl font-bold text-gray-900 mb-1">{metric.count}</p>
+                    <p className="text-sm font-medium text-gray-500">{metric.subtitle}</p>
+                  </div>
+                  <div className="flex-shrink-0 ml-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                      {React.cloneElement(metric.icon, { className: "w-6 h-6 text-blue-600" })}
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -163,33 +168,33 @@ const IndustryDashboard = () => {
         
         {/* Recent Requirements Section */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-gray-800">Recent Requirements</h2>
-            <Button asChild>
+            <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
               <Link to="/create-requirement">
-                <Plus className="mr-1 h-4 w-4" />
+                <Plus className="mr-2 h-4 w-4" />
                 Post New Requirement
               </Link>
             </Button>
           </div>
           
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Actions</TableHead>
+                  <TableRow className="border-gray-100">
+                    <TableHead className="font-semibold text-gray-700">Title</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Category</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Status</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Date</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {requirementData.map((req) => (
-                    <TableRow key={req.id}>
-                      <TableCell className="font-medium">
-                        <Link to={`/requirement/${req.id}`} className="text-blue-600 hover:underline">
+                    <TableRow key={req.id} className="border-gray-100 hover:bg-gray-50">
+                      <TableCell className="font-medium text-gray-900">
+                        <Link to={`/requirement/${req.id}`} className="text-blue-600 hover:text-blue-700 hover:underline">
                           {req.title}
                         </Link>
                       </TableCell>
@@ -203,12 +208,12 @@ const IndustryDashboard = () => {
                           {req.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="text-gray-600">
                         {req.date}
                       </TableCell>
                       <TableCell>
                         {req.status === "Completed" && (
-                          <Button size="sm" variant="outline" asChild>
+                          <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
                             <Link to="/create-purchase-order">Create PO</Link>
                           </Button>
                         )}
@@ -220,34 +225,34 @@ const IndustryDashboard = () => {
             </CardContent>
           </Card>
           
-          <div className="flex justify-center mt-4">
-            <Button variant="outline">View All Requirements</Button>
+          <div className="flex justify-center mt-6">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Requirements</Button>
           </div>
         </div>
         
         {/* Matched Stakeholders Section */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-gray-800">Matched Stakeholders</h2>
-            <Button variant="outline">Find Stakeholders</Button>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">Find Stakeholders</Button>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {stakeholderData.map((stakeholder) => (
-              <Card key={stakeholder.id} className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-5 flex flex-col items-center text-center">
-                  <Avatar className="h-16 w-16 mb-3">
-                    <AvatarFallback className="text-xl">{stakeholder.initials}</AvatarFallback>
+              <Card key={stakeholder.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
+                <CardContent className="p-6 flex flex-col items-center text-center">
+                  <Avatar className="h-16 w-16 mb-4 bg-gradient-to-br from-blue-50 to-blue-100">
+                    <AvatarFallback className="text-xl font-semibold text-blue-600">{stakeholder.initials}</AvatarFallback>
                   </Avatar>
-                  <h3 className="font-medium mb-1">{stakeholder.name}</h3>
-                  <Badge className={`mb-3 ${getCategoryColor(stakeholder.type)}`}>
+                  <h3 className="font-semibold text-gray-900 mb-2">{stakeholder.name}</h3>
+                  <Badge className={`mb-4 ${getCategoryColor(stakeholder.type)}`}>
                     {stakeholder.type}
                   </Badge>
-                  <div className="flex gap-2 mt-2">
-                    <Button variant="outline" size="sm" asChild>
+                  <div className="flex gap-2 mt-2 w-full">
+                    <Button variant="outline" size="sm" className="flex-1 border-gray-200 text-gray-700 hover:bg-gray-50" asChild>
                       <Link to={`/vendor-details/${stakeholder.id}`}>View Profile</Link>
                     </Button>
-                    <Button size="sm" asChild>
+                    <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
                       <Link to="/create-purchase-order">Create PO</Link>
                     </Button>
                   </div>
@@ -259,25 +264,25 @@ const IndustryDashboard = () => {
         
         {/* Recent Messages Section */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-gray-800">Recent Messages</h2>
-            <Button variant="outline">View All Messages</Button>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Messages</Button>
           </div>
           
-          <Card>
-            <CardContent className="p-4">
+          <Card className="bg-white border border-gray-100 shadow-sm">
+            <CardContent className="p-6">
               <ul className="divide-y divide-gray-100">
                 {messageData.map((message) => (
-                  <li key={message.id} className="py-3 flex items-start gap-4 hover:bg-gray-50 px-2 rounded cursor-pointer">
-                    <Avatar>
-                      <AvatarFallback>{message.initials}</AvatarFallback>
+                  <li key={message.id} className="py-4 flex items-start gap-4 hover:bg-gray-50 px-3 rounded-lg cursor-pointer transition-colors">
+                    <Avatar className="bg-gradient-to-br from-blue-50 to-blue-100">
+                      <AvatarFallback className="text-blue-600 font-semibold">{message.initials}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <div className="flex justify-between">
-                        <p className="text-sm font-medium text-gray-900">{message.sender}</p>
+                      <div className="flex justify-between items-start">
+                        <p className="text-sm font-semibold text-gray-900">{message.sender}</p>
                         <p className="text-xs text-gray-500">{message.time}</p>
                       </div>
-                      <p className="text-sm text-gray-500 truncate">{message.preview}</p>
+                      <p className="text-sm text-gray-700 truncate mt-1">{message.preview}</p>
                     </div>
                   </li>
                 ))}
@@ -288,49 +293,49 @@ const IndustryDashboard = () => {
         
         {/* Active Orders Section */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-gray-800">Recent Orders</h2>
-            <div className="flex gap-2">
-              <Button variant="outline">View All Orders</Button>
-              <Button asChild>
+            <div className="flex gap-3">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Orders</Button>
+              <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
                 <Link to="/create-purchase-order">
-                  <Plus className="mr-1 h-4 w-4" />
+                  <Plus className="mr-2 h-4 w-4" />
                   Create New PO
                 </Link>
               </Button>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {orderData.map((order) => (
-              <Card key={order.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-5">
-                  <div className="flex justify-between mb-2">
-                    <h3 className="font-medium">{order.id}</h3>
+              <Card key={order.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="font-semibold text-gray-900">{order.id}</h3>
                     <Badge className={getStatusColor(order.status)}>
                       {order.status}
                     </Badge>
                   </div>
-                  <p className="text-gray-800 font-medium mb-1">{order.title}</p>
-                  <p className="text-gray-600 text-sm mb-1">Vendor: {order.vendor}</p>
-                  <p className="text-gray-500 text-sm mb-3">{order.summary}</p>
+                  <p className="text-gray-900 font-medium mb-2">{order.title}</p>
+                  <p className="text-gray-600 text-sm mb-1">Vendor: <span className="font-medium">{order.vendor}</span></p>
+                  <p className="text-gray-500 text-sm mb-4">{order.summary}</p>
                   
-                  <div className="mb-3">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Progress</span>
-                      <span>{order.progress}%</span>
+                  <div className="mb-4">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="font-medium text-gray-700">Progress</span>
+                      <span className="font-semibold text-gray-900">{order.progress}%</span>
                     </div>
                     <Progress value={order.progress} className="h-2" />
                   </div>
                   
                   <div className="flex justify-between gap-2">
-                    <Button size="sm" variant="outline" asChild>
+                    <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
                       <Link to={`/work-completion-payment/${order.id}`}>
                         {order.progress === 100 ? "Review & Pay" : "View Details"}
                       </Link>
                     </Button>
                     {order.progress < 100 && (
-                      <Button size="sm" variant="ghost" asChild>
+                      <Button size="sm" variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50" asChild>
                         <Link to="/create-purchase-order">Duplicate PO</Link>
                       </Button>
                     )}

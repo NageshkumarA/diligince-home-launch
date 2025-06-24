@@ -209,49 +209,49 @@ const IndustryMessages = () => {
       
       <div className="pt-16 flex-1 flex">
         {/* Conversations Sidebar */}
-        <div className="w-1/3 bg-white border-r border-gray-200 flex flex-col">
+        <div className="w-1/3 bg-white border-r border-gray-200 flex flex-col shadow-sm">
           {/* Header */}
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-semibold text-gray-900">Messages</h1>
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-xl font-bold text-gray-900">Messages</h1>
               <div className="flex items-center gap-2">
                 {unreadCount > 0 && (
-                  <Badge className="bg-red-100 text-red-800">
+                  <Badge className="bg-red-100 text-red-800 border-red-200 font-medium">
                     {unreadCount} unread
                   </Badge>
                 )}
                 {urgentCount > 0 && (
-                  <Badge className="bg-yellow-100 text-yellow-800">
+                  <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 font-medium">
                     {urgentCount} urgent
                   </Badge>
                 )}
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
                       <Plus className="h-4 w-4 mr-2" />
                       New
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[600px]">
                     <DialogHeader>
-                      <DialogTitle>Compose New Message</DialogTitle>
+                      <DialogTitle className="text-lg font-semibold text-gray-900">Compose New Message</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
                       <div>
-                        <label className="text-sm font-medium">To</label>
-                        <Input placeholder="Select vendor..." />
+                        <label className="text-sm font-medium text-gray-700">To</label>
+                        <Input placeholder="Select vendor..." className="mt-1" />
                       </div>
                       <div>
-                        <label className="text-sm font-medium">Subject</label>
-                        <Input placeholder="Message subject..." />
+                        <label className="text-sm font-medium text-gray-700">Subject</label>
+                        <Input placeholder="Message subject..." className="mt-1" />
                       </div>
                       <div>
-                        <label className="text-sm font-medium">Message</label>
-                        <Textarea placeholder="Type your message..." rows={6} />
+                        <label className="text-sm font-medium text-gray-700">Message</label>
+                        <Textarea placeholder="Type your message..." rows={6} className="mt-1" />
                       </div>
-                      <div className="flex justify-end space-x-2">
-                        <Button variant="outline">Save Draft</Button>
-                        <Button className="bg-blue-600 hover:bg-blue-700">
+                      <div className="flex justify-end space-x-3 pt-4">
+                        <Button variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50">Save Draft</Button>
+                        <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
                           <Send className="w-4 h-4 mr-2" />
                           Send Message
                         </Button>
@@ -270,12 +270,12 @@ const IndustryMessages = () => {
                   placeholder="Search conversations..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-gray-200"
                 />
               </div>
               
               <Select value={filterBy} onValueChange={setFilterBy}>
-                <SelectTrigger>
+                <SelectTrigger className="border-gray-200">
                   <SelectValue placeholder="Filter messages" />
                 </SelectTrigger>
                 <SelectContent>
@@ -300,7 +300,7 @@ const IndustryMessages = () => {
               >
                 <div className="flex items-start gap-3">
                   <Avatar className={`h-10 w-10 ${conversation.avatar}`}>
-                    <AvatarFallback className="text-base">{conversation.initials}</AvatarFallback>
+                    <AvatarFallback className="text-base font-semibold">{conversation.initials}</AvatarFallback>
                   </Avatar>
                   
                   <div className="flex-1 min-w-0">
@@ -327,7 +327,7 @@ const IndustryMessages = () => {
                         {conversation.priority}
                       </Badge>
                       {(conversation.orderNumber || conversation.projectId) && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs border-gray-200 text-gray-600">
                           {conversation.orderNumber || conversation.projectId}
                         </Badge>
                       )}
@@ -347,15 +347,15 @@ const IndustryMessages = () => {
           {selectedConversation ? (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b border-gray-200">
+              <div className="p-6 border-b border-gray-200 bg-white">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Avatar className={`h-10 w-10 ${selectedConversation.avatar}`}>
-                      <AvatarFallback className="text-base">{selectedConversation.initials}</AvatarFallback>
+                      <AvatarFallback className="text-base font-semibold">{selectedConversation.initials}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <h2 className="text-base font-semibold text-gray-900">{selectedConversation.sender}</h2>
-                      <p className="text-sm text-gray-500">{selectedConversation.category}</p>
+                      <h2 className="text-base font-bold text-gray-900">{selectedConversation.sender}</h2>
+                      <p className="text-sm text-gray-600">{selectedConversation.category}</p>
                       {(selectedConversation.orderNumber || selectedConversation.projectId) && (
                         <p className="text-xs text-blue-600 font-medium">{selectedConversation.orderNumber || selectedConversation.projectId}</p>
                       )}
@@ -363,26 +363,27 @@ const IndustryMessages = () => {
                   </div>
                   
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="border-gray-200 text-gray-700 hover:bg-gray-50">
                       <Phone className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="border-gray-200 text-gray-700 hover:bg-gray-50">
                       <Video className="h-4 w-4" />
                     </Button>
                     <Button 
                       variant="outline" 
                       size="sm"
+                      className="border-gray-200 text-gray-700 hover:bg-gray-50"
                       onClick={() => setShowEmailModal(true)}
                     >
                       <Mail className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="border-gray-200 text-gray-700 hover:bg-gray-50">
                       <Star className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="border-gray-200 text-gray-700 hover:bg-gray-50">
                       <Archive className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="border-gray-200 text-gray-700 hover:bg-gray-50">
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </div>
@@ -390,13 +391,13 @@ const IndustryMessages = () => {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {conversationMessages.map((message) => (
                   <div
                     key={message.id}
                     className={`flex ${message.isFromContact ? "justify-start" : "justify-end"}`}
                   >
-                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                    <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${
                       message.isFromContact
                         ? "bg-gray-100 text-gray-900"
                         : "bg-blue-600 text-white"
@@ -413,16 +414,16 @@ const IndustryMessages = () => {
               </div>
 
               {/* Message Input */}
-              <div className="p-4 border-t border-gray-200">
-                <div className="flex items-end gap-2">
-                  <Button variant="outline" size="sm">
+              <div className="p-6 border-t border-gray-200 bg-white">
+                <div className="flex items-end gap-3">
+                  <Button variant="outline" size="sm" className="border-gray-200 text-gray-700 hover:bg-gray-50">
                     <Paperclip className="h-4 w-4" />
                   </Button>
                   <Textarea
                     placeholder="Type your message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    className="flex-1 min-h-[40px] max-h-32 resize-none"
+                    className="flex-1 min-h-[40px] max-h-32 resize-none border-gray-200"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
@@ -433,7 +434,7 @@ const IndustryMessages = () => {
                   <Button 
                     onClick={handleSendMessage}
                     disabled={!newMessage.trim()}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
@@ -444,8 +445,8 @@ const IndustryMessages = () => {
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <MessageSquare className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-medium text-gray-900 mb-2">Select a conversation</h3>
-                <p className="text-gray-500">Choose a conversation from the sidebar to start messaging</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Select a conversation</h3>
+                <p className="text-gray-600">Choose a conversation from the sidebar to start messaging</p>
               </div>
             </div>
           )}
@@ -456,31 +457,33 @@ const IndustryMessages = () => {
       <Dialog open={showEmailModal} onOpenChange={setShowEmailModal}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Send Email to {selectedConversation?.sender}</DialogTitle>
+            <DialogTitle className="text-lg font-semibold text-gray-900">Send Email to {selectedConversation?.sender}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Subject</label>
+              <label className="text-sm font-medium text-gray-700">Subject</label>
               <Input 
                 placeholder="Email subject..."
                 value={emailSubject}
                 onChange={(e) => setEmailSubject(e.target.value)}
+                className="mt-1 border-gray-200"
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Message</label>
+              <label className="text-sm font-medium text-gray-700">Message</label>
               <Textarea 
                 placeholder="Type your email message..."
                 rows={8}
                 value={emailContent}
                 onChange={(e) => setEmailContent(e.target.value)}
+                className="mt-1 border-gray-200"
               />
             </div>
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setShowEmailModal(false)}>
+            <div className="flex justify-end space-x-3 pt-4">
+              <Button variant="outline" onClick={() => setShowEmailModal(false)} className="border-gray-200 text-gray-700 hover:bg-gray-50">
                 Cancel
               </Button>
-              <Button onClick={handleSendEmail} className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleSendEmail} className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
                 <Mail className="w-4 h-4 mr-2" />
                 Send Email
               </Button>
