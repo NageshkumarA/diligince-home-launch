@@ -15,19 +15,19 @@ const Privacy = () => {
                 Effective Date: April 1, 2025
               </p>
               <p>
-                At diligince.ai, we take your privacy seriously. This Privacy Policy explains how we collect, use, 
-                disclose, and safeguard your information when you visit our website or use our platform.
+                At Diligince.ai, we take your privacy seriously. This Privacy Policy explains how we collect, use, 
+                disclose and safeguard your information when you visit our website or use our platform.
               </p>
               
               <h2 className="text-2xl font-bold mt-8 mb-4">Information We Collect</h2>
               <p>
                 We collect information that you voluntarily provide to us when you register on the platform, 
                 express interest in obtaining information about us or our products and services, participate 
-                in activities on the platform, or otherwise contact us.
+                in activities on the platform or otherwise contact us.
               </p>
               <p>
                 The personal information that we collect depends on the context of your interactions with us 
-                and the platform, the choices you make, and the features you use. The personal information we 
+                and the platform, the choices you make and the features you use. The personal information we 
                 collect may include:
               </p>
               <ul className="list-disc pl-6 space-y-2">
@@ -43,7 +43,7 @@ const Privacy = () => {
               </p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>To facilitate account creation and the login process</li>
-                <li>To provide, operate, and maintain our platform</li>
+                <li>To provide, operate and maintain our platform</li>
                 <li>To improve our platform to better serve you</li>
                 <li>To communicate with you about your account or transactions</li>
                 <li>To send you updates and marketing communications</li>
@@ -64,15 +64,15 @@ const Privacy = () => {
               </ul>
               <p>
                 We may also disclose your information where required by law, where we believe it is necessary to 
-                comply with a legal obligation, or to protect our rights or the safety of others.
+                comply with a legal obligation or to protect our rights or the safety of others.
               </p>
               
               <h2 className="text-2xl font-bold mt-8 mb-4">Data Security</h2>
               <p>
-                We use administrative, technical, and physical security measures to protect your personal information. 
+                We use administrative, technical and physical security measures to protect your personal information. 
                 While we have taken reasonable steps to secure the personal information you provide to us, please be 
                 aware that no security measures are perfect or impenetrable, and we cannot guarantee that your 
-                information will not be accessed, disclosed, altered, or destroyed by unauthorized parties.
+                information will not be accessed, disclosed, altered or destroyed by unauthorized parties.
               </p>
               
               <h2 className="text-2xl font-bold mt-8 mb-4">Your Rights</h2>
