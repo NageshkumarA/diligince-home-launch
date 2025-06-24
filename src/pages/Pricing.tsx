@@ -79,8 +79,7 @@ const Pricing = () => {
                 </CardContent>
                 <CardFooter>
                   <Button 
-                    variant="outline" 
-                    className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleGetStarted();
@@ -188,8 +187,7 @@ const Pricing = () => {
                 </CardContent>
                 <CardFooter>
                   <Button 
-                    variant="outline" 
-                    className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleContactSales();
