@@ -14,4 +14,4 @@ export { LogisticsVendorSidebar } from './logistics/LogisticsVendorSidebar';
 
 // Legacy components (maintained for compatibility)
 export { default as VendorSidebar } from './VendorSidebar';
-export { default as ProductVendorSidebar as ProductVendorSidebarLegacy } from './ProductVendorSidebar';
+export { default as ProductVendorSidebarLegacy } from './ProductVendorSidebar';
