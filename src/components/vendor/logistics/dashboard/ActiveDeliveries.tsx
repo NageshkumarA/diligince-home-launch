@@ -32,19 +32,19 @@ export const ActiveDeliveries = () => {
 
   const getProgressColor = (progress: number) => {
     if (progress >= 70) return "bg-green-600";
-    if (progress >= 40) return "bg-yellow-600";
-    return "bg-[#eb2f96]";
+    if (progress >= 40) return "bg-blue-600";
+    return "bg-yellow-600";
   };
 
   return (
-    <Card>
+    <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-semibold">Active Deliveries</CardTitle>
-        <Button variant="outline" size="sm">Track All</Button>
+        <CardTitle className="text-lg font-semibold text-gray-900">Active Deliveries</CardTitle>
+        <Button variant="outline" size="sm" className="border-blue-200 text-blue-600 hover:bg-blue-50">Track All</Button>
       </CardHeader>
       <CardContent className="space-y-4">
         {deliveries.map((delivery) => (
-          <div key={delivery.id} className="border rounded-lg p-4">
+          <div key={delivery.id} className="bg-white border border-gray-100 rounded-lg p-4">
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
                 <h4 className="font-semibold text-gray-900">{delivery.title}</h4>
@@ -79,7 +79,7 @@ export const ActiveDeliveries = () => {
               />
             </div>
             
-            <Button variant="outline" size="sm" className="w-full">
+            <Button variant="outline" size="sm" className="w-full border-blue-200 text-blue-600 hover:bg-blue-50">
               View Details
             </Button>
           </div>
