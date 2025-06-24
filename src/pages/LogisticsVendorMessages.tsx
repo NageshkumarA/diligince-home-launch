@@ -294,7 +294,7 @@ const LogisticsVendorMessages = () => {
               >
                 <div className="flex items-start gap-3">
                   <Avatar className={`h-10 w-10 ${conversation.avatar}`}>
-                    <Avat       arFallback>{conversation.initials}</AvatarFallback>
+                    <AvatarFallback>{conversation.initials}</AvatarFallback>
                   </Avatar>
                   
                   <div className="flex-1 min-w-0">
