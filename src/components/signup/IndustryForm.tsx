@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useUser } from "@/contexts/UserContext";
 
 // Define industry types array to be shared between signup and profile pages
 export const industries = [
@@ -41,8 +41,8 @@ export const industries = [
   "Fertilizer Production",
   "Power Generation",
   "Water Treatment",
-  "Manufacturing", // Added Manufacturing
-  "Others" // Added Others option
+  "Manufacturing",
+  "Others"
 ];
 
 const formSchema = z.object({
@@ -82,6 +82,7 @@ export function IndustryForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const { login } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -103,22 +104,55 @@ export function IndustryForm() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     
-    // Capture the effective industry type (either selected or custom)
-    const effectiveIndustryType = values.industryType === "Others" 
-      ? values.customIndustryType 
-      : values.industryType;
-    
-    console.log("Form values:", {...values, effectiveIndustryType});
-    
-    // Simulate API call delay
     setTimeout(() => {
+      // Generate initials from company name
+      const initials = values.companyName
+        .split(' ')
+        .map(word => word.charAt(0))
+        .join('')
+        .substring(0, 2)
+        .toUpperCase();
+      
+      // Create user profile
+      const userProfile = {
+        id: Math.random().toString(36).substr(2, 9),
+        email: values.email,
+        name: values.companyName,
+        role: 'industry' as const,
+        avatar: '',
+        initials: initials,
+        status: 'active' as const,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        preferences: {
+          theme: 'system' as const,
+          notifications: {
+            email: true,
+            push: true,
+            sms: false,
+            marketing: false,
+          },
+          language: 'en',
+          timezone: 'UTC',
+        },
+        profile: {
+          companyName: values.companyName,
+          industryType: values.industryType === "Others" ? values.customIndustryType : values.industryType
+        }
+      };
+
+      // Set user in context
+      login(userProfile);
+      
       setIsSubmitting(false);
       toast.success("Sign-up successful!", {
         description: "Welcome to diligince.ai",
       });
       
-      // Redirect to sign-in page after successful sign-up
-      navigate(`/signin?role=industry`);
+      // Redirect to industry dashboard
+      setTimeout(() => {
+        navigate("/industry-dashboard");
+      }, 1000);
     }, 1500);
   }
 

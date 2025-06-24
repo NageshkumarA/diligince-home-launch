@@ -20,6 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useUser } from "@/contexts/UserContext";
 import { useVendorSpecialization } from "@/contexts/VendorSpecializationContext";
 import { mapSignupToSpecialization } from "@/utils/vendorSpecializationMapping";
+import { VendorCategory } from "@/types/shared";
 
 const formSchema = z.object({
   businessName: z.string().min(1, {
@@ -131,6 +132,15 @@ export function VendorFormEnhanced() {
         .substring(0, 2)
         .toUpperCase();
       
+      // Map vendor category to our internal format
+      const vendorCategoryMap: Record<string, VendorCategory> = {
+        "Service Vendor": "service",
+        "Product Vendor": "product",
+        "Logistics Vendor": "logistics"
+      };
+      
+      const vendorCategory = vendorCategoryMap[values.vendorCategory];
+      
       // Create user profile
       const userProfile = {
         id: Math.random().toString(36).substr(2, 9),
@@ -156,7 +166,7 @@ export function VendorFormEnhanced() {
         profile: {
           businessName: values.businessName,
           phone: values.phone,
-          vendorCategory: values.vendorCategory,
+          vendorCategory: vendorCategory,
           specialization: values.specialization
         }
       };
@@ -175,12 +185,22 @@ export function VendorFormEnhanced() {
         description: "Welcome to diligince.ai",
       });
       
-      // Redirect to appropriate dashboard
-      if (values.vendorCategory === "Logistics Vendor") {
-        navigate("/logistics-vendor-dashboard");
-      } else {
-        navigate("/signin?role=vendor");
-      }
+      // Redirect to appropriate dashboard based on vendor category
+      setTimeout(() => {
+        switch (vendorCategory) {
+          case "service":
+            navigate("/service-vendor-dashboard");
+            break;
+          case "product":
+            navigate("/product-vendor-dashboard");
+            break;
+          case "logistics":
+            navigate("/logistics-vendor-dashboard");
+            break;
+          default:
+            navigate("/vendor-profile");
+        }
+      }, 1000);
     }, 1500);
   }
 

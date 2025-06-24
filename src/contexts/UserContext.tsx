@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { UserProfile, UserRole, UserPreferences } from '@/types/shared';
+import { UserProfile, UserRole, UserPreferences, getDashboardRoute } from '@/types/shared';
 
 interface UserContextType {
   user: UserProfile | null;
@@ -11,6 +11,9 @@ interface UserContextType {
   updatePreferences: (preferences: Partial<UserPreferences>) => void;
   login: (user: UserProfile) => void;
   logout: () => void;
+  getDashboardUrl: () => string;
+  isUserType: (role: UserRole) => boolean;
+  isVendorCategory: (category: string) => boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -109,6 +112,19 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+  const getDashboardUrl = (): string => {
+    if (!user) return '/';
+    return getDashboardRoute(user);
+  };
+
+  const isUserType = (role: UserRole): boolean => {
+    return user?.role === role;
+  };
+
+  const isVendorCategory = (category: string): boolean => {
+    return user?.role === 'vendor' && user?.profile?.vendorCategory === category;
+  };
+
   const value: UserContextType = {
     user,
     setUser,
@@ -118,6 +134,9 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     updatePreferences,
     login,
     logout,
+    getDashboardUrl,
+    isUserType,
+    isVendorCategory,
   };
 
   return (

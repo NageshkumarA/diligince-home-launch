@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -16,6 +15,8 @@ import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useUser } from "@/contexts/UserContext";
+import { getDashboardRoute } from "@/types/shared";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -34,6 +35,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const roleParam = searchParams.get("role");
+  const { login } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,27 +53,85 @@ const SignIn = () => {
     // Simulate API call delay
     setTimeout(() => {
       console.log("Sign in values:", values);
+      
+      // Create mock user profile based on role
+      let userProfile;
+      const baseProfile = {
+        id: Math.random().toString(36).substr(2, 9),
+        email: values.email,
+        avatar: '',
+        status: 'active' as const,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        preferences: {
+          theme: 'system' as const,
+          notifications: {
+            email: true,
+            push: true,
+            sms: false,
+            marketing: false,
+          },
+          language: 'en',
+          timezone: 'UTC',
+        },
+      };
+
+      switch (values.role) {
+        case "industry":
+          userProfile = {
+            ...baseProfile,
+            name: "Sample Company Ltd.",
+            role: 'industry' as const,
+            initials: "SC",
+            profile: {
+              companyName: "Sample Company Ltd.",
+              industryType: "Manufacturing"
+            }
+          };
+          break;
+        case "professional":
+          userProfile = {
+            ...baseProfile,
+            name: "John Professional",
+            role: 'professional' as const,
+            initials: "JP",
+            profile: {
+              fullName: "John Professional",
+              expertise: "Mechanical Engineering"
+            }
+          };
+          break;
+        case "vendor":
+          // For demo purposes, create a logistics vendor
+          userProfile = {
+            ...baseProfile,
+            name: "Sample Logistics Co.",
+            role: 'vendor' as const,
+            initials: "SL",
+            profile: {
+              businessName: "Sample Logistics Co.",
+              vendorCategory: 'logistics' as const,
+              specialization: "Transportation Services"
+            }
+          };
+          break;
+        default:
+          userProfile = baseProfile;
+      }
+
+      // Set user in context
+      login(userProfile);
+      
       setIsLoading(false);
       toast.success("Successfully signed in!", {
         description: "Welcome back to diligince.ai",
       });
       
-      // Redirect based on user role
+      // Redirect to appropriate dashboard
+      const dashboardRoute = getDashboardRoute(userProfile);
       setTimeout(() => {
-        switch (values.role) {
-          case "industry":
-            navigate("/industry-profile");
-            break;
-          case "professional":
-            navigate("/professional-profile");
-            break;
-          case "vendor":
-            navigate("/vendor-profile");
-            break;
-          default:
-            navigate("/");
-        }
-      }, 1500);
+        navigate(dashboardRoute);
+      }, 1000);
     }, 1000);
   }
 

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useUser } from "@/contexts/UserContext";
 
 const formSchema = z.object({
   fullName: z.string().min(1, {
@@ -72,6 +72,7 @@ export function ProfessionalForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const { login } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -89,16 +90,56 @@ export function ProfessionalForm() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     
-    // Simulate API call delay
     setTimeout(() => {
-      console.log("Form values:", values);
+      // Generate initials from full name
+      const initials = values.fullName
+        .split(' ')
+        .map(word => word.charAt(0))
+        .join('')
+        .substring(0, 2)
+        .toUpperCase();
+      
+      // Create user profile
+      const userProfile = {
+        id: Math.random().toString(36).substr(2, 9),
+        email: values.email,
+        name: values.fullName,
+        role: 'professional' as const,
+        avatar: '',
+        initials: initials,
+        status: 'active' as const,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        preferences: {
+          theme: 'system' as const,
+          notifications: {
+            email: true,
+            push: true,
+            sms: false,
+            marketing: false,
+          },
+          language: 'en',
+          timezone: 'UTC',
+        },
+        profile: {
+          fullName: values.fullName,
+          phone: values.phone,
+          expertise: values.expertise
+        }
+      };
+
+      // Set user in context
+      login(userProfile);
+      
       setIsSubmitting(false);
       toast.success("Sign-up successful!", {
         description: "Welcome to diligince.ai",
       });
       
-      // Redirect to sign-in page after successful sign-up
-      navigate("/signin?role=professional");
+      // Redirect to professional dashboard
+      setTimeout(() => {
+        navigate("/professional-dashboard");
+      }, 1000);
     }, 1500);
   }
 
