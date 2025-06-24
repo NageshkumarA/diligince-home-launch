@@ -13,7 +13,7 @@ const About = () => {
             <div className="text-center mb-12">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">About Diligince.ai</h1>
               <p className="text-gray-600 max-w-3xl mx-auto">
-                We're building the leading AI-powered platform connecting industrial ecosystems in India.
+                We are building the leading AI powered platform connecting industrial ecosystems in India.
               </p>
             </div>
 
@@ -21,10 +21,10 @@ const About = () => {
               <div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">Our Story</h2>
                 <p className="text-gray-600 mb-4">
-                  Founded in 2024, Diligince.ai was born from a vision to revolutionize how industrial plants connect with vendors, professionals, and logistics partners across India.
+                  Founded in 2024, Diligince.ai was born from a vision to revolutionize how industrial plants connect with vendors, professionals and logistics partners across India.
                 </p>
                 <p className="text-gray-600 mb-4">
-                  We recognized the inefficiencies in the traditional industrial service marketplace and set out to create a technology-driven solution that leverages artificial intelligence to make connections faster, smarter, and more reliable.
+                  We recognized the inefficiencies in the traditional industrial service marketplace and set out to create a technology driven solution that leverages artificial intelligence to make connections faster, smarter and more reliable.
                 </p>
                 <p className="text-gray-600">
                   Our platform is scheduled to launch in 2025, bringing an innovative approach to industrial partnerships throughout India.
