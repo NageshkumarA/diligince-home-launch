@@ -69,7 +69,7 @@ const Contact = () => {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="John Doe"
-                        className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200"
+                        className="bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-200"
                         required
                       />
                     </div>
@@ -85,7 +85,7 @@ const Contact = () => {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="john@example.com"
-                        className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200"
+                        className="bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-200"
                         required
                       />
                     </div>
@@ -100,7 +100,7 @@ const Contact = () => {
                         value={formData.subject}
                         onChange={handleChange}
                         placeholder="How can we help?"
-                        className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200"
+                        className="bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-200"
                         required
                       />
                     </div>
@@ -116,7 +116,7 @@ const Contact = () => {
                         onChange={handleChange}
                         placeholder="Tell us about your inquiry..."
                         rows={6}
-                        className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200"
+                        className="bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-200"
                         required
                       />
                     </div>
