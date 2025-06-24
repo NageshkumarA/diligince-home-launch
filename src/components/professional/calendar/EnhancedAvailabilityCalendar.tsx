@@ -143,9 +143,9 @@ const EnhancedAvailabilityCalendar = () => {
     return (
       <div
         className={`
-          relative p-2 min-h-[80px] border cursor-pointer transition-all hover:shadow-md
+          relative p-2 min-h-[80px] border cursor-pointer transition-all hover:shadow-md bg-white
           ${dayData ? getStatusColor(dayData.availability.status) : 'bg-white border-gray-200'}
-          ${isToday(date) ? 'ring-2 ring-blue-500' : ''}
+          ${isToday(date) ? 'ring-2 ring-purple-500' : ''}
         `}
         onClick={() => handleDateClick(date)}
       >
@@ -202,7 +202,7 @@ const EnhancedAvailabilityCalendar = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <CalendarDays className="h-6 w-6 text-purple-600" />
@@ -211,10 +211,10 @@ const EnhancedAvailabilityCalendar = () => {
         <p className="text-gray-600 mt-1">Manage your schedule, pricing, and availability.</p>
       </div>
 
-      <Card>
+      <Card className="bg-white border border-gray-100 shadow-sm">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">
+            <CardTitle className="text-lg text-gray-900">
               {format(currentDate, 'MMMM yyyy')}
             </CardTitle>
             <div className="flex items-center gap-2">
@@ -222,6 +222,7 @@ const EnhancedAvailabilityCalendar = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => navigateMonth('prev')}
+                className="border-purple-200 text-purple-600 hover:bg-purple-50"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -229,6 +230,7 @@ const EnhancedAvailabilityCalendar = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentDate(new Date())}
+                className="border-purple-200 text-purple-600 hover:bg-purple-50"
               >
                 Today
               </Button>
@@ -236,6 +238,7 @@ const EnhancedAvailabilityCalendar = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => navigateMonth('next')}
+                className="border-purple-200 text-purple-600 hover:bg-purple-50"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
@@ -243,9 +246,9 @@ const EnhancedAvailabilityCalendar = () => {
           </div>
         </CardHeader>
         
-        <CardContent className="p-0">
+        <CardContent className="p-0 bg-white">
           {/* Calendar Header */}
-          <div className="grid grid-cols-7 border-b">
+          <div className="grid grid-cols-7 border-b bg-white">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
               <div key={day} className="p-3 text-center text-sm font-medium text-gray-500 bg-gray-50">
                 {day}
@@ -254,7 +257,7 @@ const EnhancedAvailabilityCalendar = () => {
           </div>
           
           {/* Calendar Grid */}
-          <div className="grid grid-cols-7">
+          <div className="grid grid-cols-7 bg-white">
             {calendarDays.map((date, index) => (
               <div key={index}>
                 {renderCalendarDay(date)}

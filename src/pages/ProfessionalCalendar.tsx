@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Home, Briefcase, Calendar, MessageSquare, User, Download, Settings, Grid, List, ChevronLeft, ChevronRight, Filter, Bell, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -65,7 +66,7 @@ const ProfessionalCalendar = () => {
                   <span>/</span>
                   <span className="text-purple-600 font-medium">Calendar</span>
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Professional Calendar</h1>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">Professional Calendar</h1>
                 <p className="text-gray-600">Manage your availability, schedule meetings, and track your professional commitments.</p>
               </div>
               
@@ -75,7 +76,7 @@ const ProfessionalCalendar = () => {
                   variant="outline"
                   size="sm"
                   onClick={filterModal.openModal}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-purple-200 text-purple-600 hover:bg-purple-50"
                 >
                   <Filter className="h-4 w-4" />
                   Filters
@@ -84,7 +85,7 @@ const ProfessionalCalendar = () => {
                   variant="outline"
                   size="sm"
                   onClick={templatesModal.openModal}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-purple-200 text-purple-600 hover:bg-purple-50"
                 >
                   <Grid className="h-4 w-4" />
                   Templates
@@ -93,7 +94,7 @@ const ProfessionalCalendar = () => {
                   variant="outline"
                   size="sm"
                   onClick={bulkModal.openModal}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-purple-200 text-purple-600 hover:bg-purple-50"
                 >
                   <Clock className="h-4 w-4" />
                   Bulk Set
@@ -102,7 +103,7 @@ const ProfessionalCalendar = () => {
                   variant="outline"
                   size="sm"
                   onClick={handleImportCalendar}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-purple-200 text-purple-600 hover:bg-purple-50"
                 >
                   <Download className="h-4 w-4" />
                   Import
@@ -111,7 +112,7 @@ const ProfessionalCalendar = () => {
                   variant="outline"
                   size="sm"
                   onClick={syncModal.openModal}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-purple-200 text-purple-600 hover:bg-purple-50"
                 >
                   <Settings className="h-4 w-4" />
                   Sync
@@ -120,7 +121,7 @@ const ProfessionalCalendar = () => {
                   variant="outline"
                   size="sm"
                   onClick={handleExportCalendar}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-purple-200 text-purple-600 hover:bg-purple-50"
                 >
                   <Download className="h-4 w-4" />
                   Export
@@ -129,7 +130,7 @@ const ProfessionalCalendar = () => {
                   variant="outline"
                   size="sm"
                   onClick={handleNotificationSettings}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-purple-200 text-purple-600 hover:bg-purple-50"
                 >
                   <Bell className="h-4 w-4" />
                   Alerts
@@ -140,7 +141,7 @@ const ProfessionalCalendar = () => {
 
           {/* Enhanced Calendar Stats */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <Card className="p-4">
+            <Card className="p-4 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                   <div className="w-4 h-4 bg-green-500 rounded-full"></div>
@@ -152,7 +153,7 @@ const ProfessionalCalendar = () => {
               </div>
             </Card>
             
-            <Card className="p-4">
+            <Card className="p-4 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
                   <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
@@ -164,7 +165,7 @@ const ProfessionalCalendar = () => {
               </div>
             </Card>
             
-            <Card className="p-4">
+            <Card className="p-4 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                   <div className="w-4 h-4 bg-red-500 rounded-full"></div>
@@ -176,7 +177,7 @@ const ProfessionalCalendar = () => {
               </div>
             </Card>
             
-            <Card className="p-4">
+            <Card className="p-4 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                   <Calendar className="w-5 h-5 text-blue-600" />
@@ -188,7 +189,7 @@ const ProfessionalCalendar = () => {
               </div>
             </Card>
 
-            <Card className="p-4">
+            <Card className="p-4 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                   <Clock className="w-5 h-5 text-purple-600" />
@@ -222,22 +223,20 @@ const ProfessionalCalendar = () => {
 
                 {/* Quick Navigation */}
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="border-purple-200 text-purple-600 hover:bg-purple-50">
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="border-purple-200 text-purple-600 hover:bg-purple-50">
                     Today
                   </Button>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="border-purple-200 text-purple-600 hover:bg-purple-50">
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
 
               <TabsContent value="month" className="mt-0">
-                <div className="bg-white rounded-lg shadow-sm border">
-                  <EnhancedAvailabilityCalendar />
-                </div>
+                <EnhancedAvailabilityCalendar />
               </TabsContent>
 
               <TabsContent value="week" className="mt-0">
@@ -252,7 +251,7 @@ const ProfessionalCalendar = () => {
 
           {/* Calendar Analytics Summary */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Card className="p-6">
+            <Card className="p-6 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Availability Summary</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
@@ -270,7 +269,7 @@ const ProfessionalCalendar = () => {
               </div>
             </Card>
 
-            <Card className="p-6">
+            <Card className="p-6 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Events</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
@@ -297,18 +296,18 @@ const ProfessionalCalendar = () => {
               </div>
             </Card>
 
-            <Card className="p-6">
+            <Card className="p-6 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-2">
-                <Button variant="outline" size="sm" className="w-full justify-start" onClick={bulkModal.openModal}>
+                <Button variant="outline" size="sm" className="w-full justify-start border-purple-200 text-purple-600 hover:bg-purple-50" onClick={bulkModal.openModal}>
                   <Grid className="h-4 w-4 mr-2" />
                   Set Weekly Pattern
                 </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start" onClick={syncModal.openModal}>
+                <Button variant="outline" size="sm" className="w-full justify-start border-purple-200 text-purple-600 hover:bg-purple-50" onClick={syncModal.openModal}>
                   <Settings className="h-4 w-4 mr-2" />
                   Sync Calendar
                 </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start" onClick={handleExportCalendar}>
+                <Button variant="outline" size="sm" className="w-full justify-start border-purple-200 text-purple-600 hover:bg-purple-50" onClick={handleExportCalendar}>
                   <Download className="h-4 w-4 mr-2" />
                   Export Schedule
                 </Button>
