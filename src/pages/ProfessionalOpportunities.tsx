@@ -169,15 +169,15 @@ const ProfessionalOpportunities = () => {
           {/* Header */}
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Job Opportunities</h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Job Opportunities</h1>
               <p className="text-gray-600">Find and apply to opportunities that match your expertise</p>
             </div>
             <div className="flex gap-3">
-              <Button variant="outline">
+              <Button variant="outline" className="border-purple-200 text-purple-600 hover:bg-purple-50">
                 <BookmarkPlus className="h-4 w-4 mr-2" />
                 Saved Jobs
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" className="border-purple-200 text-purple-600 hover:bg-purple-50">
                 <Filter className="h-4 w-4 mr-2" />
                 Advanced Filters
               </Button>
@@ -185,9 +185,9 @@ const ProfessionalOpportunities = () => {
           </div>
 
           {/* Search and Filters */}
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
             <CardHeader>
-              <CardTitle className="text-lg">Search & Filter</CardTitle>
+              <CardTitle className="text-lg font-semibold text-gray-900">Search & Filter</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
@@ -198,13 +198,13 @@ const ProfessionalOpportunities = () => {
                       placeholder="Search jobs, companies, skills..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 border-gray-200 focus:border-purple-300 focus:ring-purple-200"
                     />
                   </div>
                 </div>
                 
                 <Select value={locationFilter} onValueChange={setLocationFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger className="border-gray-200 focus:border-purple-300 focus:ring-purple-200">
                     <SelectValue placeholder="Location" />
                   </SelectTrigger>
                   <SelectContent>
@@ -217,7 +217,7 @@ const ProfessionalOpportunities = () => {
                 </Select>
 
                 <Select value={budgetFilter} onValueChange={setBudgetFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger className="border-gray-200 focus:border-purple-300 focus:ring-purple-200">
                     <SelectValue placeholder="Budget Range" />
                   </SelectTrigger>
                   <SelectContent>
@@ -229,7 +229,7 @@ const ProfessionalOpportunities = () => {
                 </Select>
 
                 <Select value={skillsFilter} onValueChange={setSkillsFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger className="border-gray-200 focus:border-purple-300 focus:ring-purple-200">
                     <SelectValue placeholder="Skills" />
                   </SelectTrigger>
                   <SelectContent>
@@ -242,7 +242,7 @@ const ProfessionalOpportunities = () => {
                 </Select>
 
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger>
+                  <SelectTrigger className="border-gray-200 focus:border-purple-300 focus:ring-purple-200">
                     <SelectValue placeholder="Sort By" />
                   </SelectTrigger>
                   <SelectContent>
@@ -262,10 +262,10 @@ const ProfessionalOpportunities = () => {
               Showing {filteredJobs.length} of {jobs.length} opportunities
             </p>
             <div className="flex gap-2">
-              <Badge variant="outline">
+              <Badge variant="outline" className="border-purple-200 text-purple-600 bg-purple-50">
                 {jobs.filter(j => j.saved).length} Saved
               </Badge>
-              <Badge variant="outline">
+              <Badge variant="outline" className="border-orange-200 text-orange-600 bg-orange-50">
                 {jobs.filter(j => j.urgency === 'high').length} Urgent
               </Badge>
             </div>
@@ -274,7 +274,7 @@ const ProfessionalOpportunities = () => {
           {/* Job Listings */}
           <div className="grid gap-6">
             {filteredJobs.map((job) => (
-              <Card key={job.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card key={job.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-start gap-4">
@@ -282,10 +282,10 @@ const ProfessionalOpportunities = () => {
                         <span className="text-purple-600 font-semibold">{job.companyLogo}</span>
                       </div>
                       <div>
-                        <h3 className="text-xl font-semibold text-gray-900 mb-1">{job.title}</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">{job.title}</h3>
                         <div className="flex items-center gap-2 text-gray-600 mb-2">
                           <Building2 className="h-4 w-4" />
-                          <span>{job.company}</span>
+                          <span className="text-sm">{job.company}</span>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                           <div className="flex items-center gap-1">
@@ -316,36 +316,36 @@ const ProfessionalOpportunities = () => {
                           e.stopPropagation();
                           handleSaveJob(job.id);
                         }}
-                        className={job.saved ? "text-purple-600" : "text-gray-400"}
+                        className={job.saved ? "text-purple-600 hover:bg-purple-50" : "text-gray-400 hover:bg-gray-50"}
                       >
                         <Star className={`h-4 w-4 ${job.saved ? "fill-current" : ""}`} />
                       </Button>
                       <Badge className={`${getUrgencyColor(job.urgency)} border-0`}>
                         {job.urgency} priority
                       </Badge>
-                      <Badge variant="outline" className="text-green-600 border-green-200">
+                      <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">
                         {job.skillsMatch}% match
                       </Badge>
                     </div>
                   </div>
 
-                  <p className="text-gray-700 mb-4 line-clamp-2">{job.description}</p>
+                  <p className="text-sm text-gray-700 mb-4 line-clamp-2">{job.description}</p>
 
                   <div className="flex flex-wrap gap-2 mb-4">
                     {job.requirements.map((req, index) => (
-                      <Badge key={index} variant="secondary" className="bg-purple-50 text-purple-700">
+                      <Badge key={index} variant="secondary" className="bg-purple-50 text-purple-700 border-purple-200">
                         {req}
                       </Badge>
                     ))}
                   </div>
 
-                  <div className="flex justify-between items-center pt-4 border-t">
+                  <div className="flex justify-between items-center pt-4 border-t border-gray-100">
                     <div className="text-sm text-gray-500">
                       Posted: {new Date(job.postedDate).toLocaleDateString()} • 
                       Deadline: {new Date(job.deadline).toLocaleDateString()}
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" className="border-gray-200 text-gray-600 hover:bg-gray-50">
                         View Details
                       </Button>
                       <Button 
@@ -353,7 +353,7 @@ const ProfessionalOpportunities = () => {
                           e.stopPropagation();
                           handleJobClick(job);
                         }}
-                        className="bg-purple-600 hover:bg-purple-700"
+                        className="bg-purple-600 hover:bg-purple-700 text-white font-medium"
                         size="sm"
                       >
                         Apply Now
@@ -366,7 +366,7 @@ const ProfessionalOpportunities = () => {
           </div>
 
           {filteredJobs.length === 0 && (
-            <Card className="p-12 text-center">
+            <Card className="bg-white border border-gray-100 shadow-sm p-12 text-center">
               <Briefcase className="h-16 w-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">No opportunities found</h3>
               <p className="text-gray-600">Try adjusting your search criteria or filters</p>
