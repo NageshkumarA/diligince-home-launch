@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +7,141 @@ import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useUser } from "@/contexts/UserContext";
+import { useToast } from "@/hooks/use-toast";
+import { UserProfile } from "@/types/shared";
+
+// Mock user accounts for testing
+const mockUsers: { email: string; password: string; profile: UserProfile }[] = [
+  {
+    email: "industry@test.com",
+    password: "password123",
+    profile: {
+      id: "1",
+      email: "industry@test.com",
+      name: "John Manufacturing",
+      role: "industry",
+      avatar: "",
+      initials: "JM",
+      status: "active",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      preferences: {
+        theme: 'system',
+        notifications: { email: true, push: true, sms: false, marketing: false },
+        language: 'en',
+        timezone: 'UTC',
+      },
+      profile: {
+        companyName: "ABC Manufacturing",
+        industryType: "Manufacturing"
+      }
+    }
+  },
+  {
+    email: "professional@test.com",
+    password: "password123",
+    profile: {
+      id: "2",
+      email: "professional@test.com",
+      name: "Rahul Engineer",
+      role: "professional",
+      avatar: "",
+      initials: "RE",
+      status: "active",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      preferences: {
+        theme: 'system',
+        notifications: { email: true, push: true, sms: false, marketing: false },
+        language: 'en',
+        timezone: 'UTC',
+      },
+      profile: {
+        fullName: "Rahul Engineer",
+        expertise: "Industrial Automation"
+      }
+    }
+  },
+  {
+    email: "service@test.com",
+    password: "password123",
+    profile: {
+      id: "3",
+      email: "service@test.com",
+      name: "Tech Services Co",
+      role: "vendor",
+      avatar: "",
+      initials: "TS",
+      status: "active",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      preferences: {
+        theme: 'system',
+        notifications: { email: true, push: true, sms: false, marketing: false },
+        language: 'en',
+        timezone: 'UTC',
+      },
+      profile: {
+        businessName: "Tech Services Co",
+        vendorCategory: "service",
+        specialization: "Industrial Services"
+      }
+    }
+  },
+  {
+    email: "product@test.com",
+    password: "password123",
+    profile: {
+      id: "4",
+      email: "product@test.com",
+      name: "Product Supply Ltd",
+      role: "vendor",
+      avatar: "",
+      initials: "PS",
+      status: "active",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      preferences: {
+        theme: 'system',
+        notifications: { email: true, push: true, sms: false, marketing: false },
+        language: 'en',
+        timezone: 'UTC',
+      },
+      profile: {
+        businessName: "Product Supply Ltd",
+        vendorCategory: "product",
+        specialization: "Industrial Equipment"
+      }
+    }
+  },
+  {
+    email: "logistics@test.com",
+    password: "password123",
+    profile: {
+      id: "5",
+      email: "logistics@test.com",
+      name: "Fast Logistics",
+      role: "vendor",
+      avatar: "",
+      initials: "FL",
+      status: "active",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      preferences: {
+        theme: 'system',
+        notifications: { email: true, push: true, sms: false, marketing: false },
+        language: 'en',
+        timezone: 'UTC',
+      },
+      profile: {
+        businessName: "Fast Logistics",
+        vendorCategory: "logistics",
+        specialization: "Heavy Equipment Transport"
+      }
+    }
+  }
+];
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,15 +149,59 @@ const SignIn = () => {
     email: "",
     password: ""
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const { login, getDashboardUrl } = useUser();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Sign in attempt:", formData);
+    setIsLoading(true);
+
+    try {
+      // Find matching user
+      const matchedUser = mockUsers.find(
+        user => user.email === formData.email && user.password === formData.password
+      );
+
+      if (matchedUser) {
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Login user
+        login(matchedUser.profile);
+        
+        // Show success message
+        toast({
+          title: "Sign in successful!",
+          description: `Welcome back, ${matchedUser.profile.name}!`,
+        });
+
+        // Redirect to appropriate dashboard
+        const dashboardUrl = getDashboardUrl();
+        navigate(dashboardUrl);
+      } else {
+        // Show error message
+        toast({
+          title: "Sign in failed",
+          description: "Invalid email or password. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Sign in error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -42,6 +220,17 @@ const SignIn = () => {
               <CardTitle className="text-xl font-semibold text-gray-900">Sign In</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Test Accounts Info */}
+              <div className="bg-blue-50 p-3 rounded-lg text-xs text-blue-700">
+                <p className="font-semibold mb-1">Test Accounts:</p>
+                <p>• industry@test.com (Industry Dashboard)</p>
+                <p>• professional@test.com (Professional Dashboard)</p>
+                <p>• service@test.com (Service Vendor Dashboard)</p>
+                <p>• product@test.com (Product Vendor Dashboard)</p>
+                <p>• logistics@test.com (Logistics Vendor Dashboard)</p>
+                <p className="mt-1 font-semibold">Password: password123</p>
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -59,6 +248,7 @@ const SignIn = () => {
                       className="pl-10 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-200"
                       autoComplete="email"
                       required
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -79,11 +269,13 @@ const SignIn = () => {
                       className="pl-10 pr-10 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-200"
                       autoComplete="current-password"
                       required
+                      disabled={isLoading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      disabled={isLoading}
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -97,6 +289,7 @@ const SignIn = () => {
                       name="remember-me"
                       type="checkbox"
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      disabled={isLoading}
                     />
                     <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                       Remember me
@@ -110,8 +303,9 @@ const SignIn = () => {
                 <Button 
                   type="submit" 
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5"
+                  disabled={isLoading}
                 >
-                  Sign In
+                  {isLoading ? "Signing In..." : "Sign In"}
                 </Button>
               </form>
 
@@ -129,6 +323,7 @@ const SignIn = () => {
                   <Button
                     variant="outline"
                     className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                    disabled={isLoading}
                   >
                     <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
                       <path
@@ -153,6 +348,7 @@ const SignIn = () => {
                   <Button
                     variant="outline"
                     className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                    disabled={isLoading}
                   >
                     <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
