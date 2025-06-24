@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -29,25 +30,25 @@ const SignIn = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       
-      <main className="flex-grow flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md space-y-8">
+      <main className="flex-grow flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="w-full max-w-md space-y-8 relative z-20">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
             <p className="text-sm text-gray-600">Sign in to your account</p>
           </div>
 
-          <Card className="bg-white border border-gray-100 shadow-sm">
+          <Card className="bg-white border border-gray-100 shadow-sm relative z-30">
             <CardHeader className="text-center pb-4">
               <CardTitle className="text-xl font-semibold text-gray-900">Sign In</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 relative z-40">
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
+                <div className="relative z-50">
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
                     <Input
                       id="email"
                       name="email"
@@ -55,18 +56,20 @@ const SignIn = () => {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="Enter your email"
-                      className="pl-10 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200"
+                      className="pl-10 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200 relative z-20 pointer-events-auto"
+                      style={{ pointerEvents: 'auto' }}
+                      autoComplete="email"
                       required
                     />
                   </div>
                 </div>
 
-                <div>
+                <div className="relative z-50">
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                     Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
                     <Input
                       id="password"
                       name="password"
@@ -74,26 +77,30 @@ const SignIn = () => {
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="Enter your password"
-                      className="pl-10 pr-10 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200"
+                      className="pl-10 pr-10 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200 relative z-20 pointer-events-auto"
+                      style={{ pointerEvents: 'auto' }}
+                      autoComplete="current-password"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 z-30 pointer-events-auto"
+                      style={{ pointerEvents: 'auto' }}
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between relative z-50">
                   <div className="flex items-center">
                     <input
                       id="remember-me"
                       name="remember-me"
                       type="checkbox"
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded pointer-events-auto"
+                      style={{ pointerEvents: 'auto' }}
                     />
                     <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                       Remember me
@@ -106,7 +113,8 @@ const SignIn = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 relative z-50 pointer-events-auto"
+                  style={{ pointerEvents: 'auto' }}
                 >
                   Sign In
                 </Button>
