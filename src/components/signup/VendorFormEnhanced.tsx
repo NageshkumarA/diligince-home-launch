@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -217,9 +218,13 @@ export function VendorFormEnhanced() {
           name="businessName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Business Name</FormLabel>
+              <FormLabel className="text-gray-700">Business Name</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. Coastal Services Ltd." {...field} />
+                <Input 
+                  placeholder="e.g. Coastal Services Ltd." 
+                  className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -231,13 +236,13 @@ export function VendorFormEnhanced() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-gray-700">Email</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input 
                     placeholder="you@example.com" 
-                    className="pl-10" 
+                    className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
                     {...field} 
                   />
                 </div>
@@ -252,11 +257,12 @@ export function VendorFormEnhanced() {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone Number</FormLabel>
+              <FormLabel className="text-gray-700">Phone Number</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="e.g. 9876543210" 
                   type="tel"
+                  className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
                   {...field} 
                 />
               </FormControl>
@@ -270,7 +276,7 @@ export function VendorFormEnhanced() {
           name="vendorCategory"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Vendor Category</FormLabel>
+              <FormLabel className="text-gray-700">Vendor Category</FormLabel>
               <Select 
                 onValueChange={(value) => {
                   field.onChange(value);
@@ -279,13 +285,13 @@ export function VendorFormEnhanced() {
                 defaultValue={field.value}
               >
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200">
                     <SelectValue placeholder="Select vendor category" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
+                <SelectContent className="bg-white shadow-lg border border-gray-200 z-50">
                   {vendorCategories.map((category) => (
-                    <SelectItem key={category} value={category}>
+                    <SelectItem key={category} value={category} className="text-gray-900 hover:bg-gray-100">
                       {category}
                     </SelectItem>
                   ))}
@@ -301,17 +307,20 @@ export function VendorFormEnhanced() {
           name="specialization"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Specialization</FormLabel>
+              <FormLabel className="text-gray-700">Specialization</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger disabled={!selectedCategory}>
+                  <SelectTrigger 
+                    disabled={!selectedCategory}
+                    className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200 disabled:bg-gray-100"
+                  >
                     <SelectValue placeholder="Select specialization" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
+                <SelectContent className="bg-white shadow-lg border border-gray-200 z-50">
                   {selectedCategory && 
                     specializations[selectedCategory as keyof typeof specializations]?.map((spec) => (
-                      <SelectItem key={spec} value={spec}>
+                      <SelectItem key={spec} value={spec} className="text-gray-900 hover:bg-gray-100">
                         {spec}
                       </SelectItem>
                     ))
@@ -328,19 +337,19 @@ export function VendorFormEnhanced() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="text-gray-700">Password</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input 
                     type={showPassword ? "text" : "password"} 
                     placeholder="••••••••" 
-                    className="pl-10" 
+                    className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
                     {...field} 
                   />
                   <button 
                     type="button"
-                    className="absolute right-3 top-3 text-muted-foreground"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -361,19 +370,19 @@ export function VendorFormEnhanced() {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel className="text-gray-700">Confirm Password</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input 
                     type={showConfirmPassword ? "text" : "password"} 
                     placeholder="••••••••" 
-                    className="pl-10" 
+                    className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
                     {...field} 
                   />
                   <button 
                     type="button"
-                    className="absolute right-3 top-3 text-muted-foreground"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
@@ -401,9 +410,9 @@ export function VendorFormEnhanced() {
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>
+                <FormLabel className="text-gray-700">
                   I accept the 
-                  <a href="/terms" className="text-primary hover:underline ml-1">terms and conditions</a>
+                  <a href="/terms" className="text-blue-600 hover:underline ml-1">terms and conditions</a>
                 </FormLabel>
                 <FormMessage />
               </div>
@@ -413,7 +422,7 @@ export function VendorFormEnhanced() {
         
         <Button 
           type="submit" 
-          className="w-full hover:scale-105 transition-transform duration-200"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 transition-transform duration-200"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Creating Account..." : "Create Account"}

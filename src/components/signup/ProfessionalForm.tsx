@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -151,9 +152,13 @@ export function ProfessionalForm() {
           name="fullName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Full Name</FormLabel>
+              <FormLabel className="text-gray-700">Full Name</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. Rahul Sharma" {...field} />
+                <Input 
+                  placeholder="e.g. Rahul Sharma" 
+                  className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -165,13 +170,13 @@ export function ProfessionalForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-gray-700">Email</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input 
                     placeholder="you@example.com" 
-                    className="pl-10" 
+                    className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
                     {...field} 
                   />
                 </div>
@@ -186,11 +191,12 @@ export function ProfessionalForm() {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone Number</FormLabel>
+              <FormLabel className="text-gray-700">Phone Number</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="e.g. 9876543210" 
                   type="tel"
+                  className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
                   {...field} 
                 />
               </FormControl>
@@ -204,16 +210,16 @@ export function ProfessionalForm() {
           name="expertise"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Area of Expertise</FormLabel>
+              <FormLabel className="text-gray-700">Area of Expertise</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200">
                     <SelectValue placeholder="Select your area of expertise" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
+                <SelectContent className="bg-white shadow-lg border border-gray-200 z-50">
                   {expertiseAreas.map((expertise) => (
-                    <SelectItem key={expertise} value={expertise}>
+                    <SelectItem key={expertise} value={expertise} className="text-gray-900 hover:bg-gray-100">
                       {expertise}
                     </SelectItem>
                   ))}
@@ -229,19 +235,19 @@ export function ProfessionalForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="text-gray-700">Password</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input 
                     type={showPassword ? "text" : "password"} 
                     placeholder="••••••••" 
-                    className="pl-10" 
+                    className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
                     {...field} 
                   />
                   <button 
                     type="button"
-                    className="absolute right-3 top-3 text-muted-foreground"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -262,19 +268,19 @@ export function ProfessionalForm() {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel className="text-gray-700">Confirm Password</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input 
                     type={showConfirmPassword ? "text" : "password"} 
                     placeholder="••••••••" 
-                    className="pl-10" 
+                    className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
                     {...field} 
                   />
                   <button 
                     type="button"
-                    className="absolute right-3 top-3 text-muted-foreground"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
@@ -302,9 +308,9 @@ export function ProfessionalForm() {
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>
+                <FormLabel className="text-gray-700">
                   I accept the 
-                  <a href="/terms" className="text-primary hover:underline ml-1">terms and conditions</a>
+                  <a href="/terms" className="text-blue-600 hover:underline ml-1">terms and conditions</a>
                 </FormLabel>
                 <FormMessage />
               </div>
@@ -314,7 +320,7 @@ export function ProfessionalForm() {
         
         <Button 
           type="submit" 
-          className="w-full hover:scale-105 transition-transform duration-200"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 transition-transform duration-200"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Creating Account..." : "Create Account"}

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -182,9 +183,13 @@ export function IndustryForm() {
             name="companyName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Company Name</FormLabel>
+                <FormLabel className="text-gray-700">Company Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. Steel Industries Ltd." {...field} />
+                  <Input 
+                    placeholder="e.g. Steel Industries Ltd." 
+                    className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -196,13 +201,13 @@ export function IndustryForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-gray-700">Email</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input 
                       placeholder="you@example.com" 
-                      className="pl-10" 
+                      className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
                       {...field} 
                     />
                   </div>
@@ -217,11 +222,12 @@ export function IndustryForm() {
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone Number</FormLabel>
+                <FormLabel className="text-gray-700">Phone Number</FormLabel>
                 <FormControl>
                   <Input 
                     placeholder="e.g. 9876543210" 
                     type="tel"
+                    className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
                     {...field} 
                   />
                 </FormControl>
@@ -235,16 +241,16 @@ export function IndustryForm() {
             name="industryType"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Industry Type</FormLabel>
+                <FormLabel className="text-gray-700">Industry Type</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200">
                       <SelectValue placeholder="Select your industry type" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
+                  <SelectContent className="bg-white shadow-lg border border-gray-200 z-50">
                     {industries.map((industry) => (
-                      <SelectItem key={industry} value={industry}>
+                      <SelectItem key={industry} value={industry} className="text-gray-900 hover:bg-gray-100">
                         {industry}
                       </SelectItem>
                     ))}
@@ -261,10 +267,11 @@ export function IndustryForm() {
               name="customIndustryType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Specify Industry Type</FormLabel>
+                  <FormLabel className="text-gray-700">Specify Industry Type</FormLabel>
                   <FormControl>
                     <Input 
                       placeholder="Please specify your industry type" 
+                      className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
                       {...field} 
                     />
                   </FormControl>
@@ -279,19 +286,19 @@ export function IndustryForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="text-gray-700">Password</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input 
                       type={showPassword ? "text" : "password"} 
                       placeholder="••••••••" 
-                      className="pl-10" 
+                      className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
                       {...field} 
                     />
                     <button 
                       type="button"
-                      className="absolute right-3 top-3 text-muted-foreground"
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
@@ -312,19 +319,19 @@ export function IndustryForm() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel className="text-gray-700">Confirm Password</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input 
                       type={showConfirmPassword ? "text" : "password"} 
                       placeholder="••••••••" 
-                      className="pl-10" 
+                      className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
                       {...field} 
                     />
                     <button 
                       type="button"
-                      className="absolute right-3 top-3 text-muted-foreground"
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     >
                       {showConfirmPassword ? (
@@ -352,9 +359,9 @@ export function IndustryForm() {
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <FormLabel>
+                  <FormLabel className="text-gray-700">
                     I accept the 
-                    <a href="/terms" className="text-primary hover:underline ml-1">terms and conditions</a>
+                    <a href="/terms" className="text-blue-600 hover:underline ml-1">terms and conditions</a>
                   </FormLabel>
                   <FormMessage />
                 </div>
@@ -364,7 +371,7 @@ export function IndustryForm() {
           
           <Button 
             type="submit" 
-            className="w-full hover:scale-105 transition-transform duration-200"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 transition-transform duration-200"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Creating Account..." : "Create Account"}
