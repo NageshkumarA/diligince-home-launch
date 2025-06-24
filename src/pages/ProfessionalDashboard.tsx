@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Home, Briefcase, Calendar, MessageSquare, User, Bell } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -9,6 +8,9 @@ import { AvailabilityCalendar } from "@/components/professional/dashboard/Availa
 import { JobOpportunities } from "@/components/professional/dashboard/JobOpportunities";
 import { OngoingProjects } from "@/components/professional/dashboard/OngoingProjects";
 import { MessageCenter } from "@/components/professional/dashboard/MessageCenter";
+import { LoadingState } from "@/components/shared/loading/LoadingState";
+import { LoadingCard } from "@/components/shared/loading/LoadingCard";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
 
 // Mock data
 const mockMessages = [
@@ -131,9 +133,22 @@ const ProfessionalDashboard = () => {
   const [messages, setMessages] = useState(mockMessages);
   const [projects, setProjects] = useState(mockProjects);
   const [jobs, setJobs] = useState(mockJobs);
+  const [initialLoading, setInitialLoading] = useState(true);
 
+  const { loading: dashboardLoading, execute: loadDashboardData } = useAsyncOperation({
+    successMessage: "Dashboard data loaded successfully"
+  });
+
+  // Simulate initial data loading
   useEffect(() => {
-    toast.success("Welcome to your Professional Dashboard");
+    const loadInitialData = async () => {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setInitialLoading(false);
+      toast.success("Welcome to your Professional Dashboard");
+    };
+
+    loadInitialData();
   }, []);
 
   // Header navigation items
@@ -145,24 +160,62 @@ const ProfessionalDashboard = () => {
     { label: "Profile", icon: <User size={18} />, href: "/professional-profile" },
   ];
 
-  const handleMessageReply = (messageId: number, reply: string) => {
-    console.log(`Reply to message ${messageId}: ${reply}`);
-    toast.success("Reply sent successfully");
+  const handleMessageReply = async (messageId: number, reply: string) => {
+    await loadDashboardData(async () => {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log(`Reply to message ${messageId}: ${reply}`);
+      return { success: true };
+    });
   };
 
-  const handleJobApplication = (jobId: number, applicationData: any) => {
-    console.log(`Application for job ${jobId}:`, applicationData);
-    toast.success("Application submitted successfully");
+  const handleJobApplication = async (jobId: number, applicationData: any) => {
+    await loadDashboardData(async () => {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log(`Application for job ${jobId}:`, applicationData);
+      return { success: true };
+    });
   };
 
-  const handleProjectUpdate = (projectId: number, updates: any) => {
-    setProjects(prev => prev.map(project => 
-      project.id === projectId 
-        ? { ...project, ...updates }
-        : project
-    ));
-    toast.success("Project updated successfully");
+  const handleProjectUpdate = async (projectId: number, updates: any) => {
+    await loadDashboardData(async () => {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setProjects(prev => prev.map(project => 
+        project.id === projectId 
+          ? { ...project, ...updates }
+          : project
+      ));
+      return { success: true };
+    });
   };
+
+  if (initialLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <ProfessionalHeader navItems={headerNavItems} />
+        
+        <main className="pt-16 p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto space-y-6">
+            <LoadingState message="Loading your dashboard..." size="lg" />
+            
+            {/* Loading skeleton for main content */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <LoadingCard key={i} showHeader={false} lines={2} />
+              ))}
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <LoadingCard lines={4} />
+              <LoadingCard lines={4} />
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -188,6 +241,7 @@ const ProfessionalDashboard = () => {
             <JobOpportunities 
               jobs={jobs}
               onApplicationSubmit={handleJobApplication}
+              loading={dashboardLoading}
             />
           </div>
 
@@ -195,12 +249,14 @@ const ProfessionalDashboard = () => {
           <OngoingProjects 
             projects={projects}
             onProjectUpdate={handleProjectUpdate}
+            loading={dashboardLoading}
           />
 
           {/* Message Center */}
           <MessageCenter 
             messages={messages}
             onReply={handleMessageReply}
+            loading={dashboardLoading}
           />
         </div>
       </main>
