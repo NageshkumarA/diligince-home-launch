@@ -29,7 +29,7 @@ const Contact = () => {
     
     toast({
       title: "Message sent!",
-      description: "We'll get back to you as soon as possible.",
+      description: "We will get back to you as soon as possible.",
     });
     
     setFormData({
@@ -49,7 +49,7 @@ const Contact = () => {
             <div className="text-center mb-12">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
               <p className="text-gray-600 max-w-3xl mx-auto">
-                Have questions about our services? Need support? We're here to help.
+                Have questions about our services? Need support? We are here to help.
                 Reach out to us using any of the methods below.
               </p>
             </div>
