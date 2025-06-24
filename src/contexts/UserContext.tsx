@@ -172,7 +172,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     isVendorCategory,
     profileCompletion,
     isFirstTimeUser,
-    setFirstTimeUser,
+    setFirstTimeUser: setIsFirstTimeUser,
     hasCompletedOnboarding,
     setHasCompletedOnboarding,
   };
