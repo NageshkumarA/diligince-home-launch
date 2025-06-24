@@ -64,15 +64,15 @@ export const MessageCenter = ({
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "urgent":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 text-red-800 border-red-200";
       case "high":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 text-red-800 border-red-200";
       case "medium":
-        return "bg-orange-100 text-orange-800";
+        return "bg-orange-100 text-orange-800 border-orange-200";
       case "low":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 border-green-200";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -112,19 +112,23 @@ export const MessageCenter = ({
   const unreadCount = messages.filter(m => m.unread).length;
 
   return (
-    <Card className={className}>
+    <Card className={`bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow ${className}`}>
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <MessageSquare className="h-5 w-5" />
+          <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <MessageSquare className="h-5 w-5 text-purple-600" />
             {config.title}
             {unreadCount > 0 && (
-              <Badge className="bg-red-100 text-red-800">
+              <Badge className="bg-purple-100 text-purple-800 border-purple-200">
                 {unreadCount} unread
               </Badge>
             )}
           </CardTitle>
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="border-purple-200 text-purple-600 hover:bg-purple-50"
+          >
             View All Messages
           </Button>
         </div>
@@ -137,7 +141,7 @@ export const MessageCenter = ({
                 placeholder="Search messages..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 border-gray-200 focus:border-purple-300 focus:ring-purple-200"
               />
             </div>
             
@@ -149,6 +153,10 @@ export const MessageCenter = ({
                     variant={selectedFilter === filter.key ? "default" : "outline"}
                     size="sm"
                     onClick={() => handleFilterChange(filter.key)}
+                    className={selectedFilter === filter.key 
+                      ? "bg-purple-600 hover:bg-purple-700 text-white" 
+                      : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                    }
                   >
                     {filter.label}
                   </Button>
@@ -164,8 +172,8 @@ export const MessageCenter = ({
           {filteredMessages.map((message) => (
             <div
               key={message.id}
-              className={`p-4 rounded-lg border transition-colors hover:bg-gray-50 cursor-pointer ${
-                message.unread ? "bg-blue-50 border-blue-200" : "bg-white"
+              className={`p-4 rounded-lg border transition-colors hover:bg-gray-50 cursor-pointer bg-white ${
+                message.unread ? "border-purple-200 bg-purple-50" : "border-gray-200"
               } ${selectedMessage?.id === message.id ? "ring-2 ring-purple-400" : ""}`}
               onClick={() => setSelectedMessage(message)}
             >
@@ -181,14 +189,14 @@ export const MessageCenter = ({
                     <div className="flex items-center gap-2">
                       <h4 className="font-medium text-gray-900">{message.sender}</h4>
                       <span className="text-lg">{getTypeIcon(message.type)}</span>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs border-gray-200 text-gray-600">
                         {getTypeLabel(message.type)}
                       </Badge>
                       <Badge className={getPriorityColor(message.priority)}>
                         {message.priority}
                       </Badge>
                       {message.unread && (
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                       )}
                     </div>
                     <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -209,18 +217,30 @@ export const MessageCenter = ({
                   )}
 
                   {selectedMessage?.id === message.id && config.showReply && (
-                    <div className="mt-3 pt-3 border-t space-y-3">
+                    <div className="mt-3 pt-3 border-t border-gray-200 space-y-3">
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="flex-1">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex-1 border-purple-200 text-purple-600 hover:bg-purple-50"
+                        >
                           <Reply className="h-4 w-4 mr-2" />
                           Reply
                         </Button>
                         {config.showCallActions && (
                           <>
-                            <Button variant="outline" size="sm">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="border-gray-200 text-gray-600 hover:bg-gray-50"
+                            >
                               <Phone className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="sm">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="border-gray-200 text-gray-600 hover:bg-gray-50"
+                            >
                               <Video className="h-4 w-4" />
                             </Button>
                           </>
@@ -232,12 +252,12 @@ export const MessageCenter = ({
                           placeholder="Type your reply..."
                           value={replyText}
                           onChange={(e) => setReplyText(e.target.value)}
-                          className="min-h-[80px]"
+                          className="min-h-[80px] border-gray-200 focus:border-purple-300 focus:ring-purple-200"
                         />
                         <div className="flex gap-2">
                           <Button 
                             onClick={handleReply}
-                            className={`bg-${config.theme} hover:bg-${config.theme}/90`}
+                            className="bg-purple-600 hover:bg-purple-700 text-white"
                             disabled={!replyText.trim()}
                           >
                             <Send className="h-4 w-4 mr-2" />
@@ -246,6 +266,7 @@ export const MessageCenter = ({
                           <Button 
                             variant="outline" 
                             onClick={() => setSelectedMessage(null)}
+                            className="border-gray-200 text-gray-600 hover:bg-gray-50"
                           >
                             Cancel
                           </Button>
@@ -259,7 +280,7 @@ export const MessageCenter = ({
           ))}
         </div>
         
-        <Button className={`w-full mt-4 bg-${config.theme} hover:bg-${config.theme}/90`}>
+        <Button className="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white">
           <MessageSquare className="h-4 w-4 mr-2" />
           View All Messages
         </Button>
