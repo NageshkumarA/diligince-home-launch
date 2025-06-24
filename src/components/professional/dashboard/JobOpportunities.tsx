@@ -41,7 +41,7 @@ export const JobOpportunities = ({ jobs, onApplicationSubmit }: JobOpportunities
 
   return (
     <>
-      <Card className="p-6">
+      <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6">
         <div className="flex items-center gap-2 mb-4">
           <Briefcase className="h-5 w-5 text-purple-600" />
           <h3 className="text-lg font-semibold text-gray-900">Job Opportunities</h3>
@@ -51,12 +51,12 @@ export const JobOpportunities = ({ jobs, onApplicationSubmit }: JobOpportunities
           {jobs.slice(0, 3).map((job) => (
             <div 
               key={job.id}
-              className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 cursor-pointer transition-colors"
+              className="p-4 bg-white border border-gray-200 rounded-lg hover:border-purple-300 cursor-pointer transition-colors"
               onClick={() => handleJobClick(job)}
             >
               <div className="flex justify-between items-start mb-2">
                 <h4 className="font-medium text-gray-900">{job.title}</h4>
-                <Badge variant="outline" className="text-green-600 border-green-200">
+                <Badge variant="outline" className="text-purple-600 border-purple-200 bg-purple-50">
                   {job.skillsMatch}% match
                 </Badge>
               </div>
@@ -81,7 +81,7 @@ export const JobOpportunities = ({ jobs, onApplicationSubmit }: JobOpportunities
           ))}
           
           <div className="pt-2">
-            <button className="w-full text-purple-600 text-sm font-medium hover:text-purple-700">
+            <button className="w-full text-purple-600 text-sm font-medium hover:text-purple-700 transition-colors">
               View All Opportunities →
             </button>
           </div>

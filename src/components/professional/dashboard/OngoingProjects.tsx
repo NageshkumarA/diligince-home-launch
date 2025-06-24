@@ -40,16 +40,16 @@ export const OngoingProjects = ({ projects, onProjectUpdate }: OngoingProjectsPr
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'in-progress': return 'bg-blue-100 text-blue-800';
-      case 'scheduled': return 'bg-green-100 text-green-800';
-      case 'completed': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'in-progress': return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'scheduled': return 'bg-green-100 text-green-800 border-green-200';
+      case 'completed': return 'bg-gray-100 text-gray-800 border-gray-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   return (
     <>
-      <Card className="p-6">
+      <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="h-5 w-5 text-purple-600" />
           <h3 className="text-lg font-semibold text-gray-900">Ongoing Projects</h3>
@@ -59,7 +59,7 @@ export const OngoingProjects = ({ projects, onProjectUpdate }: OngoingProjectsPr
           {projects.map((project) => (
             <div 
               key={project.id}
-              className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 cursor-pointer transition-colors"
+              className="p-4 bg-white border border-gray-200 rounded-lg hover:border-purple-300 cursor-pointer transition-colors"
               onClick={() => handleProjectClick(project)}
             >
               <div className="flex justify-between items-start mb-3">
@@ -70,7 +70,7 @@ export const OngoingProjects = ({ projects, onProjectUpdate }: OngoingProjectsPr
                     {project.client}
                   </p>
                 </div>
-                <Badge className={getStatusColor(project.status)}>
+                <Badge className={`${getStatusColor(project.status)} border`}>
                   {project.status.replace('-', ' ')}
                 </Badge>
               </div>
@@ -88,7 +88,7 @@ export const OngoingProjects = ({ projects, onProjectUpdate }: OngoingProjectsPr
                   <Clock size={12} />
                   {project.remainingDays} days left
                 </span>
-                <span>{project.totalValue}</span>
+                <span className="font-medium text-purple-600">{project.totalValue}</span>
               </div>
             </div>
           ))}

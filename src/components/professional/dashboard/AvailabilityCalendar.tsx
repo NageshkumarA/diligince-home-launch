@@ -5,7 +5,7 @@ import { Calendar, Clock } from "lucide-react";
 
 export const AvailabilityCalendar = () => {
   return (
-    <Card className="p-6">
+    <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6">
       <div className="flex items-center gap-2 mb-4">
         <Calendar className="h-5 w-5 text-purple-600" />
         <h3 className="text-lg font-semibold text-gray-900">Availability Calendar</h3>
@@ -37,7 +37,7 @@ export const AvailabilityCalendar = () => {
         </div>
         
         <div className="pt-2">
-          <button className="w-full text-purple-600 text-sm font-medium hover:text-purple-700">
+          <button className="w-full text-purple-600 text-sm font-medium hover:text-purple-700 transition-colors">
             View Full Calendar →
           </button>
         </div>

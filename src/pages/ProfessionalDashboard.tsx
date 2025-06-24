@@ -225,7 +225,7 @@ const ProfessionalDashboard = () => {
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Welcome Section */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Professional Dashboard</h1>
             <p className="text-gray-600">Welcome back, Rahul! Here's your professional activity overview.</p>
           </div>
 
