@@ -1,9 +1,11 @@
+
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Bell, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { HeaderConfig } from "@/utils/navigationConfigs";
+import { NotificationBell } from "@/components/shared/notifications/NotificationBell";
 
 interface GenericHeaderProps {
   config: HeaderConfig;
@@ -56,13 +58,7 @@ export const GenericHeader = ({ config, className = "" }: GenericHeaderProps) =>
         </div>
         
         <div className="flex items-center space-x-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className={config.theme.buttonHoverColor}
-          >
-            <Bell size={20} />
-          </Button>
+          <NotificationBell theme={config.theme} />
           
           <Avatar className={`h-8 w-8 ${config.theme.avatarBgColor} ${config.theme.avatarBorderColor ? `border-2 ${config.theme.avatarBorderColor}` : ''}`}>
             <AvatarFallback className={`${config.theme.textColor} text-sm`}>
@@ -78,7 +74,7 @@ export const GenericHeader = ({ config, className = "" }: GenericHeaderProps) =>
           <nav className="container mx-auto px-4 py-4 space-y-2">
             {config.navItems.map((item) => (
               <Link 
-                key={item.label} 
+                key={item.label}
                 to={item.href}
                 className={`flex items-center gap-3 py-2 px-3 rounded text-sm transition-colors ${
                   location.pathname === item.href || item.active
