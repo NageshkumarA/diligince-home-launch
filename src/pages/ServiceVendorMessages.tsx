@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import VendorHeader from "@/components/vendor/VendorHeader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -249,7 +248,7 @@ const ServiceVendorMessages = () => {
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className={`font-medium text-gray-900 truncate ${conversation.unread > 0 ? "font-semibold" : ""}`}>
+                      <h3 className={`text-base font-medium text-gray-900 truncate ${conversation.unread > 0 ? "font-semibold" : ""}`}>
                         {conversation.name}
                       </h3>
                       <div className="flex items-center gap-2">
@@ -300,7 +299,7 @@ const ServiceVendorMessages = () => {
                       <AvatarFallback>{selectedConv.avatar}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <h2 className="font-semibold text-gray-900">{selectedConv.name}</h2>
+                      <h2 className="text-base font-semibold text-gray-900">{selectedConv.name}</h2>
                       <div className="flex items-center gap-2">
                         <Badge variant="outline" className="text-xs">
                           {getTypeLabel(selectedConv.type)}

@@ -242,7 +242,7 @@ const ProfessionalMessages = () => {
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className={`font-medium text-gray-900 truncate ${conversation.unread ? "font-semibold" : ""}`}>
+                      <h3 className={`text-base font-medium text-gray-900 truncate ${conversation.unread ? "font-semibold" : ""}`}>
                         {conversation.contact}
                       </h3>
                       <span className="text-xs text-gray-500">{conversation.timestamp}</span>
@@ -282,7 +282,7 @@ const ProfessionalMessages = () => {
                       <AvatarFallback>{selectedConversation.initials}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <h2 className="font-semibold text-gray-900">{selectedConversation.contact}</h2>
+                      <h2 className="text-base font-semibold text-gray-900">{selectedConversation.contact}</h2>
                       <p className="text-sm text-gray-500">{getTypeLabel(selectedConversation.type)}</p>
                     </div>
                   </div>
