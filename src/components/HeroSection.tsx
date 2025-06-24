@@ -23,7 +23,7 @@ const HeroSection = () => {
           Revolutionize Industrial Services with AI
         </h1>
         <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-          Connect with Vendors, Professionals, and Logistics seamlessly with Industries in India
+          Connect with Vendors, Professionals and Logistics seamlessly with Industries in India
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Button 
