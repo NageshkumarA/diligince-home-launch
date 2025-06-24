@@ -14,7 +14,7 @@ const Careers = () => {
       location: "Visakhapatnam, AP (Remote Optional)",
       type: "Full-time",
       department: "Engineering",
-      description: "We're looking for a Senior Frontend Developer with expertise in React, TypeScript, and modern web technologies to help build our platform's user interface."
+      description: "We're looking for a Senior Frontend Developer with expertise in React, TypeScript and modern web technologies to help build our platform's user interface."
     },
     {
       id: 2,
@@ -52,7 +52,7 @@ const Careers = () => {
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Join Our Team</h1>
               <p className="text-gray-600 max-w-3xl mx-auto">
                 Be part of our mission to revolutionize industrial ecosystems with AI. 
-                We're looking for passionate individuals to help us build something amazing.
+                We are looking for passionate individuals to help us build something amazing.
               </p>
             </div>
 
@@ -109,7 +109,7 @@ const Careers = () => {
                       </div>
                       <div>
                         <h3 className="font-semibold text-lg mb-2">Competitive Benefits</h3>
-                        <p className="text-gray-600">Attractive compensation, health benefits, and flexible work arrangements</p>
+                        <p className="text-gray-600">Attractive compensation, health benefits and flexible work arrangements</p>
                       </div>
                     </div>
                   </CardContent>
@@ -155,7 +155,7 @@ const Careers = () => {
             <div className="mt-12 text-center">
               <h3 className="text-xl font-semibold mb-4">Don't see a position that fits?</h3>
               <p className="text-gray-600 mb-6">
-                We're always looking for talented individuals. Send your resume to:
+                We are always looking for talented individuals. Send your resume to:
               </p>
               <Button variant="outline" size="lg" asChild>
                 <a href="mailto:careers@diligince.ai">careers@diligince.ai</a>
