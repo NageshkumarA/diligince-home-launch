@@ -1,11 +1,11 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import { Check, Download, FileText, Star, StarHalf, X } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Check, Download, FileText, Star, X, ArrowLeft } from "lucide-react";
 
-import PurchaseOrderHeader from "@/components/purchase-order/PurchaseOrderHeader";
+import IndustryHeader from "@/components/industry/IndustryHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -13,6 +13,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
+import { useUser } from "@/contexts/UserContext";
 
 type DeliverableItem = {
   id: string;
@@ -38,8 +47,13 @@ type RequiredDocument = {
 const WorkCompletionPayment = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useUser();
+  
   const [viewingDocument, setViewingDocument] = useState<RequiredDocument | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [poData, setPoData] = useState<any>(null);
   
   // Form handling
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm({
@@ -51,43 +65,90 @@ const WorkCompletionPayment = () => {
     }
   });
 
-  // Mock data for the PO (would be fetched from API in real implementation)
-  const poData = {
-    poNumber: "PO-2302-4872",
-    projectTitle: "Industrial Equipment Procurement",
-    vendor: "Acme Industrial Supplies",
-    vendorType: "Product Vendor",
-    startDate: "2023-03-15",
-    completionDate: "2023-04-20",
-    totalValue: 28600,
-    preTaxValue: 26000,
-    taxPercentage: 10,
-    taxAmount: 2600,
-    paidAmount: 13000,
-    balanceDue: 15600,
-    paymentTerms: "50% advance, 50% upon completion",
-    deliverables: [
-      { id: "del-1", description: "Supply of industrial metal frames (10 units)", isCompleted: true },
-      { id: "del-2", description: "Delivery to manufacturing facility", isCompleted: true },
-      { id: "del-3", description: "Installation and configuration", isCompleted: false },
-      { id: "del-4", description: "Technical training for staff", isCompleted: false }
-    ] as DeliverableItem[],
-    acceptanceCriteria: [
-      { id: "ac-1", description: "All units meet ISO 9001 quality standards", isVerified: true },
-      { id: "ac-2", description: "Installation completed within 7 working days", isVerified: true },
-      { id: "ac-3", description: "Training materials provided in digital format", isVerified: false }
-    ] as AcceptanceCriteria[],
-    requiredDocuments: [
-      { id: "doc-1", name: "Quality Certification", isUploaded: true, isVerified: true, uploadedDate: "2023-04-15", verifiedDate: "2023-04-17" },
-      { id: "doc-2", name: "Installation Report", isUploaded: true, isVerified: false, uploadedDate: "2023-04-18" },
-      { id: "doc-3", name: "Training Completion Report", isUploaded: false, isVerified: false }
-    ] as RequiredDocument[]
-  };
+  // Authentication check
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/signin');
+      return;
+    }
+    
+    if (user?.role !== 'industry') {
+      toast({
+        title: "Access Denied",
+        description: "This page is only accessible to industry users.",
+        variant: "destructive",
+      });
+      navigate('/');
+      return;
+    }
+  }, [isAuthenticated, user, navigate, toast]);
+
+  // Load PO data based on ID
+  useEffect(() => {
+    if (!id) {
+      toast({
+        title: "Error",
+        description: "Purchase Order ID is required.",
+        variant: "destructive",
+      });
+      navigate('/industry-dashboard');
+      return;
+    }
+
+    // Simulate data loading
+    const loadPoData = async () => {
+      setIsLoading(true);
+      
+      // Mock data - in real app, this would be fetched from API
+      const mockData = {
+        poNumber: `PO-2302-${id}`,
+        projectTitle: "Industrial Equipment Procurement",
+        vendor: "Acme Industrial Supplies",
+        vendorType: "Product Vendor",
+        startDate: "2023-03-15",
+        completionDate: "2023-04-20",
+        totalValue: 28600,
+        preTaxValue: 26000,
+        taxPercentage: 10,
+        taxAmount: 2600,
+        paidAmount: 13000,
+        balanceDue: 15600,
+        paymentTerms: "50% advance, 50% upon completion",
+        deliverables: [
+          { id: "del-1", description: "Supply of industrial metal frames (10 units)", isCompleted: true },
+          { id: "del-2", description: "Delivery to manufacturing facility", isCompleted: true },
+          { id: "del-3", description: "Installation and configuration", isCompleted: false },
+          { id: "del-4", description: "Technical training for staff", isCompleted: false }
+        ] as DeliverableItem[],
+        acceptanceCriteria: [
+          { id: "ac-1", description: "All units meet ISO 9001 quality standards", isVerified: true },
+          { id: "ac-2", description: "Installation completed within 7 working days", isVerified: true },
+          { id: "ac-3", description: "Training materials provided in digital format", isVerified: false }
+        ] as AcceptanceCriteria[],
+        requiredDocuments: [
+          { id: "doc-1", name: "Quality Certification", isUploaded: true, isVerified: true, uploadedDate: "2023-04-15", verifiedDate: "2023-04-17" },
+          { id: "doc-2", name: "Installation Report", isUploaded: true, isVerified: false, uploadedDate: "2023-04-18" },
+          { id: "doc-3", name: "Training Completion Report", isUploaded: false, isVerified: false }
+        ] as RequiredDocument[]
+      };
+
+      // Simulate loading delay
+      setTimeout(() => {
+        setPoData(mockData);
+        setDeliverables(mockData.deliverables);
+        setCriteria(mockData.acceptanceCriteria);
+        setDocuments(mockData.requiredDocuments);
+        setIsLoading(false);
+      }, 1000);
+    };
+
+    loadPoData();
+  }, [id, navigate, toast]);
 
   // State for checkboxes
-  const [deliverables, setDeliverables] = useState<DeliverableItem[]>(poData.deliverables);
-  const [criteria, setCriteria] = useState<AcceptanceCriteria[]>(poData.acceptanceCriteria);
-  const [documents, setDocuments] = useState<RequiredDocument[]>(poData.requiredDocuments);
+  const [deliverables, setDeliverables] = useState<DeliverableItem[]>([]);
+  const [criteria, setCriteria] = useState<AcceptanceCriteria[]>([]);
+  const [documents, setDocuments] = useState<RequiredDocument[]>([]);
 
   // Calculate if all deliverables and criteria are checked
   const allDeliverablesComplete = deliverables.every(item => item.isCompleted);
@@ -135,13 +196,17 @@ const WorkCompletionPayment = () => {
 
   // Handle payment processing
   const processPayment = () => {
-    // In a real app, this would call an API to process the payment
     console.log("Processing payment");
     setShowPaymentModal(false);
     toast({
       title: "Payment Processed",
       description: "The payment has been successfully processed.",
     });
+    
+    // Navigate back to dashboard after successful payment
+    setTimeout(() => {
+      navigate('/industry-dashboard');
+    }, 2000);
   };
 
   // Star rating component
@@ -162,17 +227,88 @@ const WorkCompletionPayment = () => {
     );
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Helmet>
+          <title>Work Completion & Payment | Diligince.ai</title>
+        </Helmet>
+        
+        <IndustryHeader />
+        
+        <main className="flex-1 container mx-auto px-4 py-8 pt-20">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading purchase order details...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!poData) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Helmet>
+          <title>Work Completion & Payment | Diligince.ai</title>
+        </Helmet>
+        
+        <IndustryHeader />
+        
+        <main className="flex-1 container mx-auto px-4 py-8 pt-20">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-800 mb-4">Purchase Order Not Found</h1>
+            <p className="text-gray-600 mb-6">The requested purchase order could not be found.</p>
+            <Button onClick={() => navigate('/industry-dashboard')}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
         <title>Work Completion & Payment | Diligince.ai</title>
       </Helmet>
       
-      <PurchaseOrderHeader />
+      <IndustryHeader />
       
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">Work Completion & Payment</h1>
-        <p className="text-gray-600 mb-6">PO: {poData.poNumber} - {poData.projectTitle}</p>
+      <main className="flex-1 container mx-auto px-4 py-8 pt-20">
+        {/* Breadcrumb Navigation */}
+        <div className="mb-6">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/industry-dashboard">Dashboard</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/industry-dashboard">Purchase Orders</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Work Completion</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Work Completion & Payment</h1>
+            <p className="text-gray-600">PO: {poData.poNumber} - {poData.projectTitle}</p>
+          </div>
+          <Button variant="outline" onClick={() => navigate('/industry-dashboard')}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Dashboard
+          </Button>
+        </div>
         
         {/* Status Box */}
         <div className="bg-[#f6ffed] border border-[#b7eb8f] rounded-md p-4 flex items-center mb-8">
