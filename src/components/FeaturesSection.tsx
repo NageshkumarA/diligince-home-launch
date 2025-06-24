@@ -38,15 +38,15 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <Card 
               key={index} 
-              className="transition-all duration-300 hover:shadow-lg hover:scale-105 animate-fade-in"
+              className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 animate-fade-in"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <CardHeader>
-                <div className="mb-2">{feature.icon}</div>
-                <CardTitle>{feature.title}</CardTitle>
+              <CardHeader className="text-center">
+                <div className="mb-4 flex justify-center">{feature.icon}</div>
+                <CardTitle className="text-lg font-semibold text-gray-900">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-sm md:text-base">{feature.description}</CardDescription>
+                <CardDescription className="text-sm text-gray-600 leading-relaxed">{feature.description}</CardDescription>
               </CardContent>
             </Card>
           ))}
