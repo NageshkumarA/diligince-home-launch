@@ -103,6 +103,8 @@ function App() {
                             <Route path="/industry-profile" element={<RouteErrorBoundary routeName="Industry Profile"><IndustryProfile /></RouteErrorBoundary>} />
                             <Route path="/industry-messages" element={<RouteErrorBoundary routeName="Industry Messages"><IndustryMessages /></RouteErrorBoundary>} />
                             <Route path="/industry-documents" element={<RouteErrorBoundary routeName="Industry Documents"><IndustryDocuments /></RouteErrorBoundary>} />
+                            <Route path="/create-requirement" element={<RouteErrorBoundary routeName="Create Requirement"><CreateRequirement /></RouteErrorBoundary>} />
+                            <Route path="/create-purchase-order" element={<RouteErrorBoundary routeName="Create Purchase Order"><CreatePurchaseOrder /></RouteErrorBoundary>} />
                             
                             {/* Professional Routes */}
                             <Route path="/professional-dashboard" element={<RouteErrorBoundary routeName="Professional Dashboard"><ProfessionalDashboard /></RouteErrorBoundary>} />
@@ -142,7 +144,6 @@ function App() {
                             <Route path="/messages" element={<RouteErrorBoundary routeName="Messages"><IndustryMessages /></RouteErrorBoundary>} />
                             <Route path="/documents" element={<RouteErrorBoundary routeName="Documents"><IndustryDocuments /></RouteErrorBoundary>} />
                             <Route path="/vendor-profile" element={<RouteErrorBoundary routeName="Vendor Profile"><VendorProfile /></RouteErrorBoundary>} />
-                            <Route path="/create-requirement" element={<RouteErrorBoundary routeName="Create Requirement"><CreateRequirement /></RouteErrorBoundary>} />
                             
                             {/* 404 Route */}
                             <Route path="*" element={<RouteErrorBoundary routeName="404"><NotFound /></RouteErrorBoundary>} />
