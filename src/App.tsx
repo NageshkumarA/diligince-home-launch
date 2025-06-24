@@ -1,10 +1,9 @@
-
 import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { ThemeProvider, NotificationProvider, UserProvider, VendorSpecializationProvider } from "@/contexts";
 import { RequirementProvider } from "@/contexts/RequirementContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -72,93 +71,91 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Router>
-          <div className="min-h-screen bg-gray-50">
-            <ErrorBoundary>
-              <UserProvider>
-                <ThemeProvider defaultTheme="system">
-                  <RequirementProvider>
-                    <VendorSpecializationProvider>
-                      <NotificationProvider>
-                        <Suspense fallback={<LoadingFallback />}>
-                          <Routes>
-                            {/* Public Routes */}
-                            <Route path="/" element={<RouteErrorBoundary routeName="Home"><Index /></RouteErrorBoundary>} />
-                            <Route path="/about" element={<RouteErrorBoundary routeName="About"><About /></RouteErrorBoundary>} />
-                            <Route path="/contact" element={<RouteErrorBoundary routeName="Contact"><Contact /></RouteErrorBoundary>} />
-                            <Route path="/blog" element={<RouteErrorBoundary routeName="Blog"><Blog /></RouteErrorBoundary>} />
-                            <Route path="/careers" element={<RouteErrorBoundary routeName="Careers"><Careers /></RouteErrorBoundary>} />
-                            <Route path="/pricing" element={<RouteErrorBoundary routeName="Pricing"><Pricing /></RouteErrorBoundary>} />
-                            <Route path="/terms" element={<RouteErrorBoundary routeName="Terms"><Terms /></RouteErrorBoundary>} />
-                            <Route path="/privacy" element={<RouteErrorBoundary routeName="Privacy"><Privacy /></RouteErrorBoundary>} />
-                            <Route path="/vendors" element={<RouteErrorBoundary routeName="Vendors"><Vendors /></RouteErrorBoundary>} />
-                            <Route path="/experts" element={<RouteErrorBoundary routeName="Experts"><Experts /></RouteErrorBoundary>} />
-                            
-                            {/* Auth Routes */}
-                            <Route path="/signup" element={<RouteErrorBoundary routeName="Sign Up"><SignUp /></RouteErrorBoundary>} />
-                            <Route path="/signin" element={<RouteErrorBoundary routeName="Sign In"><SignIn /></RouteErrorBoundary>} />
-                            
-                            {/* Industry Routes */}
-                            <Route path="/industry-dashboard" element={<RouteErrorBoundary routeName="Industry Dashboard"><IndustryDashboard /></RouteErrorBoundary>} />
-                            <Route path="/industry-profile" element={<RouteErrorBoundary routeName="Industry Profile"><IndustryProfile /></RouteErrorBoundary>} />
-                            <Route path="/industry-messages" element={<RouteErrorBoundary routeName="Industry Messages"><IndustryMessages /></RouteErrorBoundary>} />
-                            <Route path="/industry-documents" element={<RouteErrorBoundary routeName="Industry Documents"><IndustryDocuments /></RouteErrorBoundary>} />
-                            <Route path="/create-requirement" element={<RouteErrorBoundary routeName="Create Requirement"><CreateRequirement /></RouteErrorBoundary>} />
-                            <Route path="/create-purchase-order" element={<RouteErrorBoundary routeName="Create Purchase Order"><CreatePurchaseOrder /></RouteErrorBoundary>} />
-                            
-                            {/* Professional Routes */}
-                            <Route path="/professional-dashboard" element={<RouteErrorBoundary routeName="Professional Dashboard"><ProfessionalDashboard /></RouteErrorBoundary>} />
-                            <Route path="/professional-profile" element={<RouteErrorBoundary routeName="Professional Profile"><ProfessionalProfile /></RouteErrorBoundary>} />
-                            <Route path="/professional-calendar" element={<RouteErrorBoundary routeName="Professional Calendar"><ProfessionalCalendar /></RouteErrorBoundary>} />
-                            <Route path="/professional-opportunities" element={<RouteErrorBoundary routeName="Professional Opportunities"><ProfessionalOpportunities /></RouteErrorBoundary>} />
-                            <Route path="/professional-messages" element={<RouteErrorBoundary routeName="Professional Messages"><ProfessionalMessages /></RouteErrorBoundary>} />
-                            
-                            {/* Service Vendor Routes */}
-                            <Route path="/service-vendor-dashboard" element={<RouteErrorBoundary routeName="Service Vendor Dashboard"><ServiceVendorDashboard /></RouteErrorBoundary>} />
-                            <Route path="/service-vendor-profile" element={<RouteErrorBoundary routeName="Service Vendor Profile"><ServiceVendorProfile /></RouteErrorBoundary>} />
-                            <Route path="/service-vendor-rfqs" element={<RouteErrorBoundary routeName="Service Vendor RFQs"><ServiceVendorRFQs /></RouteErrorBoundary>} />
-                            <Route path="/service-vendor-services" element={<RouteErrorBoundary routeName="Service Vendor Services"><ServiceVendorServices /></RouteErrorBoundary>} />
-                            <Route path="/service-vendor-projects" element={<RouteErrorBoundary routeName="Service Vendor Projects"><ServiceVendorProjects /></RouteErrorBoundary>} />
-                            <Route path="/service-vendor-messages" element={<RouteErrorBoundary routeName="Service Vendor Messages"><ServiceVendorMessages /></RouteErrorBoundary>} />
-                            
-                            {/* Product Vendor Routes */}
-                            <Route path="/product-vendor-dashboard" element={<RouteErrorBoundary routeName="Product Vendor Dashboard"><ProductVendorDashboard /></RouteErrorBoundary>} />
-                            <Route path="/product-vendor-profile" element={<RouteErrorBoundary routeName="Product Vendor Profile"><ProductVendorProfile /></RouteErrorBoundary>} />
-                            <Route path="/product-vendor-rfqs" element={<RouteErrorBoundary routeName="Product Vendor RFQs"><ProductVendorRFQs /></RouteErrorBoundary>} />
-                            <Route path="/product-vendor-catalog" element={<RouteErrorBoundary routeName="Product Vendor Catalog"><ProductVendorCatalog /></RouteErrorBoundary>} />
-                            <Route path="/product-vendor-orders" element={<RouteErrorBoundary routeName="Product Vendor Orders"><ProductVendorOrders /></RouteErrorBoundary>} />
-                            <Route path="/product-vendor-messages" element={<RouteErrorBoundary routeName="Product Vendor Messages"><ProductVendorMessages /></RouteErrorBoundary>} />
-                            
-                            {/* Logistics Vendor Routes */}
-                            <Route path="/logistics-vendor-dashboard" element={<RouteErrorBoundary routeName="Logistics Vendor Dashboard"><LogisticsVendorDashboard /></RouteErrorBoundary>} />
-                            <Route path="/logistics-vendor-profile" element={<RouteErrorBoundary routeName="Logistics Vendor Profile"><LogisticsVendorProfile /></RouteErrorBoundary>} />
-                            <Route path="/logistics-vendor-requests" element={<RouteErrorBoundary routeName="Logistics Vendor Requests"><LogisticsVendorRequests /></RouteErrorBoundary>} />
-                            <Route path="/logistics-vendor-fleet" element={<RouteErrorBoundary routeName="Logistics Vendor Fleet"><LogisticsVendorFleet /></RouteErrorBoundary>} />
-                            <Route path="/logistics-vendor-deliveries" element={<RouteErrorBoundary routeName="Logistics Vendor Deliveries"><LogisticsVendorDeliveries /></RouteErrorBoundary>} />
-                            <Route path="/logistics-vendor-messages" element={<RouteErrorBoundary routeName="Logistics Vendor Messages"><LogisticsVendorMessages /></RouteErrorBoundary>} />
-                            
-                            {/* Work Completion Payment Route */}
-                            <Route path="/work-completion-payment/:id" element={<RouteErrorBoundary routeName="Work Completion Payment"><WorkCompletionPayment /></RouteErrorBoundary>} />
-                            
-                            {/* Shared Routes */}
-                            <Route path="/messages" element={<RouteErrorBoundary routeName="Messages"><IndustryMessages /></RouteErrorBoundary>} />
-                            <Route path="/documents" element={<RouteErrorBoundary routeName="Documents"><IndustryDocuments /></RouteErrorBoundary>} />
-                            <Route path="/vendor-profile" element={<RouteErrorBoundary routeName="Vendor Profile"><VendorProfile /></RouteErrorBoundary>} />
-                            
-                            {/* 404 Route */}
-                            <Route path="*" element={<RouteErrorBoundary routeName="404"><NotFound /></RouteErrorBoundary>} />
-                          </Routes>
-                        </Suspense>
-                        <Toaster />
-                        <Sonner />
-                      </NotificationProvider>
-                    </VendorSpecializationProvider>
-                  </RequirementProvider>
-                </ThemeProvider>
-              </UserProvider>
-            </ErrorBoundary>
-          </div>
-        </Router>
+        <div className="min-h-screen bg-gray-50">
+          <ErrorBoundary>
+            <UserProvider>
+              <ThemeProvider defaultTheme="system">
+                <RequirementProvider>
+                  <VendorSpecializationProvider>
+                    <NotificationProvider>
+                      <Suspense fallback={<LoadingFallback />}>
+                        <Routes>
+                          {/* Public Routes */}
+                          <Route path="/" element={<RouteErrorBoundary routeName="Home"><Index /></RouteErrorBoundary>} />
+                          <Route path="/about" element={<RouteErrorBoundary routeName="About"><About /></RouteErrorBoundary>} />
+                          <Route path="/contact" element={<RouteErrorBoundary routeName="Contact"><Contact /></RouteErrorBoundary>} />
+                          <Route path="/blog" element={<RouteErrorBoundary routeName="Blog"><Blog /></RouteErrorBoundary>} />
+                          <Route path="/careers" element={<RouteErrorBoundary routeName="Careers"><Careers /></RouteErrorBoundary>} />
+                          <Route path="/pricing" element={<RouteErrorBoundary routeName="Pricing"><Pricing /></RouteErrorBoundary>} />
+                          <Route path="/terms" element={<RouteErrorBoundary routeName="Terms"><Terms /></RouteErrorBoundary>} />
+                          <Route path="/privacy" element={<RouteErrorBoundary routeName="Privacy"><Privacy /></RouteErrorBoundary>} />
+                          <Route path="/vendors" element={<RouteErrorBoundary routeName="Vendors"><Vendors /></RouteErrorBoundary>} />
+                          <Route path="/experts" element={<RouteErrorBoundary routeName="Experts"><Experts /></RouteErrorBoundary>} />
+                          
+                          {/* Auth Routes */}
+                          <Route path="/signup" element={<RouteErrorBoundary routeName="Sign Up"><SignUp /></RouteErrorBoundary>} />
+                          <Route path="/signin" element={<RouteErrorBoundary routeName="Sign In"><SignIn /></RouteErrorBoundary>} />
+                          
+                          {/* Industry Routes */}
+                          <Route path="/industry-dashboard" element={<RouteErrorBoundary routeName="Industry Dashboard"><IndustryDashboard /></RouteErrorBoundary>} />
+                          <Route path="/industry-profile" element={<RouteErrorBoundary routeName="Industry Profile"><IndustryProfile /></RouteErrorBoundary>} />
+                          <Route path="/industry-messages" element={<RouteErrorBoundary routeName="Industry Messages"><IndustryMessages /></RouteErrorBoundary>} />
+                          <Route path="/industry-documents" element={<RouteErrorBoundary routeName="Industry Documents"><IndustryDocuments /></RouteErrorBoundary>} />
+                          <Route path="/create-requirement" element={<RouteErrorBoundary routeName="Create Requirement"><CreateRequirement /></RouteErrorBoundary>} />
+                          <Route path="/create-purchase-order" element={<RouteErrorBoundary routeName="Create Purchase Order"><CreatePurchaseOrder /></RouteErrorBoundary>} />
+                          
+                          {/* Professional Routes */}
+                          <Route path="/professional-dashboard" element={<RouteErrorBoundary routeName="Professional Dashboard"><ProfessionalDashboard /></RouteErrorBoundary>} />
+                          <Route path="/professional-profile" element={<RouteErrorBoundary routeName="Professional Profile"><ProfessionalProfile /></RouteErrorBoundary>} />
+                          <Route path="/professional-calendar" element={<RouteErrorBoundary routeName="Professional Calendar"><ProfessionalCalendar /></RouteErrorBoundary>} />
+                          <Route path="/professional-opportunities" element={<RouteErrorBoundary routeName="Professional Opportunities"><ProfessionalOpportunities /></RouteErrorBoundary>} />
+                          <Route path="/professional-messages" element={<RouteErrorBoundary routeName="Professional Messages"><ProfessionalMessages /></RouteErrorBoundary>} />
+                          
+                          {/* Service Vendor Routes */}
+                          <Route path="/service-vendor-dashboard" element={<RouteErrorBoundary routeName="Service Vendor Dashboard"><ServiceVendorDashboard /></RouteErrorBoundary>} />
+                          <Route path="/service-vendor-profile" element={<RouteErrorBoundary routeName="Service Vendor Profile"><ServiceVendorProfile /></RouteErrorBoundary>} />
+                          <Route path="/service-vendor-rfqs" element={<RouteErrorBoundary routeName="Service Vendor RFQs"><ServiceVendorRFQs /></RouteErrorBoundary>} />
+                          <Route path="/service-vendor-services" element={<RouteErrorBoundary routeName="Service Vendor Services"><ServiceVendorServices /></RouteErrorBoundary>} />
+                          <Route path="/service-vendor-projects" element={<RouteErrorBoundary routeName="Service Vendor Projects"><ServiceVendorProjects /></RouteErrorBoundary>} />
+                          <Route path="/service-vendor-messages" element={<RouteErrorBoundary routeName="Service Vendor Messages"><ServiceVendorMessages /></RouteErrorBoundary>} />
+                          
+                          {/* Product Vendor Routes */}
+                          <Route path="/product-vendor-dashboard" element={<RouteErrorBoundary routeName="Product Vendor Dashboard"><ProductVendorDashboard /></RouteErrorBoundary>} />
+                          <Route path="/product-vendor-profile" element={<RouteErrorBoundary routeName="Product Vendor Profile"><ProductVendorProfile /></RouteErrorBoundary>} />
+                          <Route path="/product-vendor-rfqs" element={<RouteErrorBoundary routeName="Product Vendor RFQs"><ProductVendorRFQs /></RouteErrorBoundary>} />
+                          <Route path="/product-vendor-catalog" element={<RouteErrorBoundary routeName="Product Vendor Catalog"><ProductVendorCatalog /></RouteErrorBoundary>} />
+                          <Route path="/product-vendor-orders" element={<RouteErrorBoundary routeName="Product Vendor Orders"><ProductVendorOrders /></RouteErrorBoundary>} />
+                          <Route path="/product-vendor-messages" element={<RouteErrorBoundary routeName="Product Vendor Messages"><ProductVendorMessages /></RouteErrorBoundary>} />
+                          
+                          {/* Logistics Vendor Routes */}
+                          <Route path="/logistics-vendor-dashboard" element={<RouteErrorBoundary routeName="Logistics Vendor Dashboard"><LogisticsVendorDashboard /></RouteErrorBoundary>} />
+                          <Route path="/logistics-vendor-profile" element={<RouteErrorBoundary routeName="Logistics Vendor Profile"><LogisticsVendorProfile /></RouteErrorBoundary>} />
+                          <Route path="/logistics-vendor-requests" element={<RouteErrorBoundary routeName="Logistics Vendor Requests"><LogisticsVendorRequests /></RouteErrorBoundary>} />
+                          <Route path="/logistics-vendor-fleet" element={<RouteErrorBoundary routeName="Logistics Vendor Fleet"><LogisticsVendorFleet /></RouteErrorBoundary>} />
+                          <Route path="/logistics-vendor-deliveries" element={<RouteErrorBoundary routeName="Logistics Vendor Deliveries"><LogisticsVendorDeliveries /></RouteErrorBoundary>} />
+                          <Route path="/logistics-vendor-messages" element={<RouteErrorBoundary routeName="Logistics Vendor Messages"><LogisticsVendorMessages /></RouteErrorBoundary>} />
+                          
+                          {/* Work Completion Payment Route */}
+                          <Route path="/work-completion-payment/:id" element={<RouteErrorBoundary routeName="Work Completion Payment"><WorkCompletionPayment /></RouteErrorBoundary>} />
+                          
+                          {/* Shared Routes */}
+                          <Route path="/messages" element={<RouteErrorBoundary routeName="Messages"><IndustryMessages /></RouteErrorBoundary>} />
+                          <Route path="/documents" element={<RouteErrorBoundary routeName="Documents"><IndustryDocuments /></RouteErrorBoundary>} />
+                          <Route path="/vendor-profile" element={<RouteErrorBoundary routeName="Vendor Profile"><VendorProfile /></RouteErrorBoundary>} />
+                          
+                          {/* 404 Route */}
+                          <Route path="*" element={<RouteErrorBoundary routeName="404"><NotFound /></RouteErrorBoundary>} />
+                        </Routes>
+                      </Suspense>
+                      <Toaster />
+                      <Sonner />
+                    </NotificationProvider>
+                  </VendorSpecializationProvider>
+                </RequirementProvider>
+              </ThemeProvider>
+            </UserProvider>
+          </ErrorBoundary>
+        </div>
       </TooltipProvider>
     </QueryClientProvider>
   );
