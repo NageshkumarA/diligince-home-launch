@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import VendorHeader from "@/components/vendor/VendorHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -218,7 +219,7 @@ const ServiceVendorServices = () => {
               <h1 className="text-3xl font-bold text-gray-900">Industrial Services Portfolio</h1>
               <p className="text-gray-600 mt-1">EPC, Contracting & Consultancy Services for Industrial Clients</p>
             </div>
-            <Button className="bg-yellow-600 hover:bg-yellow-700" onClick={handleAddService}>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium" onClick={handleAddService}>
               <Plus className="mr-2 h-4 w-4" />
               Add New Service
             </Button>
@@ -226,10 +227,10 @@ const ServiceVendorServices = () => {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
+                  <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
                     <Eye className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
@@ -240,10 +241,10 @@ const ServiceVendorServices = () => {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-green-100 rounded-lg">
+                  <div className="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center">
                     <DollarSign className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
@@ -254,10 +255,10 @@ const ServiceVendorServices = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-yellow-100 rounded-lg">
+                  <div className="w-12 h-12 rounded-lg bg-yellow-50 flex items-center justify-center">
                     <Users className="h-6 w-6 text-yellow-600" />
                   </div>
                   <div>
@@ -268,10 +269,10 @@ const ServiceVendorServices = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-purple-100 rounded-lg">
+                  <div className="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center">
                     <Star className="h-6 w-6 text-purple-600" />
                   </div>
                   <div>
@@ -284,7 +285,7 @@ const ServiceVendorServices = () => {
           </div>
 
           {/* Filters and Search */}
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardContent className="p-6">
               <div className="flex flex-col lg:flex-row gap-4">
                 <div className="flex-1">
@@ -323,7 +324,7 @@ const ServiceVendorServices = () => {
                   </SelectContent>
                 </Select>
 
-                <Button variant="outline">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
                   <Filter className="mr-2 h-4 w-4" />
                   More Filters
                 </Button>
@@ -334,16 +335,16 @@ const ServiceVendorServices = () => {
           {/* Services Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filteredServices.map((service) => (
-              <Card key={service.id} className="hover:shadow-lg transition-shadow">
+              <Card key={service.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold text-gray-900 mb-2">{service.name}</h3>
                       <div className="flex flex-wrap gap-2 mb-2">
-                        <Badge variant="secondary" className="bg-yellow-50 text-yellow-700">
+                        <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200">
                           {service.category}
                         </Badge>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs border-gray-200 text-gray-700">
                           <Building2 className="w-3 h-3 mr-1" />
                           {service.industry}
                         </Badge>
@@ -351,28 +352,28 @@ const ServiceVendorServices = () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                      <span className="text-sm font-medium">{service.rating}</span>
+                      <span className="text-sm font-medium text-gray-900">{service.rating}</span>
                     </div>
                   </div>
 
-                  <p className="text-gray-600 mb-4 text-sm">{service.description}</p>
+                  <p className="text-gray-700 mb-4 text-sm leading-relaxed">{service.description}</p>
 
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
                       <p className="text-xs text-gray-500 mb-1">Projects Completed</p>
-                      <p className="font-semibold">{service.completedProjects}</p>
+                      <p className="font-semibold text-gray-900">{service.completedProjects}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 mb-1">Active Projects</p>
-                      <p className="font-semibold">{service.activeProjects}</p>
+                      <p className="font-semibold text-gray-900">{service.activeProjects}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 mb-1">Pricing Model</p>
-                      <p className="font-semibold text-sm">{service.pricing}</p>
+                      <p className="font-semibold text-sm text-gray-900">{service.pricing}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 mb-1">Value Range</p>
-                      <p className="font-semibold text-sm">{service.priceRange}</p>
+                      <p className="font-semibold text-sm text-gray-900">{service.priceRange}</p>
                     </div>
                   </div>
 
@@ -380,12 +381,12 @@ const ServiceVendorServices = () => {
                     <p className="text-xs text-gray-500 mb-2">Key Capabilities</p>
                     <div className="flex flex-wrap gap-1">
                       {service.skills.slice(0, 4).map((skill, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
+                        <Badge key={index} variant="secondary" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
                           {skill}
                         </Badge>
                       ))}
                       {service.skills.length > 4 && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="secondary" className="text-xs bg-gray-50 text-gray-700 border-gray-200">
                           +{service.skills.length - 4} more
                         </Badge>
                       )}
@@ -397,7 +398,7 @@ const ServiceVendorServices = () => {
                       <p className="text-xs text-gray-500 mb-2">Certifications</p>
                       <div className="flex flex-wrap gap-1">
                         {service.certifications.slice(0, 3).map((cert, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs bg-green-50 text-green-700">
+                          <Badge key={index} variant="secondary" className="text-xs bg-green-50 text-green-700 border-green-200">
                             {cert}
                           </Badge>
                         ))}
@@ -405,12 +406,12 @@ const ServiceVendorServices = () => {
                     </div>
                   )}
 
-                  <div className="flex gap-2 pt-4 border-t">
-                    <Button variant="outline" size="sm" className="flex-1">
+                  <div className="flex gap-2 pt-4 border-t border-gray-100">
+                    <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium">
                       <Eye className="mr-2 h-4 w-4" />
                       View Details
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1" onClick={() => handleEditService(service)}>
+                    <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium" onClick={() => handleEditService(service)}>
                       <Edit className="mr-2 h-4 w-4" />
                       Edit
                     </Button>
@@ -424,8 +425,8 @@ const ServiceVendorServices = () => {
             <div className="text-center py-12">
               <div className="text-gray-500 mb-4">
                 <Building2 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p className="text-lg font-medium">No services found</p>
-                <p className="text-sm">Try adjusting your search or filters</p>
+                <p className="text-lg font-medium text-gray-900">No services found</p>
+                <p className="text-sm text-gray-600">Try adjusting your search or filters</p>
               </div>
             </div>
           )}
