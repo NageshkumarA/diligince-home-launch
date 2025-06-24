@@ -55,3 +55,32 @@ export type {
   ThemeConfig,
   ThemeColors as SharedThemeColors
 } from '../types/shared';
+
+// Export domain-specific types
+export type {
+  VendorProfile,
+  VendorType,
+  VendorStatus
+} from '../types/vendor';
+
+export type {
+  DashboardStat,
+  NavigationItem
+} from '../types/dashboard';
+
+export type {
+  ProfessionalProfile,
+  ProfessionalStatus
+} from '../types/professional';
+
+export type {
+  LogisticsVendorProfile,
+  LogisticsSpecialization
+} from '../types/logistics';
+
+export type {
+  IndustryProfile,
+  IndustryType,
+  Requirement,
+  Priority
+} from '../types/industry';

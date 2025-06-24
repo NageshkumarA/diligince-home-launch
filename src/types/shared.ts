@@ -1,4 +1,3 @@
-
 // Shared type definitions for common interfaces across the application
 
 export interface BaseEntity {
@@ -30,7 +29,7 @@ export interface MessageTypeConfig {
   color: string;
 }
 
-// Stats interfaces
+// Stats interfaces - keeping for backward compatibility, but recommend using dashboard.ts
 export interface StatItem {
   title: string;
   value: string;
@@ -67,7 +66,7 @@ export interface FormModalProps extends BaseModal {
   isLoading?: boolean;
 }
 
-// Navigation interfaces
+// Navigation interfaces - keeping for backward compatibility, but recommend using dashboard.ts
 export interface NavItem {
   label: string;
   icon: React.ReactNode;
@@ -82,7 +81,7 @@ export interface SidebarMenuItem {
   badge?: string | number;
 }
 
-// User interfaces
+// User interfaces - simplified, specific types moved to respective domain files
 export interface BaseUser extends BaseEntity {
   name: string;
   email: string;
