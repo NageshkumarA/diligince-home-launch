@@ -1,102 +1,78 @@
+
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import IndustryHeader from "@/components/industry/IndustryHeader";
+import { MessageCenter } from "@/components/industry/dashboard/MessageCenter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Search,
-  Filter,
-  MessageSquare,
-  Send,
-  AlertCircle,
-  Clock,
-  CheckCircle2,
-  Plus,
-  Phone,
-  Video,
-  Archive,
-  Star,
-  MoreHorizontal,
-  Paperclip,
-  Mail
-} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Search, MessageSquare, Send, Plus, Phone, Video, Archive, Star, MoreHorizontal, Paperclip, Mail } from "lucide-react";
 import { toast } from "sonner";
 
-// Mock message data with enhanced structure
+// Mock message data for industry
 const messageThreads = [
   {
     id: 1,
-    sender: "TechValve Solutions",
-    initials: "TV",
-    subject: "Valve Procurement - Quote Update",
-    preview: "We've updated our quote for the industrial valve set. Please review the new specifications and pricing...",
-    lastMessage: "The updated quote includes the new safety specifications you requested. Please review and let us know if you need any modifications.",
-    time: "10 min ago",
-    timestamp: "2:30 PM",
+    sender: "Steel Industries Ltd.",
+    initials: "SI",
+    subject: "Control System Upgrade Proposal",
+    preview: "We've reviewed your control system upgrade requirement. Our team can provide a comprehensive solution including SCADA implementation.",
+    lastMessage: "We can schedule a site visit next week to discuss the technical requirements in detail.",
+    time: "2 hours ago",
+    timestamp: "2:45 PM",
     unread: true,
     priority: "high",
-    category: "Product Vendor",
+    category: "Vendor Inquiry",
     avatar: "bg-blue-100 text-blue-600"
   },
   {
     id: 2,
-    sender: "EngiConsult Group",
-    initials: "EG",
-    subject: "Pipeline Inspection Schedule",
-    preview: "Our engineer is available for the inspection on Friday. We'll need access to the facility from 9 AM...",
-    lastMessage: "Our engineer is available for the inspection on Friday. We'll need access to the facility from 9 AM. Please confirm the arrangements.",
-    time: "2 hours ago",
-    timestamp: "12:30 PM",
+    sender: "AutoParts Manufacturing",
+    initials: "AM",
+    subject: "Purchase Order Confirmation",
+    preview: "Thank you for the purchase order. We'll begin production immediately and deliver within the specified timeline.",
+    lastMessage: "Expected delivery date is confirmed for next Friday. All items will be quality tested before shipment.",
+    time: "5 hours ago",
+    timestamp: "11:45 AM",
     unread: true,
     priority: "medium",
-    category: "Professional",
+    category: "Purchase Order",
+    orderNumber: "PO-15789",
     avatar: "bg-green-100 text-green-600"
   },
   {
     id: 3,
-    sender: "Service Pro Maintenance",
-    initials: "SP",
-    subject: "Safety Audit Completion",
-    preview: "The safety audit has been completed successfully. Please find the detailed report attached...",
-    lastMessage: "The safety audit has been completed successfully. All systems are operating within safety parameters. Report attached.",
+    sender: "Power Grid Solutions",
+    initials: "PG",
+    subject: "SCADA Project Update",
+    preview: "The SCADA project is progressing as planned. We've completed phase 1 testing and are ready to move to phase 2.",
+    lastMessage: "Phase 1 testing completed successfully. All systems are operational and ready for phase 2 implementation.",
     time: "1 day ago",
     timestamp: "Yesterday",
     unread: false,
-    priority: "low",
-    category: "Service Vendor",
-    avatar: "bg-purple-100 text-purple-600"
+    priority: "medium",
+    category: "Project Update",
+    projectId: "PROJ-2023-15",
+    avatar: "bg-orange-100 text-orange-600"
   },
   {
     id: 4,
-    sender: "FastTrack Logistics",
-    initials: "FL",
-    subject: "Delivery Schedule Confirmation",
-    preview: "Your equipment shipment is scheduled for delivery next Tuesday. Please confirm the receiving time...",
-    lastMessage: "Your equipment shipment is scheduled for delivery next Tuesday. Please confirm the receiving time and ensure someone is available.",
+    sender: "Industrial Automation Co.",
+    initials: "IA",
+    subject: "Factory Automation Proposal",
+    preview: "We'd like to submit a proposal for your factory automation project. Our team has extensive experience in similar implementations.",
+    lastMessage: "We'd like to submit a proposal for your factory automation project. Our team has extensive experience in similar implementations.",
     time: "2 days ago",
     timestamp: "2 days ago",
     unread: false,
-    priority: "medium",
-    category: "Logistics",
-    avatar: "bg-orange-100 text-orange-600"
+    priority: "low",
+    category: "Proposal Response",
+    avatar: "bg-purple-100 text-purple-600"
   }
 ];
 
@@ -105,63 +81,41 @@ const detailedMessages = {
   1: [
     {
       id: 1,
-      sender: "TechValve Solutions",
-      content: "Hello, we've prepared the updated quote for your industrial valve procurement request. The specifications have been modified based on your feedback.",
+      sender: "Steel Industries Ltd.",
+      content: "Good morning! We've reviewed your control system upgrade requirement posted on your platform.",
+      timestamp: "9:30 AM",
+      isFromContact: true
+    },
+    {
+      id: 2,
+      sender: "You",
+      content: "Thank you for your interest. Can you provide more details about your proposed solution and timeline?",
+      timestamp: "10:00 AM",
+      isFromContact: false
+    },
+    {
+      id: 3,
+      sender: "Steel Industries Ltd.",
+      content: "Absolutely! Our solution includes complete SCADA implementation, PLC programming, and HMI development. Timeline is 8-12 weeks.",
       timestamp: "10:30 AM",
       isFromContact: true
     },
     {
-      id: 2,
-      sender: "You",
-      content: "Thank you for the quick turnaround. Can you provide more details about the safety certifications for these valves?",
-      timestamp: "11:00 AM",
-      isFromContact: false
-    },
-    {
-      id: 3,
-      sender: "TechValve Solutions",
-      content: "Absolutely! All valves come with ISO 9001 and API 6D certifications. We can also provide additional safety documentation if needed.",
-      timestamp: "11:15 AM",
-      isFromContact: true
-    },
-    {
       id: 4,
-      sender: "TechValve Solutions",
-      content: "The updated quote includes the new safety specifications you requested. Please review and let us know if you need any modifications.",
-      timestamp: "2:30 PM",
-      isFromContact: true
-    }
-  ],
-  2: [
-    {
-      id: 1,
-      sender: "EngiConsult Group",
-      content: "Good morning! We're ready to schedule the pipeline inspection for your facility. Our senior engineer is available this week.",
-      timestamp: "9:00 AM",
-      isFromContact: true
-    },
-    {
-      id: 2,
-      sender: "You",
-      content: "That sounds great. What preparation do we need to do on our end before the inspection?",
-      timestamp: "9:30 AM",
-      isFromContact: false
-    },
-    {
-      id: 3,
-      sender: "EngiConsult Group",
-      content: "Our engineer is available for the inspection on Friday. We'll need access to the facility from 9 AM. Please confirm the arrangements.",
-      timestamp: "12:30 PM",
+      sender: "Steel Industries Ltd.",
+      content: "We can schedule a site visit next week to discuss the technical requirements in detail.",
+      timestamp: "2:45 PM",
       isFromContact: true
     }
   ]
 };
 
 const IndustryMessages = () => {
+  const [messages, setMessages] = useState(messageThreads);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterBy, setFilterBy] = useState("all");
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [conversationMessages, setConversationMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [emailSubject, setEmailSubject] = useState("");
   const [emailContent, setEmailContent] = useState("");
@@ -169,6 +123,7 @@ const IndustryMessages = () => {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
+      case "urgent": return "bg-red-100 text-red-800";
       case "high": return "bg-red-100 text-red-800";
       case "medium": return "bg-yellow-100 text-yellow-800";
       case "low": return "bg-green-100 text-green-800";
@@ -176,18 +131,20 @@ const IndustryMessages = () => {
     }
   };
 
-  const getPriorityIcon = (priority: string) => {
-    switch (priority) {
-      case "high": return <AlertCircle className="w-4 h-4" />;
-      case "medium": return <Clock className="w-4 h-4" />;
-      case "low": return <CheckCircle2 className="w-4 h-4" />;
-      default: return null;
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "Vendor Inquiry": return "bg-blue-100 text-blue-800";
+      case "Purchase Order": return "bg-green-100 text-green-800";
+      case "Project Update": return "bg-orange-100 text-orange-800";
+      case "Proposal Response": return "bg-purple-100 text-purple-800";
+      default: return "bg-gray-100 text-gray-800";
     }
   };
 
-  const filteredMessages = messageThreads.filter(message => {
+  const filteredMessages = messages.filter(message => {
     if (filterBy === "unread" && !message.unread) return false;
-    if (filterBy === "urgent" && message.priority !== "high") return false;
+    if (filterBy === "urgent" && message.priority !== "urgent" && message.priority !== "high") return false;
+    if (filterBy === "projects" && !message.projectId) return false;
     if (searchTerm && !message.subject.toLowerCase().includes(searchTerm.toLowerCase()) && 
         !message.sender.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     return true;
@@ -195,31 +152,35 @@ const IndustryMessages = () => {
 
   const handleConversationSelect = (conversation: any) => {
     setSelectedConversation(conversation);
-    setMessages(detailedMessages[conversation.id] || []);
+    setConversationMessages(detailedMessages[conversation.id] || []);
     // Mark as read
-    const threadIndex = messageThreads.findIndex(thread => thread.id === conversation.id);
-    if (threadIndex !== -1) {
-      messageThreads[threadIndex].unread = false;
+    const messageIndex = messages.findIndex(msg => msg.id === conversation.id);
+    if (messageIndex !== -1) {
+      const updatedMessages = [...messages];
+      updatedMessages[messageIndex].unread = false;
+      setMessages(updatedMessages);
     }
   };
 
   const handleSendMessage = () => {
     if (newMessage.trim() && selectedConversation) {
       const message = {
-        id: messages.length + 1,
+        id: conversationMessages.length + 1,
         sender: "You",
         content: newMessage,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         isFromContact: false
       };
-      setMessages([...messages, message]);
+      setConversationMessages([...conversationMessages, message]);
       setNewMessage("");
       
       // Update the last message in the thread
-      const threadIndex = messageThreads.findIndex(thread => thread.id === selectedConversation.id);
-      if (threadIndex !== -1) {
-        messageThreads[threadIndex].lastMessage = newMessage;
-        messageThreads[threadIndex].time = "Just now";
+      const messageIndex = messages.findIndex(msg => msg.id === selectedConversation.id);
+      if (messageIndex !== -1) {
+        const updatedMessages = [...messages];
+        updatedMessages[messageIndex].lastMessage = newMessage;
+        updatedMessages[messageIndex].time = "Just now";
+        setMessages(updatedMessages);
       }
       
       toast.success("Message sent successfully");
@@ -228,7 +189,6 @@ const IndustryMessages = () => {
 
   const handleSendEmail = () => {
     if (emailSubject.trim() && emailContent.trim() && selectedConversation) {
-      // In a real app, this would integrate with an email service
       toast.success(`Email sent to ${selectedConversation.sender}`);
       setEmailSubject("");
       setEmailContent("");
@@ -236,7 +196,8 @@ const IndustryMessages = () => {
     }
   };
 
-  const unreadCount = messageThreads.filter(thread => thread.unread).length;
+  const unreadCount = messages.filter(msg => msg.unread).length;
+  const urgentCount = messages.filter(msg => msg.priority === "urgent" || msg.priority === "high").length;
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -259,9 +220,14 @@ const IndustryMessages = () => {
                     {unreadCount} unread
                   </Badge>
                 )}
+                {urgentCount > 0 && (
+                  <Badge className="bg-yellow-100 text-yellow-800">
+                    {urgentCount} urgent
+                  </Badge>
+                )}
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button size="sm">
+                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
                       <Plus className="h-4 w-4 mr-2" />
                       New
                     </Button>
@@ -273,7 +239,7 @@ const IndustryMessages = () => {
                     <div className="space-y-4">
                       <div>
                         <label className="text-sm font-medium">To</label>
-                        <Input placeholder="Select recipient..." />
+                        <Input placeholder="Select vendor..." />
                       </div>
                       <div>
                         <label className="text-sm font-medium">Subject</label>
@@ -285,7 +251,7 @@ const IndustryMessages = () => {
                       </div>
                       <div className="flex justify-end space-x-2">
                         <Button variant="outline">Save Draft</Button>
-                        <Button>
+                        <Button className="bg-blue-600 hover:bg-blue-700">
                           <Send className="w-4 h-4 mr-2" />
                           Send Message
                         </Button>
@@ -316,6 +282,7 @@ const IndustryMessages = () => {
                   <SelectItem value="all">All Messages</SelectItem>
                   <SelectItem value="unread">Unread</SelectItem>
                   <SelectItem value="urgent">Urgent</SelectItem>
+                  <SelectItem value="projects">Project Related</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -333,12 +300,12 @@ const IndustryMessages = () => {
               >
                 <div className="flex items-start gap-3">
                   <Avatar className={`h-10 w-10 ${conversation.avatar}`}>
-                    <AvatarFallback>{conversation.initials}</AvatarFallback>
+                    <AvatarFallback className="text-base">{conversation.initials}</AvatarFallback>
                   </Avatar>
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className={`font-medium text-gray-900 truncate ${conversation.unread ? "font-semibold" : ""}`}>
+                      <h3 className={`text-base font-medium text-gray-900 truncate ${conversation.unread ? "font-semibold" : ""}`}>
                         {conversation.sender}
                       </h3>
                       <span className="text-xs text-gray-500">{conversation.time}</span>
@@ -352,14 +319,18 @@ const IndustryMessages = () => {
                       {conversation.preview}
                     </p>
                     
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge className={getCategoryColor(conversation.category)} variant="outline">
                         {conversation.category}
                       </Badge>
                       <Badge className={getPriorityColor(conversation.priority)}>
-                        {getPriorityIcon(conversation.priority)}
-                        <span className="ml-1 capitalize">{conversation.priority}</span>
+                        {conversation.priority}
                       </Badge>
+                      {(conversation.orderNumber || conversation.projectId) && (
+                        <Badge variant="outline" className="text-xs">
+                          {conversation.orderNumber || conversation.projectId}
+                        </Badge>
+                      )}
                       {conversation.unread && (
                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                       )}
@@ -380,11 +351,14 @@ const IndustryMessages = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Avatar className={`h-10 w-10 ${selectedConversation.avatar}`}>
-                      <AvatarFallback>{selectedConversation.initials}</AvatarFallback>
+                      <AvatarFallback className="text-base">{selectedConversation.initials}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <h2 className="font-semibold text-gray-900">{selectedConversation.sender}</h2>
+                      <h2 className="text-base font-semibold text-gray-900">{selectedConversation.sender}</h2>
                       <p className="text-sm text-gray-500">{selectedConversation.category}</p>
+                      {(selectedConversation.orderNumber || selectedConversation.projectId) && (
+                        <p className="text-xs text-blue-600 font-medium">{selectedConversation.orderNumber || selectedConversation.projectId}</p>
+                      )}
                     </div>
                   </div>
                   
@@ -417,7 +391,7 @@ const IndustryMessages = () => {
 
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((message) => (
+                {conversationMessages.map((message) => (
                   <div
                     key={message.id}
                     className={`flex ${message.isFromContact ? "justify-start" : "justify-end"}`}
@@ -506,7 +480,7 @@ const IndustryMessages = () => {
               <Button variant="outline" onClick={() => setShowEmailModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSendEmail}>
+              <Button onClick={handleSendEmail} className="bg-blue-600 hover:bg-blue-700">
                 <Mail className="w-4 h-4 mr-2" />
                 Send Email
               </Button>
