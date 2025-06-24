@@ -1,4 +1,5 @@
-
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,26 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Check } from "lucide-react";
 
 const Pricing = () => {
+  const [selectedPlan, setSelectedPlan] = useState<'free' | 'pro' | 'enterprise'>('pro');
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate("/signup");
+  };
+
+  const handleSubscribe = () => {
+    // In a real app, this would redirect to payment processing
+    navigate("/signup");
+  };
+
+  const handleContactSales = () => {
+    navigate("/contact");
+  };
+
+  const handleContactUs = () => {
+    navigate("/contact");
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
@@ -21,7 +42,14 @@ const Pricing = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {/* Free Tier */}
-              <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
+              <Card 
+                className={`bg-white border cursor-pointer transition-all duration-300 hover:shadow-lg ${
+                  selectedPlan === 'free' 
+                    ? 'border-2 border-blue-500 shadow-lg' 
+                    : 'border border-gray-100 shadow-sm hover:shadow-md'
+                }`}
+                onClick={() => setSelectedPlan('free')}
+              >
                 <CardHeader className="text-center">
                   <CardTitle className="text-2xl font-bold text-gray-900">Free</CardTitle>
                   <div className="mt-4">
@@ -50,14 +78,28 @@ const Pricing = () => {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-50">
+                  <Button 
+                    variant="outline" 
+                    className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleGetStarted();
+                    }}
+                  >
                     Get Started
                   </Button>
                 </CardFooter>
               </Card>
 
               {/* Pro Tier */}
-              <Card className="bg-white border-2 border-blue-500 shadow-lg relative hover:shadow-xl transition-all duration-300">
+              <Card 
+                className={`bg-white border cursor-pointer relative transition-all duration-300 hover:shadow-lg ${
+                  selectedPlan === 'pro' 
+                    ? 'border-2 border-blue-500 shadow-lg' 
+                    : 'border border-gray-100 shadow-sm hover:shadow-md'
+                }`}
+                onClick={() => setSelectedPlan('pro')}
+              >
                 <div className="absolute top-0 right-0 bg-blue-500 text-white px-3 py-1 text-sm font-medium rounded-bl-lg rounded-tr-lg">
                   Popular
                 </div>
@@ -93,14 +135,27 @@ const Pricing = () => {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button 
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSubscribe();
+                    }}
+                  >
                     Subscribe Now
                   </Button>
                 </CardFooter>
               </Card>
 
               {/* Enterprise Tier */}
-              <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
+              <Card 
+                className={`bg-white border cursor-pointer transition-all duration-300 hover:shadow-lg ${
+                  selectedPlan === 'enterprise' 
+                    ? 'border-2 border-blue-500 shadow-lg' 
+                    : 'border border-gray-100 shadow-sm hover:shadow-md'
+                }`}
+                onClick={() => setSelectedPlan('enterprise')}
+              >
                 <CardHeader className="text-center">
                   <CardTitle className="text-2xl font-bold text-gray-900">Enterprise</CardTitle>
                   <div className="mt-4">
@@ -132,7 +187,14 @@ const Pricing = () => {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-50">
+                  <Button 
+                    variant="outline" 
+                    className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleContactSales();
+                    }}
+                  >
                     Contact Sales
                   </Button>
                 </CardFooter>
@@ -151,7 +213,12 @@ const Pricing = () => {
 
             <div className="mt-12 text-center">
               <h3 className="text-xl font-semibold mb-4 text-gray-900">Have questions about our pricing?</h3>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">Contact Us</Button>
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={handleContactUs}
+              >
+                Contact Us
+              </Button>
             </div>
           </div>
         </section>
