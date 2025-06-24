@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import IndustryHeader from "@/components/industry/IndustryHeader";
@@ -36,16 +37,16 @@ const CreateRequirement = () => {
 
   return (
     <RequirementProvider>
-      <div className="flex min-h-screen flex-col bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="flex min-h-screen flex-col bg-gray-50">
         <IndustryHeader />
-        <div className="container mx-auto px-4 py-8 md:px-6">
+        <div className="container mx-auto px-4 py-8 md:px-6 pt-20">
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
                   Create Procurement Requirement
                 </h1>
-                <p className="mt-2 text-lg text-gray-600">
+                <p className="mt-2 text-lg text-gray-700">
                   Enterprise-grade requirement management system
                 </p>
               </div>
@@ -61,7 +62,7 @@ const CreateRequirement = () => {
             onStepClick={handleGoToStep} 
           />
 
-          <div className="mt-8 rounded-xl bg-white shadow-lg border border-gray-200">
+          <div className="mt-8 rounded-xl bg-white shadow-sm border border-gray-100">
             <div className="p-8">
               {currentStep === 1 && <EnhancedBasicInfoStep onNext={handleNext} />}
               {currentStep === 2 && (
