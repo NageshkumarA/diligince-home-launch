@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Home, Briefcase, Calendar, MessageSquare, User, FileText, LayoutGrid, ShoppingCart, Truck, Settings } from "lucide-react";
+import { Home, Briefcase, Calendar, MessageSquare, User, FileText, LayoutGrid, ShoppingCart, Truck, Settings, Users, FolderOpen } from "lucide-react";
 
 export interface NavItem {
   label: string;
@@ -23,6 +23,28 @@ export interface HeaderConfig {
     buttonHoverColor: string;
   };
 }
+
+export const industryHeaderConfig: HeaderConfig = {
+  brandName: "Diligince.ai",
+  brandHref: "/industry-dashboard",
+  navItems: [
+    { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/industry-dashboard" },
+    { label: "Requirements", icon: React.createElement(FileText, { size: 18 }), href: "/create-requirement" },
+    { label: "Stakeholders", icon: React.createElement(Users, { size: 18 }), href: "/vendors" },
+    { label: "Create PO", icon: React.createElement(ShoppingCart, { size: 18 }), href: "/create-purchase-order" },
+    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "/industry-messages" },
+    { label: "Documents", icon: React.createElement(FolderOpen, { size: 18 }), href: "/industry-documents" },
+    { label: "Profile", icon: React.createElement(User, { size: 18 }), href: "/industry-profile" }
+  ],
+  avatarInitials: "SPL",
+  theme: {
+    bgColor: "bg-blue-600",
+    textColor: "text-white",
+    hoverColor: "text-blue-100 hover:text-white",
+    avatarBgColor: "bg-blue-100",
+    buttonHoverColor: "hover:text-white hover:bg-blue-700"
+  }
+};
 
 export const professionalHeaderConfig: HeaderConfig = {
   brandName: "Diligince.ai",
@@ -117,6 +139,8 @@ export const getHeaderConfigByPath = (pathname: string): HeaderConfig => {
     return productVendorHeaderConfig;
   } else if (pathname.includes('logistics-vendor')) {
     return logisticsVendorHeaderConfig;
+  } else if (pathname.includes('industry')) {
+    return industryHeaderConfig;
   } else {
     return serviceVendorHeaderConfig; // default to service vendor
   }
