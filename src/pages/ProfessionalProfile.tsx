@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { User, Home, Calendar, Award, Briefcase, Wallet, Settings, LayoutGrid, MessageSquare } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -11,6 +12,9 @@ import ExperienceForm from "@/components/professional/forms/ExperienceForm";
 import EnhancedAvailabilityCalendar from "@/components/professional/calendar/EnhancedAvailabilityCalendar";
 import PaymentSettingsForm from "@/components/professional/forms/PaymentSettingsForm";
 import AccountSettingsForm from "@/components/professional/forms/AccountSettingsForm";
+import { ProfileCompletionWidget } from "@/components/shared/ProfileCompletionWidget";
+import { useUser } from "@/contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 
 // Types for the navigation menu
 export type SidebarMenuItem = {
@@ -30,20 +34,34 @@ export type ContentType =
   | "account";
 
 const ProfessionalProfile = () => {
+  const { user, profileCompletion, isAuthenticated } = useUser();
+  const navigate = useNavigate();
+  
   // State to track active content
   const [activeContent, setActiveContent] = useState<ContentType>("personal-info");
-  const [profileCompletion, setProfileCompletion] = useState(35); // Example profile completion percentage
   
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/signin');
+    }
+  }, [isAuthenticated, navigate]);
+
   useEffect(() => {
     // Notify the user that the professional profile is loaded
     toast.success("Professional profile loaded successfully");
   }, []);
   
-  // Mock professional data (renamed from expertData)
+  // Professional data from user context
   const professionalData = {
-    name: "Rahul Sharma",
-    expertise: "Mechanical Engineering",
-    initials: "RS",
+    name: user?.profile?.fullName || user?.name || "Rahul Sharma",
+    expertise: user?.profile?.expertise || "Mechanical Engineering",
+    initials: user?.initials || "RS",
+  };
+
+  // Handle profile completion action
+  const handleCompleteProfile = () => {
+    navigate('/profile-completion');
   };
 
   // Navigation menu items
@@ -93,6 +111,10 @@ const ProfessionalProfile = () => {
     }
   };
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <ProfessionalHeader navItems={headerNavItems} />
@@ -103,13 +125,22 @@ const ProfessionalProfile = () => {
           menuItems={menuItems}
           activeMenuItem={activeContent}
           onMenuItemClick={handleMenuItemClick}
-          profileCompletion={profileCompletion}
+          profileCompletion={profileCompletion.percentage}
         />
         
         <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
-          <Card className="w-full max-w-4xl mx-auto shadow-sm">
-            {renderContent()}
-          </Card>
+          <div className="w-full max-w-4xl mx-auto">
+            {/* Profile Completion Widget */}
+            <ProfileCompletionWidget
+              completion={profileCompletion}
+              onCompleteProfile={handleCompleteProfile}
+              showCompleteButton={!profileCompletion.isComplete}
+            />
+            
+            <Card className="w-full shadow-sm">
+              {renderContent()}
+            </Card>
+          </div>
         </main>
       </div>
     </div>

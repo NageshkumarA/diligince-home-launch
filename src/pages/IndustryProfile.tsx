@@ -37,6 +37,10 @@ import {
 import Footer from "@/components/Footer";
 import EnterpriseTeamMembers from "@/components/industry/EnterpriseTeamMembers";
 import IndustryHeader from "@/components/industry/IndustryHeader";
+import { ProfileCompletionWidget } from "@/components/shared/ProfileCompletionWidget";
+import { useUser } from "@/contexts/UserContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 // Types for the content
 export type ContentType = 
@@ -48,20 +52,30 @@ export type ContentType =
   | "Security & Login";
 
 const IndustryProfile = () => {
-  const [companyName, setCompanyName] = useState("Steel Plant Ltd.");
-  const [industryType, setIndustryType] = useState("Manufacturing - Steel Processing");
+  const { user, updateProfile, profileCompletion, isAuthenticated } = useUser();
+  const navigate = useNavigate();
+
+  // Initialize state from user profile
+  const [companyName, setCompanyName] = useState(user?.profile?.companyName || "Steel Plant Ltd.");
+  const [industryType, setIndustryType] = useState(user?.profile?.industryType || "Manufacturing - Steel Processing");
   const [companyDescription, setCompanyDescription] = useState(
     "Leading steel manufacturing company with over 25 years of experience. Specializing in hot and cold rolled products, galvanized steel, and custom fabrication."
   );
   const [gstNumber, setGstNumber] = useState("27AABCS1429B1ZB");
   const [regNumber, setRegNumber] = useState("U27100MH1995PLC123456");
-  const [email, setEmail] = useState("contact@steelplant.com");
-  const [phone, setPhone] = useState("+91 9876543210");
+  const [email, setEmail] = useState(user?.email || "contact@steelplant.com");
+  const [phone, setPhone] = useState(user?.profile?.phone || "+91 9876543210");
   const [address, setAddress] = useState("Plot No. 123, Industrial Area, Mumbai, Maharashtra, India - 400001");
   const [website, setWebsite] = useState("https://steelplant.com");
   const [yearEstablished, setYearEstablished] = useState("1995");
   const [activeMenu, setActiveMenu] = useState<ContentType>("Company Profile");
-  const [profileCompletion, setProfileCompletion] = useState(90);
+  
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/signin');
+    }
+  }, [isAuthenticated, navigate]);
   
   // Mock data for team members
   const [teamMembers, setTeamMembers] = useState([
@@ -89,6 +103,28 @@ const IndustryProfile = () => {
       .map((word) => word[0])
       .join("")
       .toUpperCase();
+  };
+
+  // Handle profile save
+  const handleProfileSave = () => {
+    if (!user) return;
+    
+    const profileUpdates = {
+      profile: {
+        ...user.profile,
+        companyName,
+        industryType,
+        phone,
+      }
+    };
+    
+    updateProfile(profileUpdates);
+    toast.success("Profile updated successfully!");
+  };
+
+  // Handle profile completion action
+  const handleCompleteProfile = () => {
+    navigate('/profile-completion');
   };
 
   const menuItems = [
@@ -145,9 +181,9 @@ const IndustryProfile = () => {
           <>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800">Company Profile</h2>
-              <Button variant="outline" size="sm">
-                <Edit className="w-4 h-4 mr-2" />
-                Edit Profile
+              <Button variant="outline" size="sm" onClick={handleProfileSave}>
+                <Save className="w-4 h-4 mr-2" />
+                Save Profile
               </Button>
             </div>
             
@@ -290,7 +326,7 @@ const IndustryProfile = () => {
               <Button variant="outline">
                 <X className="w-4 h-4 mr-2" /> Cancel
               </Button>
-              <Button>
+              <Button onClick={handleProfileSave}>
                 <Save className="w-4 h-4 mr-2" /> Save Changes
               </Button>
             </div>
@@ -744,6 +780,10 @@ const IndustryProfile = () => {
     }
   };
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <IndustryHeader />
@@ -764,13 +804,23 @@ const IndustryProfile = () => {
               {industryType.split(" - ")[0]}
             </span>
             
-            {/* Profile Completion */}
+            {/* Dynamic Profile Completion */}
             <div className="w-full mb-6">
               <div className="flex justify-between items-center mb-1">
                 <span className="text-sm text-gray-600">Profile Completion</span>
-                <span className="text-sm text-blue-500">{profileCompletion}%</span>
+                <span className="text-sm text-blue-500">{profileCompletion.percentage}%</span>
               </div>
-              <Progress value={profileCompletion} className="h-2" />
+              <Progress 
+                value={profileCompletion.percentage} 
+                className="h-2" 
+                indicatorClassName={profileCompletion.isComplete ? "bg-green-500" : "bg-primary"}
+              />
+              {!profileCompletion.isComplete && profileCompletion.missingFields.length > 0 && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Complete: {profileCompletion.missingFields.slice(0, 2).join(', ')}
+                  {profileCompletion.missingFields.length > 2 && ` +${profileCompletion.missingFields.length - 2} more`}
+                </p>
+              )}
             </div>
           </div>
           
@@ -801,6 +851,13 @@ const IndustryProfile = () => {
           {/* Title and Content */}
           <div className="max-w-6xl mx-auto">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Profile & Settings</h1>
+            
+            {/* Profile Completion Widget */}
+            <ProfileCompletionWidget
+              completion={profileCompletion}
+              onCompleteProfile={handleCompleteProfile}
+              showCompleteButton={!profileCompletion.isComplete}
+            />
             
             {activeMenu === "Team Members" ? (
               renderContent()
