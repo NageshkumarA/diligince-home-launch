@@ -69,14 +69,16 @@ const getProgressColor = (progress: number) => {
 
 export const ActiveProjects = () => {
   return (
-    <Card className="bg-white border border-gray-200 shadow-sm">
-      <CardHeader className="border-b border-gray-100 pb-4">
+    <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+      <CardHeader className="border-b border-gray-50 pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <Briefcase className="h-5 w-5 text-blue-600" />
+          <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+              <Briefcase className="h-5 w-5 text-blue-600" />
+            </div>
             Active Projects
           </CardTitle>
-          <Button variant="outline" size="sm" className="text-gray-700 border-gray-300 hover:bg-gray-50">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
             View All Projects
           </Button>
         </div>
@@ -85,53 +87,53 @@ export const ActiveProjects = () => {
       <CardContent className="p-6">
         <div className="space-y-6">
           {projectsData.map((project) => (
-            <div key={project.id} className="bg-gray-50 border border-gray-200 rounded-lg p-5 hover:bg-gray-100 transition-colors">
+            <div key={project.id} className="bg-gray-50 border border-gray-100 rounded-xl p-6 hover:bg-gray-100 transition-colors">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 text-base mb-1">{project.title}</h4>
-                  <p className="text-sm font-medium text-gray-600">{project.client}</p>
+                  <h4 className="font-bold text-gray-900 text-lg mb-2">{project.title}</h4>
+                  <p className="text-base font-semibold text-gray-700">{project.client}</p>
                 </div>
-                <Badge className={`${getStatusColor(project.status)} font-medium`}>
+                <Badge className={`${getStatusColor(project.status)} font-semibold text-sm px-3 py-1`}>
                   {project.status.replace('-', ' ').toUpperCase()}
                 </Badge>
               </div>
               
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">Progress</span>
-                  <span className="text-sm font-bold text-gray-900">{project.progress}%</span>
+              <div className="mb-5">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-base font-semibold text-gray-800">Progress</span>
+                  <span className="text-base font-bold text-gray-900">{project.progress}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-3">
                   <div 
-                    className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(project.progress)}`}
+                    className={`h-3 rounded-full transition-all duration-300 ${getProgressColor(project.progress)}`}
                     style={{ width: `${project.progress}%` }}
                   ></div>
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-3 text-sm mb-4">
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  <span>Due: <span className="font-medium text-gray-900">{new Date(project.deadline).toLocaleDateString()}</span></span>
+              <div className="grid grid-cols-2 gap-4 text-base mb-5">
+                <div className="flex items-center gap-3 text-gray-700">
+                  <Calendar className="h-5 w-5 text-blue-600" />
+                  <span>Due: <span className="font-semibold text-gray-900">{new Date(project.deadline).toLocaleDateString()}</span></span>
                 </div>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Users className="h-4 w-4 text-gray-500" />
-                  <span><span className="font-medium text-gray-900">{project.teamSize}</span> team members</span>
+                <div className="flex items-center gap-3 text-gray-700">
+                  <Users className="h-5 w-5 text-blue-600" />
+                  <span><span className="font-semibold text-gray-900">{project.teamSize}</span> team members</span>
                 </div>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <MapPin className="h-4 w-4 text-gray-500" />
-                  <span className="font-medium">{project.location}</span>
+                <div className="flex items-center gap-3 text-gray-700">
+                  <MapPin className="h-5 w-5 text-blue-600" />
+                  <span className="font-semibold">{project.location}</span>
                 </div>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <span className="font-semibold text-gray-900">{project.value}</span>
+                <div className="flex items-center gap-3 text-gray-700">
+                  <span className="font-bold text-gray-900">{project.value}</span>
                 </div>
               </div>
               
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-600">
-                  <span>Next: <span className="font-medium text-gray-900">{project.nextMilestone}</span></span>
+                <div className="text-base text-gray-700">
+                  <span>Next: <span className="font-semibold text-gray-900">{project.nextMilestone}</span></span>
                 </div>
-                <Button size="sm" variant="outline" className="text-blue-600 border-blue-300 hover:bg-blue-50">
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4">
                   View Details
                 </Button>
               </div>
@@ -139,7 +141,7 @@ export const ActiveProjects = () => {
           ))}
         </div>
         
-        <Button className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-medium">
+        <Button className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3">
           View All Projects
         </Button>
       </CardContent>

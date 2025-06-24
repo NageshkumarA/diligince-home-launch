@@ -77,17 +77,19 @@ const getInitialsBackground = (index: number) => {
 
 export const MessageCenter = () => {
   return (
-    <Card className="bg-white border border-gray-200 shadow-sm">
-      <CardHeader className="border-b border-gray-100 pb-4">
+    <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+      <CardHeader className="border-b border-gray-50 pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-blue-600" />
+          <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+              <MessageSquare className="h-5 w-5 text-blue-600" />
+            </div>
             Message Center
-            <Badge className="bg-red-50 text-red-700 border-red-200 font-medium">
+            <Badge className="bg-red-50 text-red-700 border-red-200 font-semibold text-sm px-3 py-1">
               2 Unread
             </Badge>
           </CardTitle>
-          <Button variant="outline" size="sm" className="text-gray-700 border-gray-300 hover:bg-gray-50">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
             View All Messages
           </Button>
         </div>
@@ -98,50 +100,50 @@ export const MessageCenter = () => {
           {mockMessages.map((message, index) => (
             <div 
               key={message.id} 
-              className={`p-4 rounded-lg border transition-colors hover:bg-gray-50 ${
+              className={`p-5 rounded-xl border transition-colors hover:bg-gray-50 ${
                 message.unread 
                   ? 'bg-blue-50 border-blue-200' 
-                  : 'bg-gray-50 border-gray-200'
+                  : 'bg-gray-50 border-gray-100'
               }`}
             >
-              <div className="flex items-start gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${getInitialsBackground(index)}`}>
+              <div className="flex items-start gap-4">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-base font-bold ${getInitialsBackground(index)}`}>
                   {message.initials}
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-semibold text-gray-900 text-sm">{message.sender}</h4>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <h4 className="font-bold text-gray-900 text-base">{message.sender}</h4>
                       {message.unread && (
-                        <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                        <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Badge className={`${getPriorityColor(message.priority)} text-xs font-medium`}>
+                    <div className="flex items-center gap-3">
+                      <Badge className={`${getPriorityColor(message.priority)} text-sm font-semibold px-3 py-1`}>
                         {message.priority.toUpperCase()}
                       </Badge>
-                      <span className="text-xs text-gray-500 flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
+                      <span className="text-sm text-gray-600 flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
                         {message.timestamp}
                       </span>
                     </div>
                   </div>
                   
-                  <p className="text-sm text-gray-700 leading-relaxed mb-2 line-clamp-2">
+                  <p className="text-base text-gray-800 leading-relaxed mb-3 line-clamp-2">
                     {message.message}
                   </p>
                   
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       {message.hasAttachment && (
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <Paperclip className="h-3 w-3" />
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <Paperclip className="h-4 w-4" />
                           <span>Attachment</span>
                         </div>
                       )}
                     </div>
-                    <Button size="sm" variant="ghost" className="text-blue-600 hover:bg-blue-50 font-medium">
+                    <Button size="sm" variant="ghost" className="text-blue-600 hover:bg-blue-50 font-semibold">
                       Reply
                     </Button>
                   </div>
@@ -151,7 +153,7 @@ export const MessageCenter = () => {
           ))}
         </div>
         
-        <Button className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-medium">
+        <Button className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3">
           View All Messages
         </Button>
       </CardContent>

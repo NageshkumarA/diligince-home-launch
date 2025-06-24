@@ -51,64 +51,66 @@ const getAvailabilityColor = (status: string) => {
 
 export const TeamAvailability = () => {
   return (
-    <Card className="bg-white border border-gray-200 shadow-sm">
-      <CardHeader className="border-b border-gray-100 pb-4">
+    <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+      <CardHeader className="border-b border-gray-50 pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <Users className="h-5 w-5 text-blue-600" />
+          <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+              <Users className="h-5 w-5 text-blue-600" />
+            </div>
             Team Availability
           </CardTitle>
-          <Button variant="outline" size="sm" className="text-gray-700 border-gray-300 hover:bg-gray-50">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
             Manage Team
           </Button>
         </div>
       </CardHeader>
       
       <CardContent className="p-6">
-        <div className="space-y-4 max-h-96 overflow-y-auto">
+        <div className="space-y-5 max-h-96 overflow-y-auto">
           {teamMembers.map((member) => (
-            <div key={member.id} className="bg-gray-50 border border-gray-200 rounded-lg p-4 hover:bg-gray-100 transition-colors">
-              <div className="flex items-start justify-between mb-3">
+            <div key={member.id} className="bg-gray-50 border border-gray-100 rounded-xl p-5 hover:bg-gray-100 transition-colors">
+              <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 text-base">{member.name}</h4>
-                  <p className="text-sm font-medium text-gray-600">{member.role}</p>
-                  <p className="text-xs text-gray-500 mt-1">{member.experience} experience</p>
+                  <h4 className="font-bold text-gray-900 text-lg">{member.name}</h4>
+                  <p className="text-base font-semibold text-gray-700">{member.role}</p>
+                  <p className="text-sm text-gray-600 mt-1">{member.experience} experience</p>
                 </div>
-                <Badge className={`${getAvailabilityColor(member.availability)} font-medium`}>
+                <Badge className={`${getAvailabilityColor(member.availability)} font-semibold text-sm px-3 py-1`}>
                   {member.availability.toUpperCase()}
                 </Badge>
               </div>
               
-              <div className="mb-3">
-                <div className="flex flex-wrap gap-1">
+              <div className="mb-4">
+                <div className="flex flex-wrap gap-2">
                   {member.skills.slice(0, 2).map((skill, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                    <Badge key={index} variant="secondary" className="text-sm bg-blue-50 text-blue-700 border-blue-200 px-3 py-1">
                       {skill}
                     </Badge>
                   ))}
                   {member.skills.length > 2 && (
-                    <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600">
+                    <Badge variant="secondary" className="text-sm bg-gray-100 text-gray-600 px-3 py-1">  
                       +{member.skills.length - 2} more
                     </Badge>
                   )}
                 </div>
               </div>
               
-              <div className="text-sm text-gray-600">
+              <div className="text-base text-gray-700">
                 {member.availability === 'available' ? (
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-green-600" />
-                    <span>Next assignment: <span className="font-medium text-gray-900">{member.nextAssignment}</span></span>
+                  <div className="flex items-center gap-3">
+                    <Calendar className="h-5 w-5 text-green-600" />
+                    <span>Next assignment: <span className="font-semibold text-gray-900">{member.nextAssignment}</span></span>
                   </div>
                 ) : (
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-red-600" />
-                      <span>Current: <span className="font-medium text-gray-900">{member.currentProject}</span></span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <Clock className="h-5 w-5 text-red-600" />
+                      <span>Current: <span className="font-semibold text-gray-900">{member.currentProject}</span></span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-gray-500" />
-                      <span>Available: <span className="font-medium text-gray-900">{member.nextAvailable}</span></span>
+                    <div className="flex items-center gap-3">
+                      <Calendar className="h-5 w-5 text-gray-500" />
+                      <span>Available: <span className="font-semibold text-gray-900">{member.nextAvailable}</span></span>
                     </div>
                   </div>
                 )}
@@ -117,15 +119,15 @@ export const TeamAvailability = () => {
           ))}
         </div>
         
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="mt-6 p-5 bg-blue-50 border border-blue-100 rounded-xl">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-semibold text-gray-900">Team Utilization</p>
-              <p className="text-sm text-gray-600">7 of 12 engineers currently available</p>
+              <p className="font-bold text-gray-900 text-lg">Team Utilization</p>
+              <p className="text-base text-gray-700">7 of 12 engineers currently available</p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-blue-600">58%</p>
-              <p className="text-xs text-gray-500">Capacity</p>
+              <p className="text-3xl font-bold text-blue-600">58%</p>
+              <p className="text-sm text-gray-600">Capacity</p>
             </div>
           </div>
         </div>
