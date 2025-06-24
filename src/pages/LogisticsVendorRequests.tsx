@@ -130,11 +130,11 @@ const LogisticsVendorRequests = () => {
           {/* Header Section */}
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Transport Requests</h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Transport Requests</h1>
               <p className="text-gray-600">Manage incoming logistics and transport requests from industrial clients.</p>
             </div>
             <Button 
-              className="bg-[#eb2f96] hover:bg-[#eb2f96]/90"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
               onClick={handleCreateCustomQuote}
             >
               <Package className="h-4 w-4 mr-2" />
@@ -150,11 +150,11 @@ const LogisticsVendorRequests = () => {
                 placeholder="Search requests by client or description..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white border-gray-200 focus:border-blue-300 focus:ring-blue-200"
               />
             </div>
             <Select value={filterType} onValueChange={setFilterType}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-48 bg-white border-gray-200 focus:border-blue-300 focus:ring-blue-200">
                 <SelectValue placeholder="Filter by type" />
               </SelectTrigger>
               <SelectContent>
@@ -169,10 +169,10 @@ const LogisticsVendorRequests = () => {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <Package className="h-8 w-8 text-[#eb2f96]" />
+                  <Package className="h-8 w-8 text-blue-600" />
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Open Requests</p>
                     <p className="text-2xl font-bold text-gray-900">12</p>
@@ -180,7 +180,7 @@ const LogisticsVendorRequests = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center">
                   <DollarSign className="h-8 w-8 text-green-600" />
@@ -191,7 +191,7 @@ const LogisticsVendorRequests = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center">
                   <Truck className="h-8 w-8 text-blue-600" />
@@ -202,7 +202,7 @@ const LogisticsVendorRequests = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center">
                   <Clock className="h-8 w-8 text-orange-600" />
@@ -218,7 +218,7 @@ const LogisticsVendorRequests = () => {
           {/* Requests List */}
           <div className="space-y-4">
             {filteredRequests.map((request) => (
-              <Card key={request.id} className="hover:shadow-md transition-shadow">
+              <Card key={request.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
@@ -264,11 +264,12 @@ const LogisticsVendorRequests = () => {
                         variant="outline" 
                         size="sm"
                         onClick={() => handleViewDetails(request)}
+                        className="border-blue-200 text-blue-600 hover:bg-blue-50"
                       >
                         View Details
                       </Button>
                       <Button 
-                        className="bg-[#eb2f96] hover:bg-[#eb2f96]/90" 
+                        className="bg-blue-600 hover:bg-blue-700 text-white" 
                         size="sm"
                         onClick={() => handleSubmitQuote(request)}
                       >

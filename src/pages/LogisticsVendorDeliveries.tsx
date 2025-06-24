@@ -165,11 +165,11 @@ const LogisticsVendorDeliveries = () => {
           {/* Header Section */}
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Active Deliveries</h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Active Deliveries</h1>
               <p className="text-gray-600">Track and manage ongoing transport and delivery operations.</p>
             </div>
             <Button 
-              className="bg-[#eb2f96] hover:bg-[#eb2f96]/90"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
               onClick={handleHeaderButtonClick}
             >
               <Navigation className="h-4 w-4 mr-2" />
@@ -179,10 +179,10 @@ const LogisticsVendorDeliveries = () => {
 
           {/* Delivery Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <Truck className="h-8 w-8 text-[#eb2f96]" />
+                  <Truck className="h-8 w-8 text-blue-600" />
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Active Deliveries</p>
                     <p className="text-2xl font-bold text-gray-900">8</p>
@@ -190,7 +190,7 @@ const LogisticsVendorDeliveries = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center">
                   <CheckCircle className="h-8 w-8 text-green-600" />
@@ -201,7 +201,7 @@ const LogisticsVendorDeliveries = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center">
                   <Clock className="h-8 w-8 text-blue-600" />
@@ -212,7 +212,7 @@ const LogisticsVendorDeliveries = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center">
                   <AlertCircle className="h-8 w-8 text-orange-600" />
@@ -233,11 +233,11 @@ const LogisticsVendorDeliveries = () => {
                 placeholder="Search deliveries by client, ID, or description..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white border-gray-200 focus:border-blue-300 focus:ring-blue-200"
               />
             </div>
             <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-48 bg-white border-gray-200 focus:border-blue-300 focus:ring-blue-200">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -253,7 +253,7 @@ const LogisticsVendorDeliveries = () => {
           {/* Deliveries List */}
           <div className="space-y-6">
             {filteredDeliveries.map((delivery) => (
-              <Card key={delivery.id} className="hover:shadow-lg transition-shadow">
+              <Card key={delivery.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
@@ -294,7 +294,7 @@ const LogisticsVendorDeliveries = () => {
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div 
-                            className="bg-[#eb2f96] h-2 rounded-full transition-all duration-300"
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                             style={{ width: `${delivery.progress}%` }}
                           ></div>
                         </div>
@@ -329,6 +329,7 @@ const LogisticsVendorDeliveries = () => {
                         variant="outline" 
                         size="sm"
                         onClick={() => handleLiveTrack(delivery)}
+                        className="border-blue-200 text-blue-600 hover:bg-blue-50"
                       >
                         <Navigation className="h-4 w-4 mr-1" />
                         Live Track
@@ -337,12 +338,13 @@ const LogisticsVendorDeliveries = () => {
                         variant="outline" 
                         size="sm"
                         onClick={() => handleCallDriver(delivery)}
+                        className="border-blue-200 text-blue-600 hover:bg-blue-50"
                       >
                         <Phone className="h-4 w-4 mr-1" />
                         Call Driver
                       </Button>
                       <Button 
-                        className="bg-[#eb2f96] hover:bg-[#eb2f96]/90" 
+                        className="bg-blue-600 hover:bg-blue-700 text-white" 
                         size="sm"
                         onClick={() => handleUpdateStatus(delivery)}
                       >
