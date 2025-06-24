@@ -92,6 +92,11 @@ const App = () => (
                     <Route path="/product-vendor-orders" element={<ProductVendorOrders />} />
                     <Route path="/product-vendor-messages" element={<ProductVendorMessages />} />
                     <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
+                    <Route path="/logistics-vendor-requests" element={<LogisticsVendorRequests />} />
+                    <Route path="/logistics-vendor-fleet" element={<LogisticsVendorFleet />} />
+                    <Route path="/logistics-vendor-deliveries" element={<LogisticsVendorDeliveries />} />
+                    <Route path="/logistics-vendor-messages" element={<LogisticsVendorMessages />} />
+                    <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
                     <Route path="/messages" element={<IndustryMessages />} />
                     <Route path="/documents" element={<IndustryDocuments />} />
                     <Route path="/signup" element={<SignUp />} />
@@ -99,17 +104,10 @@ const App = () => (
                     <Route path="/professional-profile" element={<ProfessionalProfile />} />
                     <Route path="/service-vendor-profile" element={<ServiceVendorProfile />} />
                     <Route path="/product-vendor-profile" element={<ProductVendorProfile />} />
-                    <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
                     <Route path="/vendor-profile" element={<VendorProfile />} />
                     <Route path="/create-requirement" element={<CreateRequirement />} />
                     <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
                     <Route path="/work-completion-payment" element={<WorkCompletionPayment />} />
-                    <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
-                    <Route path="/logistics-vendor-requests" element={<LogisticsVendorRequests />} />
-                    <Route path="/logistics-vendor-fleet" element={<LogisticsVendorFleet />} />
-                    <Route path="/logistics-vendor-deliveries" element={<LogisticsVendorDeliveries />} />
-                    <Route path="/logistics-vendor-messages" element={<LogisticsVendorMessages />} />
-                    <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
                     
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
