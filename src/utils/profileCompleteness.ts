@@ -1,14 +1,14 @@
 
 import { UserProfile, UserRole, VendorCategory } from '@/types/shared';
 
-// Define minimum required fields for each user type
+// Define minimum required fields for each user type - Updated with more comprehensive requirements
 const REQUIRED_FIELDS = {
   industry: ['companyName', 'industryType'],
   professional: ['fullName', 'expertise'],
   vendor: {
-    service: ['businessName', 'specialization'],
-    product: ['businessName', 'specialization'],
-    logistics: ['businessName', 'specialization']
+    service: ['businessName', 'specialization', 'email', 'phone'],
+    product: ['businessName', 'specialization', 'email', 'phone', 'address', 'registrationNumber'],
+    logistics: ['businessName', 'specialization', 'email', 'phone']
   }
 };
 
@@ -60,17 +60,22 @@ export const calculateProfileCompleteness = (user: UserProfile): ProfileCompleti
 
   // Check role-specific required fields
   requiredFields.forEach(field => {
-    if (profile[field as keyof typeof profile]) {
+    const fieldValue = profile[field as keyof typeof profile];
+    if (fieldValue && String(fieldValue).trim() !== '') {
       completedFields.push(field);
     } else {
       missingFields.push(field);
     }
   });
 
-  // Additional optional fields that improve completion
-  const optionalFields = ['phone'];
+  // Additional optional fields that improve completion for product vendors
+  const optionalFields = user.role === 'vendor' && user.profile.vendorCategory === 'product' 
+    ? ['companyDescription', 'gstNumber', 'yearEstablished', 'productCategories', 'industryFocus']
+    : ['phone'];
+    
   optionalFields.forEach(field => {
-    if (profile[field as keyof typeof profile]) {
+    const fieldValue = profile[field as keyof typeof profile];
+    if (fieldValue && (Array.isArray(fieldValue) ? fieldValue.length > 0 : String(fieldValue).trim() !== '')) {
       completedFields.push(field);
     }
   });

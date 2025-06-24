@@ -12,6 +12,7 @@ import AccountSettingsForm from "@/components/vendor/forms/AccountSettingsForm";
 import { ProfileCompletionWidget } from "@/components/shared/ProfileCompletionWidget";
 import { useUser } from "@/contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import { calculateProfileCompleteness } from "@/utils/profileCompleteness";
 
 // Types for content sections
 export type ContentType = 
@@ -24,7 +25,7 @@ export type ContentType =
   | "account-settings";
 
 const ProductVendorProfile = () => {
-  const { user, profileCompletion, isAuthenticated } = useUser();
+  const { user, isAuthenticated } = useUser();
   const navigate = useNavigate();
   
   const [activeContent, setActiveContent] = useState<ContentType>("company-info");
@@ -35,6 +36,14 @@ const ProductVendorProfile = () => {
       navigate('/signin');
     }
   }, [isAuthenticated, navigate]);
+  
+  // Calculate actual profile completion based on current user data
+  const profileCompletion = user ? calculateProfileCompleteness(user) : {
+    percentage: 0,
+    isComplete: false,
+    missingFields: [],
+    completedFields: []
+  };
   
   // Vendor data from user context
   const vendorData = {
@@ -90,7 +99,7 @@ const ProductVendorProfile = () => {
           profileCompletion={profileCompletion.percentage}
         />
         
-        <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
+        <main className="flex-1 p-6 lg:p-8 overflow-y-auto bg-gray-50">
           <div className="w-full max-w-4xl mx-auto">
             {/* Profile Completion Widget */}
             <ProfileCompletionWidget

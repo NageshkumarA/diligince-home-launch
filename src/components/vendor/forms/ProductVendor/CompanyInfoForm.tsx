@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -108,28 +109,32 @@ const CompanyInfoForm = () => {
   };
 
   return (
-    <Card className="shadow-sm">
-      <CardHeader>
-        <CardTitle className="text-xl font-bold text-gray-800">Company Information</CardTitle>
-        <CardDescription>
+    <Card className="shadow-sm bg-white border border-gray-200">
+      <CardHeader className="bg-white">
+        <CardTitle className="text-xl font-bold text-gray-900">Company Information</CardTitle>
+        <CardDescription className="text-gray-600">
           Update your company details, industry focus, and product categories.
         </CardDescription>
       </CardHeader>
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 bg-white">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
                 name="companyName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Company Name</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">Company Name</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Building className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input placeholder="Enter company name" className="pl-10" {...field} />
+                        <Building className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input 
+                          placeholder="Enter company name" 
+                          className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-200" 
+                          {...field} 
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -142,11 +147,15 @@ const CompanyInfoForm = () => {
                 name="yearEstablished"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Year Established</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">Year Established</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input placeholder="e.g., 2010" className="pl-10" {...field} />
+                        <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input 
+                          placeholder="e.g., 2010" 
+                          className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-200" 
+                          {...field} 
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -160,7 +169,7 @@ const CompanyInfoForm = () => {
               name="industryFocus"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Industry Focus</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Industry Focus</FormLabel>
                   <FormControl>
                     <MultiSelect
                       options={industryOptions}
@@ -179,11 +188,11 @@ const CompanyInfoForm = () => {
               name="companyDescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company Description</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Company Description</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Describe your company, specialization, and value proposition"
-                      className="min-h-32"
+                      className="min-h-32 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-200"
                       {...field}
                     />
                   </FormControl>
@@ -198,9 +207,13 @@ const CompanyInfoForm = () => {
                 name="gstNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>GST Number (Optional)</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">GST Number (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter GST number" {...field} />
+                      <Input 
+                        placeholder="Enter GST number" 
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-200" 
+                        {...field} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -212,9 +225,13 @@ const CompanyInfoForm = () => {
                 name="registrationNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Registration Number</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">Registration Number</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter registration number" {...field} />
+                      <Input 
+                        placeholder="Enter registration number" 
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-200" 
+                        {...field} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -228,11 +245,15 @@ const CompanyInfoForm = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Business Email</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">Business Email</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input placeholder="Enter business email" className="pl-10" {...field} />
+                        <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input 
+                          placeholder="Enter business email" 
+                          className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-200" 
+                          {...field} 
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -245,11 +266,15 @@ const CompanyInfoForm = () => {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Business Phone</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">Business Phone</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input placeholder="Enter business phone" className="pl-10" {...field} />
+                        <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input 
+                          placeholder="Enter business phone" 
+                          className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-200" 
+                          {...field} 
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -263,13 +288,13 @@ const CompanyInfoForm = () => {
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Business Address</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Business Address</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Textarea
                         placeholder="Enter complete business address"
-                        className="min-h-24 pl-10"
+                        className="min-h-24 pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-200"
                         {...field}
                       />
                     </div>
@@ -284,29 +309,29 @@ const CompanyInfoForm = () => {
               name="warehouseLocations"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Warehouse Locations</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Warehouse Locations</FormLabel>
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Input
                         placeholder="Add warehouse location"
                         value={newWarehouseLocation}
                         onChange={(e) => setNewWarehouseLocation(e.target.value)}
-                        className="flex-1"
+                        className="flex-1 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-200"
                       />
-                      <Button type="button" onClick={addWarehouseLocation} size="sm">
+                      <Button type="button" onClick={addWarehouseLocation} size="sm" className="bg-orange-600 hover:bg-orange-700 text-white">
                         Add
                       </Button>
                     </div>
                     
                     <div className="flex flex-wrap gap-2 mt-2">
                       {form.getValues("warehouseLocations")?.map((location, index) => (
-                        <div key={index} className="flex items-center bg-yellow-50 text-yellow-700 rounded-full pl-3 pr-1 py-1 text-sm">
+                        <div key={index} className="flex items-center bg-orange-50 text-orange-700 rounded-full pl-3 pr-1 py-1 text-sm border border-orange-200">
                           <span>{location}</span>
                           <Button
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="h-5 w-5 ml-1 hover:bg-yellow-100"
+                            className="h-5 w-5 ml-1 hover:bg-orange-100 text-orange-600"
                             onClick={() => removeWarehouseLocation(index)}
                           >
                             <span className="sr-only">Remove</span>
@@ -326,7 +351,7 @@ const CompanyInfoForm = () => {
               name="productCategories"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Product Categories</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Product Categories</FormLabel>
                   <FormControl>
                     <MultiSelect
                       options={productCategoryOptions}
@@ -341,11 +366,11 @@ const CompanyInfoForm = () => {
             />
           </CardContent>
           
-          <CardFooter className="flex justify-end gap-2 border-t bg-gray-50/50 px-6 py-4">
-            <Button variant="outline" type="button" disabled={isLoading}>
+          <CardFooter className="flex justify-end gap-2 border-t bg-gray-50 px-6 py-4">
+            <Button variant="outline" type="button" disabled={isLoading} className="border-gray-300 text-gray-700 hover:bg-gray-50">
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading} className="bg-yellow-600 hover:bg-yellow-700">
+            <Button type="submit" disabled={isLoading} className="bg-orange-600 hover:bg-orange-700 text-white">
               {isLoading ? "Saving..." : "Save Changes"}
             </Button>
           </CardFooter>
