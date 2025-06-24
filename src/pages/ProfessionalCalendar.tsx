@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Home, Briefcase, Calendar, MessageSquare, User, Download, Settings, Grid, List, ChevronLeft, ChevronRight, Filter, Bell, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -55,11 +54,11 @@ const ProfessionalCalendar = () => {
       <ProfessionalHeader navItems={headerNavItems} />
       
       {/* Fixed main content with proper padding to avoid navbar overlap */}
-      <main className="pt-20 p-6 lg:p-8 flex-1">
+      <main className="pt-24 px-4 sm:px-6 lg:px-8 pb-8 flex-1">
         <div className="max-w-7xl mx-auto">
           {/* Enhanced Page Header */}
-          <div className="mb-6">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="mb-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div>
                 <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
                   <span>Dashboard</span>
@@ -71,7 +70,7 @@ const ProfessionalCalendar = () => {
               </div>
               
               {/* Enhanced Quick Actions */}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 <Button
                   variant="outline"
                   size="sm"
@@ -140,7 +139,7 @@ const ProfessionalCalendar = () => {
           </div>
 
           {/* Enhanced Calendar Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
             <Card className="p-4 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -203,9 +202,9 @@ const ProfessionalCalendar = () => {
           </div>
 
           {/* Calendar View Tabs */}
-          <div className="mb-6">
+          <div className="mb-8">
             <Tabs value={calendarView} onValueChange={(value) => handleViewChange(value as 'month' | 'week' | 'day')} className="w-full">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-6">
                 <TabsList className="grid w-fit grid-cols-3">
                   <TabsTrigger value="month" className="flex items-center gap-2">
                     <Grid className="h-4 w-4" />
