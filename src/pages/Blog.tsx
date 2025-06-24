@@ -11,7 +11,7 @@ const Blog = () => {
       id: 1,
       title: "The Future of Industrial AI in India",
       excerpt: "Exploring how artificial intelligence is transforming industrial operations across India.",
-      date: "April 5, 2025",
+      Posted date: "April 5, 2025",
       author: "Rahul Sharma",
       category: "Technology",
       imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070"
@@ -20,7 +20,7 @@ const Blog = () => {
       id: 2,
       title: "5 Ways to Optimize Your Industrial Plant Operations",
       excerpt: "Practical strategies for improving efficiency and reducing costs in industrial plants.",
-      date: "March 28, 2025",
+      Posted date: "March 28, 2025",
       author: "Priya Patel",
       category: "Best Practices",
       imageUrl: "https://images.unsplash.com/photo-1581091877150-ecdf3f168575?q=80&w=2070"
@@ -29,7 +29,7 @@ const Blog = () => {
       id: 3,
       title: "The Importance of Vendor Selection in Manufacturing",
       excerpt: "How choosing the right vendors can impact your manufacturing quality and bottom line.",
-      date: "March 15, 2025",
+      Posted date: "March 15, 2025",
       author: "Vikram Singh",
       category: "Strategy",
       imageUrl: "https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?q=80&w=2065"
@@ -38,7 +38,7 @@ const Blog = () => {
       id: 4,
       title: "Industry 4.0: The Indian Perspective",
       excerpt: "An analysis of how Industry 4.0 is being implemented across various sectors in India.",
-      date: "March 7, 2025",
+      Posted date: "March 7, 2025",
       author: "Neha Gupta",
       category: "Industry Trends",
       imageUrl: "https://images.unsplash.com/photo-1581094358461-f4bb5e556130?q=80&w=2070"
@@ -47,7 +47,7 @@ const Blog = () => {
       id: 5,
       title: "Sustainable Practices in Heavy Industry",
       excerpt: "How Indian industrial companies are adopting green practices while maintaining productivity.",
-      date: "February 22, 2025",
+      Posted date: "February 22, 2025",
       author: "Arjun Reddy",
       category: "Sustainability",
       imageUrl: "https://images.unsplash.com/photo-1498084393753-b411b2d26b34?q=80&w=2048"
@@ -56,7 +56,7 @@ const Blog = () => {
       id: 6,
       title: "Leveraging Technology for Industrial Logistics",
       excerpt: "New technological solutions revolutionizing logistics in the industrial sector.",
-      date: "February 15, 2025",
+      Posted date: "February 15, 2025",
       author: "Ananya Desai",
       category: "Logistics",
       imageUrl: "https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=2070"
@@ -72,7 +72,7 @@ const Blog = () => {
             <div className="text-center mb-12">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Blog</h1>
               <p className="text-gray-600 max-w-3xl mx-auto">
-                Insights, trends, and knowledge from the industrial ecosystem. 
+                Insights, trends and knowledge from the industrial ecosystem. 
                 Stay updated with the latest developments in the industry.
               </p>
             </div>
