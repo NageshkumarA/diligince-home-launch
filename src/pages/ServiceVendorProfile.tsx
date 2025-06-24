@@ -90,7 +90,7 @@ const ServiceVendorProfile = () => {
           profileCompletion={profileCompletion.percentage}
         />
         
-        <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
+        <main className="flex-1 p-6 lg:p-8 overflow-y-auto bg-gray-50">
           <div className="w-full max-w-4xl mx-auto">
             {/* Profile Completion Widget */}
             <ProfileCompletionWidget
@@ -99,7 +99,9 @@ const ServiceVendorProfile = () => {
               showCompleteButton={!profileCompletion.isComplete}
             />
             
-            {renderContent()}
+            <div className="bg-white border border-gray-100 shadow-sm rounded-lg">
+              {renderContent()}
+            </div>
           </div>
         </main>
       </div>

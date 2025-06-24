@@ -90,21 +90,21 @@ const ServiceVendorProjects = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "planning": return "bg-blue-100 text-blue-700";
-      case "in-progress": return "bg-yellow-100 text-yellow-700";
-      case "review": return "bg-purple-100 text-purple-700";
-      case "completed": return "bg-green-100 text-green-700";
-      case "on-hold": return "bg-gray-100 text-gray-700";
-      default: return "bg-gray-100 text-gray-700";
+      case "planning": return "bg-blue-50 text-blue-700 border-blue-200";
+      case "in-progress": return "bg-yellow-50 text-yellow-700 border-yellow-200";
+      case "review": return "bg-purple-50 text-purple-700 border-purple-200";
+      case "completed": return "bg-green-50 text-green-700 border-green-200";
+      case "on-hold": return "bg-gray-50 text-gray-700 border-gray-200";
+      default: return "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "bg-red-100 text-red-700";
-      case "medium": return "bg-orange-100 text-orange-700";
-      case "low": return "bg-green-100 text-green-700";
-      default: return "bg-gray-100 text-gray-700";
+      case "high": return "bg-red-50 text-red-700 border-red-200";
+      case "medium": return "bg-orange-50 text-orange-700 border-orange-200";
+      case "low": return "bg-green-50 text-green-700 border-green-200";
+      default: return "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
 
@@ -138,7 +138,7 @@ const ServiceVendorProjects = () => {
               <h1 className="text-3xl font-bold text-gray-900">Project Management</h1>
               <p className="text-gray-600 mt-1">Track and manage your active projects</p>
             </div>
-            <Button className="bg-yellow-600 hover:bg-yellow-700">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
               <Plus className="mr-2 h-4 w-4" />
               New Project
             </Button>
@@ -146,10 +146,10 @@ const ServiceVendorProjects = () => {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
+                  <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
                     <Clock className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
@@ -160,10 +160,10 @@ const ServiceVendorProjects = () => {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-green-100 rounded-lg">
+                  <div className="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center">
                     <CheckCircle className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
@@ -174,10 +174,10 @@ const ServiceVendorProjects = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-yellow-100 rounded-lg">
+                  <div className="w-12 h-12 rounded-lg bg-yellow-50 flex items-center justify-center">
                     <DollarSign className="h-6 w-6 text-yellow-600" />
                   </div>
                   <div>
@@ -188,10 +188,10 @@ const ServiceVendorProjects = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-red-100 rounded-lg">
+                  <div className="w-12 h-12 rounded-lg bg-red-50 flex items-center justify-center">
                     <AlertCircle className="h-6 w-6 text-red-600" />
                   </div>
                   <div>
@@ -204,7 +204,7 @@ const ServiceVendorProjects = () => {
           </div>
 
           {/* Filters and Search */}
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
@@ -230,7 +230,7 @@ const ServiceVendorProjects = () => {
                     <SelectItem value="completed">Completed</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button variant="outline">
+                <Button variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50">
                   <Filter className="mr-2 h-4 w-4" />
                   More Filters
                 </Button>
@@ -241,16 +241,16 @@ const ServiceVendorProjects = () => {
           {/* Projects List */}
           <div className="space-y-4">
             {filteredProjects.map((project) => (
-              <Card key={project.id} className="hover:shadow-md transition-shadow">
+              <Card key={project.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex flex-col lg:flex-row gap-6">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-3">
-                        <h3 className="text-lg font-semibold text-gray-900">{project.name}</h3>
-                        <Badge className={getStatusColor(project.status)}>
+                        <h3 className="text-lg font-bold text-gray-900">{project.name}</h3>
+                        <Badge className={`${getStatusColor(project.status)} font-semibold text-sm px-3 py-1`}>
                           {project.status}
                         </Badge>
-                        <Badge className={getPriorityColor(project.priority)}>
+                        <Badge className={`${getPriorityColor(project.priority)} font-semibold text-sm px-3 py-1`}>
                           {project.priority}
                         </Badge>
                       </div>
@@ -258,46 +258,46 @@ const ServiceVendorProjects = () => {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
                           <span className="text-sm text-gray-500">Client:</span>
-                          <p className="font-medium">{project.client}</p>
+                          <p className="font-semibold text-gray-900">{project.client}</p>
                         </div>
                         <div>
                           <span className="text-sm text-gray-500">Service:</span>
-                          <p className="font-medium">{project.service}</p>
+                          <p className="font-semibold text-gray-900">{project.service}</p>
                         </div>
                         <div>
                           <span className="text-sm text-gray-500">Budget:</span>
-                          <p className="font-medium">{project.budget}</p>
+                          <p className="font-bold text-gray-900">{project.budget}</p>
                         </div>
                       </div>
 
-                      <p className="text-gray-600 mb-4">{project.description}</p>
+                      <p className="text-base text-gray-700 mb-4 leading-relaxed">{project.description}</p>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                         <div className="text-sm">
                           <span className="text-gray-500">Start Date:</span>
-                          <p className="font-medium">{project.startDate}</p>
+                          <p className="font-semibold text-gray-900">{project.startDate}</p>
                         </div>
                         <div className="text-sm">
                           <span className="text-gray-500">End Date:</span>
-                          <p className="font-medium">{project.endDate}</p>
+                          <p className="font-semibold text-gray-900">{project.endDate}</p>
                         </div>
                         <div className="text-sm">
                           <span className="text-gray-500">Milestones:</span>
-                          <p className="font-medium">{project.completedMilestones}/{project.milestones}</p>
+                          <p className="font-semibold text-gray-900">{project.completedMilestones}/{project.milestones}</p>
                         </div>
                         <div className="text-sm">
                           <span className="text-gray-500">Days Left:</span>
-                          <p className="font-medium">{project.daysLeft} days</p>
+                          <p className="font-semibold text-gray-900">{project.daysLeft} days</p>
                         </div>
                       </div>
 
                       <div className="flex flex-wrap gap-2 mb-4">
                         <div className="flex items-center gap-2">
-                          <Users className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm text-gray-600">Team:</span>
+                          <Users className="h-4 w-4 text-blue-600" />
+                          <span className="text-sm text-gray-700 font-medium">Team:</span>
                         </div>
                         {project.team.map((member, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
+                          <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-sm">
                             {member}
                           </Badge>
                         ))}
@@ -307,8 +307,8 @@ const ServiceVendorProjects = () => {
                     <div className="lg:w-64 space-y-4">
                       <div>
                         <div className="flex justify-between text-sm mb-2">
-                          <span className="text-gray-600">Progress</span>
-                          <span className="font-medium">{project.progress}%</span>
+                          <span className="text-gray-600 font-medium">Progress</span>
+                          <span className="font-bold text-gray-900">{project.progress}%</span>
                         </div>
                         <Progress 
                           value={project.progress} 
@@ -318,11 +318,11 @@ const ServiceVendorProjects = () => {
                       </div>
 
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="flex-1" onClick={() => handleViewProject(project)}>
+                        <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium" onClick={() => handleViewProject(project)}>
                           <Eye className="mr-2 h-4 w-4" />
                           View
                         </Button>
-                        <Button variant="outline" size="sm" className="flex-1">
+                        <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium">
                           <MessageSquare className="mr-2 h-4 w-4" />
                           Chat
                         </Button>

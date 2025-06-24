@@ -89,20 +89,20 @@ const ServiceVendorRFQs = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "open": return "bg-green-100 text-green-700";
-      case "pending": return "bg-yellow-100 text-yellow-700";
-      case "submitted": return "bg-blue-100 text-blue-700";
-      case "closed": return "bg-gray-100 text-gray-700";
-      default: return "bg-gray-100 text-gray-700";
+      case "open": return "bg-green-50 text-green-700 border-green-200";
+      case "pending": return "bg-yellow-50 text-yellow-700 border-yellow-200";
+      case "submitted": return "bg-blue-50 text-blue-700 border-blue-200";
+      case "closed": return "bg-gray-50 text-gray-700 border-gray-200";
+      default: return "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "bg-red-100 text-red-700";
-      case "medium": return "bg-orange-100 text-orange-700";
-      case "low": return "bg-green-100 text-green-700";
-      default: return "bg-gray-100 text-gray-700";
+      case "high": return "bg-red-50 text-red-700 border-red-200";
+      case "medium": return "bg-orange-50 text-orange-700 border-orange-200";
+      case "low": return "bg-green-50 text-green-700 border-green-200";
+      default: return "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
 
@@ -135,7 +135,7 @@ const ServiceVendorRFQs = () => {
               <h1 className="text-3xl font-bold text-gray-900">Industrial RFQ Management</h1>
               <p className="text-gray-600 mt-1">Manage and respond to industrial service Request for Quotes</p>
             </div>
-            <Button className="bg-yellow-600 hover:bg-yellow-700">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
               <Send className="mr-2 h-4 w-4" />
               Submit Proposal
             </Button>
@@ -143,10 +143,10 @@ const ServiceVendorRFQs = () => {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
+                  <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
                     <FileText className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
@@ -157,10 +157,10 @@ const ServiceVendorRFQs = () => {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-green-100 rounded-lg">
+                  <div className="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center">
                     <Eye className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
@@ -171,10 +171,10 @@ const ServiceVendorRFQs = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-yellow-100 rounded-lg">
+                  <div className="w-12 h-12 rounded-lg bg-yellow-50 flex items-center justify-center">
                     <Clock className="h-6 w-6 text-yellow-600" />
                   </div>
                   <div>
@@ -185,10 +185,10 @@ const ServiceVendorRFQs = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-purple-100 rounded-lg">
+                  <div className="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center">
                     <DollarSign className="h-6 w-6 text-purple-600" />
                   </div>
                   <div>
@@ -201,7 +201,7 @@ const ServiceVendorRFQs = () => {
           </div>
 
           {/* Filters and Search */}
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
@@ -227,7 +227,7 @@ const ServiceVendorRFQs = () => {
                     <SelectItem value="closed">Closed</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button variant="outline">
+                <Button variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50">
                   <Filter className="mr-2 h-4 w-4" />
                   More Filters
                 </Button>
@@ -238,43 +238,43 @@ const ServiceVendorRFQs = () => {
           {/* RFQ List */}
           <div className="space-y-4">
             {filteredRFQs.map((rfq) => (
-              <Card key={rfq.id} className="hover:shadow-md transition-shadow">
+              <Card key={rfq.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">{rfq.title}</h3>
-                        <Badge className={getStatusColor(rfq.status)}>
+                        <h3 className="text-lg font-bold text-gray-900">{rfq.title}</h3>
+                        <Badge className={`${getStatusColor(rfq.status)} font-semibold text-sm px-3 py-1`}>
                           {rfq.status}
                         </Badge>
-                        <Badge className={getPriorityColor(rfq.priority)}>
+                        <Badge className={`${getPriorityColor(rfq.priority)} font-semibold text-sm px-3 py-1`}>
                           {rfq.priority}
                         </Badge>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <DollarSign className="h-4 w-4" />
-                          <span>{rfq.budget}</span>
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <DollarSign className="h-4 w-4 text-blue-600" />
+                          <span className="font-semibold">{rfq.budget}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Calendar className="h-4 w-4" />
-                          <span>Due: {rfq.deadline}</span>
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <Calendar className="h-4 w-4 text-blue-600" />
+                          <span>Due: <span className="font-semibold text-gray-900">{rfq.deadline}</span></span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Eye className="h-4 w-4" />
-                          <span>{rfq.responses} responses</span>
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <Eye className="h-4 w-4 text-blue-600" />
+                          <span><span className="font-semibold text-gray-900">{rfq.responses}</span> responses</span>
                         </div>
-                        <div className="text-sm text-gray-600">
-                          Company: {rfq.company}
+                        <div className="text-sm text-gray-700">
+                          Company: <span className="font-semibold text-gray-900">{rfq.company}</span>
                         </div>
                       </div>
 
-                      <p className="text-gray-600 mb-3">{rfq.description}</p>
+                      <p className="text-base text-gray-700 mb-3 leading-relaxed">{rfq.description}</p>
 
                       <div className="flex flex-wrap gap-2">
                         {rfq.skills.map((skill, index) => (
-                          <Badge key={index} variant="secondary" className="bg-yellow-50 text-yellow-700">
+                          <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-sm px-3 py-1">
                             {skill}
                           </Badge>
                         ))}
@@ -282,12 +282,12 @@ const ServiceVendorRFQs = () => {
                     </div>
 
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => handleViewDetails(rfq)}>
+                      <Button variant="outline" size="sm" onClick={() => handleViewDetails(rfq)} className="border-gray-200 text-gray-700 hover:bg-gray-50">
                         <Eye className="mr-2 h-4 w-4" />
                         View Details
                       </Button>
                       {rfq.status === "open" && (
-                        <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700" onClick={() => handleCreateProposal(rfq)}>
+                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium" onClick={() => handleCreateProposal(rfq)}>
                           <Send className="mr-2 h-4 w-4" />
                           Submit Proposal
                         </Button>
