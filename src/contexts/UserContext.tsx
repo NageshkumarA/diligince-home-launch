@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserProfile, UserRole, UserPreferences, getDashboardRoute } from '@/types/shared';
+import { calculateProfileCompleteness, ProfileCompletion } from '@/utils/profileCompleteness';
 
 interface UserContextType {
   user: UserProfile | null;
@@ -14,6 +15,11 @@ interface UserContextType {
   getDashboardUrl: () => string;
   isUserType: (role: UserRole) => boolean;
   isVendorCategory: (category: string) => boolean;
+  profileCompletion: ProfileCompletion;
+  isFirstTimeUser: boolean;
+  setFirstTimeUser: (isFirst: boolean) => void;
+  hasCompletedOnboarding: boolean;
+  setHasCompletedOnboarding: (completed: boolean) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -34,22 +40,36 @@ const defaultPreferences: UserPreferences = {
   timezone: 'UTC',
 };
 
+const defaultProfileCompletion: ProfileCompletion = {
+  percentage: 0,
+  isComplete: false,
+  missingFields: [],
+  completedFields: []
+};
+
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [profileCompletion, setProfileCompletion] = useState<ProfileCompletion>(defaultProfileCompletion);
 
   useEffect(() => {
     // Load user data from localStorage on mount
     const loadUserData = () => {
       try {
         const savedUser = localStorage.getItem('user');
+        const savedOnboarding = localStorage.getItem('hasCompletedOnboarding');
+        
         if (savedUser) {
           const userData = JSON.parse(savedUser) as UserProfile;
           setUser(userData);
+          setHasCompletedOnboarding(savedOnboarding === 'true');
         }
       } catch (error) {
         console.error('Error loading user data:', error);
         localStorage.removeItem('user');
+        localStorage.removeItem('hasCompletedOnboarding');
       } finally {
         setIsLoading(false);
       }
@@ -62,10 +82,19 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     // Save user data to localStorage whenever user changes
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
+      // Calculate profile completion
+      const completion = calculateProfileCompleteness(user);
+      setProfileCompletion(completion);
     } else {
       localStorage.removeItem('user');
+      setProfileCompletion(defaultProfileCompletion);
     }
   }, [user]);
+
+  useEffect(() => {
+    // Save onboarding state
+    localStorage.setItem('hasCompletedOnboarding', hasCompletedOnboarding.toString());
+  }, [hasCompletedOnboarding]);
 
   const updateProfile = (updates: Partial<UserProfile>) => {
     if (!user) return;
@@ -105,11 +134,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       },
     };
     setUser(userWithDefaults);
+    setIsFirstTimeUser(true);
   };
 
   const logout = () => {
     setUser(null);
+    setIsFirstTimeUser(false);
+    setHasCompletedOnboarding(false);
     localStorage.removeItem('user');
+    localStorage.removeItem('hasCompletedOnboarding');
   };
 
   const getDashboardUrl = (): string => {
@@ -137,6 +170,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     getDashboardUrl,
     isUserType,
     isVendorCategory,
+    profileCompletion,
+    isFirstTimeUser,
+    setFirstTimeUser,
+    hasCompletedOnboarding,
+    setHasCompletedOnboarding,
   };
 
   return (

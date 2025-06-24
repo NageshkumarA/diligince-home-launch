@@ -18,6 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUser } from "@/contexts/UserContext";
+import { WelcomeModal } from "@/components/shared/WelcomeModal";
 
 // Define industry types array to be shared between signup and profile pages
 export const industries = [
@@ -81,6 +82,8 @@ export function IndustryForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [newUser, setNewUser] = useState<any>(null);
   const navigate = useNavigate();
   const { login } = useUser();
 
@@ -137,116 +140,88 @@ export function IndustryForm() {
         },
         profile: {
           companyName: values.companyName,
-          industryType: values.industryType === "Others" ? values.customIndustryType : values.industryType
+          industryType: values.industryType === "Others" ? values.customIndustryType : values.industryType,
+          phone: values.phone
         }
       };
 
       // Set user in context
       login(userProfile);
+      setNewUser(userProfile);
       
       setIsSubmitting(false);
       toast.success("Sign-up successful!", {
         description: "Welcome to diligince.ai",
       });
       
-      // Redirect to industry dashboard
-      setTimeout(() => {
-        navigate("/industry-dashboard");
-      }, 1000);
+      // Show welcome modal instead of direct redirect
+      setShowWelcomeModal(true);
     }, 1500);
   }
 
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-fade-in">
-        <FormField
-          control={form.control}
-          name="companyName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Company Name</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g. Steel Industries Ltd." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    placeholder="you@example.com" 
-                    className="pl-10" 
-                    {...field} 
-                  />
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone Number</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="e.g. 9876543210" 
-                  type="tel"
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="industryType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Industry Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your industry type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {industries.map((industry) => (
-                    <SelectItem key={industry} value={industry}>
-                      {industry}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+  const handleCompleteProfile = () => {
+    setShowWelcomeModal(false);
+    setTimeout(() => {
+      navigate("/profile-completion");
+    }, 300);
+  };
 
-        {showCustomIndustryField && (
+  const handleGoToDashboard = () => {
+    setShowWelcomeModal(false);
+    setTimeout(() => {
+      navigate("/industry-dashboard");
+    }, 300);
+  };
+
+  return (
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-fade-in">
           <FormField
             control={form.control}
-            name="customIndustryType"
+            name="companyName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Specify Industry Type</FormLabel>
+                <FormLabel>Company Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g. Steel Industries Ltd." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      placeholder="you@example.com" 
+                      className="pl-10" 
+                      {...field} 
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone Number</FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder="Please specify your industry type" 
+                    placeholder="e.g. 9876543210" 
+                    type="tel"
                     {...field} 
                   />
                 </FormControl>
@@ -254,104 +229,160 @@ export function IndustryForm() {
               </FormItem>
             )}
           />
-        )}
-
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    type={showPassword ? "text" : "password"} 
-                    placeholder="••••••••" 
-                    className="pl-10" 
-                    {...field} 
-                  />
-                  <button 
-                    type="button"
-                    className="absolute right-3 top-3 text-muted-foreground"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    type={showConfirmPassword ? "text" : "password"} 
-                    placeholder="••••••••" 
-                    className="pl-10" 
-                    {...field} 
-                  />
-                  <button 
-                    type="button"
-                    className="absolute right-3 top-3 text-muted-foreground"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="acceptTerms"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>
-                  I accept the 
-                  <a href="/terms" className="text-primary hover:underline ml-1">terms and conditions</a>
-                </FormLabel>
+          
+          <FormField
+            control={form.control}
+            name="industryType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Industry Type</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your industry type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {industries.map((industry) => (
+                      <SelectItem key={industry} value={industry}>
+                        {industry}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
-              </div>
-            </FormItem>
+              </FormItem>
+            )}
+          />
+
+          {showCustomIndustryField && (
+            <FormField
+              control={form.control}
+              name="customIndustryType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Specify Industry Type</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Please specify your industry type" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           )}
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      className="pl-10" 
+                      {...field} 
+                    />
+                    <button 
+                      type="button"
+                      className="absolute right-3 top-3 text-muted-foreground"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      type={showConfirmPassword ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      className="pl-10" 
+                      {...field} 
+                    />
+                    <button 
+                      type="button"
+                      className="absolute right-3 top-3 text-muted-foreground"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="acceptTerms"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>
+                    I accept the 
+                    <a href="/terms" className="text-primary hover:underline ml-1">terms and conditions</a>
+                  </FormLabel>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
+          />
+          
+          <Button 
+            type="submit" 
+            className="w-full hover:scale-105 transition-transform duration-200"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Creating Account..." : "Create Account"}
+          </Button>
+        </form>
+      </Form>
+
+      {showWelcomeModal && newUser && (
+        <WelcomeModal
+          isOpen={showWelcomeModal}
+          onClose={() => setShowWelcomeModal(false)}
+          userRole={newUser.role}
+          userName={newUser.name}
+          onCompleteProfile={handleCompleteProfile}
+          onGoToDashboard={handleGoToDashboard}
+          profileCompletion={85} // Industry form collects most required data
         />
-        
-        <Button 
-          type="submit" 
-          className="w-full hover:scale-105 transition-transform duration-200"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Creating Account..." : "Create Account"}
-        </Button>
-      </form>
-    </Form>
+      )}
+    </>
   );
 }
