@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Search, Filter, Plus, Phone, Video, Archive, Star, MoreHorizontal, Send, Paperclip } from "lucide-react";
+import { Search, Filter, Plus, Phone, Video, Archive, Star, MoreHorizontal, Send, Paperclip, Mail } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -151,6 +150,42 @@ const ProfessionalMessages = () => {
     }
   };
 
+  const handlePhoneCall = () => {
+    if (selectedConversation) {
+      toast.success(`Calling ${selectedConversation.contact}...`);
+    }
+  };
+
+  const handleVideoCall = () => {
+    if (selectedConversation) {
+      toast.success(`Starting video call with ${selectedConversation.contact}...`);
+    }
+  };
+
+  const handleSendEmail = () => {
+    if (selectedConversation) {
+      toast.success(`Opening email to ${selectedConversation.contact}...`);
+    }
+  };
+
+  const handleStarConversation = () => {
+    if (selectedConversation) {
+      toast.success(`Starred conversation with ${selectedConversation.contact}`);
+    }
+  };
+
+  const handleArchiveConversation = () => {
+    if (selectedConversation) {
+      setConversations(prev => prev.filter(conv => conv.id !== selectedConversation.id));
+      setSelectedConversation(null);
+      toast.success(`Archived conversation with ${selectedConversation.contact}`);
+    }
+  };
+
+  const handleMoreActions = () => {
+    toast.info("More actions menu");
+  };
+
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "high": return "bg-red-100 text-red-800";
@@ -288,19 +323,52 @@ const ProfessionalMessages = () => {
                   </div>
                   
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handlePhoneCall}
+                      className="hover:bg-purple-50"
+                    >
                       <Phone className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleVideoCall}
+                      className="hover:bg-purple-50"
+                    >
                       <Video className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleSendEmail}
+                      className="hover:bg-purple-50"
+                    >
+                      <Mail className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleStarConversation}
+                      className="hover:bg-purple-50"
+                    >
                       <Star className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleArchiveConversation}
+                      className="hover:bg-purple-50"
+                    >
                       <Archive className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleMoreActions}
+                      className="hover:bg-purple-50"
+                    >
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </div>

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import VendorHeader from "@/components/vendor/VendorHeader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Search, Send, Paperclip, Phone, Video, MoreVertical, Star, Archive, Filter, MessageSquare, Plus } from "lucide-react";
+import { Search, Send, Paperclip, Phone, Video, MoreHorizontal, Star, Archive, Filter, MessageSquare, Plus, Mail } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
@@ -171,6 +172,40 @@ const ServiceVendorMessages = () => {
     setSelectedConversation(conversation.id);
   };
 
+  const handlePhoneCall = () => {
+    if (selectedConv) {
+      toast.success(`Calling ${selectedConv.name}...`);
+    }
+  };
+
+  const handleVideoCall = () => {
+    if (selectedConv) {
+      toast.success(`Starting video call with ${selectedConv.name}...`);
+    }
+  };
+
+  const handleSendEmail = () => {
+    if (selectedConv) {
+      toast.success(`Opening email to ${selectedConv.name}...`);
+    }
+  };
+
+  const handleStarConversation = () => {
+    if (selectedConv) {
+      toast.success(`Starred conversation with ${selectedConv.name}`);
+    }
+  };
+
+  const handleArchiveConversation = () => {
+    if (selectedConv) {
+      toast.success(`Archived conversation with ${selectedConv.name}`);
+    }
+  };
+
+  const handleMoreActions = () => {
+    toast.info("More actions menu");
+  };
+
   const selectedConv = conversations.find(c => c.id === selectedConversation);
   const unreadCount = conversations.filter(c => c.unread > 0).reduce((sum, c) => sum + c.unread, 0);
 
@@ -310,20 +345,53 @@ const ServiceVendorMessages = () => {
                   </div>
                   
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handlePhoneCall}
+                      className="hover:bg-yellow-50"
+                    >
                       <Phone className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleVideoCall}
+                      className="hover:bg-yellow-50"
+                    >
                       <Video className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleSendEmail}
+                      className="hover:bg-yellow-50"
+                    >
+                      <Mail className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleStarConversation}
+                      className="hover:bg-yellow-50"
+                    >
                       <Star className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleArchiveConversation}
+                      className="hover:bg-yellow-50"
+                    >
                       <Archive className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
-                      <MoreVertical className="h-4 w-4" />
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleMoreActions}
+                      className="hover:bg-yellow-50"
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>

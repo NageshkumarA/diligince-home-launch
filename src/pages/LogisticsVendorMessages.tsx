@@ -191,6 +191,42 @@ const LogisticsVendorMessages = () => {
     }
   };
 
+  const handlePhoneCall = () => {
+    if (selectedConversation) {
+      toast.success(`Calling ${selectedConversation.sender}...`);
+    }
+  };
+
+  const handleVideoCall = () => {
+    if (selectedConversation) {
+      toast.success(`Starting video call with ${selectedConversation.sender}...`);
+    }
+  };
+
+  const handleOpenEmail = () => {
+    if (selectedConversation) {
+      toast.success(`Opening email to ${selectedConversation.sender}...`);
+    }
+  };
+
+  const handleStarConversation = () => {
+    if (selectedConversation) {
+      toast.success(`Starred conversation with ${selectedConversation.sender}`);
+    }
+  };
+
+  const handleArchiveConversation = () => {
+    if (selectedConversation) {
+      setMessages(prev => prev.filter(msg => msg.id !== selectedConversation.id));
+      setSelectedConversation(null);
+      toast.success(`Archived conversation with ${selectedConversation.sender}`);
+    }
+  };
+
+  const handleMoreActions = () => {
+    toast.info("More actions menu");
+  };
+
   const unreadCount = messages.filter(msg => msg.unread).length;
   const urgentCount = messages.filter(msg => msg.priority === "urgent" || msg.priority === "high").length;
 
@@ -349,26 +385,52 @@ const LogisticsVendorMessages = () => {
                   </div>
                   
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handlePhoneCall}
+                      className="hover:bg-pink-50"
+                    >
                       <Phone className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleVideoCall}
+                      className="hover:bg-pink-50"
+                    >
                       <Video className="h-4 w-4" />
                     </Button>
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => setShowEmailModal(true)}
+                      onClick={handleOpenEmail}
+                      className="hover:bg-pink-50"
                     >
                       <Mail className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleStarConversation}
+                      className="hover:bg-pink-50"
+                    >
                       <Star className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleArchiveConversation}
+                      className="hover:bg-pink-50"
+                    >
                       <Archive className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleMoreActions}
+                      className="hover:bg-pink-50"
+                    >
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </div>
