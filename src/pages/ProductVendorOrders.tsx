@@ -117,22 +117,22 @@ const ProductVendorOrders = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending": return "bg-yellow-100 text-yellow-800";
-      case "confirmed": return "bg-blue-100 text-blue-800";
-      case "processing": return "bg-purple-100 text-purple-800";
-      case "shipped": return "bg-orange-100 text-orange-800";
-      case "delivered": return "bg-green-100 text-green-800";
-      case "cancelled": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "pending": return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "confirmed": return "bg-blue-100 text-blue-800 border-blue-200";
+      case "processing": return "bg-purple-100 text-purple-800 border-purple-200";
+      case "shipped": return "bg-orange-100 text-orange-800 border-orange-200";
+      case "delivered": return "bg-green-100 text-green-800 border-green-200";
+      case "cancelled": return "bg-red-100 text-red-800 border-red-200";
+      default: return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "bg-red-100 text-red-800";
-      case "medium": return "bg-yellow-100 text-yellow-800";
-      case "low": return "bg-green-100 text-green-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "high": return "bg-red-100 text-red-800 border-red-200";
+      case "medium": return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "low": return "bg-green-100 text-green-800 border-green-200";
+      default: return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -195,14 +195,14 @@ const ProductVendorOrders = () => {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Order Management</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Order Management</h1>
               <p className="text-gray-600">Track and manage your product orders</p>
             </div>
             <div className="flex items-center gap-2">
-              <Badge className="bg-blue-100 text-blue-800">
+              <Badge className="bg-blue-100 text-blue-800 border-blue-200">
                 {orderStats.processing} Processing
               </Badge>
-              <Badge className="bg-orange-100 text-orange-800">
+              <Badge className="bg-orange-100 text-orange-800 border-orange-200">
                 {orderStats.shipped} Shipped
               </Badge>
             </div>
@@ -210,15 +210,15 @@ const ProductVendorOrders = () => {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="text-center">
-                  <p className="text-2xl font-bold">{orderStats.total}</p>
+                  <p className="text-2xl font-bold text-gray-900">{orderStats.total}</p>
                   <p className="text-sm text-gray-600">Total Orders</p>
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-yellow-600">{orderStats.pending}</p>
@@ -226,7 +226,7 @@ const ProductVendorOrders = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-blue-600">{orderStats.processing}</p>
@@ -234,7 +234,7 @@ const ProductVendorOrders = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-orange-600">{orderStats.shipped}</p>
@@ -242,7 +242,7 @@ const ProductVendorOrders = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-green-600">{orderStats.delivered}</p>
@@ -253,7 +253,7 @@ const ProductVendorOrders = () => {
           </div>
 
           {/* Filters */}
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardContent className="p-4">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
@@ -262,12 +262,12 @@ const ProductVendorOrders = () => {
                     placeholder="Search orders by number or customer..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 border-gray-200 focus:border-orange-300 focus:ring-orange-200"
                   />
                 </div>
                 
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full md:w-[200px]">
+                  <SelectTrigger className="w-full md:w-[200px] border-gray-200 focus:border-orange-300 focus:ring-orange-200">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -287,7 +287,7 @@ const ProductVendorOrders = () => {
           {/* Orders List */}
           <div className="space-y-4">
             {filteredOrders.map((order) => (
-              <Card key={order.id} className="hover:shadow-md transition-shadow">
+              <Card key={order.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div className="flex-1 space-y-3">
@@ -305,21 +305,21 @@ const ProductVendorOrders = () => {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div>
                           <span className="text-gray-500">Customer:</span>
-                          <p className="font-medium">{order.customer}</p>
+                          <p className="font-medium text-gray-900">{order.customer}</p>
                         </div>
                         <div>
                           <span className="text-gray-500">Order Date:</span>
-                          <p className="font-medium">{order.orderDate}</p>
+                          <p className="font-medium text-gray-900">{order.orderDate}</p>
                         </div>
                         <div>
                           <span className="text-gray-500">Expected Delivery:</span>
-                          <p className="font-medium">{order.expectedDelivery}</p>
+                          <p className="font-medium text-gray-900">{order.expectedDelivery}</p>
                         </div>
                       </div>
                       
                       <div className="text-sm">
                         <span className="text-gray-500">Products:</span>
-                        <p className="font-medium">
+                        <p className="font-medium text-gray-700">
                           {order.products.map(p => `${p.name} (${p.quantity})`).join(", ")}
                         </p>
                       </div>
@@ -327,13 +327,13 @@ const ProductVendorOrders = () => {
                       <div className="flex items-center justify-between">
                         <div>
                           <span className="text-gray-500 text-sm">Total Amount:</span>
-                          <p className="text-xl font-bold text-yellow-600">₹{order.totalAmount.toLocaleString()}</p>
+                          <p className="text-xl font-bold text-orange-600">₹{order.totalAmount.toLocaleString()}</p>
                         </div>
                         
                         {order.trackingNumber && (
                           <div className="text-sm">
                             <span className="text-gray-500">Tracking:</span>
-                            <p className="font-medium">{order.trackingNumber}</p>
+                            <p className="font-medium text-gray-900">{order.trackingNumber}</p>
                           </div>
                         )}
                       </div>
@@ -342,7 +342,7 @@ const ProductVendorOrders = () => {
                     <div className="flex flex-col gap-2 lg:w-auto w-full">
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button variant="outline" onClick={() => setSelectedOrder(order)}>
+                          <Button variant="outline" onClick={() => setSelectedOrder(order)} className="border-gray-200 hover:bg-gray-50">
                             <Eye className="w-4 h-4 mr-2" />
                             View Details
                           </Button>
@@ -466,7 +466,7 @@ const ProductVendorOrders = () => {
                         <Button 
                           size="sm" 
                           onClick={() => updateOrderStatus(order.id, "processing")}
-                          className="bg-yellow-600 hover:bg-yellow-700"
+                          className="bg-orange-600 hover:bg-orange-700 text-white"
                         >
                           Start Processing
                         </Button>
@@ -479,7 +479,7 @@ const ProductVendorOrders = () => {
           </div>
           
           {filteredOrders.length === 0 && (
-            <Card className="p-8">
+            <Card className="bg-white border border-gray-100 shadow-sm p-8">
               <div className="text-center">
                 <Package className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Orders Found</h3>

@@ -9,127 +9,106 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Filter, FileText, Clock, CheckCircle, AlertCircle, Eye, Send, Package } from "lucide-react";
+import { Search, FileText, MapPin, Calendar, Package, Clock, Send, Eye } from "lucide-react";
 import { toast } from "sonner";
 
-// Mock RFQ data for product vendors
+// Mock RFQ data
 const mockRFQs = [
   {
     id: 1,
-    title: "Industrial Valves Procurement",
-    company: "Chem Industries",
-    budget: "₹5,50,000",
-    quantity: "25 units",
-    deadline: "2024-05-20",
+    title: "Boiler Spare Parts Package",
+    company: "Steel Plant Ltd.",
+    description: "Complete spare parts package for boiler maintenance including valves, gaskets, and control components",
+    budget: "₹450,000",
+    deadline: "2024-05-15",
+    postedDate: "2024-05-01",
+    items: 12,
+    priority: "urgent",
     status: "open",
-    priority: "high",
-    category: "Industrial Equipment",
-    description: "We need high-quality industrial valves for our chemical processing plant. Must comply with API 6D standards.",
-    specifications: ["Size: 4-inch to 12-inch", "Material: Stainless Steel 316", "Pressure Rating: 150 PSI", "API 6D Certified"],
-    submittedDate: "2024-05-05",
-    responseDeadline: "2024-05-18"
+    location: "Mumbai, Maharashtra",
+    requirements: "API 6D certified components required",
+    delivery: "Urgent (7 days)"
   },
   {
     id: 2,
-    title: "Electrical Components Bulk Order",
+    title: "Control Panel Components",
     company: "Power Gen Co.",
-    budget: "₹8,75,000",
-    quantity: "200 units",
-    deadline: "2024-05-25",
-    status: "responded",
+    description: "Various components for control panel assembly including circuit breakers, contactors, and PLCs",
+    budget: "₹320,000",
+    deadline: "2024-05-20",
+    postedDate: "2024-04-28",
+    items: 8,
     priority: "medium",
-    category: "Electrical Components",
-    description: "Bulk procurement of electrical components including switches, circuit breakers, and control panels.",
-    specifications: ["Voltage Rating: 415V", "Current Rating: 100A", "IP65 Protection", "CE Certified"],
-    submittedDate: "2024-05-03",
-    responseDeadline: "2024-05-20"
+    status: "open",
+    location: "Pune, Maharashtra",
+    requirements: "CE certified components preferred",
+    delivery: "Standard (15 days)"
   },
   {
     id: 3,
-    title: "Safety Equipment Package",
-    company: "Steel Plant Ltd.",
-    budget: "₹3,25,000",
-    quantity: "50 sets",
-    deadline: "2024-05-30",
-    status: "awarded",
+    title: "Safety Equipment Bulk Order",
+    company: "Chemical Industries",
+    description: "Bulk order for safety equipment including helmets, gloves, goggles, and safety shoes",
+    budget: "₹180,000",
+    deadline: "2024-05-25",
+    postedDate: "2024-05-05",
+    items: 500,
     priority: "low",
-    category: "Safety Equipment",
-    description: "Complete safety equipment package for steel plant workers including helmets, gloves, and protective gear.",
-    specifications: ["ISI Marked", "Heat Resistant", "Anti-slip soles", "High visibility"],
-    submittedDate: "2024-04-28",
-    responseDeadline: "2024-05-15"
+    status: "open",
+    location: "Chennai, Tamil Nadu",
+    requirements: "ISI marked products only",
+    delivery: "Standard (10 days)"
   }
 ];
 
 const ProductVendorRFQs = () => {
   const [rfqs, setRfqs] = useState(mockRFQs);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
   const [selectedRFQ, setSelectedRFQ] = useState<any>(null);
-  const [quotationData, setQuotationData] = useState({
-    unitPrice: "",
-    totalPrice: "",
-    deliveryTime: "",
-    specifications: "",
-    terms: ""
-  });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "open": return "bg-green-100 text-green-800";
-      case "responded": return "bg-blue-100 text-blue-800";
-      case "awarded": return "bg-yellow-100 text-yellow-800";
-      case "closed": return "bg-gray-100 text-gray-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
+  const [quotationText, setQuotationText] = useState("");
+  const [quotedPrice, setQuotedPrice] = useState("");
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "bg-red-100 text-red-800";
-      case "medium": return "bg-yellow-100 text-yellow-800";
-      case "low": return "bg-green-100 text-green-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "urgent": return "bg-red-100 text-red-800 border-red-200";
+      case "medium": return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "low": return "bg-green-100 text-green-800 border-green-200";
+      default: return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "open": return <Clock className="w-4 h-4" />;
-      case "responded": return <CheckCircle className="w-4 h-4" />;
-      case "awarded": return <AlertCircle className="w-4 h-4" />;
-      default: return <FileText className="w-4 h-4" />;
-    }
+  const getDaysRemaining = (deadline: string) => {
+    const today = new Date();
+    const deadlineDate = new Date(deadline);
+    const diffTime = deadlineDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
   };
 
   const filteredRFQs = rfqs.filter(rfq => {
-    if (statusFilter !== "all" && rfq.status !== statusFilter) return false;
+    if (priorityFilter !== "all" && rfq.priority !== priorityFilter) return false;
     if (searchTerm && !rfq.title.toLowerCase().includes(searchTerm.toLowerCase()) && 
         !rfq.company.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     return true;
   });
 
-  const handleSubmitQuotation = () => {
-    if (selectedRFQ && quotationData.unitPrice && quotationData.totalPrice) {
-      // Update RFQ status
-      setRfqs(prev => prev.map(rfq => 
-        rfq.id === selectedRFQ.id 
-          ? { ...rfq, status: "responded" }
-          : rfq
-      ));
-      
-      // Reset form
-      setQuotationData({
-        unitPrice: "",
-        totalPrice: "",
-        deliveryTime: "",
-        specifications: "",
-        terms: ""
-      });
-      
-      toast.success("Quotation submitted successfully!");
-      setSelectedRFQ(null);
+  const submitQuotation = () => {
+    if (!quotedPrice || !quotationText) {
+      toast.error("Please fill in all required fields");
+      return;
     }
+    toast.success("Quotation submitted successfully!");
+    setQuotationText("");
+    setQuotedPrice("");
+    setSelectedRFQ(null);
+  };
+
+  const rfqStats = {
+    total: rfqs.length,
+    urgent: rfqs.filter(r => r.priority === "urgent").length,
+    medium: rfqs.filter(r => r.priority === "medium").length,
+    low: rfqs.filter(r => r.priority === "low").length
   };
 
   return (
@@ -145,18 +124,57 @@ const ProductVendorRFQs = () => {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Request for Quotations</h1>
-              <p className="text-gray-600">Manage product procurement requests and submit quotations</p>
+              <h1 className="text-2xl font-bold text-gray-900">Request for Quotations</h1>
+              <p className="text-gray-600">Browse and respond to RFQs from potential clients</p>
             </div>
             <div className="flex items-center gap-2">
-              <Badge className="bg-green-100 text-green-800">
-                {filteredRFQs.filter(rfq => rfq.status === "open").length} Open RFQs
+              <Badge className="bg-red-100 text-red-800">
+                {rfqStats.urgent} Urgent
+              </Badge>
+              <Badge className="bg-yellow-100 text-yellow-800">
+                {rfqStats.medium} Medium
               </Badge>
             </div>
           </div>
 
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-gray-900">{rfqStats.total}</p>
+                  <p className="text-sm text-gray-600">Total RFQs</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-red-600">{rfqStats.urgent}</p>
+                  <p className="text-sm text-gray-600">Urgent</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-yellow-600">{rfqStats.medium}</p>
+                  <p className="text-sm text-gray-600">Medium</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-600">{rfqStats.low}</p>
+                  <p className="text-sm text-gray-600">Low Priority</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Filters */}
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardContent className="p-4">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
@@ -165,133 +183,156 @@ const ProductVendorRFQs = () => {
                     placeholder="Search RFQs by title or company..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 border-gray-200 focus:border-orange-300 focus:ring-orange-200"
                   />
                 </div>
                 
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full md:w-[200px]">
-                    <SelectValue placeholder="Filter by status" />
+                <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                  <SelectTrigger className="w-full md:w-[200px] border-gray-200 focus:border-orange-300 focus:ring-orange-200">
+                    <SelectValue placeholder="Filter by priority" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value="open">Open</SelectItem>
-                    <SelectItem value="responded">Responded</SelectItem>
-                    <SelectItem value="awarded">Awarded</SelectItem>
-                    <SelectItem value="closed">Closed</SelectItem>
+                    <SelectItem value="all">All Priorities</SelectItem>
+                    <SelectItem value="urgent">Urgent</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </CardContent>
           </Card>
 
-          {/* RFQs Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* RFQs List */}
+          <div className="space-y-4">
             {filteredRFQs.map((rfq) => (
-              <Card key={rfq.id} className="hover:shadow-md transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg text-gray-900 mb-2">{rfq.title}</CardTitle>
-                      <p className="text-sm text-gray-600 mb-2">{rfq.company}</p>
-                    </div>
-                    <Badge className={getPriorityColor(rfq.priority)}>
-                      {rfq.priority}
-                    </Badge>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Badge className={getStatusColor(rfq.status)}>
-                      {getStatusIcon(rfq.status)}
-                      <span className="ml-1 capitalize">{rfq.status}</span>
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      {rfq.category}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="space-y-3">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-500">Budget:</span>
-                      <p className="font-medium text-yellow-600">{rfq.budget}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Quantity:</span>
-                      <p className="font-medium">{rfq.quantity}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Deadline:</span>
-                      <p className="font-medium">{rfq.deadline}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Response by:</span>
-                      <p className="font-medium text-red-600">{rfq.responseDeadline}</p>
-                    </div>
-                  </div>
-                  
-                  <p className="text-sm text-gray-600 line-clamp-2">{rfq.description}</p>
-                  
-                  <div className="flex gap-2 pt-2">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="flex-1">
-                          <Eye className="w-4 h-4 mr-2" />
-                          View Details
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-2xl">
-                        <DialogHeader>
-                          <DialogTitle>{rfq.title}</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <label className="text-sm font-medium text-gray-500">Company</label>
-                              <p>{rfq.company}</p>
-                            </div>
-                            <div>
-                              <label className="text-sm font-medium text-gray-500">Budget</label>
-                              <p className="text-yellow-600 font-medium">{rfq.budget}</p>
-                            </div>
-                            <div>
-                              <label className="text-sm font-medium text-gray-500">Quantity</label>
-                              <p>{rfq.quantity}</p>
-                            </div>
-                            <div>
-                              <label className="text-sm font-medium text-gray-500">Deadline</label>
-                              <p>{rfq.deadline}</p>
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <label className="text-sm font-medium text-gray-500">Description</label>
-                            <p className="mt-1">{rfq.description}</p>
-                          </div>
-                          
-                          <div>
-                            <label className="text-sm font-medium text-gray-500">Specifications</label>
-                            <ul className="mt-1 list-disc list-inside space-y-1">
-                              {rfq.specifications.map((spec, index) => (
-                                <li key={index} className="text-sm">{spec}</li>
-                              ))}
-                            </ul>
-                          </div>
+              <Card key={rfq.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                    <div className="flex-1 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <h3 className="text-xl font-semibold text-gray-900">{rfq.title}</h3>
+                        <Badge className={getPriorityColor(rfq.priority)}>
+                          {rfq.priority}
+                        </Badge>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-500">Company:</span>
+                          <p className="font-medium text-gray-900">{rfq.company}</p>
                         </div>
-                      </DialogContent>
-                    </Dialog>
+                        <div>
+                          <span className="text-gray-500">Posted:</span>
+                          <p className="font-medium text-gray-900">{rfq.postedDate}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Deadline:</span>
+                          <p className="font-medium text-gray-900">{rfq.deadline}</p>
+                        </div>
+                      </div>
+                      
+                      <p className="text-sm text-gray-700">{rfq.description}</p>
+                      
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-gray-500">
+                        <div className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3" />
+                          {rfq.location}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Package className="w-3 h-3" />
+                          {rfq.items} items
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {rfq.delivery}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {getDaysRemaining(rfq.deadline)} days left
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-gray-500 text-sm">Budget:</span>
+                          <p className="text-xl font-bold text-orange-600">{rfq.budget}</p>
+                        </div>
+                      </div>
+                    </div>
                     
-                    {rfq.status === "open" && (
+                    <div className="flex flex-col gap-2 lg:w-auto w-full">
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button 
-                            size="sm" 
-                            className="flex-1 bg-yellow-600 hover:bg-yellow-700"
-                            onClick={() => setSelectedRFQ(rfq)}
-                          >
+                          <Button variant="outline" onClick={() => setSelectedRFQ(rfq)} className="border-gray-200 hover:bg-gray-50">
+                            <Eye className="w-4 h-4 mr-2" />
+                            View Details
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle>RFQ Details - {rfq.title}</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-6">
+                            <div>
+                              <h4 className="font-semibold mb-2">Company Information</h4>
+                              <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                  <span className="text-gray-500">Company:</span>
+                                  <p className="font-medium">{rfq.company}</p>
+                                </div>
+                                <div>
+                                  <span className="text-gray-500">Location:</span>
+                                  <p className="font-medium">{rfq.location}</p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h4 className="font-semibold mb-2">Requirements</h4>
+                              <p className="text-sm bg-blue-50 p-3 rounded">{rfq.description}</p>
+                              <p className="text-sm text-gray-600 mt-2">{rfq.requirements}</p>
+                            </div>
+                            
+                            <div>
+                              <h4 className="font-semibold mb-2">Submit Quotation</h4>
+                              <div className="space-y-4">
+                                <div>
+                                  <label className="text-sm font-medium">Quoted Price *</label>
+                                  <Input
+                                    placeholder="Enter your quoted price"
+                                    value={quotedPrice}
+                                    onChange={(e) => setQuotedPrice(e.target.value)}
+                                    className="border-gray-200 focus:border-orange-300 focus:ring-orange-200"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="text-sm font-medium">Additional Details *</label>
+                                  <Textarea
+                                    placeholder="Include delivery timeline, terms, and any additional information..."
+                                    value={quotationText}
+                                    onChange={(e) => setQuotationText(e.target.value)}
+                                    rows={4}
+                                    className="border-gray-200 focus:border-orange-300 focus:ring-orange-200"
+                                  />
+                                </div>
+                                <div className="flex justify-end space-x-2">
+                                  <Button variant="outline" className="border-gray-200 hover:bg-gray-50">Cancel</Button>
+                                  <Button onClick={submitQuotation} className="bg-orange-600 hover:bg-orange-700 text-white">
+                                    <Send className="w-4 h-4 mr-2" />
+                                    Submit Quotation
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                      
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button onClick={() => setSelectedRFQ(rfq)} className="bg-orange-600 hover:bg-orange-700 text-white">
                             <Send className="w-4 h-4 mr-2" />
-                            Submit Quote
+                            Quote Now
                           </Button>
                         </DialogTrigger>
                         <DialogContent className="max-w-2xl">
@@ -299,68 +340,35 @@ const ProductVendorRFQs = () => {
                             <DialogTitle>Submit Quotation - {rfq.title}</DialogTitle>
                           </DialogHeader>
                           <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                <label className="text-sm font-medium">Unit Price (₹)</label>
-                                <Input
-                                  placeholder="Enter unit price"
-                                  value={quotationData.unitPrice}
-                                  onChange={(e) => setQuotationData(prev => ({...prev, unitPrice: e.target.value}))}
-                                />
-                              </div>
-                              <div>
-                                <label className="text-sm font-medium">Total Price (₹)</label>
-                                <Input
-                                  placeholder="Enter total price"
-                                  value={quotationData.totalPrice}
-                                  onChange={(e) => setQuotationData(prev => ({...prev, totalPrice: e.target.value}))}
-                                />
-                              </div>
-                            </div>
-                            
                             <div>
-                              <label className="text-sm font-medium">Delivery Time</label>
+                              <label className="text-sm font-medium">Quoted Price *</label>
                               <Input
-                                placeholder="e.g., 2-3 weeks"
-                                value={quotationData.deliveryTime}
-                                onChange={(e) => setQuotationData(prev => ({...prev, deliveryTime: e.target.value}))}
+                                placeholder="Enter your quoted price"
+                                value={quotedPrice}
+                                onChange={(e) => setQuotedPrice(e.target.value)}
+                                className="border-gray-200 focus:border-orange-300 focus:ring-orange-200"
                               />
                             </div>
-                            
                             <div>
-                              <label className="text-sm font-medium">Product Specifications</label>
+                              <label className="text-sm font-medium">Proposal Details *</label>
                               <Textarea
-                                placeholder="Describe your product specifications and compliance"
-                                value={quotationData.specifications}
-                                onChange={(e) => setQuotationData(prev => ({...prev, specifications: e.target.value}))}
-                                rows={3}
+                                placeholder="Include delivery timeline, terms, specifications, and any additional information..."
+                                value={quotationText}
+                                onChange={(e) => setQuotationText(e.target.value)}
+                                rows={6}
+                                className="border-gray-200 focus:border-orange-300 focus:ring-orange-200"
                               />
                             </div>
-                            
-                            <div>
-                              <label className="text-sm font-medium">Terms & Conditions</label>
-                              <Textarea
-                                placeholder="Payment terms, warranty, delivery conditions, etc."
-                                value={quotationData.terms}
-                                onChange={(e) => setQuotationData(prev => ({...prev, terms: e.target.value}))}
-                                rows={3}
-                              />
-                            </div>
-                            
                             <div className="flex justify-end space-x-2">
-                              <Button variant="outline">Save Draft</Button>
-                              <Button 
-                                onClick={handleSubmitQuotation}
-                                className="bg-yellow-600 hover:bg-yellow-700"
-                              >
-                                <Package className="w-4 h-4 mr-2" />
+                              <Button variant="outline" className="border-gray-200 hover:bg-gray-50">Cancel</Button>
+                              <Button onClick={submitQuotation} className="bg-orange-600 hover:bg-orange-700 text-white">
                                 Submit Quotation
                               </Button>
                             </div>
                           </div>
                         </DialogContent>
                       </Dialog>
-                    )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -368,14 +376,14 @@ const ProductVendorRFQs = () => {
           </div>
           
           {filteredRFQs.length === 0 && (
-            <Card className="p-8">
+            <Card className="bg-white border border-gray-100 shadow-sm p-8">
               <div className="text-center">
                 <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No RFQs Found</h3>
                 <p className="text-gray-500">
-                  {searchTerm || statusFilter !== "all" 
-                    ? "Try adjusting your search or filter criteria" 
-                    : "New product procurement requests will appear here"}
+                  {searchTerm || priorityFilter !== "all"
+                    ? "Try adjusting your search or filter criteria"
+                    : "New RFQs will appear here when clients post them"}
                 </p>
               </div>
             </Card>

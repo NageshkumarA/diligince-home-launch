@@ -66,9 +66,9 @@ const ProductVendorCatalog = () => {
   const [stockUpdates, setStockUpdates] = useState<{[key: number]: number}>({});
 
   const getStockStatus = (product: any) => {
-    if (product.stock === 0) return { status: "out-of-stock", color: "bg-red-100 text-red-800" };
-    if (product.stock <= product.minStock) return { status: "low-stock", color: "bg-yellow-100 text-yellow-800" };
-    return { status: "in-stock", color: "bg-green-100 text-green-800" };
+    if (product.stock === 0) return { status: "out-of-stock", color: "bg-red-100 text-red-800 border-red-200" };
+    if (product.stock <= product.minStock) return { status: "low-stock", color: "bg-yellow-100 text-yellow-800 border-yellow-200" };
+    return { status: "in-stock", color: "bg-green-100 text-green-800 border-green-200" };
   };
 
   const filteredProducts = products.filter(product => {
@@ -109,22 +109,22 @@ const ProductVendorCatalog = () => {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Product Catalog</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Product Catalog</h1>
               <p className="text-gray-600">Manage your product inventory and catalog</p>
             </div>
             <div className="flex items-center gap-3">
               {lowStockCount > 0 && (
-                <Badge className="bg-yellow-100 text-yellow-800">
+                <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
                   <AlertTriangle className="w-3 h-3 mr-1" />
                   {lowStockCount} Low Stock
                 </Badge>
               )}
               {outOfStockCount > 0 && (
-                <Badge className="bg-red-100 text-red-800">
+                <Badge className="bg-red-100 text-red-800 border-red-200">
                   {outOfStockCount} Out of Stock
                 </Badge>
               )}
-              <Button className="bg-yellow-600 hover:bg-yellow-700">
+              <Button className="bg-orange-600 hover:bg-orange-700 text-white">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Product
               </Button>
@@ -133,18 +133,18 @@ const ProductVendorCatalog = () => {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Total Products</p>
-                    <p className="text-2xl font-bold">{products.length}</p>
+                    <p className="text-2xl font-bold text-gray-900">{products.length}</p>
                   </div>
-                  <Package className="h-8 w-8 text-yellow-600" />
+                  <Package className="h-8 w-8 text-orange-600" />
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -159,7 +159,7 @@ const ProductVendorCatalog = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -170,7 +170,7 @@ const ProductVendorCatalog = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -186,7 +186,7 @@ const ProductVendorCatalog = () => {
           </div>
 
           {/* Controls */}
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardContent className="p-4">
               <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
                 <div className="flex flex-col md:flex-row gap-4 flex-1">
@@ -196,12 +196,12 @@ const ProductVendorCatalog = () => {
                       placeholder="Search products by name or SKU..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 border-gray-200 focus:border-orange-300 focus:ring-orange-200"
                     />
                   </div>
                   
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="w-full md:w-[200px]">
+                    <SelectTrigger className="w-full md:w-[200px] border-gray-200 focus:border-orange-300 focus:ring-orange-200">
                       <SelectValue placeholder="Filter by category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -213,7 +213,7 @@ const ProductVendorCatalog = () => {
                   </Select>
                   
                   <Select value={stockFilter} onValueChange={setStockFilter}>
-                    <SelectTrigger className="w-full md:w-[200px]">
+                    <SelectTrigger className="w-full md:w-[200px] border-gray-200 focus:border-orange-300 focus:ring-orange-200">
                       <SelectValue placeholder="Filter by stock" />
                     </SelectTrigger>
                     <SelectContent>
@@ -225,15 +225,15 @@ const ProductVendorCatalog = () => {
                 </div>
                 
                 <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => setShowStockUpdate(true)}>
+                  <Button variant="outline" onClick={() => setShowStockUpdate(true)} className="border-gray-200 hover:bg-gray-50">
                     <Edit className="w-4 h-4 mr-2" />
                     Quick Stock Update
                   </Button>
-                  <Button variant="outline">
+                  <Button variant="outline" className="border-gray-200 hover:bg-gray-50">
                     <Upload className="w-4 h-4 mr-2" />
                     Import CSV
                   </Button>
-                  <Button variant="outline">
+                  <Button variant="outline" className="border-gray-200 hover:bg-gray-50">
                     <Download className="w-4 h-4 mr-2" />
                     Export CSV
                   </Button>
@@ -247,21 +247,21 @@ const ProductVendorCatalog = () => {
             {filteredProducts.map((product) => {
               const stockStatus = getStockStatus(product);
               return (
-                <Card key={product.id} className="hover:shadow-md transition-shadow">
+                <Card key={product.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                   <CardHeader className="pb-3">
                     <div className="aspect-square bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
                       <Package className="h-12 w-12 text-gray-400" />
                     </div>
                     <CardTitle className="text-lg text-gray-900 line-clamp-2">{product.name}</CardTitle>
                     <p className="text-sm text-gray-500">SKU: {product.sku}</p>
-                    <Badge variant="outline" className="w-fit">
+                    <Badge variant="outline" className="w-fit border-gray-200">
                       {product.category}
                     </Badge>
                   </CardHeader>
                   
                   <CardContent className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold text-yellow-600">₹{product.price.toLocaleString()}</span>
+                      <span className="text-xl font-bold text-orange-600">₹{product.price.toLocaleString()}</span>
                       <Badge className={stockStatus.color}>
                         {product.stock} in stock
                       </Badge>
@@ -277,11 +277,11 @@ const ProductVendorCatalog = () => {
                     <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
                     
                     <div className="flex gap-2 pt-2">
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button variant="outline" size="sm" className="flex-1 border-gray-200 hover:bg-gray-50">
                         <Edit className="w-4 h-4 mr-2" />
                         Edit
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50">
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -304,11 +304,11 @@ const ProductVendorCatalog = () => {
                 
                 <div className="space-y-3">
                   {products.map((product) => (
-                    <div key={product.id} className="flex items-center gap-4 p-3 border rounded-lg">
+                    <div key={product.id} className="flex items-center gap-4 p-3 border border-gray-100 rounded-lg bg-white">
                       <div className="flex-1">
-                        <p className="font-medium">{product.name}</p>
+                        <p className="font-medium text-gray-900">{product.name}</p>
                         <p className="text-sm text-gray-500">SKU: {product.sku}</p>
-                        <p className="text-sm">Current: {product.stock} units</p>
+                        <p className="text-sm text-gray-600">Current: {product.stock} units</p>
                       </div>
                       <div className="w-32">
                         <Input
@@ -319,6 +319,7 @@ const ProductVendorCatalog = () => {
                             ...prev,
                             [product.id]: parseInt(e.target.value) || 0
                           }))}
+                          className="border-gray-200 focus:border-orange-300 focus:ring-orange-200"
                         />
                       </div>
                     </div>
@@ -326,10 +327,10 @@ const ProductVendorCatalog = () => {
                 </div>
                 
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setShowStockUpdate(false)}>
+                  <Button variant="outline" onClick={() => setShowStockUpdate(false)} className="border-gray-200 hover:bg-gray-50">
                     Cancel
                   </Button>
-                  <Button onClick={handleBulkStockUpdate} className="bg-yellow-600 hover:bg-yellow-700">
+                  <Button onClick={handleBulkStockUpdate} className="bg-orange-600 hover:bg-orange-700 text-white">
                     Update Stock Levels
                   </Button>
                 </div>
@@ -338,7 +339,7 @@ const ProductVendorCatalog = () => {
           </Dialog>
           
           {filteredProducts.length === 0 && (
-            <Card className="p-8">
+            <Card className="bg-white border border-gray-100 shadow-sm p-8">
               <div className="text-center">
                 <Package className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Products Found</h3>
