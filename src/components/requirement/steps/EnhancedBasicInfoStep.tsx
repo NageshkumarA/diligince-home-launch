@@ -105,16 +105,16 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({ onNext })
         {/* Main Form Section */}
         <div className="lg:col-span-2 space-y-6">
           {/* Requirement Title */}
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
                 <FileText className="h-5 w-5" />
                 Requirement Details
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="title" className="text-base font-medium">
+                <Label htmlFor="title" className="text-base font-medium text-gray-700">
                   Requirement Title <span className="text-red-500">*</span>
                 </Label>
                 <Input
@@ -133,14 +133,14 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({ onNext })
               </div>
 
               <div className="space-y-3">
-                <Label className="text-base font-medium">
+                <Label className="text-base font-medium text-gray-700">
                   Category <span className="text-red-500">*</span>
                 </Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {categoryOptions.map((category) => (
                     <div
                       key={category.id}
-                      className={`relative cursor-pointer rounded-lg border-2 p-4 transition-all hover:shadow-md ${
+                      className={`relative cursor-pointer rounded-lg border-2 p-4 transition-all hover:shadow-md bg-white ${
                         formData.category === category.id
                           ? "border-blue-500 bg-blue-50 shadow-sm"
                           : "border-gray-200 hover:border-gray-300"
@@ -168,7 +168,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({ onNext })
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="businessJustification" className="text-base font-medium">
+                <Label htmlFor="businessJustification" className="text-base font-medium text-gray-700">
                   Business Justification <span className="text-red-500">*</span>
                 </Label>
                 <Textarea
@@ -190,9 +190,9 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({ onNext })
           </Card>
 
           {/* Organization Details */}
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
                 <Building className="h-5 w-5" />
                 Organization Details
               </CardTitle>
@@ -200,7 +200,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({ onNext })
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="department" className="text-base font-medium">
+                  <Label htmlFor="department" className="text-base font-medium text-gray-700">
                     Department <span className="text-red-500">*</span>
                   </Label>
                   <Select
@@ -224,7 +224,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({ onNext })
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="costCenter" className="text-base font-medium">
+                  <Label htmlFor="costCenter" className="text-base font-medium text-gray-700">
                     Cost Center <span className="text-red-500">*</span>
                   </Label>
                   <Input
@@ -240,7 +240,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({ onNext })
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="requestedBy" className="text-base font-medium">
+                <Label htmlFor="requestedBy" className="text-base font-medium text-gray-700">
                   Requested By
                 </Label>
                 <Input
@@ -256,21 +256,21 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({ onNext })
 
         {/* Sidebar - Priority & Budget */}
         <div className="space-y-6">
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
                 <AlertTriangle className="h-5 w-5" />
                 Priority & Risk
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">
-                <Label className="text-base font-medium">Priority Level</Label>
+                <Label className="text-base font-medium text-gray-700">Priority Level</Label>
                 <div className="space-y-2">
                   {priorityOptions.map((priority) => (
                     <div
                       key={priority.value}
-                      className={`cursor-pointer rounded-lg border p-3 transition-all hover:shadow-sm ${
+                      className={`cursor-pointer rounded-lg border p-3 transition-all hover:shadow-sm bg-white ${
                         formData.priority === priority.value
                           ? "border-blue-500 bg-blue-50"
                           : "border-gray-200 hover:border-gray-300"
@@ -289,7 +289,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({ onNext })
               </div>
 
               <div className="space-y-3">
-                <Label className="text-base font-medium">Risk Assessment</Label>
+                <Label className="text-base font-medium text-gray-700">Risk Assessment</Label>
                 <Select
                   value={formData.riskLevel}
                   onValueChange={(value) => updateFormData({ riskLevel: value as any })}
@@ -323,16 +323,16 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({ onNext })
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
                 <DollarSign className="h-5 w-5" />
                 Budget Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="estimatedBudget" className="text-base font-medium">
+                <Label htmlFor="estimatedBudget" className="text-base font-medium text-gray-700">
                   Estimated Budget <span className="text-red-500">*</span>
                 </Label>
                 <div className="relative">
@@ -396,7 +396,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({ onNext })
         <Button 
           onClick={handleNext} 
           size="lg"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-8 font-medium"
         >
           Continue to Details
         </Button>

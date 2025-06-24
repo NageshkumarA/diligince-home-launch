@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { Button } from "@/components/ui/button";
@@ -127,9 +126,9 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           {/* Current Approval Steps */}
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900">
                 <Users className="h-5 w-5" />
                 Approval Steps
               </CardTitle>
@@ -144,13 +143,13 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
               ) : (
                 <div className="space-y-4">
                   {formData.approvalSteps.map((step, index) => (
-                    <div key={step.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                    <div key={step.id} className="flex items-center gap-4 p-4 border rounded-lg bg-white">
                       <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-medium text-sm">
                         {index + 1}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-medium">{step.stepName}</h3>
+                          <h3 className="font-medium text-gray-900">{step.stepName}</h3>
                           {getStatusBadge(step.status)}
                         </div>
                         <p className="text-sm text-gray-600">Approver: {step.approverRole}</p>
@@ -179,14 +178,14 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
           </Card>
 
           {/* Add New Approval Step */}
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardHeader>
-              <CardTitle>Add Approval Step</CardTitle>
+              <CardTitle className="text-gray-900">Add Approval Step</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-4">
                 <div className="flex-1">
-                  <Label>Approver Role</Label>
+                  <Label className="text-gray-700">Approver Role</Label>
                   <Select value={newApproverRole} onValueChange={setNewApproverRole}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select approver role" />
@@ -201,7 +200,7 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
                   </Select>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={addApprovalStep} className="flex items-center gap-2">
+                  <Button onClick={addApprovalStep} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium">
                     <Plus className="h-4 w-4" />
                     Add Step
                   </Button>
@@ -213,9 +212,9 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
 
         {/* Sidebar - Workflow Summary */}
         <div className="space-y-6">
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardHeader>
-              <CardTitle>Workflow Summary</CardTitle>
+              <CardTitle className="text-gray-900">Workflow Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
@@ -263,9 +262,9 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white border border-gray-100 shadow-sm">
             <CardHeader>
-              <CardTitle>Best Practices</CardTitle>
+              <CardTitle className="text-gray-900">Best Practices</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-gray-600 space-y-2">
               <p>• Include department manager for all requests</p>
@@ -287,7 +286,7 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
         <Button variant="outline" onClick={onPrevious}>
           Previous
         </Button>
-        <Button onClick={handleNext} className="bg-blue-600 hover:bg-blue-700 text-white">
+        <Button onClick={handleNext} className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
           Continue to Publishing
         </Button>
       </div>
