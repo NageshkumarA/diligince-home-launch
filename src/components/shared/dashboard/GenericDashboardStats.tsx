@@ -19,19 +19,19 @@ interface GenericDashboardStatsProps {
 
 export const GenericDashboardStats = ({ stats, className = "" }: GenericDashboardStatsProps) => {
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ${className}`}>
+    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ${className}`}>
       {stats.map((stat, index) => (
-        <Card key={index} className="hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer">
+        <Card key={index} className="bg-white border border-gray-200 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</p>
-                <p className="text-sm text-gray-500 mt-1">{stat.subtitle}</p>
+                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">{stat.title}</p>
+                <p className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
+                <p className="text-sm font-medium text-gray-500">{stat.subtitle}</p>
               </div>
-              <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                <div className={stat.color}>
-                  <stat.icon className="h-6 w-6" />
+              <div className="flex-shrink-0 ml-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                  <stat.icon className="h-6 w-6 text-blue-600" />
                 </div>
               </div>
             </div>
