@@ -16,11 +16,11 @@ const Terms = () => {
               </p>
               <p>
                 Please read these Terms of Service ("Terms", "Terms of Service") carefully before using 
-                the diligince.ai website and platform operated by diligince.ai ("us", "we", "our").
+                the Diligince.ai website and platform operated by Diligince.ai ("us", "we", "our").
               </p>
               <p>
                 Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. 
-                These Terms apply to all visitors, users, and others who access or use the Service.
+                These Terms apply to all visitors, users and others who access or use the Service.
               </p>
               <p>
                 By accessing or using the Service, you agree to be bound by these Terms. If you disagree with 
@@ -29,7 +29,7 @@ const Terms = () => {
               
               <h2 className="text-2xl font-bold mt-8 mb-4">Accounts</h2>
               <p>
-                When you create an account with us, you must provide us with accurate, complete, and up-to-date 
+                When you create an account with us, you must provide us with accurate, complete and up-to-date 
                 information. Failure to do so constitutes a breach of the Terms, which may result in immediate 
                 termination of your account on our Service.
               </p>
@@ -63,7 +63,7 @@ const Terms = () => {
               
               <h2 className="text-2xl font-bold mt-8 mb-4">Platform Usage and Restrictions</h2>
               <p>
-                Our platform is designed to connect industrial plants with vendors, professionals, and logistics providers. 
+                Our platform is designed to connect industrial plants with vendors, professionals and logistics providers. 
                 Users may not:
               </p>
               <ul className="list-disc pl-6 space-y-2">
@@ -79,13 +79,13 @@ const Terms = () => {
               
               <h2 className="text-2xl font-bold mt-8 mb-4">Intellectual Property</h2>
               <p>
-                The Service and its original content, features, and functionality are and will remain the exclusive 
-                property of diligince.ai and its licensors. The Service is protected by copyright, trademark, and 
+                The Service and its original content, features and functionality are and will remain the exclusive 
+                property of Diligince.ai and its licensors. The Service is protected by copyright, trademark and 
                 other laws of both India and foreign countries.
               </p>
               <p>
                 Our trademarks and trade dress may not be used in connection with any product or service without 
-                the prior written consent of diligince.ai.
+                the prior written consent of Diligince.ai.
               </p>
               
               <h2 className="text-2xl font-bold mt-8 mb-4">Termination</h2>
@@ -100,7 +100,7 @@ const Terms = () => {
               
               <h2 className="text-2xl font-bold mt-8 mb-4">Limitation of Liability</h2>
               <p>
-                In no event shall diligince.ai, nor its directors, employees, partners, agents, suppliers, or affiliates, 
+                In no event shall Diligince.ai, nor its directors, employees, partners, agents, suppliers, or affiliates, 
                 be liable for any indirect, incidental, special, consequential or punitive damages, including without 
                 limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from:
               </p>
