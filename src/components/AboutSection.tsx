@@ -8,7 +8,7 @@ const AboutSection = () => {
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">About Diligince.ai</h2>
           <p className="text-gray-600 max-w-3xl mx-auto">
-            We're an AI-powered platform connecting industrial plants with Vendors, Professionals, and Logistics. 
+            We are an AI powered platform connecting industrial plants with Vendors, Professionals and Logistics. 
             Launching in 2025, our mission is to revolutionize how industries find and collaborate with service providers.
           </p>
         </div>
@@ -29,7 +29,7 @@ const AboutSection = () => {
               <h3 className="text-xl font-semibold mb-3 text-gray-800">Pricing</h3>
               <p className="text-gray-600">
                 Freemium model: Free tier for basic matching. Pro tier: ₹500/month for unlimited matches, 
-                analytics, and priority support. 5% commission on transactions.
+                analytics and priority support. 5% commission on transactions.
               </p>
             </CardContent>
           </Card>
