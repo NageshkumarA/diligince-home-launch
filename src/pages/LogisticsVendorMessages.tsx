@@ -1,136 +1,74 @@
 
 import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import { LogisticsVendorHeader } from "@/components/vendor/LogisticsVendorHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Search,
-  Filter,
-  MessageSquare,
-  Send,
-  AlertCircle,
-  Clock,
-  CheckCircle2,
-  Plus,
-  Phone,
-  Video,
-  Archive,
-  Star,
-  MoreHorizontal,
-  Paperclip,
-  Mail,
-  Truck
-} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Search, MessageSquare, Send, Plus, Phone, Video, Archive, Star, MoreHorizontal, Paperclip, Mail } from "lucide-react";
 import { toast } from "sonner";
 
-// Mock conversation threads for logistics vendor
-const conversationThreads = [
+// Mock message data for logistics vendors
+const messageThreads = [
   {
     id: 1,
     sender: "Steel Industries Ltd.",
     initials: "SI",
-    subject: "Crane Transport - Urgent Request",
-    preview: "We need to confirm the crane availability for our plant expansion project. The equipment must be delivered by January 20th...",
-    lastMessage: "We need to confirm the crane availability for our plant expansion project. The equipment must be delivered by January 20th for the installation schedule.",
-    time: "10 min ago",
-    timestamp: "2:30 PM",
+    subject: "Urgent Transport Request",
+    preview: "We need immediate transportation for 50 tons of steel plates from our facility to the construction site. Can you handle this?",
+    lastMessage: "Please confirm the pickup time for the steel plates. Our crane operator will be available from 9 AM.",
+    time: "30 min ago",
+    timestamp: "2:15 PM",
     unread: true,
-    priority: "high",
+    priority: "urgent",
     category: "Transport Request",
-    avatar: "bg-green-100 text-green-600",
-    messageType: "transport-request"
+    avatar: "bg-blue-100 text-blue-600"
   },
   {
     id: 2,
     sender: "Chemical Corp",
     initials: "CC",
-    subject: "Chemical Tank Delivery Update",
-    preview: "Please provide an update on the chemical tank delivery. Our production team needs to know the exact ETA...",
-    lastMessage: "Please provide an update on the chemical tank delivery. Our production team needs to know the exact ETA for coordination with safety protocols.",
-    time: "2 hours ago",
-    timestamp: "12:30 PM",
+    subject: "Hazmat Delivery Update",
+    preview: "Could you provide an update on the hazardous materials delivery scheduled for today? Our receiving team needs advance notice.",
+    lastMessage: "The delivery is on schedule. Our certified driver will arrive at your facility between 3-4 PM today.",
+    time: "1 hour ago",
+    timestamp: "1:45 PM",
     unread: true,
-    priority: "urgent",
+    priority: "high",
     category: "Delivery Update",
-    avatar: "bg-blue-100 text-blue-600",
-    messageType: "delivery-update"
+    avatar: "bg-green-100 text-green-600"
   },
   {
     id: 3,
-    sender: "Power Generation Co.",
-    initials: "PG",
-    subject: "Turbine Components - Delivery Complete",
-    preview: "Thank you for the successful delivery of turbine components. The quality of transport and handling was excellent...",
-    lastMessage: "Thank you for the successful delivery of turbine components. The quality of transport and handling was excellent. We'll have more projects coming up.",
-    time: "1 day ago",
+    sender: "Manufacturing Hub",
+    initials: "MH",
+    subject: "Regular Route Inquiry",
+    preview: "We're looking for a logistics partner for regular weekly shipments. Can you provide a quote for ongoing transportation services?",
+    lastMessage: "Thank you for the competitive quote. We'd like to discuss the weekly schedule and payment terms.",
+    time: "3 hours ago",
     timestamp: "Yesterday",
     unread: false,
-    priority: "low",
-    category: "Delivery Feedback",
-    avatar: "bg-orange-100 text-orange-600",
-    messageType: "delivery-update"
+    priority: "medium",
+    category: "Route Inquiry",
+    avatar: "bg-orange-100 text-orange-600"
   },
   {
     id: 4,
-    sender: "Auto Manufacturing",
-    initials: "AM",
-    subject: "Factory Relocation Quote Request",
-    preview: "We're planning a complete factory relocation next quarter. Could you provide a detailed quote for moving...",
-    lastMessage: "We're planning a complete factory relocation next quarter. Could you provide a detailed quote for moving our production equipment?",
-    time: "2 days ago",
+    sender: "Power Plant Solutions",
+    initials: "PP",
+    subject: "Equipment Transport",
+    preview: "We need specialized equipment for transporting heavy machinery. Do you have flatbed trucks with crane capabilities?",
+    lastMessage: "We have flatbed trucks with 50-ton capacity and can arrange crane services. What's the pickup location?",
+    time: "1 day ago",
     timestamp: "2 days ago",
     unread: false,
     priority: "medium",
-    category: "Quote Request",
-    avatar: "bg-pink-100 text-pink-600",
-    messageType: "transport-request"
-  },
-  {
-    id: 5,
-    sender: "Mining Operations Ltd.",
-    initials: "MO",
-    subject: "Heavy Equipment Transport",
-    preview: "We need specialized transport for our excavator and bulldozers from our closed site to the new mining location...",
-    lastMessage: "We need specialized transport for our excavator and bulldozers from our closed site to the new mining location. Heavy equipment transport required.",
-    time: "3 days ago",
-    timestamp: "3 days ago",
-    unread: false,
-    priority: "medium",
-    category: "Transport Request",
-    avatar: "bg-purple-100 text-purple-600",
-    messageType: "transport-request"
-  },
-  {
-    id: 6,
-    sender: "Cement Industries",
-    initials: "CI",
-    subject: "Route Optimization Suggestion",
-    preview: "Could we use the new highway bypass for faster delivery of raw materials? It might reduce transit time...",
-    lastMessage: "Route optimization suggestion: Could we use the new highway bypass for faster delivery of raw materials? It might reduce transit time by 3 hours.",
-    time: "4 days ago",
-    timestamp: "4 days ago",
-    unread: false,
-    priority: "low",
-    category: "Route Planning",
-    avatar: "bg-indigo-100 text-indigo-600",
-    messageType: "delivery-update"
+    category: "Equipment Transport",
+    avatar: "bg-pink-100 text-pink-600"
   }
 ];
 
@@ -140,62 +78,40 @@ const detailedMessages = {
     {
       id: 1,
       sender: "Steel Industries Ltd.",
-      content: "Hello, we have an urgent requirement for crane transport for our plant expansion project. We need a 200-ton mobile crane delivered to our facility.",
-      timestamp: "10:30 AM",
+      content: "Good afternoon! We have an urgent requirement for transporting 50 tons of steel plates.",
+      timestamp: "1:30 PM",
       isFromContact: true
     },
     {
       id: 2,
       sender: "You",
-      content: "Thank you for reaching out. I can confirm we have a 200-ton Liebherr mobile crane available. What's your delivery timeline and location?",
-      timestamp: "11:00 AM",
+      content: "Hello! We can handle that. What's the pickup and delivery location? Do you need it today?",
+      timestamp: "1:45 PM",
       isFromContact: false
     },
     {
       id: 3,
       sender: "Steel Industries Ltd.",
-      content: "Perfect! We need it delivered to our Pune facility by January 20th. The crane will be used for installing heavy structural components.",
-      timestamp: "11:15 AM",
+      content: "Pickup from our warehouse at Industrial Zone A, delivery to Construction Site B. Yes, we need it today if possible.",
+      timestamp: "2:00 PM",
       isFromContact: true
     },
     {
       id: 4,
       sender: "Steel Industries Ltd.",
-      content: "We need to confirm the crane availability for our plant expansion project. The equipment must be delivered by January 20th for the installation schedule.",
-      timestamp: "2:30 PM",
-      isFromContact: true
-    }
-  ],
-  2: [
-    {
-      id: 1,
-      sender: "Chemical Corp",
-      content: "Good morning! We have a chemical tank that needs to be transported from Mumbai to our Chennai facility. It's a specialized transport requirement.",
-      timestamp: "9:00 AM",
-      isFromContact: true
-    },
-    {
-      id: 2,
-      sender: "You",
-      content: "We specialize in chemical transport with all necessary safety certifications. Can you provide the tank specifications and hazmat details?",
-      timestamp: "9:30 AM",
-      isFromContact: false
-    },
-    {
-      id: 3,
-      sender: "Chemical Corp",
-      content: "Please provide an update on the chemical tank delivery. Our production team needs to know the exact ETA for coordination with safety protocols.",
-      timestamp: "12:30 PM",
+      content: "Please confirm the pickup time for the steel plates. Our crane operator will be available from 9 AM.",
+      timestamp: "2:15 PM",
       isFromContact: true
     }
   ]
 };
 
 const LogisticsVendorMessages = () => {
+  const [messages, setMessages] = useState(messageThreads);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterBy, setFilterBy] = useState("all");
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [conversationMessages, setConversationMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [emailSubject, setEmailSubject] = useState("");
   const [emailContent, setEmailContent] = useState("");
@@ -203,61 +119,63 @@ const LogisticsVendorMessages = () => {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
+      case "urgent": return "bg-red-100 text-red-800";
       case "high": return "bg-red-100 text-red-800";
-      case "urgent": return "bg-red-200 text-red-900";
       case "medium": return "bg-yellow-100 text-yellow-800";
       case "low": return "bg-green-100 text-green-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };
 
-  const getPriorityIcon = (priority: string) => {
-    switch (priority) {
-      case "high":
-      case "urgent": return <AlertCircle className="w-4 h-4" />;
-      case "medium": return <Clock className="w-4 h-4" />;
-      case "low": return <CheckCircle2 className="w-4 h-4" />;
-      default: return null;
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "Transport Request": return "bg-blue-100 text-blue-800";
+      case "Delivery Update": return "bg-green-100 text-green-800";
+      case "Route Inquiry": return "bg-orange-100 text-orange-800";
+      case "Equipment Transport": return "bg-pink-100 text-pink-800";
+      default: return "bg-gray-100 text-gray-800";
     }
   };
 
-  const filteredConversations = conversationThreads.filter(conversation => {
-    if (filterBy === "unread" && !conversation.unread) return false;
-    if (filterBy === "urgent" && !["high", "urgent"].includes(conversation.priority)) return false;
-    if (filterBy === "transport-request" && conversation.messageType !== "transport-request") return false;
-    if (filterBy === "delivery-update" && conversation.messageType !== "delivery-update") return false;
-    if (searchTerm && !conversation.subject.toLowerCase().includes(searchTerm.toLowerCase()) && 
-        !conversation.sender.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+  const filteredMessages = messages.filter(message => {
+    if (filterBy === "unread" && !message.unread) return false;
+    if (filterBy === "urgent" && message.priority !== "urgent" && message.priority !== "high") return false;
+    if (searchTerm && !message.subject.toLowerCase().includes(searchTerm.toLowerCase()) && 
+        !message.sender.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     return true;
   });
 
   const handleConversationSelect = (conversation: any) => {
     setSelectedConversation(conversation);
-    setMessages(detailedMessages[conversation.id] || []);
+    setConversationMessages(detailedMessages[conversation.id] || []);
     // Mark as read
-    const threadIndex = conversationThreads.findIndex(thread => thread.id === conversation.id);
-    if (threadIndex !== -1) {
-      conversationThreads[threadIndex].unread = false;
+    const messageIndex = messages.findIndex(msg => msg.id === conversation.id);
+    if (messageIndex !== -1) {
+      const updatedMessages = [...messages];
+      updatedMessages[messageIndex].unread = false;
+      setMessages(updatedMessages);
     }
   };
 
   const handleSendMessage = () => {
     if (newMessage.trim() && selectedConversation) {
       const message = {
-        id: messages.length + 1,
+        id: conversationMessages.length + 1,
         sender: "You",
         content: newMessage,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         isFromContact: false
       };
-      setMessages([...messages, message]);
+      setConversationMessages([...conversationMessages, message]);
       setNewMessage("");
       
       // Update the last message in the thread
-      const threadIndex = conversationThreads.findIndex(thread => thread.id === selectedConversation.id);
-      if (threadIndex !== -1) {
-        conversationThreads[threadIndex].lastMessage = newMessage;
-        conversationThreads[threadIndex].time = "Just now";
+      const messageIndex = messages.findIndex(msg => msg.id === selectedConversation.id);
+      if (messageIndex !== -1) {
+        const updatedMessages = [...messages];
+        updatedMessages[messageIndex].lastMessage = newMessage;
+        updatedMessages[messageIndex].time = "Just now";
+        setMessages(updatedMessages);
       }
       
       toast.success("Message sent successfully");
@@ -273,10 +191,15 @@ const LogisticsVendorMessages = () => {
     }
   };
 
-  const unreadCount = conversationThreads.filter(thread => thread.unread).length;
+  const unreadCount = messages.filter(msg => msg.unread).length;
+  const urgentCount = messages.filter(msg => msg.priority === "urgent" || msg.priority === "high").length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Helmet>
+        <title>Messages | Logistics Vendor Dashboard</title>
+      </Helmet>
+      
       <LogisticsVendorHeader />
       
       <div className="pt-16 flex-1 flex">
@@ -285,11 +208,16 @@ const LogisticsVendorMessages = () => {
           {/* Header */}
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-semibold text-gray-900">Messages Hub</h1>
+              <h1 className="text-xl font-semibold text-gray-900">Messages</h1>
               <div className="flex items-center gap-2">
                 {unreadCount > 0 && (
                   <Badge className="bg-red-100 text-red-800">
                     {unreadCount} unread
+                  </Badge>
+                )}
+                {urgentCount > 0 && (
+                  <Badge className="bg-yellow-100 text-yellow-800">
+                    {urgentCount} urgent
                   </Badge>
                 )}
                 <Dialog>
@@ -310,7 +238,7 @@ const LogisticsVendorMessages = () => {
                       </div>
                       <div>
                         <label className="text-sm font-medium">Subject</label>
-                        <Input placeholder="Transport request, delivery update..." />
+                        <Input placeholder="Message subject..." />
                       </div>
                       <div>
                         <label className="text-sm font-medium">Message</label>
@@ -349,8 +277,6 @@ const LogisticsVendorMessages = () => {
                   <SelectItem value="all">All Messages</SelectItem>
                   <SelectItem value="unread">Unread</SelectItem>
                   <SelectItem value="urgent">Urgent</SelectItem>
-                  <SelectItem value="transport-request">Transport Requests</SelectItem>
-                  <SelectItem value="delivery-update">Delivery Updates</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -358,7 +284,7 @@ const LogisticsVendorMessages = () => {
 
           {/* Conversations List */}
           <div className="flex-1 overflow-y-auto">
-            {filteredConversations.map((conversation) => (
+            {filteredMessages.map((conversation) => (
               <div
                 key={conversation.id}
                 className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
@@ -368,12 +294,12 @@ const LogisticsVendorMessages = () => {
               >
                 <div className="flex items-start gap-3">
                   <Avatar className={`h-10 w-10 ${conversation.avatar}`}>
-                    <AvatarFallback>{conversation.initials}</AvatarFallback>
+                    <Avat       arFallback>{conversation.initials}</AvatarFallback>
                   </Avatar>
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className={`font-medium text-gray-900 truncate ${conversation.unread ? "font-semibold" : ""}`}>
+                      <h3 className={`text-base font-medium text-gray-900 truncate ${conversation.unread ? "font-semibold" : ""}`}>
                         {conversation.sender}
                       </h3>
                       <span className="text-xs text-gray-500">{conversation.time}</span>
@@ -387,14 +313,12 @@ const LogisticsVendorMessages = () => {
                       {conversation.preview}
                     </p>
                     
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">
-                        <Truck className="w-3 h-3 mr-1" />
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge className={getCategoryColor(conversation.category)} variant="outline">
                         {conversation.category}
                       </Badge>
                       <Badge className={getPriorityColor(conversation.priority)}>
-                        {getPriorityIcon(conversation.priority)}
-                        <span className="ml-1 capitalize">{conversation.priority}</span>
+                        {conversation.priority}
                       </Badge>
                       {conversation.unread && (
                         <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
@@ -419,7 +343,7 @@ const LogisticsVendorMessages = () => {
                       <AvatarFallback>{selectedConversation.initials}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <h2 className="font-semibold text-gray-900">{selectedConversation.sender}</h2>
+                      <h2 className="text-base font-semibold text-gray-900">{selectedConversation.sender}</h2>
                       <p className="text-sm text-gray-500">{selectedConversation.category}</p>
                     </div>
                   </div>
@@ -453,7 +377,7 @@ const LogisticsVendorMessages = () => {
 
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((message) => (
+                {conversationMessages.map((message) => (
                   <div
                     key={message.id}
                     className={`flex ${message.isFromContact ? "justify-start" : "justify-end"}`}
@@ -507,7 +431,7 @@ const LogisticsVendorMessages = () => {
               <div className="text-center">
                 <MessageSquare className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-xl font-medium text-gray-900 mb-2">Select a conversation</h3>
-                <p className="text-gray-500">Choose a conversation from the sidebar to start messaging with your logistics clients</p>
+                <p className="text-gray-500">Choose a conversation from the sidebar to start messaging</p>
               </div>
             </div>
           )}
@@ -524,7 +448,7 @@ const LogisticsVendorMessages = () => {
             <div>
               <label className="text-sm font-medium">Subject</label>
               <Input 
-                placeholder="Transport quote, delivery confirmation..."
+                placeholder="Email subject..."
                 value={emailSubject}
                 onChange={(e) => setEmailSubject(e.target.value)}
               />

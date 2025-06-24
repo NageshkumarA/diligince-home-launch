@@ -28,7 +28,7 @@ const messageThreads = [
     priority: "high",
     category: "Product Inquiry",
     orderNumber: "PO-12456",
-    avatar: "bg-green-100 text-green-600"
+    avatar: "bg-blue-100 text-blue-600"
   },
   {
     id: 2,
@@ -42,7 +42,7 @@ const messageThreads = [
     unread: true,
     priority: "urgent",
     category: "Stock Inquiry",
-    avatar: "bg-blue-100 text-blue-600"
+    avatar: "bg-green-100 text-green-600"
   },
   {
     id: 3,
@@ -61,8 +61,8 @@ const messageThreads = [
   },
   {
     id: 4,
-    sender: "AutoParts Ltd.",
-    initials: "AP",
+    sender: "AutoParts Manufacturing Ltd.",
+    initials: "AM",
     subject: "Bulk Discount Inquiry",
     preview: "We're interested in placing a large order for hydraulic pumps. Can you offer bulk discounts for quantities over 100 units?",
     lastMessage: "We're interested in placing a large order for hydraulic pumps. Can you offer bulk discounts for quantities over 100 units?",
@@ -264,7 +264,7 @@ const ProductVendorMessages = () => {
                 )}
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700">
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700">
                       <Plus className="h-4 w-4 mr-2" />
                       New
                     </Button>
@@ -288,7 +288,7 @@ const ProductVendorMessages = () => {
                       </div>
                       <div className="flex justify-end space-x-2">
                         <Button variant="outline">Save Draft</Button>
-                        <Button className="bg-yellow-600 hover:bg-yellow-700">
+                        <Button className="bg-green-600 hover:bg-green-700">
                           <Send className="w-4 h-4 mr-2" />
                           Send Message
                         </Button>
@@ -331,8 +331,8 @@ const ProductVendorMessages = () => {
               <div
                 key={conversation.id}
                 className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
-                  selectedConversation?.id === conversation.id ? "bg-yellow-50 border-l-4 border-l-yellow-600" : ""
-                } ${conversation.unread ? "bg-yellow-25" : ""}`}
+                  selectedConversation?.id === conversation.id ? "bg-green-50 border-l-4 border-l-green-600" : ""
+                } ${conversation.unread ? "bg-green-25" : ""}`}
                 onClick={() => handleConversationSelect(conversation)}
               >
                 <div className="flex items-start gap-3">
@@ -342,7 +342,7 @@ const ProductVendorMessages = () => {
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className={`font-medium text-gray-900 truncate ${conversation.unread ? "font-semibold" : ""}`}>
+                      <h3 className={`text-base font-medium text-gray-900 truncate ${conversation.unread ? "font-semibold" : ""}`}>
                         {conversation.sender}
                       </h3>
                       <span className="text-xs text-gray-500">{conversation.time}</span>
@@ -369,7 +369,7 @@ const ProductVendorMessages = () => {
                         </Badge>
                       )}
                       {conversation.unread && (
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       )}
                     </div>
                   </div>
@@ -388,13 +388,13 @@ const ProductVendorMessages = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Avatar className={`h-10 w-10 ${selectedConversation.avatar}`}>
-                      <AvatarFallback>{selectedConversation.initials}</AvatarFallback>
+                      <AvatarFallback>{selectedConversation.initials}</AvatarFallBac        k>
                     </Avatar>
                     <div>
-                      <h2 className="font-semibold text-gray-900">{selectedConversation.sender}</h2>
+                      <h2 className="text-base font-semibold text-gray-900">{selectedConversation.sender}</h2>
                       <p className="text-sm text-gray-500">{selectedConversation.category}</p>
                       {selectedConversation.orderNumber && (
-                        <p className="text-xs text-yellow-600 font-medium">{selectedConversation.orderNumber}</p>
+                        <p className="text-xs text-green-600 font-medium">{selectedConversation.orderNumber}</p>
                       )}
                     </div>
                   </div>
@@ -436,11 +436,11 @@ const ProductVendorMessages = () => {
                     <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                       message.isFromContact
                         ? "bg-gray-100 text-gray-900"
-                        : "bg-yellow-600 text-white"
+                        : "bg-green-600 text-white"
                     }`}>
                       <p className="text-sm">{message.content}</p>
                       <p className={`text-xs mt-1 ${
-                        message.isFromContact ? "text-gray-500" : "text-yellow-200"
+                        message.isFromContact ? "text-gray-500" : "text-green-200"
                       }`}>
                         {message.timestamp}
                       </p>
@@ -470,7 +470,7 @@ const ProductVendorMessages = () => {
                   <Button 
                     onClick={handleSendMessage}
                     disabled={!newMessage.trim()}
-                    className="bg-yellow-600 hover:bg-yellow-700"
+                    className="bg-green-600 hover:bg-green-700"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
@@ -517,7 +517,7 @@ const ProductVendorMessages = () => {
               <Button variant="outline" onClick={() => setShowEmailModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSendEmail} className="bg-yellow-600 hover:bg-yellow-700">
+              <Button onClick={handleSendEmail} className="bg-green-600 hover:bg-green-700">
                 <Mail className="w-4 h-4 mr-2" />
                 Send Email
               </Button>
