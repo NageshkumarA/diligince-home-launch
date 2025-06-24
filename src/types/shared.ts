@@ -49,6 +49,50 @@ export interface NotificationSettings {
   marketing: boolean;
 }
 
+// Missing type definitions that other files depend on
+export interface BaseMessage {
+  id: string;
+  content: string;
+  timestamp: string;
+  type?: 'info' | 'warning' | 'error' | 'success';
+}
+
+export interface StatItem {
+  label: string;
+  value: string | number;
+  change?: string;
+  trend?: 'up' | 'down' | 'neutral';
+}
+
+export interface BaseModal {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+}
+
+export interface BaseNotification {
+  id?: string;
+  message: string;
+  type?: 'success' | 'error' | 'warning' | 'info';
+  duration?: number;
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'top-center' | 'bottom-center';
+}
+
+export interface ThemeConfig {
+  mode: 'light' | 'dark' | 'system';
+  colors: ThemeColors;
+}
+
+export interface ThemeColors {
+  primary: string;
+  secondary: string;
+  success: string;
+  warning: string;
+  error: string;
+  info: string;
+  neutral: string;
+}
+
 // Dashboard routing utility
 export const getDashboardRoute = (userProfile: UserProfile): string => {
   switch (userProfile.role) {
