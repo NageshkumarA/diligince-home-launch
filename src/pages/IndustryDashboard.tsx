@@ -219,7 +219,7 @@ const DashboardContainer = memo(() => {
                   {requirementData.map((req) => (
                     <TableRow key={req.id} className="border-gray-100 hover:bg-gray-50">
                       <TableCell className="font-medium text-gray-900">
-                        <Link to={`/requirement/${req.id}`} className="text-blue-600 hover:text-blue-700 hover:underline">
+                        <Link to={`/requirement/${req.id.toString()}`} className="text-blue-600 hover:text-blue-700 hover:underline">
                           {req.title}
                         </Link>
                       </TableCell>
@@ -239,7 +239,7 @@ const DashboardContainer = memo(() => {
                       <TableCell>
                         <div className="flex gap-2">
                           <Button size="sm" variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50" asChild>
-                            <Link to={`/industry-project-workflow/${req.id}`}>View Workflow</Link>
+                            <Link to={`/industry-project-workflow/${req.id.toString()}`}>View Workflow</Link>
                           </Button>
                           {req.status === "Completed" && (
                             <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
@@ -290,7 +290,7 @@ const DashboardContainer = memo(() => {
                   </Badge>
                   <div className="flex gap-2 mt-2 w-full">
                     <Button variant="outline" size="sm" className="flex-1 border-gray-200 text-gray-700 hover:bg-gray-50" asChild>
-                      <Link to={`/vendor-details/${stakeholder.id}`}>View Profile</Link>
+                      <Link to={`/vendor-details/${stakeholder.id.toString()}`}>View Profile</Link>
                     </Button>
                     <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
                       <Link to="/create-purchase-order">Create PO</Link>
