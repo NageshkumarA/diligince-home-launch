@@ -66,8 +66,8 @@ const orderData = [
   { id: "PO-2023-036", title: "Consulting Services", vendor: "EngiConsult Group", summary: "1 service", status: "In Progress", progress: 40 }
 ];
 
-// Helper functions - memoized for better performance
-const getStatusColor = memo((status: string) => {
+// Helper functions - regular functions instead of memoized to fix the runtime error
+const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case "active":
     case "in progress":
@@ -80,9 +80,9 @@ const getStatusColor = memo((status: string) => {
     default:
       return "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200";
   }
-});
+};
 
-const getCategoryColor = memo((category: string) => {
+const getCategoryColor = (category: string) => {
   switch (category.toLowerCase()) {
     case "product":
     case "product vendor":
@@ -97,7 +97,7 @@ const getCategoryColor = memo((category: string) => {
     default:
       return "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200";
   }
-});
+};
 
 // Memoized dashboard container
 const DashboardContainer = memo(() => {
