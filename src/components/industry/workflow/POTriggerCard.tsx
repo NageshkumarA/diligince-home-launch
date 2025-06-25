@@ -23,6 +23,14 @@ export const POTriggerCard = ({ acceptedQuote, onGeneratePO }: POTriggerCardProp
     }).format(amount);
   };
 
+  const handleTermsChange = (checked: boolean | "indeterminate") => {
+    setTermsAccepted(checked === true);
+  };
+
+  const handlePaymentTermsChange = (checked: boolean | "indeterminate") => {
+    setPaymentTermsAccepted(checked === true);
+  };
+
   const canGeneratePO = termsAccepted && paymentTermsAccepted;
 
   return (
@@ -101,7 +109,7 @@ export const POTriggerCard = ({ acceptedQuote, onGeneratePO }: POTriggerCardProp
             <Checkbox 
               id="terms" 
               checked={termsAccepted}
-              onCheckedChange={setTermsAccepted}
+              onCheckedChange={handleTermsChange}
             />
             <label htmlFor="terms" className="text-sm">
               I accept the standard terms and conditions for this purchase order
@@ -112,7 +120,7 @@ export const POTriggerCard = ({ acceptedQuote, onGeneratePO }: POTriggerCardProp
             <Checkbox 
               id="payment-terms" 
               checked={paymentTermsAccepted}
-              onCheckedChange={setPaymentTermsAccepted}
+              onCheckedChange={handlePaymentTermsChange}
             />
             <label htmlFor="payment-terms" className="text-sm">
               I agree to the payment schedule and retention terms outlined above
