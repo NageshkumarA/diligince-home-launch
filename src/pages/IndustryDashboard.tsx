@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { Suspense, memo } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import IndustryHeader from "@/components/industry/IndustryHeader";
@@ -25,8 +26,43 @@ import {
   Plus,
   Workflow
 } from "lucide-react";
+import { FastLoadingState } from "@/components/shared/loading/FastLoadingState";
+import { SkeletonLoader } from "@/components/shared/loading/SkeletonLoader";
+import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
+import { perfUtils } from "@/utils/performance";
 
-// Mock data for the dashboard
+// Lazy load dashboard components for better performance
+const DashboardMetrics = React.lazy(() => 
+  import("@/components/industry/dashboard/DashboardMetrics").then(module => ({
+    default: module.DashboardMetrics || (() => null)
+  })).catch(() => ({ default: () => null }))
+);
+
+const RequirementsTable = React.lazy(() => 
+  import("@/components/industry/dashboard/RequirementsTable").then(module => ({
+    default: module.RequirementsTable || (() => null)
+  })).catch(() => ({ default: () => null }))
+);
+
+const StakeholdersGrid = React.lazy(() => 
+  import("@/components/industry/dashboard/StakeholdersGrid").then(module => ({
+    default: module.StakeholdersGrid || (() => null)
+  })).catch(() => ({ default: () => null }))
+);
+
+const MessagesSection = React.lazy(() => 
+  import("@/components/industry/dashboard/MessagesSection").then(module => ({
+    default: module.MessagesSection || (() => null)
+  })).catch(() => ({ default: () => null }))
+);
+
+const OrdersSection = React.lazy(() => 
+  import("@/components/industry/dashboard/OrdersSection").then(module => ({
+    default: module.OrdersSection || (() => null)
+  })).catch(() => ({ default: () => null }))
+);
+
+// Mock data for the dashboard - moved to module level for better performance
 const metrics = [
   { title: "Active Requirements", count: 12, subtitle: "ongoing jobs", icon: <FileText className="w-8 h-8 text-blue-500" /> },
   { title: "Pending RFQs", count: 8, subtitle: "awaiting response", icon: <Clock className="w-8 h-8 text-amber-500" /> },
@@ -61,8 +97,8 @@ const orderData = [
   { id: "PO-2023-036", title: "Consulting Services", vendor: "EngiConsult Group", summary: "1 service", status: "In Progress", progress: 40 }
 ];
 
-// Helper function for status badge color
-const getStatusColor = (status: string) => {
+// Helper functions - memoized for better performance
+const getStatusColor = memo((status: string) => {
   switch (status.toLowerCase()) {
     case "active":
     case "in progress":
@@ -75,10 +111,9 @@ const getStatusColor = (status: string) => {
     default:
       return "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200";
   }
-};
+});
 
-// Helper function for category badge color
-const getCategoryColor = (category: string) => {
+const getCategoryColor = memo((category: string) => {
   switch (category.toLowerCase()) {
     case "product":
     case "product vendor":
@@ -93,67 +128,70 @@ const getCategoryColor = (category: string) => {
     default:
       return "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200";
   }
-};
+});
 
-const IndustryDashboard = () => {
+// Memoized dashboard container
+const DashboardContainer = memo(() => {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Helmet>
-        <title>Industry Dashboard | Diligince.ai</title>
-      </Helmet>
+    <main className="flex-1 container mx-auto px-4 py-8 pt-20">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Industry Dashboard</h1>
+        <p className="text-gray-700 text-lg">Welcome back to your procurement dashboard</p>
+      </div>
       
-      <IndustryHeader />
+      {/* Quick Actions Section */}
+      <div className="mb-8">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
+            <Link to="/create-requirement" className="flex items-center gap-3">
+              <FileText className="h-6 w-6" />
+              <div>
+                <div className="font-semibold">Post New Requirement</div>
+                <div className="text-sm opacity-90">Find vendors and services</div>
+              </div>
+            </Link>
+          </Button>
+          <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
+            <Link to="/create-purchase-order" className="flex items-center gap-3">
+              <ShoppingCart className="h-6 w-6" />
+              <div>
+                <div className="font-semibold">Create Purchase Order</div>
+                <div className="text-sm opacity-90">Generate new PO</div>
+              </div>
+            </Link>
+          </Button>
+          <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
+            <Link to="/industry-project-workflow/demo" className="flex items-center gap-3">
+              <Workflow className="h-6 w-6" />
+              <div>
+                <div className="font-semibold">Project Workflows</div>
+                <div className="text-sm opacity-90">Manage project progress</div>
+              </div>
+            </Link>
+          </Button>
+          <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
+            <Link to="/industry-messages" className="flex items-center gap-3">
+              <MessageSquare className="h-6 w-6" />
+              <div>
+                <div className="font-semibold">View Messages</div>
+                <div className="text-sm opacity-90">Check communications</div>
+              </div>
+            </Link>
+          </Button>
+        </div>
+      </div>
       
-      <main className="flex-1 container mx-auto px-4 py-8 pt-20">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Industry Dashboard</h1>
-          <p className="text-gray-700 text-lg">Welcome back to your procurement dashboard</p>
+      {/* Key Metrics Section */}
+      <Suspense fallback={
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-white p-6 rounded-lg border border-gray-100">
+              <SkeletonLoader lines={2} height="20px" />
+            </div>
+          ))}
         </div>
-        
-        {/* Quick Actions Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
-              <Link to="/create-requirement" className="flex items-center gap-3">
-                <FileText className="h-6 w-6" />
-                <div>
-                  <div className="font-semibold">Post New Requirement</div>
-                  <div className="text-sm opacity-90">Find vendors and services</div>
-                </div>
-              </Link>
-            </Button>
-            <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
-              <Link to="/create-purchase-order" className="flex items-center gap-3">
-                <ShoppingCart className="h-6 w-6" />
-                <div>
-                  <div className="font-semibold">Create Purchase Order</div>
-                  <div className="text-sm opacity-90">Generate new PO</div>
-                </div>
-              </Link>
-            </Button>
-            <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
-              <Link to="/industry-project-workflow/demo" className="flex items-center gap-3">
-                <Workflow className="h-6 w-6" />
-                <div>
-                  <div className="font-semibold">Project Workflows</div>
-                  <div className="text-sm opacity-90">Manage project progress</div>
-                </div>
-              </Link>
-            </Button>
-            <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
-              <Link to="/industry-messages" className="flex items-center gap-3">
-                <MessageSquare className="h-6 w-6" />
-                <div>
-                  <div className="font-semibold">View Messages</div>
-                  <div className="text-sm opacity-90">Check communications</div>
-                </div>
-              </Link>
-            </Button>
-          </div>
-        </div>
-        
-        {/* Key Metrics Section */}
+      }>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {metrics.map((metric, index) => (
             <Card key={index} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
@@ -174,19 +212,25 @@ const IndustryDashboard = () => {
             </Card>
           ))}
         </div>
+      </Suspense>
+      
+      {/* Recent Requirements Section */}
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-gray-800">Recent Requirements</h2>
+          <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
+            <Link to="/create-requirement">
+              <Plus className="mr-2 h-4 w-4" />
+              Post New Requirement
+            </Link>
+          </Button>
+        </div>
         
-        {/* Recent Requirements Section */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-800">Recent Requirements</h2>
-            <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
-              <Link to="/create-requirement">
-                <Plus className="mr-2 h-4 w-4" />
-                Post New Requirement
-              </Link>
-            </Button>
+        <Suspense fallback={
+          <div className="bg-white p-6 rounded-lg border border-gray-100">
+            <SkeletonLoader lines={8} />
           </div>
-          
+        }>
           <Card className="bg-white border border-gray-100 shadow-sm">
             <CardContent className="p-0">
               <Table>
@@ -238,19 +282,29 @@ const IndustryDashboard = () => {
               </Table>
             </CardContent>
           </Card>
-          
-          <div className="flex justify-center mt-6">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Requirements</Button>
-          </div>
+        </Suspense>
+        
+        <div className="flex justify-center mt-6">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Requirements</Button>
+        </div>
+      </div>
+      
+      {/* Matched Stakeholders Section */}
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-gray-800">Matched Stakeholders</h2>
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">Find Stakeholders</Button>
         </div>
         
-        {/* Matched Stakeholders Section */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-800">Matched Stakeholders</h2>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">Find Stakeholders</Button>
+        <Suspense fallback={
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-white p-6 rounded-lg border border-gray-100">
+                <SkeletonLoader lines={4} />
+              </div>
+            ))}
           </div>
-          
+        }>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {stakeholderData.map((stakeholder) => (
               <Card key={stakeholder.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
@@ -274,15 +328,21 @@ const IndustryDashboard = () => {
               </Card>
             ))}
           </div>
+        </Suspense>
+      </div>
+      
+      {/* Recent Messages Section */}
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-gray-800">Recent Messages</h2>
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Messages</Button>
         </div>
         
-        {/* Recent Messages Section */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-800">Recent Messages</h2>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Messages</Button>
+        <Suspense fallback={
+          <div className="bg-white p-6 rounded-lg border border-gray-100">
+            <SkeletonLoader lines={5} />
           </div>
-          
+        }>
           <Card className="bg-white border border-gray-100 shadow-sm">
             <CardContent className="p-6">
               <ul className="divide-y divide-gray-100">
@@ -303,23 +363,33 @@ const IndustryDashboard = () => {
               </ul>
             </CardContent>
           </Card>
+        </Suspense>
+      </div>
+      
+      {/* Active Orders Section */}
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-gray-800">Recent Orders</h2>
+          <div className="flex gap-3">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Orders</Button>
+            <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
+              <Link to="/create-purchase-order">
+                <Plus className="mr-2 h-4 w-4" />
+                Create New PO
+              </Link>
+            </Button>
+          </div>
         </div>
         
-        {/* Active Orders Section */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-800">Recent Orders</h2>
-            <div className="flex gap-3">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Orders</Button>
-              <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
-                <Link to="/create-purchase-order">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create New PO
-                </Link>
-              </Button>
-            </div>
+        <Suspense fallback={
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="bg-white p-6 rounded-lg border border-gray-100">
+                <SkeletonLoader lines={6} />
+              </div>
+            ))}
           </div>
-          
+        }>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {orderData.map((order) => (
               <Card key={order.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
@@ -356,10 +426,34 @@ const IndustryDashboard = () => {
               </Card>
             ))}
           </div>
-        </div>
-      </main>
+        </Suspense>
+      </div>
+    </main>
+  );
+});
+
+DashboardContainer.displayName = "DashboardContainer";
+
+const IndustryDashboard = () => {
+  console.log("IndustryDashboard rendering - optimized version");
+  usePerformanceMonitor("IndustryDashboard");
+
+  // Initialize performance monitoring
+  React.useEffect(() => {
+    perfUtils.measureCoreWebVitals();
+  }, []);
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Helmet>
+        <title>Industry Dashboard | Diligince.ai</title>
+      </Helmet>
+      
+      <IndustryHeader />
+      
+      <DashboardContainer />
     </div>
   );
 };
 
-export default IndustryDashboard;
+export default memo(IndustryDashboard);
