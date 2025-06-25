@@ -31,43 +31,12 @@ import { SkeletonLoader } from "@/components/shared/loading/SkeletonLoader";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { perfUtils } from "@/utils/performance";
 
-// Lazy load dashboard components for better performance
-const DashboardMetrics = React.lazy(() => 
-  import("@/components/industry/dashboard/DashboardMetrics").then(module => ({
-    default: module.DashboardMetrics || (() => null)
-  })).catch(() => ({ default: () => null }))
-);
-
-const RequirementsTable = React.lazy(() => 
-  import("@/components/industry/dashboard/RequirementsTable").then(module => ({
-    default: module.RequirementsTable || (() => null)
-  })).catch(() => ({ default: () => null }))
-);
-
-const StakeholdersGrid = React.lazy(() => 
-  import("@/components/industry/dashboard/StakeholdersGrid").then(module => ({
-    default: module.StakeholdersGrid || (() => null)
-  })).catch(() => ({ default: () => null }))
-);
-
-const MessagesSection = React.lazy(() => 
-  import("@/components/industry/dashboard/MessagesSection").then(module => ({
-    default: module.MessagesSection || (() => null)
-  })).catch(() => ({ default: () => null }))
-);
-
-const OrdersSection = React.lazy(() => 
-  import("@/components/industry/dashboard/OrdersSection").then(module => ({
-    default: module.OrdersSection || (() => null)
-  })).catch(() => ({ default: () => null }))
-);
-
 // Mock data for the dashboard - moved to module level for better performance
 const metrics = [
-  { title: "Active Requirements", count: 12, subtitle: "ongoing jobs", icon: <FileText className="w-8 h-8 text-blue-500" /> },
-  { title: "Pending RFQs", count: 8, subtitle: "awaiting response", icon: <Clock className="w-8 h-8 text-amber-500" /> },
-  { title: "Active POs", count: 5, subtitle: "in progress", icon: <ShoppingCart className="w-8 h-8 text-green-500" /> },
-  { title: "Completed Jobs", count: 27, subtitle: "this year", icon: <CheckCircle className="w-8 h-8 text-purple-500" /> }
+  { title: "Active Requirements", count: 12, subtitle: "ongoing jobs", icon: FileText },
+  { title: "Pending RFQs", count: 8, subtitle: "awaiting response", icon: Clock },
+  { title: "Active POs", count: 5, subtitle: "in progress", icon: ShoppingCart },
+  { title: "Completed Jobs", count: 27, subtitle: "this year", icon: CheckCircle }
 ];
 
 const requirementData = [
@@ -193,24 +162,27 @@ const DashboardContainer = memo(() => {
         </div>
       }>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {metrics.map((metric, index) => (
-            <Card key={index} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">{metric.title}</p>
-                    <p className="text-3xl font-bold text-gray-900 mb-1">{metric.count}</p>
-                    <p className="text-sm font-medium text-gray-500">{metric.subtitle}</p>
-                  </div>
-                  <div className="flex-shrink-0 ml-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                      {React.cloneElement(metric.icon, { className: "w-6 h-6 text-blue-600" })}
+          {metrics.map((metric, index) => {
+            const IconComponent = metric.icon;
+            return (
+              <Card key={index} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">{metric.title}</p>
+                      <p className="text-3xl font-bold text-gray-900 mb-1">{metric.count}</p>
+                      <p className="text-sm font-medium text-gray-500">{metric.subtitle}</p>
+                    </div>
+                    <div className="flex-shrink-0 ml-4">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                        <IconComponent className="w-6 h-6 text-blue-600" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </Suspense>
       
