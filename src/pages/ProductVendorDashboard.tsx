@@ -1,10 +1,9 @@
-
 import React, { Suspense, memo } from "react";
 import VendorHeader from "@/components/vendor/VendorHeader";
 import { FastLoadingState } from "@/components/shared/loading/FastLoadingState";
 import { SkeletonLoader } from "@/components/shared/loading/SkeletonLoader";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
-import { performance as perfUtils } from "@/utils/performance";
+import { perfUtils } from "@/utils/performance";
 
 // Lazy load dashboard components for better performance
 const DashboardStats = React.lazy(() => 

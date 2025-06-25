@@ -1,6 +1,6 @@
 
 // Performance utilities for enterprise-grade loading
-export const performance = {
+export const perfUtils = {
   // Measure component render time
   measureRender: (componentName: string, fn: () => void) => {
     const start = performance.now();
