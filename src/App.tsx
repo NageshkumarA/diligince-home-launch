@@ -27,6 +27,7 @@ const IndustryDashboard = React.lazy(() => import("./pages/IndustryDashboard"));
 const IndustryProfile = React.lazy(() => import("./pages/IndustryProfile"));
 const IndustryMessages = React.lazy(() => import("./pages/IndustryMessages"));
 const IndustryDocuments = React.lazy(() => import("./pages/IndustryDocuments"));
+const IndustryProjectWorkflow = React.lazy(() => import("./pages/IndustryProjectWorkflow"));
 const ProfessionalDashboard = React.lazy(() => import("./pages/ProfessionalDashboard"));
 const ProfessionalProfile = React.lazy(() => import("./pages/ProfessionalProfile"));
 const ProfessionalCalendar = React.lazy(() => import("./pages/ProfessionalCalendar"));
@@ -101,6 +102,7 @@ function App() {
                           <Route path="/industry-profile" element={<RouteErrorBoundary routeName="Industry Profile"><IndustryProfile /></RouteErrorBoundary>} />
                           <Route path="/industry-messages" element={<RouteErrorBoundary routeName="Industry Messages"><IndustryMessages /></RouteErrorBoundary>} />
                           <Route path="/industry-documents" element={<RouteErrorBoundary routeName="Industry Documents"><IndustryDocuments /></RouteErrorBoundary>} />
+                          <Route path="/industry-project-workflow/:projectId" element={<RouteErrorBoundary routeName="Project Workflow"><IndustryProjectWorkflow /></RouteErrorBoundary>} />
                           <Route path="/create-requirement" element={<RouteErrorBoundary routeName="Create Requirement"><CreateRequirement /></RouteErrorBoundary>} />
                           <Route path="/create-purchase-order" element={<RouteErrorBoundary routeName="Create Purchase Order"><CreatePurchaseOrder /></RouteErrorBoundary>} />
                           

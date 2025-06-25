@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
@@ -23,7 +22,8 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
-  Plus
+  Plus,
+  Workflow
 } from "lucide-react";
 
 // Mock data for the dashboard
@@ -113,7 +113,7 @@ const IndustryDashboard = () => {
         {/* Quick Actions Section */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
               <Link to="/create-requirement" className="flex items-center gap-3">
                 <FileText className="h-6 w-6" />
@@ -129,6 +129,15 @@ const IndustryDashboard = () => {
                 <div>
                   <div className="font-semibold">Create Purchase Order</div>
                   <div className="text-sm opacity-90">Generate new PO</div>
+                </div>
+              </Link>
+            </Button>
+            <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
+              <Link to="/industry-project-workflow/demo" className="flex items-center gap-3">
+                <Workflow className="h-6 w-6" />
+                <div>
+                  <div className="font-semibold">Project Workflows</div>
+                  <div className="text-sm opacity-90">Manage project progress</div>
                 </div>
               </Link>
             </Button>
@@ -212,11 +221,16 @@ const IndustryDashboard = () => {
                         {req.date}
                       </TableCell>
                       <TableCell>
-                        {req.status === "Completed" && (
-                          <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
-                            <Link to="/create-purchase-order">Create PO</Link>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50" asChild>
+                            <Link to={`/industry-project-workflow/${req.id}`}>View Workflow</Link>
                           </Button>
-                        )}
+                          {req.status === "Completed" && (
+                            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
+                              <Link to="/create-purchase-order">Create PO</Link>
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -329,16 +343,14 @@ const IndustryDashboard = () => {
                   </div>
                   
                   <div className="flex justify-between gap-2">
+                    <Button size="sm" variant="outline" className="flex-1 border-gray-200 text-gray-700 hover:bg-gray-50" asChild>
+                      <Link to={`/industry-project-workflow/${order.id}`}>Manage Workflow</Link>
+                    </Button>
                     <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
                       <Link to={`/work-completion-payment/${order.id}`}>
                         {order.progress === 100 ? "Review & Pay" : "View Details"}
                       </Link>
                     </Button>
-                    {order.progress < 100 && (
-                      <Button size="sm" variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50" asChild>
-                        <Link to="/create-purchase-order">Duplicate PO</Link>
-                      </Button>
-                    )}
                   </div>
                 </CardContent>
               </Card>
