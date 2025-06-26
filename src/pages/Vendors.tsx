@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useStakeholder } from "@/contexts/StakeholderContext";
 import { VendorDetailsModal } from "@/components/stakeholder/VendorDetailsModal";
 import { ExpertDetailsModal } from "@/components/stakeholder/ExpertDetailsModal";
+import { AddExpertModal } from "@/components/industry/AddExpertModal";
 import { StakeholderProfile } from "@/types/stakeholder";
 import { useModal } from "@/hooks/useModal";
 import { Star, MapPin, Award } from "lucide-react";
@@ -19,6 +20,7 @@ const Vendors = () => {
   const [selectedStakeholder, setSelectedStakeholder] = useState<StakeholderProfile | null>(null);
   const { isOpen: isVendorModalOpen, openModal: openVendorModal, closeModal: closeVendorModal } = useModal();
   const { isOpen: isExpertModalOpen, openModal: openExpertModal, closeModal: closeExpertModal } = useModal();
+  const { isOpen: isAddExpertModalOpen, openModal: openAddExpertModal, closeModal: closeAddExpertModal } = useModal();
 
   // Filter stakeholders by type
   const vendors = stakeholderProfiles.filter(s => 
@@ -172,8 +174,11 @@ const Vendors = () => {
           
           <TabsContent value="experts" className="space-y-6 mt-8">
             <div className="flex justify-end">
-              <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
-                <Link to="/professional-profile">Add Expert</Link>
+              <Button 
+                onClick={openAddExpertModal}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
+              >
+                Add Expert
               </Button>
             </div>
             
@@ -281,6 +286,12 @@ const Vendors = () => {
           }}
         />
       )}
+
+      {/* Add Expert Modal */}
+      <AddExpertModal
+        isOpen={isAddExpertModalOpen}
+        onClose={closeAddExpertModal}
+      />
     </div>
   );
 };
