@@ -65,7 +65,7 @@ export const PaymentMilestoneTracker = ({
             <span>{formatCurrency(totalPaymentsReleased)} of {formatCurrency(totalProjectValue)}</span>
           </div>
           <Progress value={progressPercentage} className="h-2" />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-300">
             {completedPayments} of {milestones.length} milestones completed
           </p>
         </div>
@@ -83,9 +83,9 @@ export const PaymentMilestoneTracker = ({
               
               <div className="grid md:grid-cols-3 gap-4 mb-3">
                 <div>
-                  <p className="text-sm text-gray-600">Amount</p>
+                  <p className="text-sm text-gray-50">Amount</p>
                   <p className="font-medium">{formatCurrency(milestone.amount)}</p>
-                  <p className="text-xs text-gray-500">({milestone.percentage}% of total)</p>
+                  <p className="text-xs text-gray-300">({milestone.percentage}% of total)</p>
                 </div>
                 
                 {milestone.dueDate && <div>
@@ -99,7 +99,7 @@ export const PaymentMilestoneTracker = ({
                   </div>}
               </div>
               
-              <p className="text-sm text-gray-600 mb-3">{milestone.description}</p>
+              <p className="text-sm mb-3 text-gray-300">{milestone.description}</p>
               
               {milestone.status === 'pending' && <AlertDialog>
                   <AlertDialogTrigger asChild>

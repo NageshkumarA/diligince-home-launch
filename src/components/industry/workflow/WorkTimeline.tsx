@@ -62,13 +62,13 @@ export const WorkTimeline = ({
                 {/* Event content */}
                 <div className="flex-1 min-w-0 pb-8">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium text-gray-900 text-xl">{event.title}</h3>
+                    <h3 className="font-medium text-xl text-gray-50">{event.title}</h3>
                     {getStatusBadge(event.status)}
                   </div>
                   
-                  <p className="text-sm text-gray-600 mb-2">{event.description}</p>
+                  <p className="text-sm mb-2 text-gray-300">{event.description}</p>
                   
-                  {event.timestamp && <p className="text-xs text-gray-500">
+                  {event.timestamp && <p className="text-xs text-gray-300">
                       {new Date(event.timestamp).toLocaleString()}
                     </p>}
                 </div>
