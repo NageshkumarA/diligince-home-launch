@@ -35,11 +35,11 @@ export const QuoteReviewTable = ({
             <thead>
               <tr className="border-b">
                 <th className="text-left p-4 font-medium bg-blue-500">Vendor</th>
-                <th className="text-left p-4 font-medium bg-blue-500">Quote Amount</th>
-                <th className="text-left p-4 font-medium bg-blue-500">Delivery</th>
+                <th className="text-left p-4 font-medium bg-blue-500">     Quote Amount</th>
+                <th className="text-left p-4 font-medium bg-blue-500">    Delivery</th>
                 <th className="text-left p-4 font-medium bg-blue-500">Rating</th>
-                <th className="text-left p-4 font-medium bg-blue-500">Proposal</th>
-                <th className="text-left p-4 font-medium bg-blue-500">Action</th>
+                <th className="text-left p-4 font-medium bg-blue-500">                    Proposal</th>
+                <th className="text-left p-4 font-medium bg-blue-500">       Action</th>
               </tr>
             </thead>
             <tbody>

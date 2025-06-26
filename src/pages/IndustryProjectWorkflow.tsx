@@ -234,7 +234,7 @@ const IndustryProjectWorkflow = () => {
         </div>
 
         {/* Workflow Progress Indicator */}
-        <div className="mb-8 bg-white p-6 rounded-lg shadow-sm border">
+        <div className="mb-8 p-6 rounded-lg shadow-sm border bg-blue-50">
           <h2 className="font-semibold mb-4 text-neutral-950 text-2xl">Workflow Progress</h2>
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
