@@ -1,11 +1,9 @@
-
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { TrendingUp, User, Clock } from "lucide-react";
 import { ProjectDetailsModal } from "./ProjectDetailsModal";
-
 interface Project {
   id: number;
   title: string;
@@ -18,37 +16,37 @@ interface Project {
   totalValue: string;
   remainingDays: number;
 }
-
 interface OngoingProjectsProps {
   projects: Project[];
   onProjectUpdate: (projectId: number, updates: any) => void;
 }
-
-export const OngoingProjects = ({ projects, onProjectUpdate }: OngoingProjectsProps) => {
+export const OngoingProjects = ({
+  projects,
+  onProjectUpdate
+}: OngoingProjectsProps) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const handleProjectClick = (project: Project) => {
     setSelectedProject(project);
     setIsModalOpen(true);
   };
-
   const handleModalClose = () => {
     setIsModalOpen(false);
     setSelectedProject(null);
   };
-
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'in-progress': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'scheduled': return 'bg-green-100 text-green-800 border-green-200';
-      case 'completed': return 'bg-gray-100 text-gray-800 border-gray-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'in-progress':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'scheduled':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'completed':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
-
-  return (
-    <>
+  return <>
       <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="h-5 w-5 text-purple-600" />
@@ -56,15 +54,10 @@ export const OngoingProjects = ({ projects, onProjectUpdate }: OngoingProjectsPr
         </div>
         
         <div className="space-y-4">
-          {projects.map((project) => (
-            <div 
-              key={project.id}
-              className="p-4 bg-white border border-gray-200 rounded-lg hover:border-purple-300 cursor-pointer transition-colors"
-              onClick={() => handleProjectClick(project)}
-            >
+          {projects.map(project => <div key={project.id} className="p-4 bg-white border border-gray-200 rounded-lg hover:border-purple-300 cursor-pointer transition-colors" onClick={() => handleProjectClick(project)}>
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h4 className="font-medium text-gray-900">{project.title}</h4>
+                  <h4 className="font-medium text-gray-900 text-lg">{project.title}</h4>
                   <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
                     <User size={14} />
                     {project.client}
@@ -90,24 +83,15 @@ export const OngoingProjects = ({ projects, onProjectUpdate }: OngoingProjectsPr
                 </span>
                 <span className="font-medium text-purple-600">{project.totalValue}</span>
               </div>
-            </div>
-          ))}
+            </div>)}
           
-          {projects.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
+          {projects.length === 0 && <div className="text-center py-8 text-gray-500">
               <TrendingUp className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p>No ongoing projects</p>
-            </div>
-          )}
+            </div>}
         </div>
       </Card>
 
-      <ProjectDetailsModal
-        isOpen={isModalOpen}
-        onClose={handleModalClose}
-        project={selectedProject}
-        onUpdate={onProjectUpdate}
-      />
-    </>
-  );
+      <ProjectDetailsModal isOpen={isModalOpen} onClose={handleModalClose} project={selectedProject} onUpdate={onProjectUpdate} />
+    </>;
 };
