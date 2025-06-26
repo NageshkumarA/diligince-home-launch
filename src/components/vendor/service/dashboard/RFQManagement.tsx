@@ -1,35 +1,29 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, MapPin, Calendar, Clock, Briefcase } from "lucide-react";
-
-const rfqData = [
-  {
-    id: 1,
-    title: "SCADA System Implementation",
-    company: "Steel Plant Ltd.",
-    description: "Complete SCADA system setup for steel manufacturing process control",
-    location: "Mumbai, Maharashtra",
-    budget: "₹750,000",
-    deadline: "2024-05-15",
-    priority: "urgent",
-    skills: ["PLC Programming", "SCADA", "Industrial Automation"]
-  },
-  {
-    id: 2,
-    title: "Electrical Panel Installation",
-    company: "Power Gen Co.",
-    description: "Design and installation of control panels for power generation facility",
-    location: "Pune, Maharashtra",
-    budget: "₹450,000",
-    deadline: "2024-05-20",
-    priority: "medium",
-    skills: ["Electrical Design", "Panel Installation", "Testing"]
-  }
-];
-
+const rfqData = [{
+  id: 1,
+  title: "SCADA System Implementation",
+  company: "Steel Plant Ltd.",
+  description: "Complete SCADA system setup for steel manufacturing process control",
+  location: "Mumbai, Maharashtra",
+  budget: "₹750,000",
+  deadline: "2024-05-15",
+  priority: "urgent",
+  skills: ["PLC Programming", "SCADA", "Industrial Automation"]
+}, {
+  id: 2,
+  title: "Electrical Panel Installation",
+  company: "Power Gen Co.",
+  description: "Design and installation of control panels for power generation facility",
+  location: "Pune, Maharashtra",
+  budget: "₹450,000",
+  deadline: "2024-05-20",
+  priority: "medium",
+  skills: ["Electrical Design", "Panel Installation", "Testing"]
+}];
 const getPriorityColor = (priority: string) => {
   switch (priority) {
     case 'urgent':
@@ -42,19 +36,17 @@ const getPriorityColor = (priority: string) => {
       return 'bg-gray-50 text-gray-700 border-gray-200';
   }
 };
-
 export const RFQManagement = () => {
-  return (
-    <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+  return <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
       <CardHeader className="border-b border-gray-50 pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
-              <FileText className="h-5 w-5 text-blue-600" />
+              <FileText className="h-5 w-5 text-blue-600 bg-yellow-600" />
             </div>
             RFQ Management
           </CardTitle>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
+          <Button className="text-white font-medium bg-yellow-600 hover:bg-yellow-500">
             View All RFQs
           </Button>
         </div>
@@ -62,8 +54,7 @@ export const RFQManagement = () => {
       
       <CardContent className="p-6">
         <div className="space-y-6 max-h-96 overflow-y-auto">
-          {rfqData.map((rfq) => (
-            <div key={rfq.id} className="bg-gray-50 border border-gray-100 rounded-xl p-6 hover:bg-gray-100 transition-colors">
+          {rfqData.map(rfq => <div key={rfq.id} className="bg-gray-50 border border-gray-100 rounded-xl p-6 hover:bg-gray-100 transition-colors">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <h4 className="font-bold text-gray-900 text-lg mb-2">{rfq.title}</h4>
@@ -97,29 +88,23 @@ export const RFQManagement = () => {
               
               <div className="flex items-center justify-between">
                 <div className="flex flex-wrap gap-2">
-                  {rfq.skills.slice(0, 2).map((skill, index) => (
-                    <Badge key={index} variant="secondary" className="text-sm bg-blue-50 text-blue-700 border-blue-200 px-3 py-1">
+                  {rfq.skills.slice(0, 2).map((skill, index) => <Badge key={index} variant="secondary" className="text-sm text-teal -700 border-blue-200 px-3 py-1 bg-yellow-600">
                       {skill}
-                    </Badge>
-                  ))}
-                  {rfq.skills.length > 2 && (
-                    <Badge variant="secondary" className="text-sm bg-gray-100 text-gray-600 px-3 py-1">
+                    </Badge>)}
+                  {rfq.skills.length > 2 && <Badge variant="secondary" className="text-sm bg-gray-100 text-gray-600 px-3 py-1">
                       +{rfq.skills.length - 2} more
-                    </Badge>
-                  )}
+                    </Badge>}
                 </div>
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4">
+                <Button size="sm" className="text-white font-semibold px-4 bg-amber-600 hover:bg-amber-500">
                   Submit Proposal
                 </Button>
               </div>
-            </div>
-          ))}
+            </div>)}
         </div>
         
-        <Button className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3">
+        <Button className="w-full mt-6 text-white font-semibold py-3 bg-yellow-600 hover:bg-yellow-500">
           View All RFQs
         </Button>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };

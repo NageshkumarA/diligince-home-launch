@@ -1,41 +1,34 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Users, Calendar, Clock } from "lucide-react";
-
-const teamMembers = [
-  {
-    id: 1,
-    name: "Rajesh Kumar",
-    role: "Senior Electrical Engineer",
-    availability: "available",
-    nextAssignment: "May 20, 2024",
-    skills: ["PLC Programming", "SCADA", "Panel Design"],
-    experience: "8 years"
-  },
-  {
-    id: 2,
-    name: "Priya Sharma",
-    role: "Control Systems Engineer",
-    availability: "busy",
-    currentProject: "Steel Plant SCADA",
-    nextAvailable: "May 25, 2024",
-    skills: ["Control Systems", "HMI Design"],
-    experience: "6 years"
-  },
-  {
-    id: 3,
-    name: "Amit Patel",
-    role: "Automation Specialist",
-    availability: "available",
-    nextAssignment: "May 18, 2024",
-    skills: ["Industrial Automation", "Robotics"],
-    experience: "10 years"
-  }
-];
-
+const teamMembers = [{
+  id: 1,
+  name: "Rajesh Kumar",
+  role: "Senior Electrical Engineer",
+  availability: "available",
+  nextAssignment: "May 20, 2024",
+  skills: ["PLC Programming", "SCADA", "Panel Design"],
+  experience: "8 years"
+}, {
+  id: 2,
+  name: "Priya Sharma",
+  role: "Control Systems Engineer",
+  availability: "busy",
+  currentProject: "Steel Plant SCADA",
+  nextAvailable: "May 25, 2024",
+  skills: ["Control Systems", "HMI Design"],
+  experience: "6 years"
+}, {
+  id: 3,
+  name: "Amit Patel",
+  role: "Automation Specialist",
+  availability: "available",
+  nextAssignment: "May 18, 2024",
+  skills: ["Industrial Automation", "Robotics"],
+  experience: "10 years"
+}];
 const getAvailabilityColor = (status: string) => {
   switch (status) {
     case 'available':
@@ -48,10 +41,8 @@ const getAvailabilityColor = (status: string) => {
       return 'bg-gray-50 text-gray-700 border-gray-200';
   }
 };
-
 export const TeamAvailability = () => {
-  return (
-    <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+  return <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
       <CardHeader className="border-b border-gray-50 pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-3">
@@ -60,7 +51,7 @@ export const TeamAvailability = () => {
             </div>
             Team Availability
           </CardTitle>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
+          <Button className="text-white font-medium bg-yellow-600 hover:bg-yellow-500">
             Manage Team
           </Button>
         </div>
@@ -68,8 +59,7 @@ export const TeamAvailability = () => {
       
       <CardContent className="p-6">
         <div className="space-y-5 max-h-96 overflow-y-auto">
-          {teamMembers.map((member) => (
-            <div key={member.id} className="bg-gray-50 border border-gray-100 rounded-xl p-5 hover:bg-gray-100 transition-colors">
+          {teamMembers.map(member => <div key={member.id} className="bg-gray-50 border border-gray-100 rounded-xl p-5 hover:bg-gray-100 transition-colors">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <h4 className="font-bold text-gray-900 text-lg">{member.name}</h4>
@@ -83,27 +73,20 @@ export const TeamAvailability = () => {
               
               <div className="mb-4">
                 <div className="flex flex-wrap gap-2">
-                  {member.skills.slice(0, 2).map((skill, index) => (
-                    <Badge key={index} variant="secondary" className="text-sm bg-blue-50 text-blue-700 border-blue-200 px-3 py-1">
+                  {member.skills.slice(0, 2).map((skill, index) => <Badge key={index} variant="secondary" className="text-sm bg-blue-50 text-blue-700 border-blue-200 px-3 py-1">
                       {skill}
-                    </Badge>
-                  ))}
-                  {member.skills.length > 2 && (
-                    <Badge variant="secondary" className="text-sm bg-gray-100 text-gray-600 px-3 py-1">  
+                    </Badge>)}
+                  {member.skills.length > 2 && <Badge variant="secondary" className="text-sm bg-gray-100 text-gray-600 px-3 py-1">  
                       +{member.skills.length - 2} more
-                    </Badge>
-                  )}
+                    </Badge>}
                 </div>
               </div>
               
               <div className="text-base text-gray-700">
-                {member.availability === 'available' ? (
-                  <div className="flex items-center gap-3">
+                {member.availability === 'available' ? <div className="flex items-center gap-3">
                     <Calendar className="h-5 w-5 text-green-600" />
                     <span>Next assignment: <span className="font-semibold text-gray-900">{member.nextAssignment}</span></span>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
+                  </div> : <div className="space-y-2">
                     <div className="flex items-center gap-3">
                       <Clock className="h-5 w-5 text-red-600" />
                       <span>Current: <span className="font-semibold text-gray-900">{member.currentProject}</span></span>
@@ -112,11 +95,9 @@ export const TeamAvailability = () => {
                       <Calendar className="h-5 w-5 text-gray-500" />
                       <span>Available: <span className="font-semibold text-gray-900">{member.nextAvailable}</span></span>
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
-            </div>
-          ))}
+            </div>)}
         </div>
         
         <div className="mt-6 p-5 bg-blue-50 border border-blue-100 rounded-xl">
@@ -132,6 +113,5 @@ export const TeamAvailability = () => {
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
