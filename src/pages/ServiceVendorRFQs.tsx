@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import VendorHeader from "@/components/vendor/VendorHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +8,6 @@ import { Search, Filter, Calendar, DollarSign, Clock, Eye, Send, FileText } from
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RFQDetailsModal } from "@/components/vendor/service/modals/RFQDetailsModal";
 import { ProposalCreationModal } from "@/components/vendor/service/modals/ProposalCreationModal";
-
 const ServiceVendorRFQs = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -19,115 +17,110 @@ const ServiceVendorRFQs = () => {
   const [proposalRFQTitle, setProposalRFQTitle] = useState("");
 
   // Industrial RFQ data
-  const rfqs = [
-    {
-      id: "RFQ-001",
-      title: "Industrial Equipment Maintenance Contract",
-      company: "SteelWorks Manufacturing",
-      budget: "$45,000 - $65,000",
-      deadline: "2024-01-25",
-      status: "open",
-      priority: "high",
-      description: "Seeking comprehensive maintenance services for steel production equipment including preventive maintenance, emergency repairs, and equipment calibration.",
-      skills: ["Equipment Maintenance", "Hydraulic Systems", "PLC Programming"],
-      submittedDate: "2024-01-08",
-      responses: 8
-    },
-    {
-      id: "RFQ-002",
-      title: "Safety Audit & Compliance Assessment",
-      company: "ChemProcess Industries",
-      budget: "$25,000 - $35,000",
-      deadline: "2024-02-05",
-      status: "pending",
-      priority: "medium",
-      description: "Complete safety audit for chemical processing facility including OSHA compliance assessment and safety management system implementation.",
-      skills: ["Safety Auditing", "OSHA Standards", "Risk Assessment"],
-      submittedDate: "2024-01-10",
-      responses: 12
-    },
-    {
-      id: "RFQ-003",
-      title: "Automation System Upgrade",
-      company: "AutoMfg Corporation",
-      budget: "$85,000 - $120,000",
-      deadline: "2024-02-15",
-      status: "submitted",
-      priority: "high",
-      description: "Upgrade existing manufacturing line with modern PLC systems and SCADA implementation for automotive parts production facility.",
-      skills: ["Industrial Automation", "SCADA Systems", "PLC Programming"],
-      submittedDate: "2024-01-05",
-      responses: 6
-    },
-    {
-      id: "RFQ-004",
-      title: "Quality Control System Implementation",
-      company: "Pharmaceutical Corp",
-      budget: "$55,000 - $75,000",
-      deadline: "2024-01-30",
-      status: "open",
-      priority: "high",
-      description: "Implementation of comprehensive quality control and testing systems for pharmaceutical manufacturing facility to meet FDA regulations.",
-      skills: ["Quality Control", "FDA Compliance", "Testing Systems"],
-      submittedDate: "2024-01-12",
-      responses: 4
-    },
-    {
-      id: "RFQ-005",
-      title: "Production Line Optimization",
-      company: "FoodTech Processing",
-      budget: "$35,000 - $50,000",
-      deadline: "2024-02-20",
-      status: "open",
-      priority: "medium",
-      description: "Lean manufacturing implementation and process optimization for food processing production lines to improve efficiency and reduce waste.",
-      skills: ["Lean Manufacturing", "Process Optimization", "Production Planning"],
-      submittedDate: "2024-01-14",
-      responses: 9
-    }
-  ];
-
+  const rfqs = [{
+    id: "RFQ-001",
+    title: "Industrial Equipment Maintenance Contract",
+    company: "SteelWorks Manufacturing",
+    budget: "$45,000 - $65,000",
+    deadline: "2024-01-25",
+    status: "open",
+    priority: "high",
+    description: "Seeking comprehensive maintenance services for steel production equipment including preventive maintenance, emergency repairs, and equipment calibration.",
+    skills: ["Equipment Maintenance", "Hydraulic Systems", "PLC Programming"],
+    submittedDate: "2024-01-08",
+    responses: 8
+  }, {
+    id: "RFQ-002",
+    title: "Safety Audit & Compliance Assessment",
+    company: "ChemProcess Industries",
+    budget: "$25,000 - $35,000",
+    deadline: "2024-02-05",
+    status: "pending",
+    priority: "medium",
+    description: "Complete safety audit for chemical processing facility including OSHA compliance assessment and safety management system implementation.",
+    skills: ["Safety Auditing", "OSHA Standards", "Risk Assessment"],
+    submittedDate: "2024-01-10",
+    responses: 12
+  }, {
+    id: "RFQ-003",
+    title: "Automation System Upgrade",
+    company: "AutoMfg Corporation",
+    budget: "$85,000 - $120,000",
+    deadline: "2024-02-15",
+    status: "submitted",
+    priority: "high",
+    description: "Upgrade existing manufacturing line with modern PLC systems and SCADA implementation for automotive parts production facility.",
+    skills: ["Industrial Automation", "SCADA Systems", "PLC Programming"],
+    submittedDate: "2024-01-05",
+    responses: 6
+  }, {
+    id: "RFQ-004",
+    title: "Quality Control System Implementation",
+    company: "Pharmaceutical Corp",
+    budget: "$55,000 - $75,000",
+    deadline: "2024-01-30",
+    status: "open",
+    priority: "high",
+    description: "Implementation of comprehensive quality control and testing systems for pharmaceutical manufacturing facility to meet FDA regulations.",
+    skills: ["Quality Control", "FDA Compliance", "Testing Systems"],
+    submittedDate: "2024-01-12",
+    responses: 4
+  }, {
+    id: "RFQ-005",
+    title: "Production Line Optimization",
+    company: "FoodTech Processing",
+    budget: "$35,000 - $50,000",
+    deadline: "2024-02-20",
+    status: "open",
+    priority: "medium",
+    description: "Lean manufacturing implementation and process optimization for food processing production lines to improve efficiency and reduce waste.",
+    skills: ["Lean Manufacturing", "Process Optimization", "Production Planning"],
+    submittedDate: "2024-01-14",
+    responses: 9
+  }];
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "open": return "bg-green-50 text-green-700 border-green-200";
-      case "pending": return "bg-yellow-50 text-yellow-700 border-yellow-200";
-      case "submitted": return "bg-blue-50 text-blue-700 border-blue-200";
-      case "closed": return "bg-gray-50 text-gray-700 border-gray-200";
-      default: return "bg-gray-50 text-gray-700 border-gray-200";
+      case "open":
+        return "bg-green-50 text-green-700 border-green-200";
+      case "pending":
+        return "bg-yellow-50 text-yellow-700 border-yellow-200";
+      case "submitted":
+        return "bg-blue-50 text-blue-700 border-blue-200";
+      case "closed":
+        return "bg-gray-50 text-gray-700 border-gray-200";
+      default:
+        return "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
-
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "bg-red-50 text-red-700 border-red-200";
-      case "medium": return "bg-orange-50 text-orange-700 border-orange-200";
-      case "low": return "bg-green-50 text-green-700 border-green-200";
-      default: return "bg-gray-50 text-gray-700 border-gray-200";
+      case "high":
+        return "bg-red-50 text-red-700 border-red-200";
+      case "medium":
+        return "bg-orange-50 text-orange-700 border-orange-200";
+      case "low":
+        return "bg-green-50 text-green-700 border-green-200";
+      default:
+        return "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
-
   const handleViewDetails = (rfq: any) => {
     setSelectedRFQ(rfq);
     setShowRFQDetails(true);
   };
-
   const handleCreateProposal = (rfq: any) => {
     setProposalRFQTitle(rfq.title);
     setShowProposalModal(true);
   };
-
   const filteredRFQs = rfqs.filter(rfq => {
-    const matchesSearch = rfq.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         rfq.company.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = rfq.title.toLowerCase().includes(searchTerm.toLowerCase()) || rfq.company.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = statusFilter === "all" || rfq.status === statusFilter;
     return matchesSearch && matchesFilter;
   });
-
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       <VendorHeader />
       
-      <main className="pt-32 p-6 lg:p-8">
+      <main className="pt-32 p-6 lg:p-8 mx-0 px-[30px] py-[85px]">
         <div className="max-w-7xl mx-auto space-y-6 mt-8">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -207,12 +200,7 @@ const ServiceVendorRFQs = () => {
                 <div className="flex-1">
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input 
-                      placeholder="Search industrial RFQs..." 
-                      className="pl-10"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                    <Input placeholder="Search industrial RFQs..." className="pl-10" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                   </div>
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -237,8 +225,7 @@ const ServiceVendorRFQs = () => {
 
           {/* RFQ List */}
           <div className="space-y-4">
-            {filteredRFQs.map((rfq) => (
-              <Card key={rfq.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+            {filteredRFQs.map(rfq => <Card key={rfq.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div className="flex-1">
@@ -273,11 +260,9 @@ const ServiceVendorRFQs = () => {
                       <p className="text-base text-gray-700 mb-3 leading-relaxed">{rfq.description}</p>
 
                       <div className="flex flex-wrap gap-2">
-                        {rfq.skills.map((skill, index) => (
-                          <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-sm px-3 py-1">
+                        {rfq.skills.map((skill, index) => <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-sm px-3 py-1">
                             {skill}
-                          </Badge>
-                        ))}
+                          </Badge>)}
                       </div>
                     </div>
 
@@ -286,37 +271,22 @@ const ServiceVendorRFQs = () => {
                         <Eye className="mr-2 h-4 w-4" />
                         View Details
                       </Button>
-                      {rfq.status === "open" && (
-                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium" onClick={() => handleCreateProposal(rfq)}>
+                      {rfq.status === "open" && <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium" onClick={() => handleCreateProposal(rfq)}>
                           <Send className="mr-2 h-4 w-4" />
                           Submit Proposal
-                        </Button>
-                      )}
+                        </Button>}
                     </div>
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </main>
 
       {/* Modals */}
-      {selectedRFQ && (
-        <RFQDetailsModal
-          isOpen={showRFQDetails}
-          onClose={() => setShowRFQDetails(false)}
-          rfq={selectedRFQ}
-        />
-      )}
+      {selectedRFQ && <RFQDetailsModal isOpen={showRFQDetails} onClose={() => setShowRFQDetails(false)} rfq={selectedRFQ} />}
 
-      <ProposalCreationModal
-        isOpen={showProposalModal}
-        onClose={() => setShowProposalModal(false)}
-        rfqTitle={proposalRFQTitle}
-      />
-    </div>
-  );
+      <ProposalCreationModal isOpen={showProposalModal} onClose={() => setShowProposalModal(false)} rfqTitle={proposalRFQTitle} />
+    </div>;
 };
-
 export default ServiceVendorRFQs;
