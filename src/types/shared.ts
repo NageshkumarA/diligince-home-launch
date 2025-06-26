@@ -36,6 +36,7 @@ export interface UserProfile {
   name: string;
   email: string;
   role: UserRole;
+  initials?: string;
   profile?: any;
   preferences?: UserPreferences;
   createdAt?: string;
