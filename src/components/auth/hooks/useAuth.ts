@@ -12,6 +12,32 @@ export const useAuth = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const getVendorDashboardUrl = (userType: string, vendorType?: string) => {
+    if (userType === 'vendor' && vendorType) {
+      switch (vendorType) {
+        case 'service':
+          return '/service-vendor-dashboard';
+        case 'product':
+          return '/product-vendor-dashboard';
+        case 'logistics':
+          return '/logistics-vendor-dashboard';
+        default:
+          return '/service-vendor-dashboard';
+      }
+    }
+    
+    switch (userType) {
+      case 'industry':
+        return '/industry-dashboard';
+      case 'professional':
+        return '/professional-dashboard';
+      case 'expert':
+        return '/professional-dashboard';
+      default:
+        return '/service-vendor-dashboard';
+    }
+  };
+
   const signUp = useCallback(async (userData: UserProfile & { password: string }) => {
     setIsLoading(true);
     
@@ -47,6 +73,11 @@ export const useAuth = () => {
         description: "Welcome to diligince.ai",
       });
 
+      // Redirect to appropriate dashboard
+      const dashboardUrl = getVendorDashboardUrl(userProfile.userType, userProfile.vendorType);
+      console.log("Redirecting to:", dashboardUrl);
+      navigate(dashboardUrl);
+
       return { success: true, user: userProfile };
     } catch (error) {
       console.error('Sign up error:', error);
@@ -59,7 +90,7 @@ export const useAuth = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [login, toast]);
+  }, [login, toast, navigate]);
 
   const signIn = useCallback(async (email: string, password: string) => {
     console.log("signIn called with:", { email, password: "***" });
@@ -82,8 +113,8 @@ export const useAuth = () => {
           description: `Welcome back, ${user.name}!`,
         });
 
-        // Redirect to appropriate dashboard
-        const dashboardUrl = getDashboardUrl();
+        // Redirect to appropriate dashboard based on user type and vendor type
+        const dashboardUrl = getVendorDashboardUrl(user.userType, user.vendorType);
         console.log("Redirecting to:", dashboardUrl);
         navigate(dashboardUrl);
         
@@ -108,7 +139,7 @@ export const useAuth = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [login, toast, navigate, getDashboardUrl]);
+  }, [login, toast, navigate]);
 
   return {
     signUp,

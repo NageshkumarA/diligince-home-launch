@@ -5,9 +5,10 @@ import { LogisticsVendorSidebar } from "@/components/vendor/LogisticsVendorSideb
 import { ProfileCompletionWidget } from "@/components/shared/ProfileCompletionWidget";
 import { useUser } from "@/contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import { calculateProfileCompleteness } from "@/utils/profileCompleteness";
 
 const LogisticsVendorProfile = () => {
-  const { user, profileCompletion, isAuthenticated } = useUser();
+  const { user, isAuthenticated } = useUser();
   const navigate = useNavigate();
 
   // Redirect if not authenticated
@@ -16,6 +17,14 @@ const LogisticsVendorProfile = () => {
       navigate('/signin');
     }
   }, [isAuthenticated, navigate]);
+
+  // Calculate actual profile completion based on current user data
+  const profileCompletion = user ? calculateProfileCompleteness(user) : {
+    percentage: 0,
+    isComplete: false,
+    missingFields: [],
+    completedFields: []
+  };
 
   // Handle profile completion action
   const handleCompleteProfile = () => {

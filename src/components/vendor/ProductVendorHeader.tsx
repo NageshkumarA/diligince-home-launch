@@ -7,13 +7,22 @@ import { vendorHeaderConfig } from "@/utils/navigationConfigs";
 export const ProductVendorHeader = () => {
   const location = useLocation();
   
-  // Update nav items to reflect current active state
+  // Update nav items to reflect current active state and correct profile link
   const config = {
     ...vendorHeaderConfig,
-    navItems: vendorHeaderConfig.navItems.map(item => ({
-      ...item,
-      active: location.pathname === item.href
-    }))
+    navItems: vendorHeaderConfig.navItems.map(item => {
+      if (item.href === '/vendor-profile') {
+        return {
+          ...item,
+          href: '/product-vendor-profile',
+          active: location.pathname === '/product-vendor-profile'
+        };
+      }
+      return {
+        ...item,
+        active: location.pathname === item.href
+      };
+    })
   };
 
   return <GenericHeader config={config} />;

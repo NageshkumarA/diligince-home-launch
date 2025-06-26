@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { ServiceVendorHeader } from "@/components/vendor/ServiceVendorHeader";
 import { ServiceVendorSidebar } from "@/components/vendor/service/ServiceVendorSidebar";
@@ -11,6 +12,7 @@ import AccountSettingsForm from "@/components/vendor/forms/AccountSettingsForm";
 import { ProfileCompletionWidget } from "@/components/shared/ProfileCompletionWidget";
 import { useUser } from "@/contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import { calculateProfileCompleteness } from "@/utils/profileCompleteness";
 
 // Types for content sections
 export type ContentType = 
@@ -23,7 +25,7 @@ export type ContentType =
   | "account-settings";
 
 const ServiceVendorProfile = () => {
-  const { user, profileCompletion, isAuthenticated } = useUser();
+  const { user, isAuthenticated } = useUser();
   const navigate = useNavigate();
   
   const [activeContent, setActiveContent] = useState<ContentType>("company-info");
@@ -34,6 +36,14 @@ const ServiceVendorProfile = () => {
       navigate('/signin');
     }
   }, [isAuthenticated, navigate]);
+  
+  // Calculate actual profile completion based on current user data
+  const profileCompletion = user ? calculateProfileCompleteness(user) : {
+    percentage: 0,
+    isComplete: false,
+    missingFields: [],
+    completedFields: []
+  };
   
   // Vendor data from user context
   const vendorData = {
