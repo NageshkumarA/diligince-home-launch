@@ -95,7 +95,7 @@ export const QuoteReviewTable = ({
                           Accept Quote
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent>
+                      <AlertDialogContent className="bg-gray-50">
                         <AlertDialogHeader>
                           <AlertDialogTitle>Accept Quote</AlertDialogTitle>
                           <AlertDialogDescription>
