@@ -3,12 +3,12 @@ import { UserProfile, UserRole, VendorCategory } from '@/types/shared';
 
 // Define minimum required fields for each user type - Updated with more comprehensive requirements
 const REQUIRED_FIELDS = {
-  industry: ['companyName', 'industryType'],
-  professional: ['fullName', 'expertise'],
+  industry: ['name', 'email', 'companyName', 'industryType'],
+  professional: ['name', 'email', 'fullName', 'expertise'],
   vendor: {
-    service: ['businessName', 'specialization', 'email', 'phone'],
-    product: ['businessName', 'specialization', 'email', 'phone', 'address', 'registrationNumber'],
-    logistics: ['businessName', 'specialization', 'email', 'phone']
+    service: ['name', 'email', 'businessName', 'specialization', 'phone'],
+    product: ['name', 'email', 'businessName', 'specialization', 'phone', 'address', 'registrationNumber'],
+    logistics: ['name', 'email', 'businessName', 'specialization', 'phone']
   }
 };
 
@@ -23,7 +23,9 @@ export interface ProfileCompletion {
 }
 
 export const calculateProfileCompleteness = (user: UserProfile): ProfileCompletion => {
-  if (!user || !user.profile) {
+  console.log("Calculating profile completeness for user:", user);
+  
+  if (!user) {
     return {
       percentage: 0,
       isComplete: false,
@@ -35,32 +37,37 @@ export const calculateProfileCompleteness = (user: UserProfile): ProfileCompleti
   let requiredFields: string[] = [];
   
   // Get role-specific required fields
-  if (user.role === 'vendor' && user.profile.vendorCategory) {
+  if (user.role === 'vendor' && user.profile?.vendorCategory) {
     const vendorCategory = user.profile.vendorCategory as keyof typeof REQUIRED_FIELDS.vendor;
     const vendorFields = REQUIRED_FIELDS.vendor[vendorCategory];
-    requiredFields = vendorFields ? [...vendorFields] : ['businessName', 'specialization'];
+    requiredFields = vendorFields ? [...vendorFields] : ['name', 'email', 'businessName', 'specialization'];
   } else if (user.role === 'industry' || user.role === 'professional') {
     const roleFields = REQUIRED_FIELDS[user.role];
-    requiredFields = roleFields ? [...roleFields] : [];
+    requiredFields = roleFields ? [...roleFields] : ['name', 'email'];
+  } else {
+    // Default fields for any user
+    requiredFields = ['name', 'email'];
   }
 
-  const profile = user.profile;
+  console.log("Required fields for", user.role, ":", requiredFields);
+
   const completedFields: string[] = [];
   const missingFields: string[] = [];
 
-  // Check basic profile fields
-  const basicFields = ['name', 'email'];
-  basicFields.forEach(field => {
-    if (user[field as keyof UserProfile]) {
-      completedFields.push(field);
-    } else {
-      missingFields.push(field);
-    }
-  });
-
-  // Check role-specific required fields
+  // Check each required field
   requiredFields.forEach(field => {
-    const fieldValue = profile[field as keyof typeof profile];
+    let fieldValue;
+    
+    // Check if field exists in user object directly
+    if (field === 'name' || field === 'email') {
+      fieldValue = user[field as keyof UserProfile];
+    } else if (user.profile) {
+      // Check if field exists in profile object
+      fieldValue = user.profile[field as keyof typeof user.profile];
+    }
+    
+    console.log(`Checking field ${field}:`, fieldValue);
+    
     if (fieldValue && String(fieldValue).trim() !== '') {
       completedFields.push(field);
     } else {
@@ -68,21 +75,17 @@ export const calculateProfileCompleteness = (user: UserProfile): ProfileCompleti
     }
   });
 
-  // Additional optional fields that improve completion for product vendors
-  const optionalFields = user.role === 'vendor' && user.profile.vendorCategory === 'product' 
-    ? ['companyDescription', 'gstNumber', 'yearEstablished', 'productCategories', 'industryFocus']
-    : ['phone'];
-    
-  optionalFields.forEach(field => {
-    const fieldValue = profile[field as keyof typeof profile];
-    if (fieldValue && (Array.isArray(fieldValue) ? fieldValue.length > 0 : String(fieldValue).trim() !== '')) {
-      completedFields.push(field);
-    }
-  });
-
-  const totalFields = basicFields.length + requiredFields.length + optionalFields.length;
-  const percentage = Math.round((completedFields.length / totalFields) * 100);
+  const totalFields = requiredFields.length;
+  const percentage = totalFields > 0 ? Math.round((completedFields.length / totalFields) * 100) : 0;
   const isComplete = percentage >= PROFILE_COMPLETION_THRESHOLD;
+
+  console.log("Profile completion result:", {
+    percentage,
+    isComplete,
+    completedFields,
+    missingFields,
+    totalFields
+  });
 
   return {
     percentage,
@@ -102,7 +105,9 @@ export const getProfileCompletionMessage = (role: UserRole, missingFields: strin
     specialization: 'Specialization',
     phone: 'Phone Number',
     name: 'Name',
-    email: 'Email'
+    email: 'Email',
+    address: 'Address',
+    registrationNumber: 'Registration Number'
   };
 
   const missingLabels = missingFields.map(field => fieldLabels[field] || field);
@@ -118,12 +123,18 @@ export const getProfileCompletionMessage = (role: UserRole, missingFields: strin
 export const getCompletionIncentives = (percentage: number): string[] => {
   const incentives = [];
   
-  if (percentage < 50) {
-    incentives.push('Unlock basic platform features');
-    incentives.push('Receive targeted opportunities');
-  } else if (percentage < 80) {
-    incentives.push('Increase your visibility to clients');
-    incentives.push('Access premium features');
+  if (percentage < 25) {
+    incentives.push('Complete basic information to get started');
+    incentives.push('Add your contact details');
+  } else if (percentage < 50) {
+    incentives.push('Add business information to improve visibility');
+    incentives.push('Complete your specialization details');
+  } else if (percentage < 75) {
+    incentives.push('Almost there! Add remaining details');
+    incentives.push('Complete profile for better opportunities');
+  } else if (percentage < 100) {
+    incentives.push('Final step - complete all information');
+    incentives.push('Unlock maximum platform benefits');
   } else {
     incentives.push('Maximum visibility and trust score');
     incentives.push('Priority in search results');

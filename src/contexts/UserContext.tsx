@@ -63,8 +63,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         
         if (savedUser) {
           const userData = JSON.parse(savedUser) as UserProfile;
+          console.log("Loaded user from localStorage:", userData);
           setUser(userData);
           setHasCompletedOnboarding(savedOnboarding === 'true');
+          
+          // Calculate profile completion immediately
+          const completion = calculateProfileCompleteness(userData);
+          setProfileCompletion(completion);
         }
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -79,10 +84,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // Save user data to localStorage whenever user changes
+    // Save user data and recalculate profile completion whenever user changes
     if (user) {
+      console.log("Saving user to localStorage and recalculating completion:", user);
       localStorage.setItem('user', JSON.stringify(user));
-      // Calculate profile completion
+      
+      // Recalculate profile completion
       const completion = calculateProfileCompleteness(user);
       setProfileCompletion(completion);
     } else {
@@ -99,13 +106,16 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const updateProfile = (updates: Partial<UserProfile>) => {
     if (!user) return;
     
+    console.log("Updating profile with:", updates);
     setUser(current => {
       if (!current) return null;
-      return {
+      const updatedUser = {
         ...current,
         ...updates,
         updatedAt: new Date().toISOString(),
       };
+      console.log("Updated user:", updatedUser);
+      return updatedUser;
     });
   };
 
@@ -126,6 +136,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   };
 
   const login = (userData: UserProfile) => {
+    console.log("Logging in user:", userData);
     const userWithDefaults: UserProfile = {
       ...userData,
       preferences: {
@@ -138,6 +149,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
+    console.log("Logging out user");
     setUser(null);
     setIsFirstTimeUser(false);
     setHasCompletedOnboarding(false);
@@ -172,7 +184,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     isVendorCategory,
     profileCompletion,
     isFirstTimeUser,
-    setFirstTimeUser: setIsFirstTimeUser,
+    setFirstTimeUser: setFirstTimeUser,
     hasCompletedOnboarding,
     setHasCompletedOnboarding,
   };
