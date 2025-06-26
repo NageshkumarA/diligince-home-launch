@@ -8,26 +8,22 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle, Clock, XCircle, Plus, Trash2, Users, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-
 interface ApprovalWorkflowStepProps {
   onNext: () => void;
   onPrevious: () => void;
 }
-
-const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onPrevious }) => {
-  const { formData, updateFormData, validateStep, stepErrors } = useRequirement();
+const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({
+  onNext,
+  onPrevious
+}) => {
+  const {
+    formData,
+    updateFormData,
+    validateStep,
+    stepErrors
+  } = useRequirement();
   const [newApproverRole, setNewApproverRole] = useState("");
-
-  const approverRoles = [
-    "Department Manager",
-    "Procurement Manager", 
-    "Finance Manager",
-    "General Manager",
-    "CEO",
-    "Compliance Officer",
-    "Technical Lead"
-  ];
-
+  const approverRoles = ["Department Manager", "Procurement Manager", "Finance Manager", "General Manager", "CEO", "Compliance Officer", "Technical Lead"];
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "approved":
@@ -38,7 +34,6 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
         return <Clock className="h-4 w-4 text-yellow-500" />;
     }
   };
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "approved":
@@ -49,13 +44,11 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
         return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>;
     }
   };
-
   const addApprovalStep = () => {
     if (!newApproverRole) {
       toast.error("Please select an approver role");
       return;
     }
-
     const newStep = {
       id: `step-${Date.now()}`,
       stepName: `${newApproverRole} Approval`,
@@ -63,21 +56,18 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
       status: "pending" as const,
       required: true
     };
-
     updateFormData({
       approvalSteps: [...formData.approvalSteps, newStep]
     });
     setNewApproverRole("");
     toast.success("Approval step added");
   };
-
   const removeApprovalStep = (stepId: string) => {
     updateFormData({
       approvalSteps: formData.approvalSteps.filter(step => step.id !== stepId)
     });
     toast.success("Approval step removed");
   };
-
   const handleNext = () => {
     if (validateStep(4)) {
       onNext();
@@ -85,11 +75,8 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
       toast.error("Please configure the approval workflow");
     }
   };
-
   const requiresApproval = formData.estimatedBudget > 10000 || formData.priority === "critical" || formData.complianceRequired;
-
-  return (
-    <div className="space-y-8">
+  return <div className="space-y-8">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -104,13 +91,12 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
         </div>
       </div>
 
-      {requiresApproval && (
-        <Card className="border-orange-200 bg-orange-50">
+      {requiresApproval && <Card className="border-orange-200 bg-orange-50">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
               <AlertCircle className="h-5 w-5 text-orange-500 mt-0.5" />
               <div>
-                <h3 className="font-medium text-orange-800">Approval Required</h3>
+                <h3 className="font-medium text-orange-800 text-3xl">Approval Required</h3>
                 <p className="text-sm text-orange-700 mt-1">
                   This requirement needs approval due to: {" "}
                   {formData.estimatedBudget > 10000 && "High budget value, "}
@@ -120,8 +106,7 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
               </div>
             </div>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
@@ -134,16 +119,12 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {formData.approvalSteps.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+              {formData.approvalSteps.length === 0 ? <div className="text-center py-8 text-gray-500">
                   <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                   <p className="text-lg font-medium">No approval steps configured</p>
                   <p className="text-sm">Add approvers to create your workflow</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {formData.approvalSteps.map((step, index) => (
-                    <div key={step.id} className="flex items-center gap-4 p-4 border rounded-lg bg-white">
+                </div> : <div className="space-y-4">
+                  {formData.approvalSteps.map((step, index) => <div key={step.id} className="flex items-center gap-4 p-4 border rounded-lg bg-white">
                       <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-medium text-sm">
                         {index + 1}
                       </div>
@@ -153,34 +134,25 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
                           {getStatusBadge(step.status)}
                         </div>
                         <p className="text-sm text-gray-600">Approver: {step.approverRole}</p>
-                        {step.approvedBy && (
-                          <p className="text-xs text-gray-500 mt-1">
+                        {step.approvedBy && <p className="text-xs text-gray-500 mt-1">
                             Approved by: {step.approvedBy} on {step.approvedAt?.toLocaleDateString()}
-                          </p>
-                        )}
+                          </p>}
                       </div>
                       <div className="flex items-center gap-2">
                         {getStatusIcon(step.status)}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeApprovalStep(step.id)}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => removeApprovalStep(step.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    </div>)}
+                </div>}
             </CardContent>
           </Card>
 
           {/* Add New Approval Step */}
           <Card className="bg-white border border-gray-100 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-gray-900">Add Approval Step</CardTitle>
+              <CardTitle className="text-gray-900 text-xl">Add Approval Step</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-4">
@@ -191,11 +163,9 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
                       <SelectValue placeholder="Select approver role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {approverRoles.map((role) => (
-                        <SelectItem key={role} value={role}>
+                      {approverRoles.map(role => <SelectItem key={role} value={role}>
                           {role}
-                        </SelectItem>
-                      ))}
+                        </SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
@@ -214,7 +184,7 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
         <div className="space-y-6">
           <Card className="bg-white border border-gray-100 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-gray-900">Workflow Summary</CardTitle>
+              <CardTitle className="text-gray-900 text-2xl">Workflow Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
@@ -237,26 +207,20 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
               </div>
 
               <div className="pt-4 border-t">
-                <h4 className="font-medium mb-3">Automatic Triggers</h4>
+                <h4 className="font-medium mb-3 text-xl">Automatic Triggers</h4>
                 <div className="space-y-2 text-sm text-gray-600">
-                  {formData.estimatedBudget > 50000 && (
-                    <div className="flex items-center gap-2">
+                  {formData.estimatedBudget > 50000 && <div className="flex items-center gap-2">
                       <CheckCircle className="h-3 w-3 text-green-500" />
                       <span>Senior management approval (Budget &gt; $50K)</span>
-                    </div>
-                  )}
-                  {formData.priority === "critical" && (
-                    <div className="flex items-center gap-2">
+                    </div>}
+                  {formData.priority === "critical" && <div className="flex items-center gap-2">
                       <CheckCircle className="h-3 w-3 text-green-500" />
                       <span>Expedited approval (Critical priority)</span>
-                    </div>
-                  )}
-                  {formData.complianceRequired && (
-                    <div className="flex items-center gap-2">
+                    </div>}
+                  {formData.complianceRequired && <div className="flex items-center gap-2">
                       <CheckCircle className="h-3 w-3 text-green-500" />
                       <span>Compliance review required</span>
-                    </div>
-                  )}
+                    </div>}
                 </div>
               </div>
             </CardContent>
@@ -264,7 +228,7 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
 
           <Card className="bg-white border border-gray-100 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-gray-900">Best Practices</CardTitle>
+              <CardTitle className="text-gray-900 text-xl">Best Practices</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-gray-600 space-y-2">
               <p>• Include department manager for all requests</p>
@@ -276,11 +240,9 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
         </div>
       </div>
 
-      {stepErrors.approvalSteps && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+      {stepErrors.approvalSteps && <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-red-700 text-sm">{stepErrors.approvalSteps}</p>
-        </div>
-      )}
+        </div>}
 
       <div className="flex justify-between pt-6 border-t">
         <Button variant="outline" onClick={onPrevious}>
@@ -290,8 +252,6 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
           Continue to Publishing
         </Button>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ApprovalWorkflowStep;
