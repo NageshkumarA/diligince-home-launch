@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import VendorHeader from "@/components/vendor/VendorHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +8,6 @@ import { Progress } from "@/components/ui/progress";
 import { Search, Filter, Calendar, Users, DollarSign, Clock, Eye, MessageSquare, CheckCircle, AlertCircle, Plus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProjectDetailsModal } from "@/components/vendor/service/modals/ProjectDetailsModal";
-
 const ServiceVendorProjects = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -17,120 +15,117 @@ const ServiceVendorProjects = () => {
   const [showProjectDetails, setShowProjectDetails] = useState(false);
 
   // Mock projects data
-  const projects = [
-    {
-      id: "PRJ-001",
-      name: "E-commerce Platform Development",
-      client: "RetailMax Inc.",
-      service: "Custom Software Development",
-      budget: "$45,000",
-      startDate: "2024-01-01",
-      endDate: "2024-03-15",
-      status: "in-progress",
-      priority: "high",
-      progress: 65,
-      team: ["John Doe", "Sarah Smith", "Mike Johnson"],
-      description: "Building a comprehensive e-commerce platform with advanced inventory management and analytics.",
-      milestones: 8,
-      completedMilestones: 5,
-      daysLeft: 28
-    },
-    {
-      id: "PRJ-002",
-      name: "Brand Identity Redesign",
-      client: "TechStartup Pro",
-      service: "Brand Identity Design",
-      budget: "$8,500",
-      startDate: "2024-01-15",
-      endDate: "2024-02-28",
-      status: "review",
-      priority: "medium",
-      progress: 90,
-      team: ["Emily Davis", "Alex Chen"],
-      description: "Complete brand overhaul including logo, guidelines, and marketing materials.",
-      milestones: 5,
-      completedMilestones: 4,
-      daysLeft: 12
-    },
-    {
-      id: "PRJ-003",
-      name: "Digital Marketing Campaign",
-      client: "HealthPlus Solutions",
-      service: "Digital Marketing Strategy",
-      budget: "$15,000",
-      startDate: "2024-02-01",
-      endDate: "2024-04-30",
-      status: "planning",
-      priority: "medium",
-      progress: 25,
-      team: ["Lisa Wong", "David Rodriguez", "Emma Thompson"],
-      description: "Multi-channel marketing campaign for healthcare product launch.",
-      milestones: 12,
-      completedMilestones: 3,
-      daysLeft: 65
-    },
-    {
-      id: "PRJ-004",
-      name: "Business Process Optimization",
-      client: "ManufactureCorp",
-      service: "Business Consulting",
-      budget: "$12,000",
-      startDate: "2023-12-01",
-      endDate: "2024-01-31",
-      status: "completed",
-      priority: "low",
-      progress: 100,
-      team: ["Robert Kim", "Jennifer Liu"],
-      description: "Streamlining manufacturing processes and implementing efficiency improvements.",
-      milestones: 6,
-      completedMilestones: 6,
-      daysLeft: 0
-    }
-  ];
-
+  const projects = [{
+    id: "PRJ-001",
+    name: "E-commerce Platform Development",
+    client: "RetailMax Inc.",
+    service: "Custom Software Development",
+    budget: "$45,000",
+    startDate: "2024-01-01",
+    endDate: "2024-03-15",
+    status: "in-progress",
+    priority: "high",
+    progress: 65,
+    team: ["John Doe", "Sarah Smith", "Mike Johnson"],
+    description: "Building a comprehensive e-commerce platform with advanced inventory management and analytics.",
+    milestones: 8,
+    completedMilestones: 5,
+    daysLeft: 28
+  }, {
+    id: "PRJ-002",
+    name: "Brand Identity Redesign",
+    client: "TechStartup Pro",
+    service: "Brand Identity Design",
+    budget: "$8,500",
+    startDate: "2024-01-15",
+    endDate: "2024-02-28",
+    status: "review",
+    priority: "medium",
+    progress: 90,
+    team: ["Emily Davis", "Alex Chen"],
+    description: "Complete brand overhaul including logo, guidelines, and marketing materials.",
+    milestones: 5,
+    completedMilestones: 4,
+    daysLeft: 12
+  }, {
+    id: "PRJ-003",
+    name: "Digital Marketing Campaign",
+    client: "HealthPlus Solutions",
+    service: "Digital Marketing Strategy",
+    budget: "$15,000",
+    startDate: "2024-02-01",
+    endDate: "2024-04-30",
+    status: "planning",
+    priority: "medium",
+    progress: 25,
+    team: ["Lisa Wong", "David Rodriguez", "Emma Thompson"],
+    description: "Multi-channel marketing campaign for healthcare product launch.",
+    milestones: 12,
+    completedMilestones: 3,
+    daysLeft: 65
+  }, {
+    id: "PRJ-004",
+    name: "Business Process Optimization",
+    client: "ManufactureCorp",
+    service: "Business Consulting",
+    budget: "$12,000",
+    startDate: "2023-12-01",
+    endDate: "2024-01-31",
+    status: "completed",
+    priority: "low",
+    progress: 100,
+    team: ["Robert Kim", "Jennifer Liu"],
+    description: "Streamlining manufacturing processes and implementing efficiency improvements.",
+    milestones: 6,
+    completedMilestones: 6,
+    daysLeft: 0
+  }];
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "planning": return "bg-blue-50 text-blue-700 border-blue-200";
-      case "in-progress": return "bg-yellow-50 text-yellow-700 border-yellow-200";
-      case "review": return "bg-purple-50 text-purple-700 border-purple-200";
-      case "completed": return "bg-green-50 text-green-700 border-green-200";
-      case "on-hold": return "bg-gray-50 text-gray-700 border-gray-200";
-      default: return "bg-gray-50 text-gray-700 border-gray-200";
+      case "planning":
+        return "bg-blue-50 text-blue-700 border-blue-200";
+      case "in-progress":
+        return "bg-yellow-50 text-yellow-700 border-yellow-200";
+      case "review":
+        return "bg-purple-50 text-purple-700 border-purple-200";
+      case "completed":
+        return "bg-green-50 text-green-700 border-green-200";
+      case "on-hold":
+        return "bg-gray-50 text-gray-700 border-gray-200";
+      default:
+        return "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
-
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "bg-red-50 text-red-700 border-red-200";
-      case "medium": return "bg-orange-50 text-orange-700 border-orange-200";
-      case "low": return "bg-green-50 text-green-700 border-green-200";
-      default: return "bg-gray-50 text-gray-700 border-gray-200";
+      case "high":
+        return "bg-red-50 text-red-700 border-red-200";
+      case "medium":
+        return "bg-orange-50 text-orange-700 border-orange-200";
+      case "low":
+        return "bg-green-50 text-green-700 border-green-200";
+      default:
+        return "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
-
   const getProgressColor = (progress: number) => {
     if (progress >= 80) return "bg-green-500";
     if (progress >= 50) return "bg-yellow-500";
     return "bg-blue-500";
   };
-
   const handleViewProject = (project: any) => {
     setSelectedProject(project);
     setShowProjectDetails(true);
   };
-
   const filteredProjects = projects.filter(project => {
-    const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         project.client.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) || project.client.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = statusFilter === "all" || project.status === statusFilter;
     return matchesSearch && matchesFilter;
   });
-
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       <VendorHeader />
       
-      <main className="pt-32 p-6 lg:p-8">
+      <main className="pt-32 p-6 lg:p-8 py-[85px]">
         <div className="max-w-7xl mx-auto space-y-6 mt-8">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -210,12 +205,7 @@ const ServiceVendorProjects = () => {
                 <div className="flex-1">
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input 
-                      placeholder="Search projects..." 
-                      className="pl-10"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                    <Input placeholder="Search projects..." className="pl-10" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                   </div>
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -240,8 +230,7 @@ const ServiceVendorProjects = () => {
 
           {/* Projects List */}
           <div className="space-y-4">
-            {filteredProjects.map((project) => (
-              <Card key={project.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+            {filteredProjects.map(project => <Card key={project.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex flex-col lg:flex-row gap-6">
                     <div className="flex-1">
@@ -296,11 +285,9 @@ const ServiceVendorProjects = () => {
                           <Users className="h-4 w-4 text-blue-600" />
                           <span className="text-sm text-gray-700 font-medium">Team:</span>
                         </div>
-                        {project.team.map((member, index) => (
-                          <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-sm">
+                        {project.team.map((member, index) => <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-sm">
                             {member}
-                          </Badge>
-                        ))}
+                          </Badge>)}
                       </div>
                     </div>
 
@@ -310,11 +297,7 @@ const ServiceVendorProjects = () => {
                           <span className="text-gray-600 font-medium">Progress</span>
                           <span className="font-bold text-gray-900">{project.progress}%</span>
                         </div>
-                        <Progress 
-                          value={project.progress} 
-                          className="h-2"
-                          indicatorClassName={getProgressColor(project.progress)}
-                        />
+                        <Progress value={project.progress} className="h-2" indicatorClassName={getProgressColor(project.progress)} />
                       </div>
 
                       <div className="flex gap-2">
@@ -330,22 +313,13 @@ const ServiceVendorProjects = () => {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </main>
 
       {/* Project Details Modal */}
-      {selectedProject && (
-        <ProjectDetailsModal
-          isOpen={showProjectDetails}
-          onClose={() => setShowProjectDetails(false)}
-          project={selectedProject}
-        />
-      )}
-    </div>
-  );
+      {selectedProject && <ProjectDetailsModal isOpen={showProjectDetails} onClose={() => setShowProjectDetails(false)} project={selectedProject} />}
+    </div>;
 };
-
 export default ServiceVendorProjects;
