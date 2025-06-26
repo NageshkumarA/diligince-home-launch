@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,45 +5,27 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { DollarSign, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { PaymentMilestone } from '@/types/workflow';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 interface PaymentMilestoneTrackerProps {
   milestones: PaymentMilestone[];
   onReleasePayment: (milestoneId: string) => void;
   totalProjectValue: number;
 }
-
-export const PaymentMilestoneTracker = ({ 
-  milestones, 
-  onReleasePayment, 
-  totalProjectValue 
+export const PaymentMilestoneTracker = ({
+  milestones,
+  onReleasePayment,
+  totalProjectValue
 }: PaymentMilestoneTrackerProps) => {
   const [selectedMilestone, setSelectedMilestone] = useState<string | null>(null);
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'USD'
     }).format(amount);
   };
-
   const completedPayments = milestones.filter(m => m.status === 'completed').length;
-  const totalPaymentsReleased = milestones
-    .filter(m => m.status === 'completed')
-    .reduce((sum, m) => sum + m.amount, 0);
-  
-  const progressPercentage = (totalPaymentsReleased / totalProjectValue) * 100;
-
+  const totalPaymentsReleased = milestones.filter(m => m.status === 'completed').reduce((sum, m) => sum + m.amount, 0);
+  const progressPercentage = totalPaymentsReleased / totalProjectValue * 100;
   const getStatusIcon = (status: PaymentMilestone['status']) => {
     switch (status) {
       case 'completed':
@@ -57,7 +38,6 @@ export const PaymentMilestoneTracker = ({
         return null;
     }
   };
-
   const getStatusBadge = (status: PaymentMilestone['status']) => {
     switch (status) {
       case 'completed':
@@ -65,21 +45,19 @@ export const PaymentMilestoneTracker = ({
       case 'released':
         return <Badge className="bg-blue-600">Processing</Badge>;
       case 'pending':
-        return <Badge variant="outline">Pending</Badge>;
+        return <Badge variant="outline" className="bg-blue-600">Pending</Badge>;
       default:
         return null;
     }
   };
-
-  return (
-    <Card className="w-full">
-      <CardHeader>
+  return <Card className="w-full bg-blue-500">
+      <CardHeader className="bg-blue-500">
         <CardTitle className="flex items-center gap-2">
           <DollarSign className="h-5 w-5" />
           Payment Milestone Tracker
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 bg-blue-500">
         {/* Overall Progress */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
@@ -94,15 +72,11 @@ export const PaymentMilestoneTracker = ({
 
         {/* Milestone Cards */}
         <div className="space-y-4">
-          {milestones.map((milestone) => (
-            <div 
-              key={milestone.id} 
-              className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
-            >
+          {milestones.map(milestone => <div key={milestone.id} className="border rounded-lg p-4 transition-colors bg-blue-500">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   {getStatusIcon(milestone.status)}
-                  <h3 className="font-medium">{milestone.name}</h3>
+                  <h3 className="font-medium text-xl">{milestone.name}</h3>
                 </div>
                 {getStatusBadge(milestone.status)}
               </div>
@@ -114,30 +88,22 @@ export const PaymentMilestoneTracker = ({
                   <p className="text-xs text-gray-500">({milestone.percentage}% of total)</p>
                 </div>
                 
-                {milestone.dueDate && (
-                  <div>
+                {milestone.dueDate && <div>
                     <p className="text-sm text-gray-600">Due Date</p>
                     <p className="font-medium">{new Date(milestone.dueDate).toLocaleDateString()}</p>
-                  </div>
-                )}
+                  </div>}
                 
-                {milestone.releasedDate && (
-                  <div>
+                {milestone.releasedDate && <div>
                     <p className="text-sm text-gray-600">Released</p>
                     <p className="font-medium">{new Date(milestone.releasedDate).toLocaleDateString()}</p>
-                  </div>
-                )}
+                  </div>}
               </div>
               
               <p className="text-sm text-gray-600 mb-3">{milestone.description}</p>
               
-              {milestone.status === 'pending' && (
-                <AlertDialog>
+              {milestone.status === 'pending' && <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button 
-                      className="bg-blue-600 hover:bg-blue-700"
-                      onClick={() => setSelectedMilestone(milestone.id)}
-                    >
+                    <Button onClick={() => setSelectedMilestone(milestone.id)} className="bg-blue-800 hover:bg-blue-700 text-gray-50">
                       Release Payment
                     </Button>
                   </AlertDialogTrigger>
@@ -151,20 +117,14 @@ export const PaymentMilestoneTracker = ({
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction 
-                        onClick={() => onReleasePayment(milestone.id)}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
+                      <AlertDialogAction onClick={() => onReleasePayment(milestone.id)} className="bg-blue-600 hover:bg-blue-700">
                         Release Payment
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
-                </AlertDialog>
-              )}
-            </div>
-          ))}
+                </AlertDialog>}
+            </div>)}
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
