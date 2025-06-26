@@ -284,7 +284,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
                 </div>
                 <Switch id="urgency" checked={formData.urgency} onCheckedChange={checked => updateFormData({
                 urgency: checked
-              })} className="bg-blue-700 hover:bg-blue-600 text-amber-50" />
+              })} className="bg-blue-700 hover:bg-blue-600 text-gray-300" />
               </div>
             </CardContent>
           </Card>
@@ -319,7 +319,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
                 </div>
                 <Switch id="budgetApproved" checked={formData.budgetApproved} onCheckedChange={checked => updateFormData({
                 budgetApproved: checked
-              })} className="bg-blue-700 hover:bg-blue-600" />
+              })} className="bg-blue-700 hover:bg-blue-600 text-gray-300" />
               </div>
 
               <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
@@ -331,7 +331,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
                 </div>
                 <Switch id="complianceRequired" checked={formData.complianceRequired} onCheckedChange={checked => updateFormData({
                 complianceRequired: checked
-              })} className="bg-blue-700 hover:bg-blue-600" />
+              })} className="bg-blue-700 hover:bg-blue-600 text-gray-300" />
               </div>
             </CardContent>
           </Card>
