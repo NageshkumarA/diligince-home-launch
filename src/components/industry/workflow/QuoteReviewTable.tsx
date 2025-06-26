@@ -29,22 +29,22 @@ export const QuoteReviewTable = ({
           Vendor Quotes Comparison
         </CardTitle>
       </CardHeader>
-      <CardContent className="bg-gray-500">
+      <CardContent className="bg-blue-500">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b">
-                <th className="text-left p-4 font-medium">Vendor</th>
-                <th className="text-left p-4 font-medium">Quote Amount</th>
-                <th className="text-left p-4 font-medium">Delivery</th>
-                <th className="text-left p-4 font-medium">Rating</th>
-                <th className="text-left p-4 font-medium">Proposal</th>
+                <th className="text-left p-4 font-medium bg-blue-500">Vendor</th>
+                <th className="text-left p-4 font-medium bg-blue-500">Quote Amount</th>
+                <th className="text-left p-4 font-medium bg-blue-500">Delivery</th>
+                <th className="text-left p-4 font-medium bg-blue-500">Rating</th>
+                <th className="text-left p-4 font-medium bg-blue-500">Proposal</th>
                 <th className="text-left p-4 font-medium">Action</th>
               </tr>
             </thead>
             <tbody>
               {quotes.map(quote => <tr key={quote.id} className="border-b hover:bg-gray-50">
-                  <td className="p-4">
+                  <td className="p-4 bg-blue-500">
                     <div>
                       <div className="font-medium">{quote.vendorName}</div>
                       <div className="text-sm text-gray-500">
@@ -52,7 +52,7 @@ export const QuoteReviewTable = ({
                       </div>
                     </div>
                   </td>
-                  <td className="p-4">
+                  <td className="p-4 bg-blue-500">
                     <div className="flex items-center gap-2">
                       <DollarSign className="h-4 w-4" />
                       <span className={quote.quoteAmount === getLowestPrice() ? 'font-bold text-green-600' : ''}>
@@ -63,7 +63,7 @@ export const QuoteReviewTable = ({
                         </Badge>}
                     </div>
                   </td>
-                  <td className="p-4">
+                  <td className="p-4 bg-blue-500">
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />
                       <span className={quote.deliveryTimeWeeks === getFastestDelivery() ? 'font-bold text-blue-600' : ''}>
@@ -74,13 +74,13 @@ export const QuoteReviewTable = ({
                         </Badge>}
                     </div>
                   </td>
-                  <td className="p-4">
+                  <td className="p-4 bg-blue-500">
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 text-yellow-500" />
                       <span>{quote.vendorRating.toFixed(1)}</span>
                     </div>
                   </td>
-                  <td className="p-4">
+                  <td className="p-4 bg-blue-500">
                     <div className="max-w-xs">
                       <p className="text-sm truncate">{quote.proposalSummary}</p>
                       <Button variant="link" className="p-0 h-auto text-xs">
@@ -88,10 +88,10 @@ export const QuoteReviewTable = ({
                       </Button>
                     </div>
                   </td>
-                  <td className="p-4">
+                  <td className="p-4 bg-blue-500">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setSelectedQuote(quote.id)}>
+                        <Button onClick={() => setSelectedQuote(quote.id)} className="text-gray-50 bg-blue-900 hover:bg-blue-800">
                           Accept Quote
                         </Button>
                       </AlertDialogTrigger>
