@@ -52,7 +52,7 @@ export const TransportRequests = () => {
           {requests.map(request => <div key={request.id} className="bg-white border border-gray-100 rounded-lg p-4 hover:bg-gray-50 transition-colors">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900">{request.title}</h4>
+                  <h4 className="font-semibold text-gray-900 text-xl">{request.title}</h4>
                   <p className="text-sm text-gray-600">{request.client}</p>
                 </div>
                 <Badge className={getPriorityColor(request.priority)}>

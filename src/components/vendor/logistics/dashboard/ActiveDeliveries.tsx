@@ -38,7 +38,7 @@ export const ActiveDeliveries = () => {
         {deliveries.map(delivery => <div key={delivery.id} className="bg-white border border-gray-100 rounded-lg p-4">
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
-                <h4 className="font-semibold text-gray-900">{delivery.title}</h4>
+                <h4 className="font-semibold text-gray-900 text-xl">{delivery.title}</h4>
                 <p className="text-sm text-gray-600">{delivery.client}</p>
               </div>
               <div className="text-right">

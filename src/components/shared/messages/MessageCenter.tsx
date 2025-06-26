@@ -138,7 +138,7 @@ export const MessageCenter = ({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
-                      <h4 className="text-gray-900 font-normal text-xl">{message.sender}</h4>
+                      <h4 className="text-gray-900 font-normal text-lg">{message.sender}</h4>
                       <span className="text-lg">{getTypeIcon(message.type)}</span>
                       <Badge variant="outline" className="text-xs border-gray-200 text-gray-600">
                         {getTypeLabel(message.type)}
