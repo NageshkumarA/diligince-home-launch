@@ -9,7 +9,6 @@ import { Calendar, MapPin, Package, Truck, Clock, DollarSign, Filter, Search } f
 import { RequestDetailsModal } from "@/components/vendor/logistics/modals/RequestDetailsModal";
 import { CustomQuoteModal } from "@/components/vendor/logistics/modals/CustomQuoteModal";
 import { QuoteModal } from "@/components/vendor/logistics/dashboard/QuoteModal";
-
 const LogisticsVendorRequests = () => {
   const [filterType, setFilterType] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,112 +16,104 @@ const LogisticsVendorRequests = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [showCustomQuoteModal, setShowCustomQuoteModal] = useState(false);
-
-  const requests = [
-    {
-      id: "REQ-001",
-      client: "Steel Industries Ltd.",
-      type: "Heavy Machinery Transport",
-      description: "Transport of 50-ton industrial press from Mumbai to Chennai",
-      pickup: "Mumbai, Maharashtra",
-      delivery: "Chennai, Tamil Nadu",
-      deadline: "2025-01-15",
-      budget: "₹2,50,000",
-      priority: "high",
-      status: "open",
-      weight: "50 tons",
-      dimensions: "6m x 3m x 2.5m"
-    },
-    {
-      id: "REQ-002",
-      client: "Chemical Corp",
-      type: "Hazardous Materials",
-      description: "Transport of chemical tanks with proper safety protocols",
-      pickup: "Gujarat Industrial Estate",
-      delivery: "Bangalore Tech Park",
-      deadline: "2025-01-20",
-      budget: "₹1,80,000",
-      priority: "urgent",
-      status: "open",
-      weight: "25 tons",
-      dimensions: "4m x 2m x 2m"
-    },
-    {
-      id: "REQ-003",
-      client: "Power Generation Co.",
-      type: "Turbine Components",
-      description: "Transport of wind turbine blades and components",
-      pickup: "Pune Manufacturing Unit",
-      delivery: "Rajasthan Wind Farm",
-      deadline: "2025-01-25",
-      budget: "₹3,20,000",
-      priority: "medium",
-      status: "quoted",
-      weight: "35 tons",
-      dimensions: "15m x 3m x 2m"
-    },
-    {
-      id: "REQ-004",
-      client: "Auto Manufacturing",
-      type: "Factory Relocation",
-      description: "Complete factory equipment relocation project",
-      pickup: "Delhi Manufacturing Hub",
-      delivery: "Haryana Industrial Zone",
-      deadline: "2025-02-01",
-      budget: "₹8,50,000",
-      priority: "medium",
-      status: "open",
-      weight: "200 tons",
-      dimensions: "Multiple units"
-    }
-  ];
-
+  const requests = [{
+    id: "REQ-001",
+    client: "Steel Industries Ltd.",
+    type: "Heavy Machinery Transport",
+    description: "Transport of 50-ton industrial press from Mumbai to Chennai",
+    pickup: "Mumbai, Maharashtra",
+    delivery: "Chennai, Tamil Nadu",
+    deadline: "2025-01-15",
+    budget: "₹2,50,000",
+    priority: "high",
+    status: "open",
+    weight: "50 tons",
+    dimensions: "6m x 3m x 2.5m"
+  }, {
+    id: "REQ-002",
+    client: "Chemical Corp",
+    type: "Hazardous Materials",
+    description: "Transport of chemical tanks with proper safety protocols",
+    pickup: "Gujarat Industrial Estate",
+    delivery: "Bangalore Tech Park",
+    deadline: "2025-01-20",
+    budget: "₹1,80,000",
+    priority: "urgent",
+    status: "open",
+    weight: "25 tons",
+    dimensions: "4m x 2m x 2m"
+  }, {
+    id: "REQ-003",
+    client: "Power Generation Co.",
+    type: "Turbine Components",
+    description: "Transport of wind turbine blades and components",
+    pickup: "Pune Manufacturing Unit",
+    delivery: "Rajasthan Wind Farm",
+    deadline: "2025-01-25",
+    budget: "₹3,20,000",
+    priority: "medium",
+    status: "quoted",
+    weight: "35 tons",
+    dimensions: "15m x 3m x 2m"
+  }, {
+    id: "REQ-004",
+    client: "Auto Manufacturing",
+    type: "Factory Relocation",
+    description: "Complete factory equipment relocation project",
+    pickup: "Delhi Manufacturing Hub",
+    delivery: "Haryana Industrial Zone",
+    deadline: "2025-02-01",
+    budget: "₹8,50,000",
+    priority: "medium",
+    status: "open",
+    weight: "200 tons",
+    dimensions: "Multiple units"
+  }];
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "urgent": return "bg-red-100 text-red-800";
-      case "high": return "bg-orange-100 text-orange-800";
-      case "medium": return "bg-yellow-100 text-yellow-800";
-      default: return "bg-green-100 text-green-800";
+      case "urgent":
+        return "bg-red-100 text-red-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-green-100 text-green-800";
     }
   };
-
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "open": return "bg-blue-100 text-blue-800";
-      case "quoted": return "bg-purple-100 text-purple-800";
-      case "awarded": return "bg-green-100 text-green-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "open":
+        return "bg-blue-100 text-blue-800";
+      case "quoted":
+        return "bg-purple-100 text-purple-800";
+      case "awarded":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
-
   const filteredRequests = requests.filter(request => {
-    const matchesSearch = request.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         request.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = request.client.toLowerCase().includes(searchTerm.toLowerCase()) || request.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filterType === "all" || request.type.toLowerCase().includes(filterType.toLowerCase());
     return matchesSearch && matchesFilter;
   });
-
   const handleViewDetails = (request: any) => {
     setSelectedRequest(request);
     setShowDetailsModal(true);
   };
-
   const handleSubmitQuote = (request: any) => {
     setSelectedRequest(request);
     setShowQuoteModal(true);
   };
-
   const handleCreateCustomQuote = () => {
     setShowCustomQuoteModal(true);
   };
-
   const handleQuoteFromDetails = () => {
     setShowDetailsModal(false);
     setShowQuoteModal(true);
   };
-
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       <LogisticsVendorHeader />
       
       <main className="pt-32 p-6 lg:p-8">
@@ -133,10 +124,7 @@ const LogisticsVendorRequests = () => {
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Transport Requests</h1>
               <p className="text-gray-600">Manage incoming logistics and transport requests from industrial clients.</p>
             </div>
-            <Button 
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-              onClick={handleCreateCustomQuote}
-            >
+            <Button onClick={handleCreateCustomQuote} className="text-white bg-pink-700 hover:bg-pink-600">
               <Package className="h-4 w-4 mr-2" />
               Create Custom Quote
             </Button>
@@ -146,12 +134,7 @@ const LogisticsVendorRequests = () => {
           <div className="flex gap-4 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search requests by client or description..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-white border-gray-200 focus:border-blue-300 focus:ring-blue-200"
-              />
+              <Input placeholder="Search requests by client or description..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-white border-gray-200 focus:border-blue-300 focus:ring-blue-200" />
             </div>
             <Select value={filterType} onValueChange={setFilterType}>
               <SelectTrigger className="w-48 bg-white border-gray-200 focus:border-blue-300 focus:ring-blue-200">
@@ -217,8 +200,7 @@ const LogisticsVendorRequests = () => {
 
           {/* Requests List */}
           <div className="space-y-4">
-            {filteredRequests.map((request) => (
-              <Card key={request.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+            {filteredRequests.map(request => <Card key={request.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
@@ -260,50 +242,26 @@ const LogisticsVendorRequests = () => {
                     </div>
                     
                     <div className="flex gap-2 ml-4">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleViewDetails(request)}
-                        className="border-blue-200 text-blue-600 hover:bg-blue-50"
-                      >
+                      <Button variant="outline" size="sm" onClick={() => handleViewDetails(request)} className="border-blue-200 text-gray-50 bg-pink-700 hover:bg-pink-600">
                         View Details
                       </Button>
-                      <Button 
-                        className="bg-blue-600 hover:bg-blue-700 text-white" 
-                        size="sm"
-                        onClick={() => handleSubmitQuote(request)}
-                      >
+                      <Button size="sm" onClick={() => handleSubmitQuote(request)} className="text-white bg-pink-700 hover:bg-pink-600">
                         Submit Quote
                       </Button>
                     </div>
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </main>
 
       {/* Modals */}
-      <RequestDetailsModal
-        isOpen={showDetailsModal}
-        onClose={() => setShowDetailsModal(false)}
-        request={selectedRequest}
-        onSubmitQuote={handleQuoteFromDetails}
-      />
+      <RequestDetailsModal isOpen={showDetailsModal} onClose={() => setShowDetailsModal(false)} request={selectedRequest} onSubmitQuote={handleQuoteFromDetails} />
 
-      <QuoteModal
-        isOpen={showQuoteModal}
-        onClose={() => setShowQuoteModal(false)}
-        request={selectedRequest}
-      />
+      <QuoteModal isOpen={showQuoteModal} onClose={() => setShowQuoteModal(false)} request={selectedRequest} />
 
-      <CustomQuoteModal
-        isOpen={showCustomQuoteModal}
-        onClose={() => setShowCustomQuoteModal(false)}
-      />
-    </div>
-  );
+      <CustomQuoteModal isOpen={showCustomQuoteModal} onClose={() => setShowCustomQuoteModal(false)} />
+    </div>;
 };
-
 export default LogisticsVendorRequests;
