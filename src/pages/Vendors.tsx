@@ -77,11 +77,11 @@ const Vendors = () => {
     
     switch (invitation.status) {
       case 'sent':
-        return <Clock className="h-4 w-4 text-amber-500" title="Invitation sent - waiting for response" />;
+        return <Clock className="h-4 w-4 text-amber-500" />;
       case 'accepted':
-        return <CheckCircle className="h-4 w-4 text-green-500" title="Invitation accepted" />;
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'opened':
-        return <Mail className="h-4 w-4 text-blue-500" title="Invitation opened" />;
+        return <Mail className="h-4 w-4 text-blue-500" />;
       default:
         return null;
     }
