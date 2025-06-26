@@ -1,27 +1,13 @@
 
-import React, { memo } from "react";
-import { LoadingSpinner } from "./LoadingSpinner";
+import React from 'react';
 
-interface FastLoadingStateProps {
-  message?: string;
-  size?: "sm" | "md" | "lg";
-  className?: string;
-  showSpinner?: boolean;
-}
-
-// Optimized loading component with minimal re-renders
-export const FastLoadingState = memo(({ 
-  message = "Loading...", 
-  size = "md",
-  className = "",
-  showSpinner = true
-}: FastLoadingStateProps) => {
+export const FastLoadingState = () => {
   return (
-    <div className={`flex flex-col items-center justify-center p-4 ${className}`}>
-      {showSpinner && <LoadingSpinner size={size} />}
-      <p className="mt-2 text-sm text-gray-600 animate-pulse">{message}</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading...</p>
+      </div>
     </div>
   );
-});
-
-FastLoadingState.displayName = "FastLoadingState";
+};

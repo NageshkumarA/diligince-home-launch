@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { FastLoadingState } from "@/components/shared/loading/FastLoadingState";
+import { NotificationStoreProvider } from "@/contexts/NotificationStoreContext";
 
 // Lazy load pages for better performance
 const LandingPage = React.lazy(() => import("@/pages/LandingPage"));
@@ -29,43 +30,45 @@ function App() {
     <Router>
       <div className="App">
         <ErrorBoundary>
-          <Suspense fallback={<FastLoadingState />}>
-            <Routes>
-              {/* Landing and Auth Routes */}
-              <Route path="/" element={<LandingPage />} />
-              
-              {/* Industry Routes */}
-              <Route path="/industry-dashboard" element={<IndustryDashboard />} />
-              <Route path="/industry-requirements" element={<IndustryRequirements />} />
-              <Route path="/industry-workflows" element={<IndustryWorkflows />} />
-              <Route path="/industry-stakeholders" element={<IndustryStakeholders />} />
-              <Route path="/industry-messages" element={<IndustryMessages />} />
-              <Route path="/industry-profile" element={<IndustryProfile />} />
-              <Route path="/industry-documents" element={<IndustryDocuments />} />
-              <Route path="/industry-project-workflow/:id" element={<IndustryProjectWorkflow />} />
-              
-              {/* Requirement Management */}
-              <Route path="/create-requirement" element={<CreateRequirement />} />
-              <Route path="/requirement/:id" element={<RequirementDetails />} />
-              
-              {/* Purchase Order Management */}
-              <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
-              <Route path="/work-completion-payment/:id" element={<WorkCompletionPayment />} />
-              
-              {/* Vendor Dashboards */}
-              <Route path="/product-vendor-dashboard" element={<ProductVendorDashboard />} />
-              <Route path="/service-vendor-dashboard" element={<ServiceVendorDashboard />} />
-              <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
-              <Route path="/expert-dashboard" element={<ExpertDashboard />} />
-              
-              {/* Vendor Details */}
-              <Route path="/vendor-details/:id" element={<VendorDetails />} />
-              
-              {/* Fallback Route */}
-              <Route path="*" element={<LandingPage />} />
-            </Routes>
-          </Suspense>
-          <Toaster />
+          <NotificationStoreProvider>
+            <Suspense fallback={<FastLoadingState />}>
+              <Routes>
+                {/* Landing and Auth Routes */}
+                <Route path="/" element={<LandingPage />} />
+                
+                {/* Industry Routes */}
+                <Route path="/industry-dashboard" element={<IndustryDashboard />} />
+                <Route path="/industry-requirements" element={<IndustryRequirements />} />
+                <Route path="/industry-workflows" element={<IndustryWorkflows />} />
+                <Route path="/industry-stakeholders" element={<IndustryStakeholders />} />
+                <Route path="/industry-messages" element={<IndustryMessages />} />
+                <Route path="/industry-profile" element={<IndustryProfile />} />
+                <Route path="/industry-documents" element={<IndustryDocuments />} />
+                <Route path="/industry-project-workflow/:id" element={<IndustryProjectWorkflow />} />
+                
+                {/* Requirement Management */}
+                <Route path="/create-requirement" element={<CreateRequirement />} />
+                <Route path="/requirement/:id" element={<RequirementDetails />} />
+                
+                {/* Purchase Order Management */}
+                <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
+                <Route path="/work-completion-payment/:id" element={<WorkCompletionPayment />} />
+                
+                {/* Vendor Dashboards */}
+                <Route path="/product-vendor-dashboard" element={<ProductVendorDashboard />} />
+                <Route path="/service-vendor-dashboard" element={<ServiceVendorDashboard />} />
+                <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
+                <Route path="/expert-dashboard" element={<ExpertDashboard />} />
+                
+                {/* Vendor Details */}
+                <Route path="/vendor-details/:id" element={<VendorDetails />} />
+                
+                {/* Fallback Route */}
+                <Route path="*" element={<LandingPage />} />
+              </Routes>
+            </Suspense>
+            <Toaster />
+          </NotificationStoreProvider>
         </ErrorBoundary>
       </div>
     </Router>

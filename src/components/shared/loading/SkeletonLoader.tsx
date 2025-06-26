@@ -1,34 +1,24 @@
 
-import React, { memo } from "react";
+import React from 'react';
 
 interface SkeletonLoaderProps {
   lines?: number;
-  width?: string;
   height?: string;
-  className?: string;
 }
 
-// Optimized skeleton loader for progressive loading
-export const SkeletonLoader = memo(({ 
+export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ 
   lines = 3, 
-  width = "100%", 
-  height = "16px",
-  className = ""
-}: SkeletonLoaderProps) => {
+  height = "16px" 
+}) => {
   return (
-    <div className={`space-y-2 ${className}`}>
-      {Array.from({ length: lines }).map((_, i) => (
+    <div className="animate-pulse space-y-2">
+      {Array.from({ length: lines }).map((_, index) => (
         <div
-          key={i}
-          className="bg-gray-200 rounded animate-pulse"
-          style={{
-            width: i === lines - 1 ? '60%' : width,
-            height
-          }}
+          key={index}
+          className="bg-gray-200 rounded"
+          style={{ height }}
         />
       ))}
     </div>
   );
-});
-
-SkeletonLoader.displayName = "SkeletonLoader";
+};
