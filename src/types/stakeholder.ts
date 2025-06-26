@@ -43,3 +43,16 @@ export interface StakeholderProfile {
   established?: string;
   teamSize?: string;
 }
+
+export interface StakeholderInvitation {
+  id: string;
+  stakeholderId: string;
+  email: string;
+  name: string;
+  type: 'vendor' | 'expert';
+  invitedBy: string;
+  sentDate: string;
+  status: 'sent' | 'opened' | 'accepted' | 'declined';
+  acceptedDate?: string;
+  invitationToken?: string;
+}

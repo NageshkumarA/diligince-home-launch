@@ -1,18 +1,21 @@
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { StakeholderApplication, StakeholderMatch, StakeholderProfile } from '@/types/stakeholder';
+import { StakeholderApplication, StakeholderMatch, StakeholderProfile, StakeholderInvitation } from '@/types/stakeholder';
 import { RequirementFormData } from './RequirementContext';
 
 interface StakeholderContextType {
   applications: StakeholderApplication[];
   matches: StakeholderMatch[];
   stakeholderProfiles: StakeholderProfile[];
+  invitations: StakeholderInvitation[];
   submitApplication: (application: Omit<StakeholderApplication, 'id' | 'submittedDate' | 'status'>) => void;
   reviewApplication: (applicationId: string, status: 'accepted' | 'rejected', comments?: string) => void;
   getApplicationsForRequirement: (requirementId: string) => StakeholderApplication[];
   getMatchedStakeholders: (requirementId: string) => StakeholderProfile[];
   notifyStakeholders: (requirement: RequirementFormData) => void;
-  addStakeholderProfile: (profile: Omit<StakeholderProfile, 'id'>) => void;
+  addStakeholderProfile: (profile: Omit<StakeholderProfile, 'id'>) => string;
+  sendInvitation: (invitation: Omit<StakeholderInvitation, 'id' | 'sentDate' | 'status'>) => Promise<void>;
+  getInvitationStatus: (stakeholderId: string) => StakeholderInvitation | null;
 }
 
 const StakeholderContext = createContext<StakeholderContextType | undefined>(undefined);
@@ -85,6 +88,7 @@ export const StakeholderProvider = ({ children }: { children: React.ReactNode })
   const [applications, setApplications] = useState<StakeholderApplication[]>([]);
   const [matches, setMatches] = useState<StakeholderMatch[]>([]);
   const [stakeholderProfiles, setStakeholderProfiles] = useState<StakeholderProfile[]>(mockStakeholderProfiles);
+  const [invitations, setInvitations] = useState<StakeholderInvitation[]>([]);
 
   const submitApplication = useCallback((applicationData: Omit<StakeholderApplication, 'id' | 'submittedDate' | 'status'>) => {
     const newApplication: StakeholderApplication = {
@@ -143,19 +147,45 @@ export const StakeholderProvider = ({ children }: { children: React.ReactNode })
       id: `stakeholder-${Date.now()}`
     };
     setStakeholderProfiles(prev => [...prev, newProfile]);
+    return newProfile.id;
   }, []);
+
+  const sendInvitation = useCallback(async (invitationData: Omit<StakeholderInvitation, 'id' | 'sentDate' | 'status'>) => {
+    const newInvitation: StakeholderInvitation = {
+      ...invitationData,
+      id: `inv-${Date.now()}`,
+      sentDate: new Date().toISOString(),
+      status: 'sent'
+    };
+    
+    setInvitations(prev => [...prev, newInvitation]);
+    
+    // Simulate sending email invitation
+    console.log(`Sending invitation email to ${invitationData.email} for ${invitationData.name}`);
+    
+    // In a real application, this would send an actual email
+    // For now, we'll simulate a successful send
+    return Promise.resolve();
+  }, []);
+
+  const getInvitationStatus = useCallback((stakeholderId: string) => {
+    return invitations.find(inv => inv.stakeholderId === stakeholderId) || null;
+  }, [invitations]);
 
   return (
     <StakeholderContext.Provider value={{
       applications,
       matches,
       stakeholderProfiles,
+      invitations,
       submitApplication,
       reviewApplication,
       getApplicationsForRequirement,
       getMatchedStakeholders,
       notifyStakeholders,
-      addStakeholderProfile
+      addStakeholderProfile,
+      sendInvitation,
+      getInvitationStatus
     }}>
       {children}
     </StakeholderContext.Provider>

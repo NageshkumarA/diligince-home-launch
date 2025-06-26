@@ -11,16 +11,18 @@ import { useStakeholder } from "@/contexts/StakeholderContext";
 import { VendorDetailsModal } from "@/components/stakeholder/VendorDetailsModal";
 import { ExpertDetailsModal } from "@/components/stakeholder/ExpertDetailsModal";
 import { AddExpertModal } from "@/components/industry/AddExpertModal";
+import { AddVendorModal } from "@/components/industry/AddVendorModal";
 import { StakeholderProfile } from "@/types/stakeholder";
 import { useModal } from "@/hooks/useModal";
-import { Star, MapPin, Award } from "lucide-react";
+import { Star, MapPin, Award, Mail, CheckCircle, Clock } from "lucide-react";
 
 const Vendors = () => {
-  const { stakeholderProfiles, applications } = useStakeholder();
+  const { stakeholderProfiles, applications, getInvitationStatus } = useStakeholder();
   const [selectedStakeholder, setSelectedStakeholder] = useState<StakeholderProfile | null>(null);
   const { isOpen: isVendorModalOpen, openModal: openVendorModal, closeModal: closeVendorModal } = useModal();
   const { isOpen: isExpertModalOpen, openModal: openExpertModal, closeModal: closeExpertModal } = useModal();
   const { isOpen: isAddExpertModalOpen, openModal: openAddExpertModal, closeModal: closeAddExpertModal } = useModal();
+  const { isOpen: isAddVendorModalOpen, openModal: openAddVendorModal, closeModal: closeAddVendorModal } = useModal();
 
   // Filter stakeholders by type
   const vendors = stakeholderProfiles.filter(s => 
@@ -69,6 +71,22 @@ const Vendors = () => {
     );
   };
 
+  const getInvitationStatusIcon = (stakeholderId: string) => {
+    const invitation = getInvitationStatus(stakeholderId);
+    if (!invitation) return null;
+    
+    switch (invitation.status) {
+      case 'sent':
+        return <Clock className="h-4 w-4 text-amber-500" title="Invitation sent - waiting for response" />;
+      case 'accepted':
+        return <CheckCircle className="h-4 w-4 text-green-500" title="Invitation accepted" />;
+      case 'opened':
+        return <Mail className="h-4 w-4 text-blue-500" title="Invitation opened" />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Helmet>
@@ -91,14 +109,17 @@ const Vendors = () => {
               Vendors ({vendors.length})
             </TabsTrigger>
             <TabsTrigger value="experts" className="data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50">
-              Experts ({experts.length})
+              Expert Professionals ({experts.length})
             </TabsTrigger>
           </TabsList>
           
           <TabsContent value="vendors" className="space-y-6 mt-8">
             <div className="flex justify-end">
-              <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
-                <Link to="/vendor-profile">Add Vendor</Link>
+              <Button 
+                onClick={openAddVendorModal}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
+              >
+                Add Vendor
               </Button>
             </div>
             
@@ -108,7 +129,10 @@ const Vendors = () => {
                   <CardHeader className="pb-4">
                     <div className="flex items-start justify-between">
                       <div>
-                        <CardTitle className="text-lg font-semibold text-gray-900">{vendor.name}</CardTitle>
+                        <div className="flex items-center gap-2 mb-1">
+                          <CardTitle className="text-lg font-semibold text-gray-900">{vendor.name}</CardTitle>
+                          {getInvitationStatusIcon(vendor.id)}
+                        </div>
                         <CardDescription className="text-gray-600 mt-1">
                           {getStakeholderTypeLabel(vendor.type)}
                         </CardDescription>
@@ -178,7 +202,7 @@ const Vendors = () => {
                 onClick={openAddExpertModal}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
               >
-                Add Expert
+                Add Expert Professional
               </Button>
             </div>
             
@@ -188,7 +212,10 @@ const Vendors = () => {
                   <CardHeader className="pb-4">
                     <div className="flex items-start justify-between">
                       <div>
-                        <CardTitle className="text-lg font-semibold text-gray-900">{expert.name}</CardTitle>
+                        <div className="flex items-center gap-2 mb-1">
+                          <CardTitle className="text-lg font-semibold text-gray-900">{expert.name}</CardTitle>
+                          {getInvitationStatusIcon(expert.id)}
+                        </div>
                         <CardDescription className="text-gray-600 mt-1">
                           Expert Professional
                         </CardDescription>
@@ -287,7 +314,12 @@ const Vendors = () => {
         />
       )}
 
-      {/* Add Expert Modal */}
+      {/* Add Modals */}
+      <AddVendorModal
+        isOpen={isAddVendorModalOpen}
+        onClose={closeAddVendorModal}
+      />
+
       <AddExpertModal
         isOpen={isAddExpertModalOpen}
         onClose={closeAddExpertModal}

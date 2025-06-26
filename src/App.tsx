@@ -35,6 +35,7 @@ import IndustryMessages from "./pages/IndustryMessages";
 import CreatePurchaseOrder from "./pages/CreatePurchaseOrder";
 import RequirementDetails from "./pages/RequirementDetails";
 import ProfileCompletion from "./pages/ProfileCompletion";
+import StakeholderOnboarding from "./pages/StakeholderOnboarding";
 import Experts from "./pages/Experts";
 import Careers from "./pages/Careers";
 import { UserProvider } from "@/contexts/UserContext";
@@ -67,6 +68,7 @@ function App() {
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/profile-completion" element={<ProfileCompletion />} />
+                    <Route path="/stakeholder-onboarding" element={<StakeholderOnboarding />} />
                     <Route path="/industry-dashboard" element={<IndustryDashboard />} />
                     <Route path="/vendors" element={<Vendors />} />
                     <Route path="/experts" element={<Experts />} />
