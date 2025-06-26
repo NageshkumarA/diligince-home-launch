@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import VendorHeader from "@/components/vendor/VendorHeader";
+import { ServiceVendorHeader } from "@/components/vendor/ServiceVendorHeader";
 import { ServiceVendorSidebar } from "@/components/vendor/service/ServiceVendorSidebar";
 import CompanyInfoForm from "@/components/vendor/forms/CompanyInfoForm";
 import TeamMembersSection from "@/components/vendor/forms/TeamMembersSection";
@@ -80,7 +79,7 @@ const ServiceVendorProfile = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <VendorHeader />
+      <ServiceVendorHeader />
       
       <div className="flex flex-grow pt-16">
         <ServiceVendorSidebar

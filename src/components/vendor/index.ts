@@ -1,4 +1,9 @@
 
+// Headers
+export { ServiceVendorHeader } from './ServiceVendorHeader';
+export { ProductVendorHeader } from './ProductVendorHeader';
+export { LogisticsVendorHeader } from './LogisticsVendorHeader';
+
 // Shared components
 export { BaseSidebar } from './shared/BaseSidebar';
 export { BaseVendorLayout } from './shared/BaseVendorLayout';

@@ -1,5 +1,5 @@
 import React, { Suspense, memo } from "react";
-import VendorHeader from "@/components/vendor/VendorHeader";
+import { ServiceVendorHeader } from "@/components/vendor/ServiceVendorHeader";
 import { FastLoadingState } from "@/components/shared/loading/FastLoadingState";
 import { SkeletonLoader } from "@/components/shared/loading/SkeletonLoader";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
@@ -112,7 +112,7 @@ const ServiceVendorDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <VendorHeader />
+      <ServiceVendorHeader />
       
       <main className="pt-32 p-6 lg:p-8">
         <DashboardContainer />

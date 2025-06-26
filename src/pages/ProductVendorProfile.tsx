@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import VendorHeader from "@/components/vendor/VendorHeader";
+import { ProductVendorHeader } from "@/components/vendor/ProductVendorHeader";
 import { ProductVendorSidebar } from "@/components/vendor/product/ProductVendorSidebar";
 import CompanyInfoForm from "@/components/vendor/forms/ProductVendor/CompanyInfoForm";
 import ProductCatalogSection from "@/components/vendor/forms/ProductVendor/ProductCatalogSection";
@@ -89,7 +88,7 @@ const ProductVendorProfile = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <VendorHeader />
+      <ProductVendorHeader />
       
       <div className="flex flex-grow pt-16">
         <ProductVendorSidebar
