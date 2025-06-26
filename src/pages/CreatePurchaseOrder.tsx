@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { format, differenceInDays } from 'date-fns';
@@ -7,30 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PurchaseOrderStepIndicator from '@/components/purchase-order/PurchaseOrderStepIndicator';
@@ -48,39 +29,35 @@ const formSchema = z.object({
   taxPercentage: z.coerce.number().min(0, "Tax percentage cannot be negative"),
   totalValue: z.coerce.number(),
   startDate: z.date({
-    required_error: "Start date is required",
+    required_error: "Start date is required"
   }),
   endDate: z.date({
-    required_error: "End date is required",
+    required_error: "End date is required"
   }).refine(data => data, {
-    message: "End date is required",
+    message: "End date is required"
   }),
   paymentTerms: z.string().min(1, "Payment terms are required"),
   specialInstructions: z.string().optional(),
   scopeOfWork: z.string().min(1, "Scope of work is required"),
-  deliverables: z.array(
-    z.object({
-      id: z.string(),
-      description: z.string().min(1, "Deliverable description is required"),
-    })
-  ),
-  acceptanceCriteria: z.array(
-    z.object({
-      id: z.string(),
-      description: z.string().min(1, "Acceptance criteria is required"),
-    })
-  ),
+  deliverables: z.array(z.object({
+    id: z.string(),
+    description: z.string().min(1, "Deliverable description is required")
+  })),
+  acceptanceCriteria: z.array(z.object({
+    id: z.string(),
+    description: z.string().min(1, "Acceptance criteria is required")
+  }))
 }).refine(data => data.endDate >= data.startDate, {
   message: "End date must be after start date",
-  path: ["endDate"],
+  path: ["endDate"]
 });
-
 type FormValues = z.infer<typeof formSchema>;
-
 const CreatePurchaseOrder: React.FC = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [currentStep, setCurrentStep] = useState<POStepType>(3); // Start at step 3 (PO Details)
-  
+
   // Generate unique PO number
   const generatePONumber = () => {
     const date = new Date();
@@ -91,11 +68,16 @@ const CreatePurchaseOrder: React.FC = () => {
   };
 
   // Vendors list - in a real app this would come from API
-  const vendors = [
-    { id: "1", name: "Acme Industrial Supplies" },
-    { id: "2", name: "Tech Manufacturing Co." },
-    { id: "3", name: "Global Equipment Ltd." }
-  ];
+  const vendors = [{
+    id: "1",
+    name: "Acme Industrial Supplies"
+  }, {
+    id: "2",
+    name: "Tech Manufacturing Co."
+  }, {
+    id: "3",
+    name: "Global Equipment Ltd."
+  }];
 
   // Initialize the form
   const form = useForm<FormValues>({
@@ -113,8 +95,8 @@ const CreatePurchaseOrder: React.FC = () => {
       specialInstructions: "",
       scopeOfWork: "",
       deliverables: [],
-      acceptanceCriteria: [],
-    },
+      acceptanceCriteria: []
+    }
   });
 
   // Extract form values
@@ -141,7 +123,7 @@ const CreatePurchaseOrder: React.FC = () => {
   // Handle previous step
   const handlePrevious = () => {
     if (currentStep > 1) {
-      setCurrentStep((prev) => (prev - 1) as POStepType);
+      setCurrentStep(prev => prev - 1 as POStepType);
     }
   };
 
@@ -150,13 +132,13 @@ const CreatePurchaseOrder: React.FC = () => {
     form.trigger();
     if (form.formState.isValid) {
       if (currentStep < 5) {
-        setCurrentStep((prev) => (prev + 1) as POStepType);
+        setCurrentStep(prev => prev + 1 as POStepType);
       }
     } else {
       toast({
         title: "Validation Error",
         description: "Please check the form for errors.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
@@ -165,44 +147,38 @@ const CreatePurchaseOrder: React.FC = () => {
   const handleSaveAsDraft = () => {
     toast({
       title: "Progress Saved",
-      description: "Your purchase order has been saved as draft.",
+      description: "Your purchase order has been saved as draft."
     });
   };
 
   // Handle adding a deliverable
   const handleAddDeliverable = () => {
     const deliverables = form.getValues("deliverables");
-    form.setValue("deliverables", [
-      ...deliverables,
-      { id: `del-${Date.now()}`, description: "" },
-    ]);
+    form.setValue("deliverables", [...deliverables, {
+      id: `del-${Date.now()}`,
+      description: ""
+    }]);
   };
 
   // Handle removing a deliverable
   const handleRemoveDeliverable = (id: string) => {
     const deliverables = form.getValues("deliverables");
-    form.setValue(
-      "deliverables",
-      deliverables.filter((del) => del.id !== id)
-    );
+    form.setValue("deliverables", deliverables.filter(del => del.id !== id));
   };
 
   // Handle adding acceptance criteria
   const handleAddCriteria = () => {
     const criteria = form.getValues("acceptanceCriteria");
-    form.setValue("acceptanceCriteria", [
-      ...criteria,
-      { id: `ac-${Date.now()}`, description: "" },
-    ]);
+    form.setValue("acceptanceCriteria", [...criteria, {
+      id: `ac-${Date.now()}`,
+      description: ""
+    }]);
   };
 
   // Handle removing acceptance criteria
   const handleRemoveCriteria = (id: string) => {
     const criteria = form.getValues("acceptanceCriteria");
-    form.setValue(
-      "acceptanceCriteria",
-      criteria.filter((crit) => crit.id !== id)
-    );
+    form.setValue("acceptanceCriteria", criteria.filter(crit => crit.id !== id));
   };
 
   // Handle form submission
@@ -218,9 +194,7 @@ const CreatePurchaseOrder: React.FC = () => {
     }
     return 0;
   };
-
-  return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+  return <div className="flex flex-col min-h-screen bg-gray-50">
       <IndustryHeader />
       
       <main className="flex-1 container max-w-7xl mx-auto px-4 py-8 pt-20">
@@ -230,10 +204,7 @@ const CreatePurchaseOrder: React.FC = () => {
         </div>
         
         <div className="mb-10">
-          <PurchaseOrderStepIndicator 
-            currentStep={currentStep} 
-            onStepClick={handleStepClick} 
-          />
+          <PurchaseOrderStepIndicator currentStep={currentStep} onStepClick={handleStepClick} />
         </div>
         
         <Form {...form}>
@@ -245,227 +216,136 @@ const CreatePurchaseOrder: React.FC = () => {
                   <CardTitle className="text-lg font-semibold text-gray-900">Purchase Order Details</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6 p-6">
-                  <FormField
-                    control={form.control}
-                    name="poNumber"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="poNumber" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">PO Number*</FormLabel>
                         <FormControl>
                           <Input {...field} readOnly className="bg-gray-50 border-gray-200" />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
                   
-                  <FormField
-                    control={form.control}
-                    name="vendor"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="vendor" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">Vendor*</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger className="border-gray-200">
                               <SelectValue placeholder="Select vendor" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {vendors.map((vendor) => (
-                              <SelectItem key={vendor.id} value={vendor.id}>
+                            {vendors.map(vendor => <SelectItem key={vendor.id} value={vendor.id}>
                                 {vendor.name}
-                              </SelectItem>
-                            ))}
+                              </SelectItem>)}
                           </SelectContent>
                         </Select>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
                   
-                  <FormField
-                    control={form.control}
-                    name="projectTitle"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="projectTitle" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">Project Title*</FormLabel>
                         <FormControl>
                           <Input {...field} className="border-gray-200" />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
                   
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="orderValue"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={form.control} name="orderValue" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel className="text-sm font-medium text-gray-700">Order Value*</FormLabel>
                           <FormControl>
                             <div className="relative">
                               <span className="absolute left-3 top-2.5 text-gray-500">$</span>
-                              <Input
-                                type="number"
-                                {...field}
-                                className="pl-7 border-gray-200"
-                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                              />
+                              <Input type="number" onChange={e => field.onChange(parseFloat(e.target.value) || 0)} className="pl-7 border-gray-200 bg-gray-50" />
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                     
-                    <FormField
-                      control={form.control}
-                      name="taxPercentage"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={form.control} name="taxPercentage" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel className="text-sm font-medium text-gray-700">Tax Percentage</FormLabel>
                           <FormControl>
                             <div className="relative">
-                              <Input
-                                type="number"
-                                {...field}
-                                className="pr-7 border-gray-200"
-                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                              />
+                              <Input type="number" onChange={e => field.onChange(parseFloat(e.target.value) || 0)} className="pr-7 border-gray-200 bg-gray-50" />
                               <span className="absolute right-3 top-2.5 text-gray-500">%</span>
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                   </div>
                   
-                  <FormField
-                    control={form.control}
-                    name="totalValue"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="totalValue" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">Total Value</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <span className="absolute left-3 top-2.5 text-gray-500">$</span>
-                            <Input 
-                              readOnly 
-                              value={field.value.toFixed(2)} 
-                              className="pl-7 font-semibold bg-blue-50 border-blue-200" 
-                            />
+                            <Input readOnly value={field.value.toFixed(2)} className="pl-7 font-semibold border-blue-200 bg-gray-50" />
                           </div>
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
                   
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="startDate"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
+                    <FormField control={form.control} name="startDate" render={({
+                    field
+                  }) => <FormItem className="flex flex-col">
                           <FormLabel className="text-sm font-medium text-gray-700">Start Date*</FormLabel>
                           <Popover>
                             <PopoverTrigger asChild>
                               <FormControl>
-                                <Button
-                                  variant={"outline"}
-                                  className={cn(
-                                    "pl-3 text-left font-normal border-gray-200",
-                                    !field.value && "text-gray-500"
-                                  )}
-                                >
-                                  {field.value ? (
-                                    format(field.value, "PPP")
-                                  ) : (
-                                    <span>Pick a date</span>
-                                  )}
+                                <Button variant={"outline"} className={cn("pl-3 text-left font-normal border-gray-200", !field.value && "text-gray-500")}>
+                                  {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
                               </FormControl>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                initialFocus
-                                className="pointer-events-auto p-3"
-                              />
+                              <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus className="pointer-events-auto p-3" />
                             </PopoverContent>
                           </Popover>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                     
-                    <FormField
-                      control={form.control}
-                      name="endDate"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
+                    <FormField control={form.control} name="endDate" render={({
+                    field
+                  }) => <FormItem className="flex flex-col">
                           <FormLabel className="text-sm font-medium text-gray-700">End Date*</FormLabel>
                           <Popover>
                             <PopoverTrigger asChild>
                               <FormControl>
-                                <Button
-                                  variant={"outline"}
-                                  className={cn(
-                                    "pl-3 text-left font-normal border-gray-200",
-                                    !field.value && "text-gray-500"
-                                  )}
-                                >
-                                  {field.value ? (
-                                    format(field.value, "PPP")
-                                  ) : (
-                                    <span>Pick a date</span>
-                                  )}
+                                <Button variant={"outline"} className={cn("pl-3 text-left font-normal border-gray-200", !field.value && "text-gray-500")}>
+                                  {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
                               </FormControl>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                initialFocus
-                                disabled={(date) => date < startDate}
-                                className="pointer-events-auto p-3"
-                              />
+                              <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus disabled={date => date < startDate} className="pointer-events-auto p-3" />
                             </PopoverContent>
                           </Popover>
                           <FormMessage />
-                          {startDate && endDate && (
-                            <p className="text-sm text-gray-500 mt-1">
+                          {startDate && endDate && <p className="text-sm text-gray-500 mt-1">
                               Duration: {getDuration()} day(s)
-                            </p>
-                          )}
-                        </FormItem>
-                      )}
-                    />
+                            </p>}
+                        </FormItem>} />
                   </div>
                   
-                  <FormField
-                    control={form.control}
-                    name="paymentTerms"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="paymentTerms" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">Payment Terms*</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger className="border-gray-200">
                               <SelectValue placeholder="Select payment terms" />
@@ -481,23 +361,17 @@ const CreatePurchaseOrder: React.FC = () => {
                           </SelectContent>
                         </Select>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
                   
-                  <FormField
-                    control={form.control}
-                    name="specialInstructions"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="specialInstructions" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">Special Instructions</FormLabel>
                         <FormControl>
-                          <Textarea {...field} className="min-h-[100px] border-gray-200" />
+                          <Textarea className="min-h-[100px] border-gray-200 bg-gray-50" />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
                 </CardContent>
               </Card>
               
@@ -507,111 +381,63 @@ const CreatePurchaseOrder: React.FC = () => {
                   <CardTitle className="text-lg font-semibold text-gray-900">Scope of Work</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6 p-6">
-                  <FormField
-                    control={form.control}
-                    name="scopeOfWork"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="scopeOfWork" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">Scope of Work*</FormLabel>
                         <FormControl>
-                          <Textarea {...field} className="min-h-[200px] border-gray-200" />
+                          <Textarea className="min-h-[200px] border-gray-200 bg-gray-50" />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
                   
                   <div>
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="font-medium text-gray-900">Deliverables</h3>
-                      <Button 
-                        type="button" 
-                        size="sm" 
-                        variant="outline" 
-                        onClick={handleAddDeliverable}
-                        className="border-gray-200 text-gray-700 hover:bg-gray-50"
-                      >
+                      <h3 className="font-medium text-gray-900 text-xl">Deliverables</h3>
+                      <Button type="button" size="sm" variant="outline" onClick={handleAddDeliverable} className="border-gray-200 bg-blue-700 hover:bg-blue-600 text-gray-50">
                         <Plus className="h-4 w-4 mr-1" /> Add Deliverable
                       </Button>
                     </div>
                     
                     <div className="space-y-3">
-                      {form.getValues("deliverables").map((deliverable, index) => (
-                        <div key={deliverable.id} className="flex gap-2">
-                          <FormField
-                            control={form.control}
-                            name={`deliverables.${index}.description`}
-                            render={({ field }) => (
-                              <FormItem className="flex-1">
+                      {form.getValues("deliverables").map((deliverable, index) => <div key={deliverable.id} className="flex gap-2">
+                          <FormField control={form.control} name={`deliverables.${index}.description`} render={({
+                        field
+                      }) => <FormItem className="flex-1">
                                 <FormControl>
-                                  <Input 
-                                    {...field} 
-                                    placeholder="Enter deliverable description..." 
-                                    className="border-gray-200"
-                                  />
+                                  <Input {...field} placeholder="Enter deliverable description..." className="border-gray-200" />
                                 </FormControl>
                                 <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleRemoveDeliverable(deliverable.id)}
-                            className="border-red-200 text-red-600 hover:bg-red-50"
-                          >
+                              </FormItem>} />
+                          <Button type="button" size="sm" variant="outline" onClick={() => handleRemoveDeliverable(deliverable.id)} className="border-red-200 text-red-600 hover:bg-red-50">
                             <Trash2 className="h-4 w-4" />
                           </Button>
-                        </div>
-                      ))}
+                        </div>)}
                     </div>
                   </div>
                   
                   <div>
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="font-medium text-gray-900">Acceptance Criteria</h3>
-                      <Button 
-                        type="button" 
-                        size="sm" 
-                        variant="outline" 
-                        onClick={handleAddCriteria}
-                        className="border-gray-200 text-gray-700 hover:bg-gray-50"
-                      >
+                      <h3 className="font-medium text-gray-900 text-xl">Acceptance Criteria</h3>
+                      <Button type="button" size="sm" variant="outline" onClick={handleAddCriteria} className="border-gray-200 text-gray-50 bg-blue-700 hover:bg-blue-600">
                         <Plus className="h-4 w-4 mr-1" /> Add Criteria
                       </Button>
                     </div>
                     
                     <div className="space-y-3">
-                      {form.getValues("acceptanceCriteria").map((criteria, index) => (
-                        <div key={criteria.id} className="flex gap-2">
-                          <FormField
-                            control={form.control}
-                            name={`acceptanceCriteria.${index}.description`}
-                            render={({ field }) => (
-                              <FormItem className="flex-1">
+                      {form.getValues("acceptanceCriteria").map((criteria, index) => <div key={criteria.id} className="flex gap-2">
+                          <FormField control={form.control} name={`acceptanceCriteria.${index}.description`} render={({
+                        field
+                      }) => <FormItem className="flex-1">
                                 <FormControl>
-                                  <Input 
-                                    {...field} 
-                                    placeholder="Enter acceptance criteria..." 
-                                    className="border-gray-200"
-                                  />
+                                  <Input {...field} placeholder="Enter acceptance criteria..." className="border-gray-200" />
                                 </FormControl>
                                 <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleRemoveCriteria(criteria.id)}
-                            className="border-red-200 text-red-600 hover:bg-red-50"
-                          >
+                              </FormItem>} />
+                          <Button type="button" size="sm" variant="outline" onClick={() => handleRemoveCriteria(criteria.id)} className="border-red-200 text-red-600 hover:bg-red-50">
                             <Trash2 className="h-4 w-4" />
                           </Button>
-                        </div>
-                      ))}
+                        </div>)}
                     </div>
                   </div>
                 </CardContent>
@@ -620,29 +446,15 @@ const CreatePurchaseOrder: React.FC = () => {
             
             {/* Action Buttons */}
             <div className="flex justify-between items-center">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleSaveAsDraft}
-                className="border-gray-200 text-gray-700 hover:bg-gray-50"
-              >
+              <Button type="button" variant="outline" onClick={handleSaveAsDraft} className="border-gray-200 bg-blue-700 hover:bg-blue-600 text-gray-50">
                 Save as Draft
               </Button>
               
               <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handlePrevious}
-                  disabled={currentStep === 1}
-                  className="border-gray-200 text-gray-700 hover:bg-gray-50"
-                >
+                <Button type="button" variant="outline" onClick={handlePrevious} disabled={currentStep === 1} className="border-gray-200 text-gray-50 bg-blue-700 hover:bg-blue-600">
                   Previous
                 </Button>
-                <Button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
-                >
+                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
                   {currentStep === 5 ? "Create Purchase Order" : "Next"}
                 </Button>
               </div>
@@ -650,8 +462,6 @@ const CreatePurchaseOrder: React.FC = () => {
           </form>
         </Form>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default CreatePurchaseOrder;
