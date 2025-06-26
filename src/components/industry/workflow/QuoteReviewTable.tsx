@@ -23,14 +23,14 @@ export const QuoteReviewTable = ({
   const getLowestPrice = () => Math.min(...quotes.map(q => q.quoteAmount));
   const getFastestDelivery = () => Math.min(...quotes.map(q => q.deliveryTimeWeeks));
   return <Card className="w-full">
-      <CardHeader className="bg-gray-500">
+      <CardHeader className="bg-blue-500">
         <CardTitle className="flex items-center gap-2">
           <FileText className="h-5 w-5" />
           Vendor Quotes Comparison
         </CardTitle>
       </CardHeader>
       <CardContent className="bg-blue-500">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto bg-gray-50">
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b">
@@ -39,7 +39,7 @@ export const QuoteReviewTable = ({
                 <th className="text-left p-4 font-medium bg-blue-500">Delivery</th>
                 <th className="text-left p-4 font-medium bg-blue-500">Rating</th>
                 <th className="text-left p-4 font-medium bg-blue-500">Proposal</th>
-                <th className="text-left p-4 font-medium">Action</th>
+                <th className="text-left p-4 font-medium bg-blue-500">Action</th>
               </tr>
             </thead>
             <tbody>
