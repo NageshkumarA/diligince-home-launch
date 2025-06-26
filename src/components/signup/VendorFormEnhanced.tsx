@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -86,7 +87,9 @@ export const VendorFormEnhanced = () => {
       name: formData.fullName,
       email: formData.email.toLowerCase().trim(),
       role: 'vendor',
+      avatar: '',
       initials: formData.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
+      status: 'active',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       profile: {
