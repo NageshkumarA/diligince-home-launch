@@ -36,49 +36,57 @@ import CreatePurchaseOrder from "./pages/CreatePurchaseOrder";
 import RequirementDetails from "./pages/RequirementDetails";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import Experts from "./pages/Experts";
+import Careers from "./pages/Careers";
 import { UserProvider } from "@/contexts/UserContext";
 import { StakeholderProvider } from "@/contexts/StakeholderContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
+import { NotificationStoreProvider } from "@/contexts/NotificationStoreContext";
 
 function App() {
   return (
     <Router>
       <UserProvider>
         <StakeholderProvider>
-          <div className="min-h-screen bg-background">
-            <ErrorBoundary fallback={<div>Something went wrong</div>}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/blog/:id" element={<BlogArticle />} />
-                <Route path="/legal" element={<Legal />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/signin" element={<SignIn />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/profile-completion" element={<ProfileCompletion />} />
-                <Route path="/industry-dashboard" element={<IndustryDashboard />} />
-                <Route path="/vendors" element={<Vendors />} />
-                <Route path="/experts" element={<Experts />} />
-                <Route path="/vendor-profile" element={<VendorProfile />} />
-                <Route path="/professional-profile" element={<ProfessionalProfile />} />
-                <Route path="/vendor-details/:id" element={<VendorDetails />} />
-                <Route path="/professional-details/:id" element={<ProfessionalDetails />} />
-                <Route path="/create-requirement" element={<CreateRequirement />} />
-                <Route path="/industry-project-workflow/:projectId" element={<IndustryProjectWorkflow />} />
-                <Route path="/work-completion-payment/:orderId" element={<WorkCompletionPayment />} />
-                <Route path="/industry-messages" element={<IndustryMessages />} />
-                <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
-                <Route path="/requirement/:id" element={<RequirementDetails />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </ErrorBoundary>
-            <Toaster />
-          </div>
+          <NotificationProvider>
+            <NotificationStoreProvider>
+              <div className="min-h-screen bg-background">
+                <ErrorBoundary fallback={<div>Something went wrong</div>}>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/pricing" element={<Pricing />} />
+                    <Route path="/blog" element={<Blog />} />
+                    <Route path="/blog/:id" element={<BlogArticle />} />
+                    <Route path="/legal" element={<Legal />} />
+                    <Route path="/terms" element={<Terms />} />
+                    <Route path="/privacy" element={<Privacy />} />
+                    <Route path="/careers" element={<Careers />} />
+                    <Route path="/signin" element={<SignIn />} />
+                    <Route path="/signup" element={<SignUp />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/profile-completion" element={<ProfileCompletion />} />
+                    <Route path="/industry-dashboard" element={<IndustryDashboard />} />
+                    <Route path="/vendors" element={<Vendors />} />
+                    <Route path="/experts" element={<Experts />} />
+                    <Route path="/vendor-profile" element={<VendorProfile />} />
+                    <Route path="/professional-profile" element={<ProfessionalProfile />} />
+                    <Route path="/vendor-details/:id" element={<VendorDetails />} />
+                    <Route path="/professional-details/:id" element={<ProfessionalDetails />} />
+                    <Route path="/create-requirement" element={<CreateRequirement />} />
+                    <Route path="/industry-project-workflow/:projectId" element={<IndustryProjectWorkflow />} />
+                    <Route path="/work-completion-payment/:orderId" element={<WorkCompletionPayment />} />
+                    <Route path="/industry-messages" element={<IndustryMessages />} />
+                    <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
+                    <Route path="/requirement/:id" element={<RequirementDetails />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </ErrorBoundary>
+                <Toaster />
+              </div>
+            </NotificationStoreProvider>
+          </NotificationProvider>
         </StakeholderProvider>
       </UserProvider>
     </Router>
