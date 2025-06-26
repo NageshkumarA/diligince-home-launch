@@ -47,7 +47,7 @@ export const QuoteReviewTable = ({
                   <td className="p-4 bg-blue-500">
                     <div>
                       <div className="font-medium">{quote.vendorName}</div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-500 bg-blue-500">
                         Submitted: {new Date(quote.submittedDate).toLocaleDateString()}
                       </div>
                     </div>
