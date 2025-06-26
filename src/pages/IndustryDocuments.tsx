@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import IndustryHeader from "@/components/industry/IndustryHeader";
@@ -156,7 +155,7 @@ const IndustryDocuments = () => {
               placeholder="Search documents..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border-gray-200"
+              className="pl-10 bg-white text-black border-gray-200"
             />
           </div>
           <Select value={filterBy} onValueChange={setFilterBy}>
