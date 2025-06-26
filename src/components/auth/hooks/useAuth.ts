@@ -12,9 +12,9 @@ export const useAuth = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const getVendorDashboardUrl = (userType: string, vendorType?: string) => {
-    if (userType === 'vendor' && vendorType) {
-      switch (vendorType) {
+  const getVendorDashboardUrl = (userRole: string, vendorCategory?: string) => {
+    if (userRole === 'vendor' && vendorCategory) {
+      switch (vendorCategory) {
         case 'service':
           return '/service-vendor-dashboard';
         case 'product':
@@ -26,12 +26,10 @@ export const useAuth = () => {
       }
     }
     
-    switch (userType) {
+    switch (userRole) {
       case 'industry':
         return '/industry-dashboard';
       case 'professional':
-        return '/professional-dashboard';
-      case 'expert':
         return '/professional-dashboard';
       default:
         return '/service-vendor-dashboard';
@@ -74,7 +72,7 @@ export const useAuth = () => {
       });
 
       // Redirect to appropriate dashboard
-      const dashboardUrl = getVendorDashboardUrl(userProfile.userType, userProfile.vendorType);
+      const dashboardUrl = getVendorDashboardUrl(userProfile.role, userProfile.profile?.vendorCategory);
       console.log("Redirecting to:", dashboardUrl);
       navigate(dashboardUrl);
 
@@ -113,8 +111,8 @@ export const useAuth = () => {
           description: `Welcome back, ${user.name}!`,
         });
 
-        // Redirect to appropriate dashboard based on user type and vendor type
-        const dashboardUrl = getVendorDashboardUrl(user.userType, user.vendorType);
+        // Redirect to appropriate dashboard based on user role and vendor category
+        const dashboardUrl = getVendorDashboardUrl(user.role, user.profile?.vendorCategory);
         console.log("Redirecting to:", dashboardUrl);
         navigate(dashboardUrl);
         
