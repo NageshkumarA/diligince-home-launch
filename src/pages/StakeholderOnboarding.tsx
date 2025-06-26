@@ -16,6 +16,7 @@ const StakeholderOnboarding = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasValidInvitation, setHasValidInvitation] = useState(true);
   
   const invitationToken = searchParams.get('token');
   const stakeholderType = searchParams.get('type');
@@ -32,10 +33,13 @@ const StakeholderOnboarding = () => {
 
   useEffect(() => {
     if (!invitationToken || !email || !name) {
+      console.log("Missing required parameters:", { invitationToken, email, name });
+      setHasValidInvitation(false);
       toast.error("Invalid invitation link");
-      navigate('/');
+    } else {
+      setHasValidInvitation(true);
     }
-  }, [invitationToken, email, name, navigate]);
+  }, [invitationToken, email, name]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -88,7 +92,7 @@ const StakeholderOnboarding = () => {
             navigate('/logistics-vendor-dashboard');
             break;
           default:
-            navigate('/vendor-dashboard');
+            navigate('/industry-dashboard');
         }
       }
     }, 2000);
@@ -109,6 +113,56 @@ const StakeholderOnboarding = () => {
     { number: 2, title: "Complete Profile", icon: <Building className="h-5 w-5" /> },
     { number: 3, title: "Dashboard Access", icon: <Shield className="h-5 w-5" /> }
   ];
+
+  // Show error state if invitation is invalid
+  if (!hasValidInvitation) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <Helmet>
+          <title>Invalid Invitation | Diligince.ai</title>
+        </Helmet>
+        
+        <div className="w-full max-w-md">
+          <Card className="bg-white shadow-lg">
+            <CardHeader className="text-center">
+              <CardTitle className="text-red-600">Invalid Invitation Link</CardTitle>
+              <CardDescription>
+                The invitation link you used is invalid or has expired.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-red-50 p-4 rounded-lg">
+                <p className="text-sm text-red-800">
+                  This could happen if:
+                </p>
+                <ul className="text-sm text-red-700 mt-2 space-y-1 list-disc list-inside">
+                  <li>The invitation link is incomplete</li>
+                  <li>The link has expired</li>
+                  <li>You accessed the page directly without an invitation</li>
+                </ul>
+              </div>
+              
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => navigate('/')}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                >
+                  Go to Homepage
+                </Button>
+                <Button 
+                  onClick={() => navigate('/contact')}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Contact Support
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
