@@ -91,6 +91,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       
       // Recalculate profile completion
       const completion = calculateProfileCompleteness(user);
+      console.log("New profile completion:", completion);
       setProfileCompletion(completion);
     } else {
       localStorage.removeItem('user');
@@ -184,7 +185,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     isVendorCategory,
     profileCompletion,
     isFirstTimeUser,
-    setFirstTimeUser: setFirstTimeUser,
+    setFirstTimeUser: setIsFirstTimeUser,
     hasCompletedOnboarding,
     setHasCompletedOnboarding,
   };
