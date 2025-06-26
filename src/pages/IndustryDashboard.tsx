@@ -1,3 +1,4 @@
+
 import React, { Suspense, memo } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
@@ -8,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { FileText, MessageSquare, ShoppingCart, CheckCircle, Clock, AlertCircle, Plus, Workflow } from "lucide-react";
+import { FileText, MessageSquare, ShoppingCart, CheckCircle, Clock, AlertCircle, Plus, Workflow, Eye, DollarSign } from "lucide-react";
 import { FastLoadingState } from "@/components/shared/loading/FastLoadingState";
 import { SkeletonLoader } from "@/components/shared/loading/SkeletonLoader";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
@@ -18,116 +19,147 @@ import { perfUtils } from "@/utils/performance";
 const metrics = [{
   title: "Active Requirements",
   count: 12,
-  subtitle: "ongoing jobs",
+  subtitle: "ongoing projects",
   icon: FileText
 }, {
-  title: "Pending RFQs",
+  title: "Pending Reviews",
   count: 8,
-  subtitle: "awaiting response",
+  subtitle: "awaiting approval",
   icon: Clock
 }, {
-  title: "Active POs",
+  title: "Active Purchase Orders",
   count: 5,
   subtitle: "in progress",
   icon: ShoppingCart
 }, {
-  title: "Completed Jobs",
+  title: "Completed Projects",
   count: 27,
   subtitle: "this year",
   icon: CheckCircle
 }];
+
 const requirementData = [{
   id: 1,
   title: "Industrial Valve Procurement",
   category: "Product",
   status: "Active",
-  date: "2 days ago"
+  date: "2 days ago",
+  budget: 25000,
+  applicants: 8
 }, {
   id: 2,
   title: "Pipeline Inspection Service",
   category: "Service",
-  status: "Pending",
-  date: "1 week ago"
+  status: "Completed",
+  date: "1 week ago", 
+  budget: 35000,
+  applicants: 12
 }, {
   id: 3,
   title: "Chemical Engineering Consultant",
   category: "Expert",
   status: "Active",
-  date: "3 days ago"
+  date: "3 days ago",
+  budget: 15000,
+  applicants: 5
 }, {
   id: 4,
   title: "Equipment Transportation",
   category: "Logistics",
-  status: "Completed",
-  date: "2 weeks ago"
+  status: "Approved",
+  date: "2 weeks ago",
+  budget: 8000,
+  applicants: 15
 }, {
   id: 5,
   title: "Safety Audit Services",
   category: "Service",
   status: "Active",
-  date: "5 days ago"
+  date: "5 days ago",
+  budget: 12000,
+  applicants: 7
 }];
+
 const stakeholderData = [{
   id: 1,
   name: "TechValve Solutions",
   initials: "TV",
-  type: "Product Vendor"
+  type: "Product Vendor",
+  rating: 4.8,
+  projects: 28
 }, {
   id: 2,
   name: "EngiConsult Group",
   initials: "EG",
-  type: "Expert"
+  type: "Expert",
+  rating: 4.9,
+  projects: 45
 }, {
   id: 3,
   name: "Service Pro Maintenance",
   initials: "SP",
-  type: "Service Vendor"
+  type: "Service Vendor",
+  rating: 4.7,
+  projects: 32
 }, {
   id: 4,
   name: "FastTrack Logistics",
   initials: "FL",
-  type: "Logistics"
+  type: "Logistics",
+  rating: 4.6,
+  projects: 67
 }];
+
 const messageData = [{
   id: 1,
   sender: "John Smith",
   initials: "JS",
-  preview: "Regarding your recent valve procurement inquiry, we have...",
-  time: "10 min ago"
+  preview: "Updated proposal for the valve procurement project...",
+  time: "10 min ago",
+  requirementId: "REQ-001"
 }, {
   id: 2,
   sender: "TechValve Solutions",
   initials: "TV",
-  preview: "Thank you for your order. We've processed the shipment and...",
-  time: "2 hours ago"
+  preview: "Thank you for your order. Shipment tracking details...",
+  time: "2 hours ago",
+  requirementId: "REQ-002"
 }, {
   id: 3,
   sender: "EngiConsult Group",
   initials: "EG",
-  preview: "Our engineer will be available for the consultation on...",
-  time: "Yesterday"
+  preview: "Our engineer is available for consultation on...",
+  time: "Yesterday",
+  requirementId: "REQ-003"
 }];
+
 const orderData = [{
   id: "PO-2023-042",
   title: "Industrial Valve Set",
   vendor: "TechValve Solutions",
   summary: "3 items",
   status: "In Progress",
-  progress: 65
+  progress: 65,
+  amount: 25000,
+  requirementId: "REQ-001"
 }, {
   id: "PO-2023-039",
   title: "Safety Equipment",
   vendor: "ProtectWell Inc",
   summary: "12 items",
   status: "Delivered",
-  progress: 100
+  progress: 100,
+  amount: 15000,
+  requirementId: "REQ-004"
 }, {
   id: "PO-2023-036",
   title: "Consulting Services",
   vendor: "EngiConsult Group",
   summary: "1 service",
   status: "In Progress",
-  progress: 40
+  progress: 40,
+  amount: 35000,
+  requirementId: "REQ-002"
 }];
 
 // Helper functions - regular functions instead of memoized to fix the runtime error
@@ -141,10 +173,13 @@ const getStatusColor = (status: string) => {
     case "completed":
     case "delivered":
       return "bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200";
+    case "approved":
+      return "bg-purple-100 text-purple-800 hover:bg-purple-200 border-purple-200";
     default:
       return "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200";
   }
 };
+
 const getCategoryColor = (category: string) => {
   switch (category.toLowerCase()) {
     case "product":
@@ -170,7 +205,7 @@ const DashboardContainer = memo(() => {
         <p className="text-gray-700 text-lg">Welcome back to your procurement dashboard</p>
       </div>
       
-      {/* Quick Actions Section */}
+      {/* Quick Actions Section - ISO 9001 Compliant Flow */}
       <div className="mb-8">
         <h2 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -178,26 +213,26 @@ const DashboardContainer = memo(() => {
             <Link to="/create-requirement" className="flex items-center gap-3">
               <FileText className="h-6 w-6" />
               <div>
-                <div className="font-semibold">Post New Requirement</div>
-                <div className="text-sm opacity-90">Find vendors and services</div>
+                <div className="font-semibold">Create Requirement</div>
+                <div className="text-sm opacity-90">Start procurement process</div>
               </div>
             </Link>
           </Button>
           <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
-            <Link to="/create-purchase-order" className="flex items-center gap-3">
-              <ShoppingCart className="h-6 w-6" />
-              <div>
-                <div className="font-semibold">Create Purchase Order</div>
-                <div className="text-sm opacity-90">Generate new PO</div>
-              </div>
-            </Link>
-          </Button>
-          <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
-            <Link to="/industry-project-workflow/demo" className="flex items-center gap-3">
+            <Link to="/industry-workflows" className="flex items-center gap-3">
               <Workflow className="h-6 w-6" />
               <div>
-                <div className="font-semibold">Project Workflows</div>
-                <div className="text-sm opacity-90">Manage project progress</div>
+                <div className="font-semibold">Manage Workflows</div>
+                <div className="text-sm opacity-90">Track project progress</div>
+              </div>
+            </Link>
+          </Button>
+          <Button asChild className="h-16 justify-start text-left bg-blue-600 hover:bg-blue-700 text-white font-medium">
+            <Link to="/industry-stakeholders" className="flex items-center gap-3">
+              <ShoppingCart className="h-6 w-6" />
+              <div>
+                <div className="font-semibold">Find Stakeholders</div>
+                <div className="text-sm opacity-90">Discover vendors & experts</div>
               </div>
             </Link>
           </Button>
@@ -251,7 +286,7 @@ const DashboardContainer = memo(() => {
           <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
             <Link to="/create-requirement">
               <Plus className="mr-2 h-4 w-4" />
-              Post New Requirement
+              Create New Requirement
             </Link>
           </Button>
         </div>
@@ -264,19 +299,22 @@ const DashboardContainer = memo(() => {
               <Table>
                 <TableHeader>
                   <TableRow className="border-gray-100">
-                    <TableHead className="font-semibold text-gray-700">Title</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Requirement</TableHead>
                     <TableHead className="font-semibold text-gray-700">Category</TableHead>
                     <TableHead className="font-semibold text-gray-700">Status</TableHead>
-                    <TableHead className="font-semibold text-gray-700">Date</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Budget</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Applicants</TableHead>
                     <TableHead className="font-semibold text-gray-700">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {requirementData.map(req => <TableRow key={req.id} className="border-gray-100 hover:bg-gray-50">
-                      <TableCell className="font-medium text-gray-900">
-                        <Link to={`/requirement/${req.id.toString()}`} className="text-blue-600 hover:text-blue-700 hover:underline">
-                          {req.title}
-                        </Link>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium text-gray-900">{req.title}</div>
+                          <div className="text-sm text-gray-500">REQ-{req.id.toString().padStart(3, '0')}</div>
+                          <div className="text-xs text-gray-400">{req.date}</div>
+                        </div>
                       </TableCell>
                       <TableCell>
                         <Badge className={getCategoryColor(req.category)}>
@@ -288,16 +326,30 @@ const DashboardContainer = memo(() => {
                           {req.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-gray-600">
-                        {req.date}
+                      <TableCell className="font-medium">
+                        ${req.budget.toLocaleString()}
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-medium">{req.applicants}</span> vendors
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50" asChild>
-                            <Link to={`/industry-project-workflow/${req.id.toString()}`}>View Workflow</Link>
+                          <Button size="sm" variant="outline" asChild>
+                            <Link to={`/requirement/${req.id}`} className="flex items-center gap-1">
+                              <Eye className="h-3 w-3" />
+                              View
+                            </Link>
+                          </Button>
+                          <Button size="sm" variant="outline" asChild>
+                            <Link to={`/industry-project-workflow/${req.id}`} className="flex items-center gap-1">
+                              <Workflow className="h-3 w-3" />
+                              Workflow
+                            </Link>
                           </Button>
                           {req.status === "Completed" && <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
-                              <Link to="/create-purchase-order">Create PO</Link>
+                              <Link to={`/create-purchase-order?requirementId=REQ-${req.id.toString().padStart(3, '0')}`}>
+                                Create PO
+                              </Link>
                             </Button>}
                         </div>
                       </TableCell>
@@ -309,15 +361,19 @@ const DashboardContainer = memo(() => {
         </Suspense>
         
         <div className="flex justify-center mt-6">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Requirements</Button>
+          <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
+            <Link to="/industry-requirements">View All Requirements</Link>
+          </Button>
         </div>
       </div>
       
       {/* Matched Stakeholders Section */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">Matched Stakeholders</h2>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">Find Stakeholders</Button>
+          <h2 className="text-xl font-bold text-gray-800">Top Stakeholders</h2>
+          <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
+            <Link to="/industry-stakeholders">Find More Stakeholders</Link>
+          </Button>
         </div>
         
         <Suspense fallback={<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -334,15 +390,18 @@ const DashboardContainer = memo(() => {
                     <AvatarFallback className="text-xl font-semibold text-blue-600">{stakeholder.initials}</AvatarFallback>
                   </Avatar>
                   <h3 className="font-semibold text-gray-900 mb-2 text-lg">{stakeholder.name}</h3>
-                  <Badge className={`mb-4 ${getCategoryColor(stakeholder.type)}`}>
+                  <Badge className={`mb-2 ${getCategoryColor(stakeholder.type)}`}>
                     {stakeholder.type}
                   </Badge>
+                  <div className="text-sm text-gray-600 mb-4">
+                    <div>★ {stakeholder.rating} • {stakeholder.projects} projects</div>
+                  </div>
                   <div className="flex gap-2 mt-2 w-full">
-                    <Button variant="outline" size="sm" className="flex-1 border-gray-200 text-gray-700 hover:bg-gray-50" asChild>
-                      <Link to={`/vendor-details/${stakeholder.id.toString()}`}>View Profile</Link>
+                    <Button variant="outline" size="sm" className="flex-1" asChild>
+                      <Link to={`/vendor-details/${stakeholder.id}`}>View Profile</Link>
                     </Button>
                     <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
-                      <Link to="/create-purchase-order">Create PO</Link>
+                      <Link to={`/industry-stakeholders?invite=${stakeholder.id}`}>Invite</Link>
                     </Button>
                   </div>
                 </CardContent>
@@ -355,7 +414,9 @@ const DashboardContainer = memo(() => {
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-gray-800">Recent Messages</h2>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Messages</Button>
+          <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
+            <Link to="/industry-messages">View All Messages</Link>
+          </Button>
         </div>
         
         <Suspense fallback={<div className="bg-white p-6 rounded-lg border border-gray-100">
@@ -364,13 +425,16 @@ const DashboardContainer = memo(() => {
           <Card className="bg-white border border-gray-100 shadow-sm">
             <CardContent className="p-6">
               <ul className="divide-y divide-gray-100">
-                {messageData.map(message => <li key={message.id} className="py-4 flex items-start gap-4 hover:bg-gray-50 px-3 rounded-lg cursor-pointer transition-colors">
+                {messageData.map(message => <li key={message.id} className="py-4 flex items-start gap-4 hover:bg-gray-50 px-3 rounded-lg cursor-pointer transition-colors" onClick={() => window.location.href = `/industry-messages?message=${message.id}`}>
                     <Avatar className="bg-gradient-to-br from-blue-50 to-blue-100">
                       <AvatarFallback className="text-blue-600 font-semibold">{message.initials}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start">
-                        <p className="text-sm font-semibold text-gray-900">{message.sender}</p>
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">{message.sender}</p>
+                          <p className="text-xs text-gray-500">Re: {message.requirementId}</p>
+                        </div>
                         <p className="text-xs text-gray-500">{message.time}</p>
                       </div>
                       <p className="text-sm text-gray-700 truncate mt-1">{message.preview}</p>
@@ -385,14 +449,10 @@ const DashboardContainer = memo(() => {
       {/* Active Orders Section */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">Recent Orders</h2>
+          <h2 className="text-xl font-bold text-gray-800">Recent Purchase Orders</h2>
           <div className="flex gap-3">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Orders</Button>
             <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
-              <Link to="/create-purchase-order">
-                <Plus className="mr-2 h-4 w-4" />
-                Create New PO
-              </Link>
+              <Link to="/industry-workflows?tab=purchase_order">View All Orders</Link>
             </Button>
           </div>
         </div>
@@ -408,13 +468,17 @@ const DashboardContainer = memo(() => {
             {orderData.map(order => <Card key={order.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-semibold text-gray-900 text-xl">{order.id}</h3>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 text-xl">{order.id}</h3>
+                      <p className="text-xs text-gray-500">From: {order.requirementId}</p>
+                    </div>
                     <Badge className={getStatusColor(order.status)}>
                       {order.status}
                     </Badge>
                   </div>
                   <p className="text-gray-900 font-medium mb-2">{order.title}</p>
                   <p className="text-gray-600 text-sm mb-1">Vendor: <span className="font-medium">{order.vendor}</span></p>
+                  <p className="text-gray-600 text-sm mb-1">Amount: <span className="font-medium">${order.amount.toLocaleString()}</span></p>
                   <p className="text-gray-500 text-sm mb-4">{order.summary}</p>
                   
                   <div className="mb-4">
@@ -426,12 +490,12 @@ const DashboardContainer = memo(() => {
                   </div>
                   
                   <div className="flex justify-between gap-2">
-                    <Button size="sm" variant="outline" className="flex-1 border-gray-200 text-gray-700 hover:bg-gray-50" asChild>
-                      <Link to={`/industry-project-workflow/${order.id}`}>Manage Workflow</Link>
+                    <Button size="sm" variant="outline" className="flex-1" asChild>
+                      <Link to={`/industry-project-workflow/${order.id}`}>View Workflow</Link>
                     </Button>
                     <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
                       <Link to={`/work-completion-payment/${order.id}`}>
-                        {order.progress === 100 ? "Review & Pay" : "View Details"}
+                        {order.progress === 100 ? "Process Payment" : "Manage Milestones"}
                       </Link>
                     </Button>
                   </div>
@@ -442,7 +506,9 @@ const DashboardContainer = memo(() => {
       </div>
     </main>;
 });
+
 DashboardContainer.displayName = "DashboardContainer";
+
 const IndustryDashboard = () => {
   console.log("IndustryDashboard rendering - optimized version");
   usePerformanceMonitor("IndustryDashboard");
@@ -451,6 +517,7 @@ const IndustryDashboard = () => {
   React.useEffect(() => {
     perfUtils.measureCoreWebVitals();
   }, []);
+  
   return <div className="min-h-screen flex flex-col bg-gray-50">
       <Helmet>
         <title>Industry Dashboard | Diligince.ai</title>
@@ -461,4 +528,5 @@ const IndustryDashboard = () => {
       <DashboardContainer />
     </div>;
 };
+
 export default memo(IndustryDashboard);

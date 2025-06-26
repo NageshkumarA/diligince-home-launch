@@ -1,11 +1,9 @@
-
-import React from "react";
-import { Home, Briefcase, Calendar, MessageSquare, User, FileText, LayoutGrid, ShoppingCart, Truck, Settings, Users, FolderOpen } from "lucide-react";
+import { Home, FileText, ShoppingCart, MessageSquare, Users, Workflow, Building2, Package, Truck, User, Calendar, Briefcase } from "lucide-react";
 
 export interface NavItem {
   label: string;
-  icon: React.ReactNode;
   href: string;
+  icon: React.ReactNode;
   active?: boolean;
 }
 
@@ -18,130 +16,175 @@ export interface HeaderConfig {
     bgColor: string;
     textColor: string;
     hoverColor: string;
+    buttonHoverColor: string;
     avatarBgColor: string;
     avatarBorderColor?: string;
-    buttonHoverColor: string;
   };
 }
 
+// Industry Dashboard Navigation - ISO 9001 Compliant Flow
 export const industryHeaderConfig: HeaderConfig = {
   brandName: "Diligince.ai",
   brandHref: "/industry-dashboard",
   navItems: [
-    { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/industry-dashboard" },
-    { label: "Requirements", icon: React.createElement(FileText, { size: 18 }), href: "/create-requirement" },
-    { label: "Stakeholders", icon: React.createElement(Users, { size: 18 }), href: "/vendors" },
-    { label: "Create PO", icon: React.createElement(ShoppingCart, { size: 18 }), href: "/create-purchase-order" },
-    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "/industry-messages" },
-    { label: "Documents", icon: React.createElement(FolderOpen, { size: 18 }), href: "/industry-documents" },
-    { label: "Profile", icon: React.createElement(User, { size: 18 }), href: "/industry-profile" }
+    {
+      label: "Dashboard",
+      href: "/industry-dashboard",
+      icon: <Home size={18} />
+    },
+    {
+      label: "Requirements",
+      href: "/create-requirement",
+      icon: <FileText size={18} />
+    },
+    {
+      label: "Workflows",
+      href: "/industry-workflows",
+      icon: <Workflow size={18} />
+    },
+    {
+      label: "Messages",
+      href: "/industry-messages",
+      icon: <MessageSquare size={18} />
+    },
+    {
+      label: "Stakeholders",
+      href: "/industry-stakeholders",
+      icon: <Users size={18} />
+    }
   ],
-  avatarInitials: "SPL",
+  avatarInitials: "IN",
   theme: {
-    bgColor: "bg-blue-600",
-    textColor: "text-white",
-    hoverColor: "text-blue-100 hover:text-white",
+    bgColor: "bg-white",
+    textColor: "text-gray-900",
+    hoverColor: "text-gray-600 hover:text-blue-600",
+    buttonHoverColor: "hover:bg-gray-100",
     avatarBgColor: "bg-blue-100",
-    buttonHoverColor: "hover:text-white hover:bg-blue-700"
+    avatarBorderColor: "border-blue-200"
   }
 };
 
-export const professionalHeaderConfig: HeaderConfig = {
-  brandName: "Diligince.ai",
-  brandHref: "/",
+// Vendor Dashboard Navigation
+export const vendorHeaderConfig: HeaderConfig = {
+  brandName: "Diligence.ai",
+  brandHref: "/vendor-dashboard",
   navItems: [
-    { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/professional-dashboard", active: true },
-    { label: "Opportunities", icon: React.createElement(Briefcase, { size: 18 }), href: "/professional-opportunities" },
-    { label: "Calendar", icon: React.createElement(Calendar, { size: 18 }), href: "/professional-calendar" },
-    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "/professional-messages" },
-    { label: "Profile", icon: React.createElement(User, { size: 18 }), href: "/professional-profile" },
+    {
+      label: "Dashboard",
+      href: "/vendor-dashboard",
+      icon: <Home size={18} />
+    },
+    {
+      label: "Requirements",
+      href: "/vendor-requirements",
+      icon: <FileText size={18} />
+    },
+    {
+      label: "Projects",
+      href: "/vendor-projects",
+      icon: <Workflow size={18} />
+    },
+    {
+      label: "Messages",
+      href: "/vendor-messages",
+      icon: <MessageSquare size={18} />
+    },
+    {
+      label: "Profile",
+      href: "/vendor-profile",
+      icon: <User size={18} />
+    }
   ],
-  avatarInitials: "RS",
+  avatarInitials: "VE",
   theme: {
-    bgColor: "bg-[#722ed1]",
-    textColor: "text-white",
-    hoverColor: "text-purple-200 hover:text-white",
-    avatarBgColor: "bg-purple-800",
-    buttonHoverColor: "hover:text-white hover:bg-purple-600"
+    bgColor: "bg-gray-900",
+    textColor: "text-gray-50",
+    hoverColor: "text-gray-400 hover:text-blue-300",
+    buttonHoverColor: "hover:bg-gray-800",
+    avatarBgColor: "bg-gray-700",
   }
 };
 
-export const serviceVendorHeaderConfig: HeaderConfig = {
-  brandName: "Diligince.ai",
-  brandHref: "/",
+// Logistics Vendor Dashboard Navigation
+export const logisticsHeaderConfig: HeaderConfig = {
+  brandName: "Diligence.ai",
+  brandHref: "/logistics-dashboard",
   navItems: [
-    { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/service-vendor-dashboard" },
-    { label: "RFQs", icon: React.createElement(FileText, { size: 18 }), href: "/service-vendor-rfqs" },
-    { label: "Services", icon: React.createElement(LayoutGrid, { size: 18 }), href: "/service-vendor-services" },
-    { label: "Projects", icon: React.createElement(ShoppingCart, { size: 18 }), href: "/service-vendor-projects" },
-    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "/service-vendor-messages" },
-    { label: "Profile", icon: React.createElement(User, { size: 18 }), href: "/service-vendor-profile" }
+    {
+      label: "Dashboard",
+      href: "/logistics-dashboard",
+      icon: <Home size={18} />
+    },
+    {
+      label: "Shipments",
+      href: "/logistics-shipments",
+      icon: <Truck size={18} />
+    },
+    {
+      label: "Warehouse",
+      href: "/logistics-warehouse",
+      icon: <Building2 size={18} />
+    },
+    {
+      label: "Messages",
+      href: "/logistics-messages",
+      icon: <MessageSquare size={18} />
+    },
+    {
+      label: "Profile",
+      href: "/logistics-profile",
+      icon: <User size={18} />
+    }
   ],
-  avatarInitials: "TS",
+  avatarInitials: "LG",
   theme: {
-    bgColor: "bg-[#faad14]",
-    textColor: "text-white",
-    hoverColor: "text-yellow-100 hover:text-white",
-    avatarBgColor: "bg-yellow-700",
-    avatarBorderColor: "border-yellow-300",
-    buttonHoverColor: "hover:text-white hover:bg-yellow-600"
+    bgColor: "bg-white",
+    textColor: "text-gray-900",
+    hoverColor: "text-gray-600 hover:text-blue-600",
+    buttonHoverColor: "hover:bg-gray-100",
+    avatarBgColor: "bg-blue-100",
+    avatarBorderColor: "border-blue-200"
   }
 };
 
-export const productVendorHeaderConfig: HeaderConfig = {
-  brandName: "Diligince.ai",
-  brandHref: "/",
+// Expert Dashboard Navigation
+export const expertHeaderConfig: HeaderConfig = {
+  brandName: "Diligence.ai",
+  brandHref: "/expert-dashboard",
   navItems: [
-    { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/product-vendor-dashboard" },
-    { label: "RFQs", icon: React.createElement(FileText, { size: 18 }), href: "/product-vendor-rfqs" },
-    { label: "Catalog", icon: React.createElement(LayoutGrid, { size: 18 }), href: "/product-vendor-catalog" },
-    { label: "Orders", icon: React.createElement(ShoppingCart, { size: 18 }), href: "/product-vendor-orders" },
-    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "/product-vendor-messages" },
-    { label: "Profile", icon: React.createElement(User, { size: 18 }), href: "/product-vendor-profile" }
+    {
+      label: "Dashboard",
+      href: "/expert-dashboard",
+      icon: <Home size={18} />
+    },
+    {
+      label: "Projects",
+      href: "/expert-projects",
+      icon: <Briefcase size={18} />
+    },
+    {
+      label: "Calendar",
+      href: "/expert-calendar",
+      icon: <Calendar size={18} />
+    },
+    {
+      label: "Messages",
+      href: "/expert-messages",
+      icon: <MessageSquare size={18} />
+    },
+    {
+      label: "Profile",
+      href: "/expert-profile",
+      icon: <User size={18} />
+    }
   ],
-  avatarInitials: "PP",
+  avatarInitials: "EX",
   theme: {
-    bgColor: "bg-[#faad14]",
-    textColor: "text-white",
-    hoverColor: "text-yellow-100 hover:text-white",
-    avatarBgColor: "bg-yellow-700",
-    avatarBorderColor: "border-yellow-300",
-    buttonHoverColor: "hover:text-white hover:bg-yellow-600"
-  }
-};
-
-export const logisticsVendorHeaderConfig: HeaderConfig = {
-  brandName: "Diligince.ai",
-  brandHref: "/",
-  navItems: [
-    { label: "Dashboard", icon: React.createElement(Home, { size: 18 }), href: "/logistics-vendor-dashboard" },
-    { label: "Requests", icon: React.createElement(FileText, { size: 18 }), href: "/logistics-vendor-requests" },
-    { label: "Fleet", icon: React.createElement(Truck, { size: 18 }), href: "/logistics-vendor-fleet" },
-    { label: "Deliveries", icon: React.createElement(ShoppingCart, { size: 18 }), href: "/logistics-vendor-deliveries" },
-    { label: "Messages", icon: React.createElement(MessageSquare, { size: 18 }), href: "/logistics-vendor-messages" },
-    { label: "Profile", icon: React.createElement(User, { size: 18 }), href: "/logistics-vendor-profile" }
-  ],
-  avatarInitials: "LL",
-  theme: {
-    bgColor: "bg-[#eb2f96]",
-    textColor: "text-white",
-    hoverColor: "text-pink-100 hover:text-white",
-    avatarBgColor: "bg-pink-700",
-    avatarBorderColor: "border-pink-300",
-    buttonHoverColor: "hover:text-white hover:bg-pink-600"
-  }
-};
-
-export const getHeaderConfigByPath = (pathname: string): HeaderConfig => {
-  if (pathname.includes('professional')) {
-    return professionalHeaderConfig;
-  } else if (pathname.includes('product-vendor')) {
-    return productVendorHeaderConfig;
-  } else if (pathname.includes('logistics-vendor')) {
-    return logisticsVendorHeaderConfig;
-  } else if (pathname.includes('industry')) {
-    return industryHeaderConfig;
-  } else {
-    return serviceVendorHeaderConfig; // default to service vendor
+    bgColor: "bg-white",
+    textColor: "text-gray-900",
+    hoverColor: "text-gray-600 hover:text-blue-600",
+    buttonHoverColor: "hover:bg-gray-100",
+    avatarBgColor: "bg-blue-100",
+    avatarBorderColor: "border-blue-200"
   }
 };
