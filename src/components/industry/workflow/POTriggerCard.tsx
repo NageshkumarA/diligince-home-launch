@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,46 +5,41 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle, FileText, User, Calendar, DollarSign } from 'lucide-react';
 import { VendorQuote } from '@/types/workflow';
 import { Checkbox } from '@/components/ui/checkbox';
-
 interface POTriggerCardProps {
   acceptedQuote: VendorQuote;
   onGeneratePO: () => void;
 }
-
-export const POTriggerCard = ({ acceptedQuote, onGeneratePO }: POTriggerCardProps) => {
+export const POTriggerCard = ({
+  acceptedQuote,
+  onGeneratePO
+}: POTriggerCardProps) => {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [paymentTermsAccepted, setPaymentTermsAccepted] = useState(false);
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'USD'
     }).format(amount);
   };
-
   const handleTermsChange = (checked: boolean | "indeterminate") => {
     setTermsAccepted(checked === true);
   };
-
   const handlePaymentTermsChange = (checked: boolean | "indeterminate") => {
     setPaymentTermsAccepted(checked === true);
   };
-
   const canGeneratePO = termsAccepted && paymentTermsAccepted;
-
-  return (
-    <Card className="w-full">
-      <CardHeader>
+  return <Card className="w-full">
+      <CardHeader className="bg-blue-400">
         <CardTitle className="flex items-center gap-2">
           <CheckCircle className="h-5 w-5 text-green-600" />
           Quote Accepted - Generate Purchase Order
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 bg-blue-400">
         {/* Accepted Quote Summary */}
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+        <div className="p-4 rounded-lg border border-green-200 bg-blue-400">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-green-800">Accepted Vendor Quote</h3>
+            <h3 className="font-semibold text-green-800 text-2xl">Accepted Vendor Quote</h3>
             <Badge className="bg-green-600">Accepted</Badge>
           </div>
           
@@ -106,22 +100,14 @@ export const POTriggerCard = ({ acceptedQuote, onGeneratePO }: POTriggerCardProp
         {/* Terms and Conditions */}
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="terms" 
-              checked={termsAccepted}
-              onCheckedChange={handleTermsChange}
-            />
+            <Checkbox id="terms" checked={termsAccepted} onCheckedChange={handleTermsChange} />
             <label htmlFor="terms" className="text-sm">
               I accept the standard terms and conditions for this purchase order
             </label>
           </div>
           
           <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="payment-terms" 
-              checked={paymentTermsAccepted}
-              onCheckedChange={handlePaymentTermsChange}
-            />
+            <Checkbox id="payment-terms" checked={paymentTermsAccepted} onCheckedChange={handlePaymentTermsChange} />
             <label htmlFor="payment-terms" className="text-sm">
               I agree to the payment schedule and retention terms outlined above
             </label>
@@ -130,22 +116,14 @@ export const POTriggerCard = ({ acceptedQuote, onGeneratePO }: POTriggerCardProp
 
         {/* Generate PO Button */}
         <div className="pt-4">
-          <Button 
-            onClick={onGeneratePO}
-            disabled={!canGeneratePO}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400"
-            size="lg"
-          >
+          <Button onClick={onGeneratePO} disabled={!canGeneratePO} size="lg" className="w-full bg-blue-700 hover:bg-blue-600">
             <FileText className="h-4 w-4 mr-2" />
             Generate Purchase Order
           </Button>
-          {!canGeneratePO && (
-            <p className="text-sm text-gray-500 mt-2 text-center">
+          {!canGeneratePO && <p className="text-sm text-gray-500 mt-2 text-center">
               Please accept both terms and conditions to continue
-            </p>
-          )}
+            </p>}
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
