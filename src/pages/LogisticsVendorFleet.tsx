@@ -10,130 +10,136 @@ import { VehicleDetailsModal } from "@/components/vendor/logistics/modals/Vehicl
 import { AddVehicleModal } from "@/components/vendor/logistics/modals/AddVehicleModal";
 import { AddDriverModal } from "@/components/vendor/logistics/modals/AddDriverModal";
 import { VehicleTrackingModal } from "@/components/vendor/logistics/modals/VehicleTrackingModal";
-
 const LogisticsVendorFleet = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   // Modal states
   const [isVehicleDetailsModalOpen, setIsVehicleDetailsModalOpen] = useState(false);
   const [isAddVehicleModalOpen, setIsAddVehicleModalOpen] = useState(false);
   const [isAddDriverModalOpen, setIsAddDriverModalOpen] = useState(false);
   const [isVehicleTrackingModalOpen, setIsVehicleTrackingModalOpen] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState<any>(null);
-
-  const fleet = [
-    {
-      id: "TRK-001",
-      type: "Heavy Duty Truck",
-      model: "Tata Prima 4940.S",
-      capacity: "40 tons",
-      status: "available",
-      driver: "Rajesh Kumar",
-      location: "Mumbai Depot",
-      mileage: "1,25,000 km",
-      nextMaintenance: "2025-01-20",
-      fuelLevel: 85,
-      lastUpdated: "2 hours ago"
-    },
-    {
-      id: "CRN-002",
-      type: "Mobile Crane",
-      model: "Tadano GR-1000XL",
-      capacity: "100 tons",
-      status: "in-use",
-      driver: "Suresh Patel",
-      location: "Pune Construction Site",
-      mileage: "75,000 km",
-      nextMaintenance: "2025-01-15",
-      fuelLevel: 62,
-      lastUpdated: "30 minutes ago"
-    },
-    {
-      id: "TRL-003",
-      type: "Low Bed Trailer",
-      model: "Ashok Leyland 6x4",
-      capacity: "60 tons",
-      status: "maintenance",
-      driver: "Unassigned",
-      location: "Service Center - Delhi",
-      mileage: "2,10,000 km",
-      nextMaintenance: "In Progress",
-      fuelLevel: 45,
-      lastUpdated: "1 day ago"
-    },
-    {
-      id: "TRK-004",
-      type: "Container Truck",
-      model: "Volvo FH16",
-      capacity: "35 tons",
-      status: "available",
-      driver: "Amit Singh",
-      location: "Chennai Port",
-      mileage: "95,000 km",
-      nextMaintenance: "2025-02-01",
-      fuelLevel: 92,
-      lastUpdated: "1 hour ago"
-    },
-    {
-      id: "SPL-005",
-      type: "Specialized Transport",
-      model: "Multi-Axle Hydraulic",
-      capacity: "150 tons",
-      status: "in-use",
-      driver: "Vikram Sharma",
-      location: "Bangalore - Mysore Highway",
-      mileage: "45,000 km",
-      nextMaintenance: "2025-01-25",
-      fuelLevel: 78,
-      lastUpdated: "15 minutes ago"
-    }
-  ];
-
-  const drivers = [
-    { name: "Rajesh Kumar", experience: "12 years", rating: 4.8, status: "available" },
-    { name: "Suresh Patel", experience: "8 years", rating: 4.6, status: "on-duty" },
-    { name: "Amit Singh", experience: "15 years", rating: 4.9, status: "available" },
-    { name: "Vikram Sharma", experience: "10 years", rating: 4.7, status: "on-duty" },
-    { name: "Deepak Yadav", experience: "6 years", rating: 4.5, status: "off-duty" }
-  ];
-
+  const fleet = [{
+    id: "TRK-001",
+    type: "Heavy Duty Truck",
+    model: "Tata Prima 4940.S",
+    capacity: "40 tons",
+    status: "available",
+    driver: "Rajesh Kumar",
+    location: "Mumbai Depot",
+    mileage: "1,25,000 km",
+    nextMaintenance: "2025-01-20",
+    fuelLevel: 85,
+    lastUpdated: "2 hours ago"
+  }, {
+    id: "CRN-002",
+    type: "Mobile Crane",
+    model: "Tadano GR-1000XL",
+    capacity: "100 tons",
+    status: "in-use",
+    driver: "Suresh Patel",
+    location: "Pune Construction Site",
+    mileage: "75,000 km",
+    nextMaintenance: "2025-01-15",
+    fuelLevel: 62,
+    lastUpdated: "30 minutes ago"
+  }, {
+    id: "TRL-003",
+    type: "Low Bed Trailer",
+    model: "Ashok Leyland 6x4",
+    capacity: "60 tons",
+    status: "maintenance",
+    driver: "Unassigned",
+    location: "Service Center - Delhi",
+    mileage: "2,10,000 km",
+    nextMaintenance: "In Progress",
+    fuelLevel: 45,
+    lastUpdated: "1 day ago"
+  }, {
+    id: "TRK-004",
+    type: "Container Truck",
+    model: "Volvo FH16",
+    capacity: "35 tons",
+    status: "available",
+    driver: "Amit Singh",
+    location: "Chennai Port",
+    mileage: "95,000 km",
+    nextMaintenance: "2025-02-01",
+    fuelLevel: 92,
+    lastUpdated: "1 hour ago"
+  }, {
+    id: "SPL-005",
+    type: "Specialized Transport",
+    model: "Multi-Axle Hydraulic",
+    capacity: "150 tons",
+    status: "in-use",
+    driver: "Vikram Sharma",
+    location: "Bangalore - Mysore Highway",
+    mileage: "45,000 km",
+    nextMaintenance: "2025-01-25",
+    fuelLevel: 78,
+    lastUpdated: "15 minutes ago"
+  }];
+  const drivers = [{
+    name: "Rajesh Kumar",
+    experience: "12 years",
+    rating: 4.8,
+    status: "available"
+  }, {
+    name: "Suresh Patel",
+    experience: "8 years",
+    rating: 4.6,
+    status: "on-duty"
+  }, {
+    name: "Amit Singh",
+    experience: "15 years",
+    rating: 4.9,
+    status: "available"
+  }, {
+    name: "Vikram Sharma",
+    experience: "10 years",
+    rating: 4.7,
+    status: "on-duty"
+  }, {
+    name: "Deepak Yadav",
+    experience: "6 years",
+    rating: 4.5,
+    status: "off-duty"
+  }];
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "available": return "bg-green-100 text-green-800";
-      case "in-use": return "bg-blue-100 text-blue-800";
-      case "maintenance": return "bg-red-100 text-red-800";
-      case "off-duty": return "bg-gray-100 text-gray-800";
-      default: return "bg-yellow-100 text-yellow-800";
+      case "available":
+        return "bg-green-100 text-green-800";
+      case "in-use":
+        return "bg-blue-100 text-blue-800";
+      case "maintenance":
+        return "bg-red-100 text-red-800";
+      case "off-duty":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-yellow-100 text-yellow-800";
     }
   };
-
   const getFuelColor = (level: number) => {
     if (level > 70) return "text-green-600";
     if (level > 30) return "text-yellow-600";
     return "text-red-600";
   };
-
   const filteredFleet = fleet.filter(vehicle => {
-    const matchesSearch = vehicle.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         vehicle.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         vehicle.driver.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = vehicle.id.toLowerCase().includes(searchTerm.toLowerCase()) || vehicle.type.toLowerCase().includes(searchTerm.toLowerCase()) || vehicle.driver.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filterStatus === "all" || vehicle.status === filterStatus;
     return matchesSearch && matchesFilter;
   });
-
   const handleVehicleDetails = (vehicle: any) => {
     setSelectedVehicle(vehicle);
     setIsVehicleDetailsModalOpen(true);
   };
-
   const handleVehicleTracking = (vehicle: any) => {
     setSelectedVehicle(vehicle);
     setIsVehicleTrackingModalOpen(true);
   };
-
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       <LogisticsVendorHeader />
       
       <main className="pt-32 p-6 lg:p-8">
@@ -144,10 +150,7 @@ const LogisticsVendorFleet = () => {
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Fleet Management</h1>
               <p className="text-gray-600">Monitor and manage your logistics fleet, equipment, and drivers.</p>
             </div>
-            <Button 
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-              onClick={() => setIsAddVehicleModalOpen(true)}
-            >
+            <Button onClick={() => setIsAddVehicleModalOpen(true)} className="text-white bg-pink-700 hover:bg-pink-600">
               <Plus className="h-4 w-4 mr-2" />
               Add Vehicle
             </Button>
@@ -216,12 +219,7 @@ const LogisticsVendorFleet = () => {
           <div className="flex gap-4 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search vehicles by ID, type, or driver..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-white border-gray-200 focus:border-blue-300 focus:ring-blue-200"
-              />
+              <Input placeholder="Search vehicles by ID, type, or driver..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-white border-gray-200 focus:border-blue-300 focus:ring-blue-200" />
             </div>
             <Select value={filterStatus} onValueChange={setFilterStatus}>
               <SelectTrigger className="w-48 bg-white border-gray-200 focus:border-blue-300 focus:ring-blue-200">
@@ -240,8 +238,7 @@ const LogisticsVendorFleet = () => {
             {/* Fleet List */}
             <div className="lg:col-span-2 space-y-4">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Fleet Overview</h2>
-              {filteredFleet.map((vehicle) => (
-                <Card key={vehicle.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              {filteredFleet.map(vehicle => <Card key={vehicle.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
@@ -250,12 +247,10 @@ const LogisticsVendorFleet = () => {
                           <Badge className={getStatusColor(vehicle.status)}>
                             {vehicle.status}
                           </Badge>
-                          {vehicle.fuelLevel < 30 && (
-                            <Badge className="bg-red-100 text-red-800">
+                          {vehicle.fuelLevel < 30 && <Badge className="bg-red-100 text-red-800">
                               <AlertCircle className="h-3 w-3 mr-1" />
                               Low Fuel
-                            </Badge>
-                          )}
+                            </Badge>}
                         </div>
                         <p className="text-sm text-gray-600 mb-1">{vehicle.type} - {vehicle.model}</p>
                         <p className="text-sm text-gray-600 mb-3">Capacity: {vehicle.capacity}</p>
@@ -285,28 +280,17 @@ const LogisticsVendorFleet = () => {
                       </div>
                       
                       <div className="flex gap-2 ml-4">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleVehicleTracking(vehicle)}
-                          className="border-blue-200 text-blue-600 hover:bg-blue-50"
-                        >
+                        <Button variant="outline" size="sm" onClick={() => handleVehicleTracking(vehicle)} className="border-blue-200 text-gray-50 bg-pink-700 hover:bg-pink-600">
                           <MapPin className="h-4 w-4 mr-1" />
                           Track
                         </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleVehicleDetails(vehicle)}
-                          className="border-blue-200 text-blue-600 hover:bg-blue-50"
-                        >
+                        <Button variant="outline" size="sm" onClick={() => handleVehicleDetails(vehicle)} className="border-blue-200 text-gray-50 bg-pink-700 hover:bg-pink-600">
                           Details
                         </Button>
                       </div>
                     </div>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
 
             {/* Driver Management */}
@@ -317,8 +301,7 @@ const LogisticsVendorFleet = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {drivers.map((driver, index) => (
-                      <div key={index} className="flex justify-between items-center p-3 border border-gray-100 rounded-lg bg-white">
+                    {drivers.map((driver, index) => <div key={index} className="flex justify-between items-center p-3 border border-gray-100 rounded-lg bg-white">
                         <div>
                           <p className="font-medium text-gray-900">{driver.name}</p>
                           <p className="text-sm text-gray-600">{driver.experience}</p>
@@ -330,14 +313,9 @@ const LogisticsVendorFleet = () => {
                         <Badge className={getStatusColor(driver.status)}>
                           {driver.status}
                         </Badge>
-                      </div>
-                    ))}
+                      </div>)}
                   </div>
-                  <Button 
-                    className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white" 
-                    size="sm"
-                    onClick={() => setIsAddDriverModalOpen(true)}
-                  >
+                  <Button size="sm" onClick={() => setIsAddDriverModalOpen(true)} className="w-full mt-4 text-white bg-pink-700 hover:bg-pink-600">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Driver
                   </Button>
@@ -374,29 +352,13 @@ const LogisticsVendorFleet = () => {
       </main>
 
       {/* Modals */}
-      <VehicleDetailsModal
-        isOpen={isVehicleDetailsModalOpen}
-        onClose={() => setIsVehicleDetailsModalOpen(false)}
-        vehicle={selectedVehicle}
-      />
+      <VehicleDetailsModal isOpen={isVehicleDetailsModalOpen} onClose={() => setIsVehicleDetailsModalOpen(false)} vehicle={selectedVehicle} />
       
-      <AddVehicleModal
-        isOpen={isAddVehicleModalOpen}
-        onClose={() => setIsAddVehicleModalOpen(false)}
-      />
+      <AddVehicleModal isOpen={isAddVehicleModalOpen} onClose={() => setIsAddVehicleModalOpen(false)} />
       
-      <AddDriverModal
-        isOpen={isAddDriverModalOpen}
-        onClose={() => setIsAddDriverModalOpen(false)}
-      />
+      <AddDriverModal isOpen={isAddDriverModalOpen} onClose={() => setIsAddDriverModalOpen(false)} />
       
-      <VehicleTrackingModal
-        isOpen={isVehicleTrackingModalOpen}
-        onClose={() => setIsVehicleTrackingModalOpen(false)}
-        vehicle={selectedVehicle}
-      />
-    </div>
-  );
+      <VehicleTrackingModal isOpen={isVehicleTrackingModalOpen} onClose={() => setIsVehicleTrackingModalOpen(false)} vehicle={selectedVehicle} />
+    </div>;
 };
-
 export default LogisticsVendorFleet;
