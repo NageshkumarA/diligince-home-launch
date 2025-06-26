@@ -88,14 +88,14 @@ export const RFQManagement = () => {
               
               <div className="flex items-center justify-between">
                 <div className="flex flex-wrap gap-2">
-                  {rfq.skills.slice(0, 2).map((skill, index) => <Badge key={index} variant="secondary" className="text-sm text-teal -700 border-blue-200 px-3 py-1 bg-yellow-600">
+                  {rfq.skills.slice(0, 2).map((skill, index) => <Badge key={index} variant="secondary" className="text-sm text-teal -700 border-blue-200 py-1 bg-yellow-600 px-[12px] mx-0 my-[10px]">
                       {skill}
                     </Badge>)}
                   {rfq.skills.length > 2 && <Badge variant="secondary" className="text-sm bg-gray-100 text-gray-600 px-3 py-1">
                       +{rfq.skills.length - 2} more
                     </Badge>}
                 </div>
-                <Button size="sm" className="text-white font-semibold px-4 bg-amber-600 hover:bg-amber-500">
+                <Button size="sm" className="text-white font-semibold px-4 bg-amber-600 hover:bg-amber-500 py-0 text-left mx-0 my-0">
                   Submit Proposal
                 </Button>
               </div>
