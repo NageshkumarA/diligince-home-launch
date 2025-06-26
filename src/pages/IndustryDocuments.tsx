@@ -5,136 +5,105 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Search,
-  Filter,
-  FileText,
-  Upload,
-  Download,
-  Eye,
-  Calendar,
-  File,
-  Plus
-} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Search, Filter, FileText, Upload, Download, Eye, Calendar, File, Plus } from "lucide-react";
 
 // Mock document data
-const documents = [
-  {
-    id: 1,
-    name: "Industrial Valve RFQ Specification",
-    type: "RFQ",
-    category: "Requirements",
-    size: "2.4 MB",
-    uploadDate: "2024-01-15",
-    lastModified: "2024-01-15",
-    status: "Active",
-    requirement: "Industrial Valve Procurement"
-  },
-  {
-    id: 2,
-    name: "TechValve Solutions Contract",
-    type: "Contract",
-    category: "Legal",
-    size: "1.8 MB",
-    uploadDate: "2024-01-10",
-    lastModified: "2024-01-12",
-    status: "Signed",
-    requirement: "Industrial Valve Procurement"
-  },
-  {
-    id: 3,
-    name: "Pipeline Inspection Technical Specs",
-    type: "Specification",
-    category: "Technical",
-    size: "3.2 MB",
-    uploadDate: "2024-01-08",
-    lastModified: "2024-01-08",
-    status: "Active",
-    requirement: "Pipeline Inspection Service"
-  },
-  {
-    id: 4,
-    name: "Safety Audit Report - Final",
-    type: "Report",
-    category: "Compliance",
-    size: "5.1 MB",
-    uploadDate: "2024-01-05",
-    lastModified: "2024-01-05",
-    status: "Completed",
-    requirement: "Safety Audit Services"
-  },
-  {
-    id: 5,
-    name: "Purchase Order PO-2023-042",
-    type: "Purchase Order",
-    category: "Procurement",
-    size: "876 KB",
-    uploadDate: "2024-01-03",
-    lastModified: "2024-01-03",
-    status: "Active",
-    requirement: "Industrial Valve Procurement"
-  }
-];
-
+const documents = [{
+  id: 1,
+  name: "Industrial Valve RFQ Specification",
+  type: "RFQ",
+  category: "Requirements",
+  size: "2.4 MB",
+  uploadDate: "2024-01-15",
+  lastModified: "2024-01-15",
+  status: "Active",
+  requirement: "Industrial Valve Procurement"
+}, {
+  id: 2,
+  name: "TechValve Solutions Contract",
+  type: "Contract",
+  category: "Legal",
+  size: "1.8 MB",
+  uploadDate: "2024-01-10",
+  lastModified: "2024-01-12",
+  status: "Signed",
+  requirement: "Industrial Valve Procurement"
+}, {
+  id: 3,
+  name: "Pipeline Inspection Technical Specs",
+  type: "Specification",
+  category: "Technical",
+  size: "3.2 MB",
+  uploadDate: "2024-01-08",
+  lastModified: "2024-01-08",
+  status: "Active",
+  requirement: "Pipeline Inspection Service"
+}, {
+  id: 4,
+  name: "Safety Audit Report - Final",
+  type: "Report",
+  category: "Compliance",
+  size: "5.1 MB",
+  uploadDate: "2024-01-05",
+  lastModified: "2024-01-05",
+  status: "Completed",
+  requirement: "Safety Audit Services"
+}, {
+  id: 5,
+  name: "Purchase Order PO-2023-042",
+  type: "Purchase Order",
+  category: "Procurement",
+  size: "876 KB",
+  uploadDate: "2024-01-03",
+  lastModified: "2024-01-03",
+  status: "Active",
+  requirement: "Industrial Valve Procurement"
+}];
 const IndustryDocuments = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterBy, setFilterBy] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
-
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case "active": return "bg-green-100 text-green-800";
-      case "signed": return "bg-blue-100 text-blue-800";
-      case "completed": return "bg-purple-100 text-purple-800";
-      case "draft": return "bg-gray-100 text-gray-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "signed":
+        return "bg-blue-100 text-blue-800";
+      case "completed":
+        return "bg-purple-100 text-purple-800";
+      case "draft":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
-
   const getTypeIcon = (type: string) => {
     switch (type.toLowerCase()) {
-      case "rfq": return <FileText className="w-4 h-4" />;
-      case "contract": return <File className="w-4 h-4" />;
-      case "specification": return <FileText className="w-4 h-4" />;
-      case "report": return <FileText className="w-4 h-4" />;
-      case "purchase order": return <FileText className="w-4 h-4" />;
-      default: return <File className="w-4 h-4" />;
+      case "rfq":
+        return <FileText className="w-4 h-4" />;
+      case "contract":
+        return <File className="w-4 h-4" />;
+      case "specification":
+        return <FileText className="w-4 h-4" />;
+      case "report":
+        return <FileText className="w-4 h-4" />;
+      case "purchase order":
+        return <FileText className="w-4 h-4" />;
+      default:
+        return <File className="w-4 h-4" />;
     }
   };
-
   const filteredDocuments = documents.filter(doc => {
     if (filterBy === "recent" && new Date(doc.uploadDate) < new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) return false;
     if (filterBy === "active" && doc.status.toLowerCase() !== "active") return false;
     if (categoryFilter !== "all" && doc.category.toLowerCase() !== categoryFilter.toLowerCase()) return false;
-    if (searchTerm && !doc.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        !doc.type.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+    if (searchTerm && !doc.name.toLowerCase().includes(searchTerm.toLowerCase()) && !doc.type.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     return true;
   });
-
-  return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+  return <div className="min-h-screen flex flex-col bg-gray-50">
       <Helmet>
         <title>Documents | Industry Dashboard</title>
       </Helmet>
@@ -151,12 +120,7 @@ const IndustryDocuments = () => {
         <div className="flex flex-col lg:flex-row gap-4 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Search documents..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white text-black border-gray-200"
-            />
+            <Input placeholder="Search documents..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-white text-black border-gray-200" />
           </div>
           <Select value={filterBy} onValueChange={setFilterBy}>
             <SelectTrigger className="w-full lg:w-48 border-gray-200">
@@ -189,7 +153,7 @@ const IndustryDocuments = () => {
                 Upload Document
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[500px] bg-gray-50">
               <DialogHeader>
                 <DialogTitle className="text-lg font-semibold text-gray-900">Upload New Document</DialogTitle>
               </DialogHeader>
@@ -324,8 +288,7 @@ const IndustryDocuments = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredDocuments.map((doc) => (
-                  <TableRow key={doc.id} className="border-gray-100 hover:bg-gray-50">
+                {filteredDocuments.map(doc => <TableRow key={doc.id} className="border-gray-100 hover:bg-gray-50">
                     <TableCell>
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 rounded bg-blue-50 flex items-center justify-center">
@@ -362,15 +325,12 @@ const IndustryDocuments = () => {
                         </Button>
                       </div>
                     </TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>)}
               </TableBody>
             </Table>
           </CardContent>
         </Card>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default IndustryDocuments;
