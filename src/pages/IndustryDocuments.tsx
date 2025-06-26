@@ -160,7 +160,7 @@ const IndustryDocuments = () => {
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium text-gray-700">Document Name</label>
-                  <Input placeholder="Enter document name..." className="mt-1 border-gray-200" />
+                  <Input placeholder="Enter document name..." className="mt-1 border-gray-200 bg-gray-50" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700">Category</label>
