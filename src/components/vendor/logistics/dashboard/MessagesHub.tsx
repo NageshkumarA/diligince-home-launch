@@ -1,5 +1,6 @@
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { MessageCenter as SharedMessageCenter } from "@/components/shared/messages/MessageCenter";
 import { logisticsVendorMessageConfig } from "@/utils/messageConfigs";
 
@@ -13,7 +14,8 @@ const messages = [
     priority: "high",
     color: "green",
     unread: true,
-    type: "delivery-update"
+    type: "delivery-update",
+    attachments: []
   },
   {
     id: 2,
@@ -24,7 +26,8 @@ const messages = [
     priority: "medium",
     color: "blue",
     unread: false,
-    type: "delivery-update"
+    type: "delivery-update",
+    attachments: []
   },
   {
     id: 3,
@@ -35,7 +38,8 @@ const messages = [
     priority: "medium",
     color: "orange",
     unread: false,
-    type: "urgent-transport"
+    type: "urgent-transport",
+    attachments: []
   },
   {
     id: 4,
@@ -46,15 +50,27 @@ const messages = [
     priority: "low",
     color: "pink",
     unread: false,
-    type: "route-planning"
+    type: "route-planning",
+    attachments: []
   }
 ];
 
 export const MessagesHub = () => {
+  const navigate = useNavigate();
+
+  const handleViewAllMessages = () => {
+    navigate('/logistics-vendor-messages');
+  };
+
+  const configWithNavigation = {
+    ...logisticsVendorMessageConfig,
+    onViewAllMessages: handleViewAllMessages
+  };
+
   return (
     <SharedMessageCenter 
       messages={messages}
-      config={logisticsVendorMessageConfig}
+      config={configWithNavigation}
     />
   );
 };

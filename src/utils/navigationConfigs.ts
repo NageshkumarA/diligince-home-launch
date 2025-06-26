@@ -195,38 +195,43 @@ export const vendorHeaderConfig: HeaderConfig = {
   }
 };
 
-// Logistics Vendor Dashboard Navigation
-export const logisticsHeaderConfig: HeaderConfig = {
+// Logistics Vendor Dashboard Navigation (NEW - Fixed for logistics vendors)
+export const logisticsVendorHeaderConfig: HeaderConfig = {
   brandName: "Diligence.ai",
-  brandHref: "/logistics-dashboard",
+  brandHref: "/logistics-vendor-dashboard",
   navItems: [
     {
       label: "Dashboard",
-      href: "/logistics-dashboard",
+      href: "/logistics-vendor-dashboard",
       icon: React.createElement(Home, { size: 18 })
     },
     {
-      label: "Shipments",
-      href: "/logistics-shipments",
+      label: "Requests",
+      href: "/logistics-vendor-requests",
+      icon: React.createElement(FileText, { size: 18 })
+    },
+    {
+      label: "Deliveries",
+      href: "/logistics-vendor-deliveries",
       icon: React.createElement(Truck, { size: 18 })
     },
     {
-      label: "Warehouse",
-      href: "/logistics-warehouse",
+      label: "Fleet",
+      href: "/logistics-vendor-fleet",
       icon: React.createElement(Building2, { size: 18 })
     },
     {
       label: "Messages",
-      href: "/logistics-messages",
+      href: "/logistics-vendor-messages",
       icon: React.createElement(MessageSquare, { size: 18 })
     },
     {
       label: "Profile",
-      href: "/logistics-profile",
+      href: "/logistics-vendor-profile",
       icon: React.createElement(User, { size: 18 })
     }
   ],
-  avatarInitials: "LG",
+  avatarInitials: "LV",
   theme: {
     bgColor: "bg-white",
     textColor: "text-gray-900",
@@ -236,6 +241,9 @@ export const logisticsHeaderConfig: HeaderConfig = {
     avatarBorderColor: "border-blue-200"
   }
 };
+
+// Logistics Dashboard Navigation (Alias for compatibility)
+export const logisticsHeaderConfig: HeaderConfig = logisticsVendorHeaderConfig;
 
 // Expert Dashboard Navigation
 export const expertHeaderConfig: HeaderConfig = {
@@ -321,15 +329,12 @@ export const professionalHeaderConfig: HeaderConfig = {
   }
 };
 
-// Alias for logistics vendor header config (for compatibility)
-export const logisticsVendorHeaderConfig = logisticsHeaderConfig;
-
 // Utility function to get header config by path
 export const getHeaderConfigByPath = (path: string): HeaderConfig => {
   if (path.startsWith('/industry')) return industryHeaderConfig;
   if (path.startsWith('/service-vendor')) return serviceVendorHeaderConfig;
   if (path.startsWith('/product-vendor')) return productVendorHeaderConfig;
-  if (path.startsWith('/logistics')) return logisticsHeaderConfig;
+  if (path.startsWith('/logistics-vendor') || path.startsWith('/logistics')) return logisticsVendorHeaderConfig;
   if (path.startsWith('/expert')) return expertHeaderConfig;
   if (path.startsWith('/professional')) return professionalHeaderConfig;
   if (path.startsWith('/vendor')) return vendorHeaderConfig;

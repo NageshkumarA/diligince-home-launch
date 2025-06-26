@@ -1,75 +1,135 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Truck, Clock, User } from "lucide-react";
+import { MapPin, Clock, User, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+interface Delivery {
+  id: string;
+  title: string;
+  client: string;
+  driver: string;
+  progress: number;
+  status: string;
+  eta: string;
+  location: string;
+}
+
 export const ActiveDeliveries = () => {
-  const deliveries = [{
-    id: 1,
-    title: "Chemical Tanks Transport",
-    client: "Chem Industries",
-    equipment: "Low-bed Trailer LB-40",
-    driver: "A. Kumar",
-    eta: "May 5, 16:30",
-    progress: 70,
-    status: "in-transit"
-  }, {
-    id: 2,
-    title: "Generator Unit Delivery",
-    client: "Power Gen Co.",
-    equipment: "Heavy Truck HT-25",
-    driver: "S. Patel",
-    eta: "May 6, 11:00",
-    progress: 30,
-    status: "in-transit"
-  }];
-  const getProgressColor = (progress: number) => {
-    if (progress >= 70) return "bg-green-600";
-    if (progress >= 40) return "bg-blue-600";
-    return "bg-yellow-600";
+  const navigate = useNavigate();
+  const [deliveries] = useState<Delivery[]>([
+    {
+      id: "DEL-001",
+      title: "Chemical Tanks Transport",
+      client: "Chem Industries",
+      driver: "A. Kumar",
+      progress: 70,
+      status: "In Transit",
+      eta: "May 5, 16:30",
+      location: "Highway NH-48, 45km from destination"
+    },
+    {
+      id: "DEL-002", 
+      title: "Heavy Equipment Move",
+      client: "Steel Plant Ltd.",
+      driver: "R. Singh",
+      progress: 25,
+      status: "Loading",
+      eta: "May 6, 14:00",
+      location: "Loading Bay - Steel Plant"
+    }
+  ]);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "In Transit":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "Loading":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "Delivered":
+        return "bg-green-100 text-green-800 border-green-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+    }
   };
-  return <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+
+  const handleTrackAll = () => {
+    navigate('/logistics-vendor-deliveries');
+  };
+
+  const handleViewDetails = (deliveryId: string) => {
+    console.log("View details for delivery:", deliveryId);
+    // TODO: Open delivery details modal
+  };
+
+  return (
+    <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-semibold text-gray-900">Active Deliveries</CardTitle>
-        <Button variant="outline" size="sm" className="border-blue-200 text-blue-50 bg-pink-700 hover:bg-pink-600">Track All</Button>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="border-blue-200 text-blue-600 hover:bg-blue-50"
+          onClick={handleTrackAll}
+        >
+          Track All
+        </Button>
       </CardHeader>
       <CardContent className="space-y-4">
-        {deliveries.map(delivery => <div key={delivery.id} className="bg-white border border-gray-100 rounded-lg p-4">
+        {deliveries.map((delivery) => (
+          <div key={delivery.id} className="bg-white border border-gray-100 rounded-lg p-4 hover:bg-gray-50 transition-colors">
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
-                <h4 className="font-semibold text-gray-900 text-xl">{delivery.title}</h4>
+                <h4 className="font-semibold text-gray-900 text-sm">{delivery.title}</h4>
                 <p className="text-sm text-gray-600">{delivery.client}</p>
               </div>
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{delivery.progress}%</p>
-                <p className="text-xs text-gray-500">Complete</p>
-              </div>
+              <Badge className={getStatusColor(delivery.status)}>
+                {delivery.status}
+              </Badge>
             </div>
             
             <div className="space-y-2 mb-4">
               <div className="flex items-center text-sm text-gray-600">
-                <Truck className="h-4 w-4 mr-2" />
-                {delivery.equipment}
-              </div>
-              <div className="flex items-center text-sm text-gray-600">
                 <User className="h-4 w-4 mr-2" />
-                {delivery.driver}
+                Driver: {delivery.driver}
               </div>
               <div className="flex items-center text-sm text-gray-600">
                 <Clock className="h-4 w-4 mr-2" />
                 ETA: {delivery.eta}
               </div>
+              <div className="flex items-center text-sm text-gray-600">
+                <MapPin className="h-4 w-4 mr-2" />
+                {delivery.location}
+              </div>
             </div>
             
-            <div className="mb-3">
-              <Progress value={delivery.progress} className="h-2" indicatorClassName={getProgressColor(delivery.progress)} />
+            <div className="mb-4">
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-gray-600">Progress</span>
+                <span className="text-gray-900 font-medium">{delivery.progress}%</span>
+              </div>
+              <Progress 
+                value={delivery.progress} 
+                className="h-2 bg-gray-100" 
+                indicatorClassName="bg-blue-500"
+              />
             </div>
             
-            <Button variant="outline" size="sm" className="w-full border-blue-200 text-blue-50 bg-pink-700 hover:bg-pink-600">
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={() => handleViewDetails(delivery.id)}
+              className="w-full flex items-center gap-1 border-gray-200 hover:bg-gray-50"
+            >
+              <Eye className="h-3 w-3" />
               View Details
             </Button>
-          </div>)}
+          </div>
+        ))}
       </CardContent>
-    </Card>;
+    </Card>
+  );
 };
