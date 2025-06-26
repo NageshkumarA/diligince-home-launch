@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
-import { saveUserToRegistry, getUserFromRegistry, checkEmailExists } from '../utils/authUtils';
+import { saveUserToRegistry, getUserFromRegistry, checkEmailExists, listAllRegisteredUsers } from '../utils/authUtils';
 import { UserProfile } from '@/types/shared';
 
 export const useAuth = () => {
@@ -40,8 +40,12 @@ export const useAuth = () => {
     setIsLoading(true);
     
     try {
+      console.log("=== SIGNUP PROCESS STARTED ===");
+      console.log("User data for signup:", { ...userData, password: "***" });
+      
       // Check if email already exists
       if (checkEmailExists(userData.email)) {
+        console.log("Email already exists during signup");
         toast({
           title: "Email already exists",
           description: "An account with this email already exists. Please sign in instead.",
@@ -54,6 +58,7 @@ export const useAuth = () => {
       const saved = saveUserToRegistry(userData);
       
       if (!saved) {
+        console.log("Failed to save user during signup");
         toast({
           title: "Sign up failed",
           description: "Unable to create account. Please try again.",
@@ -64,6 +69,7 @@ export const useAuth = () => {
 
       // Remove password before setting user in context
       const { password, ...userProfile } = userData;
+      console.log("User profile to set in context:", userProfile);
       login(userProfile);
       
       toast({
@@ -73,9 +79,10 @@ export const useAuth = () => {
 
       // Redirect to appropriate dashboard
       const dashboardUrl = getVendorDashboardUrl(userProfile.role, userProfile.profile?.vendorCategory);
-      console.log("Redirecting to:", dashboardUrl);
+      console.log("Redirecting to dashboard:", dashboardUrl);
       navigate(dashboardUrl);
 
+      console.log("=== SIGNUP PROCESS COMPLETED ===");
       return { success: true, user: userProfile };
     } catch (error) {
       console.error('Sign up error:', error);
@@ -91,10 +98,14 @@ export const useAuth = () => {
   }, [login, toast, navigate]);
 
   const signIn = useCallback(async (email: string, password: string) => {
-    console.log("signIn called with:", { email, password: "***" });
+    console.log("=== SIGNIN PROCESS STARTED ===");
+    console.log("signIn called with email:", email);
     setIsLoading(true);
 
     try {
+      // List all registered users for debugging
+      listAllRegisteredUsers();
+      
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -103,7 +114,7 @@ export const useAuth = () => {
       console.log("User found:", user ? "YES" : "NO");
       
       if (user) {
-        console.log("Logging in user:", user.name);
+        console.log("Logging in user:", user.name, "with role:", user.role, "and vendor category:", user.profile?.vendorCategory);
         login(user);
         
         toast({
@@ -113,15 +124,16 @@ export const useAuth = () => {
 
         // Redirect to appropriate dashboard based on user role and vendor category
         const dashboardUrl = getVendorDashboardUrl(user.role, user.profile?.vendorCategory);
-        console.log("Redirecting to:", dashboardUrl);
+        console.log("Redirecting to dashboard:", dashboardUrl);
         navigate(dashboardUrl);
         
+        console.log("=== SIGNIN PROCESS COMPLETED ===");
         return { success: true, user };
       } else {
-        console.log("Invalid credentials");
+        console.log("Invalid credentials - no user found");
         toast({
           title: "Sign in failed",
-          description: "Invalid email or password. Please try again.",
+          description: "Invalid email or password. Please check your credentials and try again.",
           variant: "destructive",
         });
         return { success: false, error: "Invalid credentials" };

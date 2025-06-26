@@ -21,6 +21,7 @@ export const saveUserToRegistry = (user: UserProfile & { password: string }): bo
     // Check if user already exists
     const existingUser = registeredUsers.find((u: any) => u.email === user.email);
     if (existingUser) {
+      console.log("User already exists:", user.email);
       return false; // User already exists
     }
     
@@ -32,7 +33,8 @@ export const saveUserToRegistry = (user: UserProfile & { password: string }): bo
     
     registeredUsers.push(userWithHashedPassword);
     localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-    console.log("User saved to registry:", userWithHashedPassword.email);
+    console.log("User saved to registry successfully:", userWithHashedPassword.email);
+    console.log("Total registered users:", registeredUsers.length);
     return true;
   } catch (error) {
     console.error('Error saving user to registry:', error);
@@ -41,15 +43,16 @@ export const saveUserToRegistry = (user: UserProfile & { password: string }): bo
 };
 
 export const getUserFromRegistry = (email: string, password: string): UserProfile | null => {
-  console.log("Getting user from registry for:", email);
+  console.log("Getting user from registry for email:", email);
   try {
     const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-    console.log("Registered users count:", registeredUsers.length);
+    console.log("Total registered users in storage:", registeredUsers.length);
+    console.log("All registered emails:", registeredUsers.map((u: any) => u.email));
     
     const user = registeredUsers.find((u: any) => {
-      const emailMatch = u.email === email;
+      const emailMatch = u.email.toLowerCase() === email.toLowerCase();
       const passwordMatch = verifyPassword(password, u.password);
-      console.log(`User ${u.email}: emailMatch=${emailMatch}, passwordMatch=${passwordMatch}`);
+      console.log(`Checking user ${u.email}: emailMatch=${emailMatch}, passwordMatch=${passwordMatch}`);
       return emailMatch && passwordMatch;
     });
     
@@ -60,7 +63,7 @@ export const getUserFromRegistry = (email: string, password: string): UserProfil
       return userWithoutPassword;
     }
     
-    console.log("No matching user found");
+    console.log("No matching user found for email:", email);
     return null;
   } catch (error) {
     console.error('Error getting user from registry:', error);
@@ -71,11 +74,25 @@ export const getUserFromRegistry = (email: string, password: string): UserProfil
 export const checkEmailExists = (email: string): boolean => {
   try {
     const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-    const exists = registeredUsers.some((u: any) => u.email === email);
+    const exists = registeredUsers.some((u: any) => u.email.toLowerCase() === email.toLowerCase());
     console.log(`Email ${email} exists:`, exists);
     return exists;
   } catch (error) {
     console.error('Error checking email existence:', error);
     return false;
+  }
+};
+
+// Debug function to list all registered users
+export const listAllRegisteredUsers = (): void => {
+  try {
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    console.log("=== ALL REGISTERED USERS ===");
+    registeredUsers.forEach((user: any, index: number) => {
+      console.log(`${index + 1}. Email: ${user.email}, Role: ${user.role}, Vendor Category: ${user.profile?.vendorCategory || 'N/A'}`);
+    });
+    console.log("=== END OF LIST ===");
+  } catch (error) {
+    console.error('Error listing registered users:', error);
   }
 };
