@@ -1,9 +1,9 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, MapPin, Calendar, Package, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { QuotationModal } from "./QuotationModal";
 import { getPriorityColor, getDaysRemaining } from "@/utils/shared";
 
@@ -45,10 +45,15 @@ const rfqData = [
 export const RFQManagement = () => {
   const [selectedRFQ, setSelectedRFQ] = useState<any>(null);
   const [isQuotationModalOpen, setIsQuotationModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleQuoteNow = (rfq: any) => {
     setSelectedRFQ(rfq);
     setIsQuotationModalOpen(true);
+  };
+
+  const handleViewAllRFQs = () => {
+    navigate('/product-vendor-rfqs');
   };
 
   return (
@@ -66,6 +71,7 @@ export const RFQManagement = () => {
               variant="outline" 
               size="sm"
               className="border-orange-200 text-orange-600 hover:bg-orange-50"
+              onClick={handleViewAllRFQs}
             >
               View All RFQs
             </Button>
@@ -126,7 +132,10 @@ export const RFQManagement = () => {
             ))}
           </div>
           
-          <Button className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white">
+          <Button 
+            className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white"
+            onClick={handleViewAllRFQs}
+          >
             View All RFQs
           </Button>
         </CardContent>

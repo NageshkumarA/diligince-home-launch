@@ -1,10 +1,10 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ShoppingCart, Package, Truck, Eye, Calendar } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { OrderDetailsModal } from "./OrderDetailsModal";
 import { getStatusColor, getPaymentStatusColor, getPriorityColor } from "@/utils/shared";
 
@@ -50,10 +50,15 @@ const activeOrders = [
 export const OrdersManagement = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleViewOrder = (order: any) => {
     setSelectedOrder(order);
     setIsOrderModalOpen(true);
+  };
+
+  const handleViewAllOrders = () => {
+    navigate('/product-vendor-orders');
   };
 
   return (
@@ -71,6 +76,7 @@ export const OrdersManagement = () => {
               variant="outline" 
               size="sm"
               className="border-orange-200 text-orange-600 hover:bg-orange-50"
+              onClick={handleViewAllOrders}
             >
               View All Orders
             </Button>
@@ -150,7 +156,10 @@ export const OrdersManagement = () => {
             ))}
           </div>
           
-          <Button className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white">
+          <Button 
+            className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white"
+            onClick={handleViewAllOrders}
+          >
             View All Orders
           </Button>
         </CardContent>

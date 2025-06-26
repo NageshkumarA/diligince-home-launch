@@ -1,3 +1,4 @@
+
 import { Home, FileText, ShoppingCart, MessageSquare, Users, Workflow, Building2, Package, Truck, User, Calendar, Briefcase } from "lucide-react";
 import React from "react";
 
@@ -103,6 +104,53 @@ export const serviceVendorHeaderConfig: HeaderConfig = {
     hoverColor: "text-gray-400 hover:text-blue-300",
     buttonHoverColor: "hover:bg-gray-800",
     avatarBgColor: "bg-gray-700",
+  }
+};
+
+// Product Vendor Dashboard Navigation (NEW - Fixed for product vendors)
+export const productVendorHeaderConfig: HeaderConfig = {
+  brandName: "Diligence.ai",
+  brandHref: "/product-vendor-dashboard",
+  navItems: [
+    {
+      label: "Dashboard",
+      href: "/product-vendor-dashboard",
+      icon: React.createElement(Home, { size: 18 })
+    },
+    {
+      label: "RFQs",
+      href: "/product-vendor-rfqs",
+      icon: React.createElement(FileText, { size: 18 })
+    },
+    {
+      label: "Orders",
+      href: "/product-vendor-orders",
+      icon: React.createElement(ShoppingCart, { size: 18 })
+    },
+    {
+      label: "Catalog",
+      href: "/product-vendor-catalog",
+      icon: React.createElement(Package, { size: 18 })
+    },
+    {
+      label: "Messages",
+      href: "/product-vendor-messages",
+      icon: React.createElement(MessageSquare, { size: 18 })
+    },
+    {
+      label: "Profile",
+      href: "/product-vendor-profile",
+      icon: React.createElement(User, { size: 18 })
+    }
+  ],
+  avatarInitials: "PV",
+  theme: {
+    bgColor: "bg-white",
+    textColor: "text-gray-900",
+    hoverColor: "text-gray-600 hover:text-blue-600",
+    buttonHoverColor: "hover:bg-gray-100",
+    avatarBgColor: "bg-orange-100",
+    avatarBorderColor: "border-orange-200"
   }
 };
 
@@ -280,6 +328,7 @@ export const logisticsVendorHeaderConfig = logisticsHeaderConfig;
 export const getHeaderConfigByPath = (path: string): HeaderConfig => {
   if (path.startsWith('/industry')) return industryHeaderConfig;
   if (path.startsWith('/service-vendor')) return serviceVendorHeaderConfig;
+  if (path.startsWith('/product-vendor')) return productVendorHeaderConfig;
   if (path.startsWith('/logistics')) return logisticsHeaderConfig;
   if (path.startsWith('/expert')) return expertHeaderConfig;
   if (path.startsWith('/professional')) return professionalHeaderConfig;

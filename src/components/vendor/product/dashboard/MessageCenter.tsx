@@ -1,5 +1,6 @@
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { MessageCenter as SharedMessageCenter } from "@/components/shared/messages/MessageCenter";
 import { productVendorMessageConfig } from "@/utils/messageConfigs";
 
@@ -56,10 +57,21 @@ const messages = [
 ];
 
 export const MessageCenter = () => {
+  const navigate = useNavigate();
+
+  const handleViewAllMessages = () => {
+    navigate('/product-vendor-messages');
+  };
+
+  const configWithNavigation = {
+    ...productVendorMessageConfig,
+    onViewAllMessages: handleViewAllMessages
+  };
+
   return (
     <SharedMessageCenter 
       messages={messages}
-      config={productVendorMessageConfig}
+      config={configWithNavigation}
     />
   );
 };

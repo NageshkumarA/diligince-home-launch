@@ -1,10 +1,10 @@
-
 import React, { useState, useMemo, memo, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Package, Search, AlertTriangle, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 const topProducts = [
   {
@@ -135,6 +135,7 @@ ProductItem.displayName = "ProductItem";
 
 export const ProductCatalogView = memo(() => {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   const filteredProducts = useMemo(() => 
     topProducts.filter(product =>
@@ -153,12 +154,12 @@ export const ProductCatalogView = memo(() => {
   }, []);
 
   const handleManageCatalog = useCallback(() => {
-    console.log("Manage catalog clicked");
-  }, []);
+    navigate('/product-vendor-catalog');
+  }, [navigate]);
 
   const handleViewAllProducts = useCallback(() => {
-    console.log("View all products clicked");
-  }, []);
+    navigate('/product-vendor-catalog');
+  }, [navigate]);
 
   return (
     <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
