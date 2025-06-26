@@ -433,14 +433,14 @@ const DashboardContainer = memo(() => {
                       variant="outline" 
                       size="sm" 
                       className="flex-1" 
-                      onClick={() => handleViewProfile(stakeholder.id, stakeholder.type)}
+                      onClick={() => handleViewProfile(stakeholder.id.toString(), stakeholder.type)}
                     >
                       View Profile
                     </Button>
                     <Button 
                       size="sm" 
                       className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium"
-                      onClick={() => handleInviteToProject(stakeholder.id)}
+                      onClick={() => handleInviteToProject(stakeholder.id.toString())}
                     >
                       Invite
                     </Button>
