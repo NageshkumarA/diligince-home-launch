@@ -1,4 +1,3 @@
-
 import React, { Suspense, memo } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
@@ -8,63 +7,128 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell
-} from "@/components/ui/table";
-import {
-  FileText,
-  MessageSquare,
-  ShoppingCart,
-  CheckCircle,
-  Clock,
-  AlertCircle,
-  Plus,
-  Workflow
-} from "lucide-react";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { FileText, MessageSquare, ShoppingCart, CheckCircle, Clock, AlertCircle, Plus, Workflow } from "lucide-react";
 import { FastLoadingState } from "@/components/shared/loading/FastLoadingState";
 import { SkeletonLoader } from "@/components/shared/loading/SkeletonLoader";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { perfUtils } from "@/utils/performance";
 
 // Mock data for the dashboard - moved to module level for better performance
-const metrics = [
-  { title: "Active Requirements", count: 12, subtitle: "ongoing jobs", icon: FileText },
-  { title: "Pending RFQs", count: 8, subtitle: "awaiting response", icon: Clock },
-  { title: "Active POs", count: 5, subtitle: "in progress", icon: ShoppingCart },
-  { title: "Completed Jobs", count: 27, subtitle: "this year", icon: CheckCircle }
-];
-
-const requirementData = [
-  { id: 1, title: "Industrial Valve Procurement", category: "Product", status: "Active", date: "2 days ago" },
-  { id: 2, title: "Pipeline Inspection Service", category: "Service", status: "Pending", date: "1 week ago" },
-  { id: 3, title: "Chemical Engineering Consultant", category: "Expert", status: "Active", date: "3 days ago" },
-  { id: 4, title: "Equipment Transportation", category: "Logistics", status: "Completed", date: "2 weeks ago" },
-  { id: 5, title: "Safety Audit Services", category: "Service", status: "Active", date: "5 days ago" }
-];
-
-const stakeholderData = [
-  { id: 1, name: "TechValve Solutions", initials: "TV", type: "Product Vendor" },
-  { id: 2, name: "EngiConsult Group", initials: "EG", type: "Expert" },
-  { id: 3, name: "Service Pro Maintenance", initials: "SP", type: "Service Vendor" },
-  { id: 4, name: "FastTrack Logistics", initials: "FL", type: "Logistics" }
-];
-
-const messageData = [
-  { id: 1, sender: "John Smith", initials: "JS", preview: "Regarding your recent valve procurement inquiry, we have...", time: "10 min ago" },
-  { id: 2, sender: "TechValve Solutions", initials: "TV", preview: "Thank you for your order. We've processed the shipment and...", time: "2 hours ago" },
-  { id: 3, sender: "EngiConsult Group", initials: "EG", preview: "Our engineer will be available for the consultation on...", time: "Yesterday" }
-];
-
-const orderData = [
-  { id: "PO-2023-042", title: "Industrial Valve Set", vendor: "TechValve Solutions", summary: "3 items", status: "In Progress", progress: 65 },
-  { id: "PO-2023-039", title: "Safety Equipment", vendor: "ProtectWell Inc", summary: "12 items", status: "Delivered", progress: 100 },
-  { id: "PO-2023-036", title: "Consulting Services", vendor: "EngiConsult Group", summary: "1 service", status: "In Progress", progress: 40 }
-];
+const metrics = [{
+  title: "Active Requirements",
+  count: 12,
+  subtitle: "ongoing jobs",
+  icon: FileText
+}, {
+  title: "Pending RFQs",
+  count: 8,
+  subtitle: "awaiting response",
+  icon: Clock
+}, {
+  title: "Active POs",
+  count: 5,
+  subtitle: "in progress",
+  icon: ShoppingCart
+}, {
+  title: "Completed Jobs",
+  count: 27,
+  subtitle: "this year",
+  icon: CheckCircle
+}];
+const requirementData = [{
+  id: 1,
+  title: "Industrial Valve Procurement",
+  category: "Product",
+  status: "Active",
+  date: "2 days ago"
+}, {
+  id: 2,
+  title: "Pipeline Inspection Service",
+  category: "Service",
+  status: "Pending",
+  date: "1 week ago"
+}, {
+  id: 3,
+  title: "Chemical Engineering Consultant",
+  category: "Expert",
+  status: "Active",
+  date: "3 days ago"
+}, {
+  id: 4,
+  title: "Equipment Transportation",
+  category: "Logistics",
+  status: "Completed",
+  date: "2 weeks ago"
+}, {
+  id: 5,
+  title: "Safety Audit Services",
+  category: "Service",
+  status: "Active",
+  date: "5 days ago"
+}];
+const stakeholderData = [{
+  id: 1,
+  name: "TechValve Solutions",
+  initials: "TV",
+  type: "Product Vendor"
+}, {
+  id: 2,
+  name: "EngiConsult Group",
+  initials: "EG",
+  type: "Expert"
+}, {
+  id: 3,
+  name: "Service Pro Maintenance",
+  initials: "SP",
+  type: "Service Vendor"
+}, {
+  id: 4,
+  name: "FastTrack Logistics",
+  initials: "FL",
+  type: "Logistics"
+}];
+const messageData = [{
+  id: 1,
+  sender: "John Smith",
+  initials: "JS",
+  preview: "Regarding your recent valve procurement inquiry, we have...",
+  time: "10 min ago"
+}, {
+  id: 2,
+  sender: "TechValve Solutions",
+  initials: "TV",
+  preview: "Thank you for your order. We've processed the shipment and...",
+  time: "2 hours ago"
+}, {
+  id: 3,
+  sender: "EngiConsult Group",
+  initials: "EG",
+  preview: "Our engineer will be available for the consultation on...",
+  time: "Yesterday"
+}];
+const orderData = [{
+  id: "PO-2023-042",
+  title: "Industrial Valve Set",
+  vendor: "TechValve Solutions",
+  summary: "3 items",
+  status: "In Progress",
+  progress: 65
+}, {
+  id: "PO-2023-039",
+  title: "Safety Equipment",
+  vendor: "ProtectWell Inc",
+  summary: "12 items",
+  status: "Delivered",
+  progress: 100
+}, {
+  id: "PO-2023-036",
+  title: "Consulting Services",
+  vendor: "EngiConsult Group",
+  summary: "1 service",
+  status: "In Progress",
+  progress: 40
+}];
 
 // Helper functions - regular functions instead of memoized to fix the runtime error
 const getStatusColor = (status: string) => {
@@ -81,7 +145,6 @@ const getStatusColor = (status: string) => {
       return "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200";
   }
 };
-
 const getCategoryColor = (category: string) => {
   switch (category.toLowerCase()) {
     case "product":
@@ -101,8 +164,7 @@ const getCategoryColor = (category: string) => {
 
 // Memoized dashboard container
 const DashboardContainer = memo(() => {
-  return (
-    <main className="flex-1 container mx-auto px-4 py-8 pt-20">
+  return <main className="flex-1 container mx-auto px-4 py-8 pt-20">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Industry Dashboard</h1>
         <p className="text-gray-700 text-lg">Welcome back to your procurement dashboard</p>
@@ -152,20 +214,17 @@ const DashboardContainer = memo(() => {
       </div>
       
       {/* Key Metrics Section */}
-      <Suspense fallback={
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-white p-6 rounded-lg border border-gray-100">
+      <Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {Array.from({
+        length: 4
+      }).map((_, i) => <div key={i} className="bg-white p-6 rounded-lg border border-gray-100">
               <SkeletonLoader lines={2} height="20px" />
-            </div>
-          ))}
-        </div>
-      }>
+            </div>)}
+        </div>}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {metrics.map((metric, index) => {
-            const IconComponent = metric.icon;
-            return (
-              <Card key={index} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
+          const IconComponent = metric.icon;
+          return <Card key={index} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
@@ -180,9 +239,8 @@ const DashboardContainer = memo(() => {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
-            );
-          })}
+              </Card>;
+        })}
         </div>
       </Suspense>
       
@@ -198,11 +256,9 @@ const DashboardContainer = memo(() => {
           </Button>
         </div>
         
-        <Suspense fallback={
-          <div className="bg-white p-6 rounded-lg border border-gray-100">
+        <Suspense fallback={<div className="bg-white p-6 rounded-lg border border-gray-100">
             <SkeletonLoader lines={8} />
-          </div>
-        }>
+          </div>}>
           <Card className="bg-white border border-gray-100 shadow-sm">
             <CardContent className="p-0">
               <Table>
@@ -216,8 +272,7 @@ const DashboardContainer = memo(() => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {requirementData.map((req) => (
-                    <TableRow key={req.id} className="border-gray-100 hover:bg-gray-50">
+                  {requirementData.map(req => <TableRow key={req.id} className="border-gray-100 hover:bg-gray-50">
                       <TableCell className="font-medium text-gray-900">
                         <Link to={`/requirement/${req.id.toString()}`} className="text-blue-600 hover:text-blue-700 hover:underline">
                           {req.title}
@@ -241,15 +296,12 @@ const DashboardContainer = memo(() => {
                           <Button size="sm" variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50" asChild>
                             <Link to={`/industry-project-workflow/${req.id.toString()}`}>View Workflow</Link>
                           </Button>
-                          {req.status === "Completed" && (
-                            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
+                          {req.status === "Completed" && <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
                               <Link to="/create-purchase-order">Create PO</Link>
-                            </Button>
-                          )}
+                            </Button>}
                         </div>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </CardContent>
@@ -268,23 +320,20 @@ const DashboardContainer = memo(() => {
           <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">Find Stakeholders</Button>
         </div>
         
-        <Suspense fallback={
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white p-6 rounded-lg border border-gray-100">
+        <Suspense fallback={<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array.from({
+          length: 4
+        }).map((_, i) => <div key={i} className="bg-white p-6 rounded-lg border border-gray-100">
                 <SkeletonLoader lines={4} />
-              </div>
-            ))}
-          </div>
-        }>
+              </div>)}
+          </div>}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {stakeholderData.map((stakeholder) => (
-              <Card key={stakeholder.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
+            {stakeholderData.map(stakeholder => <Card key={stakeholder.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
                 <CardContent className="p-6 flex flex-col items-center text-center">
                   <Avatar className="h-16 w-16 mb-4 bg-gradient-to-br from-blue-50 to-blue-100">
                     <AvatarFallback className="text-xl font-semibold text-blue-600">{stakeholder.initials}</AvatarFallback>
                   </Avatar>
-                  <h3 className="font-semibold text-gray-900 mb-2">{stakeholder.name}</h3>
+                  <h3 className="font-semibold text-gray-900 mb-2 text-lg">{stakeholder.name}</h3>
                   <Badge className={`mb-4 ${getCategoryColor(stakeholder.type)}`}>
                     {stakeholder.type}
                   </Badge>
@@ -297,8 +346,7 @@ const DashboardContainer = memo(() => {
                     </Button>
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </Suspense>
       </div>
@@ -310,16 +358,13 @@ const DashboardContainer = memo(() => {
           <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">View All Messages</Button>
         </div>
         
-        <Suspense fallback={
-          <div className="bg-white p-6 rounded-lg border border-gray-100">
+        <Suspense fallback={<div className="bg-white p-6 rounded-lg border border-gray-100">
             <SkeletonLoader lines={5} />
-          </div>
-        }>
+          </div>}>
           <Card className="bg-white border border-gray-100 shadow-sm">
             <CardContent className="p-6">
               <ul className="divide-y divide-gray-100">
-                {messageData.map((message) => (
-                  <li key={message.id} className="py-4 flex items-start gap-4 hover:bg-gray-50 px-3 rounded-lg cursor-pointer transition-colors">
+                {messageData.map(message => <li key={message.id} className="py-4 flex items-start gap-4 hover:bg-gray-50 px-3 rounded-lg cursor-pointer transition-colors">
                     <Avatar className="bg-gradient-to-br from-blue-50 to-blue-100">
                       <AvatarFallback className="text-blue-600 font-semibold">{message.initials}</AvatarFallback>
                     </Avatar>
@@ -330,8 +375,7 @@ const DashboardContainer = memo(() => {
                       </div>
                       <p className="text-sm text-gray-700 truncate mt-1">{message.preview}</p>
                     </div>
-                  </li>
-                ))}
+                  </li>)}
               </ul>
             </CardContent>
           </Card>
@@ -353,21 +397,18 @@ const DashboardContainer = memo(() => {
           </div>
         </div>
         
-        <Suspense fallback={
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="bg-white p-6 rounded-lg border border-gray-100">
+        <Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({
+          length: 3
+        }).map((_, i) => <div key={i} className="bg-white p-6 rounded-lg border border-gray-100">
                 <SkeletonLoader lines={6} />
-              </div>
-            ))}
-          </div>
-        }>
+              </div>)}
+          </div>}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {orderData.map((order) => (
-              <Card key={order.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
+            {orderData.map(order => <Card key={order.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-semibold text-gray-900">{order.id}</h3>
+                    <h3 className="font-semibold text-gray-900 text-xl">{order.id}</h3>
                     <Badge className={getStatusColor(order.status)}>
                       {order.status}
                     </Badge>
@@ -395,17 +436,13 @@ const DashboardContainer = memo(() => {
                     </Button>
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </Suspense>
       </div>
-    </main>
-  );
+    </main>;
 });
-
 DashboardContainer.displayName = "DashboardContainer";
-
 const IndustryDashboard = () => {
   console.log("IndustryDashboard rendering - optimized version");
   usePerformanceMonitor("IndustryDashboard");
@@ -414,9 +451,7 @@ const IndustryDashboard = () => {
   React.useEffect(() => {
     perfUtils.measureCoreWebVitals();
   }, []);
-
-  return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+  return <div className="min-h-screen flex flex-col bg-gray-50">
       <Helmet>
         <title>Industry Dashboard | Diligince.ai</title>
       </Helmet>
@@ -424,8 +459,6 @@ const IndustryDashboard = () => {
       <IndustryHeader />
       
       <DashboardContainer />
-    </div>
-  );
+    </div>;
 };
-
 export default memo(IndustryDashboard);
