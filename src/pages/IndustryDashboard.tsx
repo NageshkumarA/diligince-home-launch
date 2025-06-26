@@ -1,7 +1,6 @@
-
 import React, { Suspense, memo } from "react";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import IndustryHeader from "@/components/industry/IndustryHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -199,6 +198,36 @@ const getCategoryColor = (category: string) => {
 
 // Memoized dashboard container
 const DashboardContainer = memo(() => {
+  const navigate = useNavigate();
+
+  // Handler functions for stakeholder actions
+  const handleViewProfile = (stakeholderId: string, stakeholderType: string) => {
+    console.log('Viewing profile for stakeholder:', stakeholderId, stakeholderType);
+    navigate(`/vendor-details/${stakeholderId}`);
+  };
+
+  const handleInviteStakeholder = () => {
+    console.log('Opening invite stakeholder modal');
+    // Navigate to stakeholder onboarding or show modal
+    navigate('/stakeholder-onboarding');
+  };
+
+  const handleInviteToProject = (stakeholderId: string, requirementId?: string) => {
+    console.log('Inviting stakeholder to project:', stakeholderId, requirementId);
+    // Navigate to create requirement with pre-selected stakeholder
+    if (requirementId) {
+      navigate(`/create-requirement?stakeholder=${stakeholderId}&requirement=${requirementId}`);
+    } else {
+      navigate(`/create-requirement?stakeholder=${stakeholderId}`);
+    }
+  };
+
+  const handleManageMilestones = (orderId: string) => {
+    console.log('Managing milestones for order:', orderId);
+    // Navigate to milestone management page (using project workflow for now)
+    navigate(`/industry-project-workflow/${orderId}`);
+  };
+
   return <main className="flex-1 container mx-auto px-4 py-8 pt-20">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Industry Dashboard</h1>
@@ -371,8 +400,11 @@ const DashboardContainer = memo(() => {
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-gray-800">Top Stakeholders</h2>
-          <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
-            <Link to="/industry-stakeholders">Find More Stakeholders</Link>
+          <Button 
+            onClick={handleInviteStakeholder}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
+          >
+            Find More Stakeholders
           </Button>
         </div>
         
@@ -397,11 +429,20 @@ const DashboardContainer = memo(() => {
                     <div>★ {stakeholder.rating} • {stakeholder.projects} projects</div>
                   </div>
                   <div className="flex gap-2 mt-2 w-full">
-                    <Button variant="outline" size="sm" className="flex-1" asChild>
-                      <Link to={`/vendor-details/${stakeholder.id}`}>View Profile</Link>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1" 
+                      onClick={() => handleViewProfile(stakeholder.id, stakeholder.type)}
+                    >
+                      View Profile
                     </Button>
-                    <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
-                      <Link to={`/industry-stakeholders?invite=${stakeholder.id}`}>Invite</Link>
+                    <Button 
+                      size="sm" 
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium"
+                      onClick={() => handleInviteToProject(stakeholder.id)}
+                    >
+                      Invite
                     </Button>
                   </div>
                 </CardContent>
@@ -493,10 +534,18 @@ const DashboardContainer = memo(() => {
                     <Button size="sm" variant="outline" className="flex-1" asChild>
                       <Link to={`/industry-project-workflow/${order.id}`}>View Workflow</Link>
                     </Button>
-                    <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium" asChild>
-                      <Link to={`/work-completion-payment/${order.id}`}>
-                        {order.progress === 100 ? "Process Payment" : "Manage Milestones"}
-                      </Link>
+                    <Button 
+                      size="sm" 
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium"
+                      onClick={() => {
+                        if (order.progress === 100) {
+                          navigate(`/work-completion-payment/${order.id}`);
+                        } else {
+                          handleManageMilestones(order.id);
+                        }
+                      }}
+                    >
+                      {order.progress === 100 ? "Process Payment" : "Manage Milestones"}
                     </Button>
                   </div>
                 </CardContent>

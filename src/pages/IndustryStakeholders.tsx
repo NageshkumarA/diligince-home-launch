@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
+import { useNavigate } from "react-router-dom";
 import IndustryHeader from "@/components/industry/IndustryHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -75,6 +76,7 @@ const mockStakeholders: Stakeholder[] = [
 ];
 
 const IndustryStakeholders = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
 
@@ -93,6 +95,22 @@ const IndustryStakeholders = () => {
       case "Logistics": return "bg-amber-100 text-amber-800";
       default: return "bg-gray-100 text-gray-800";
     }
+  };
+
+  // Handler functions
+  const handleViewProfile = (stakeholderId: string) => {
+    console.log('Viewing stakeholder profile:', stakeholderId);
+    navigate(`/vendor-details/${stakeholderId}`);
+  };
+
+  const handleInviteToProject = (stakeholderId: string) => {
+    console.log('Inviting stakeholder to project:', stakeholderId);
+    navigate(`/create-requirement?stakeholder=${stakeholderId}`);
+  };
+
+  const handleInviteStakeholder = () => {
+    console.log('Opening invite stakeholder modal');
+    navigate('/stakeholder-onboarding');
   };
 
   return (
@@ -126,7 +144,10 @@ const IndustryStakeholders = () => {
               <Filter className="h-4 w-4" />
               Filters
             </Button>
-            <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+            <Button 
+              onClick={handleInviteStakeholder}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+            >
               <Plus className="h-4 w-4" />
               Invite Stakeholder
             </Button>
@@ -197,10 +218,19 @@ const IndustryStakeholders = () => {
                 </div>
 
                 <div className="flex gap-2 pt-2">
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={() => handleViewProfile(stakeholder.id)}
+                  >
                     View Profile
                   </Button>
-                  <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700">
+                  <Button 
+                    size="sm" 
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                    onClick={() => handleInviteToProject(stakeholder.id)}
+                  >
                     Invite to Project
                   </Button>
                 </div>
@@ -214,7 +244,10 @@ const IndustryStakeholders = () => {
             <Building className="h-12 w-12 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No stakeholders found</h3>
             <p className="text-gray-500 mb-4">Try adjusting your search criteria or invite new stakeholders.</p>
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button 
+              onClick={handleInviteStakeholder}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
               Invite Stakeholder
             </Button>
           </div>
