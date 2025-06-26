@@ -1,6 +1,7 @@
 
 import React from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
+import { useStakeholder } from "@/contexts/StakeholderContext";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -24,11 +25,14 @@ interface PublishStepProps {
 
 const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
   const { formData, updateFormData, validateStep, stepErrors } = useRequirement();
+  const { notifyStakeholders } = useStakeholder();
 
   const handlePublish = () => {
     if (validateStep(5)) {
-      // In a real app, you would submit to your API here
-      toast.success("Requirement published successfully!");
+      // Notify relevant stakeholders about the new requirement
+      notifyStakeholders(formData);
+      
+      toast.success("Requirement published successfully! Relevant stakeholders have been notified.");
       onNext();
     } else {
       toast.error("Please fill in all required fields");
@@ -36,7 +40,6 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
   };
 
   const handleSaveDraft = () => {
-    // In a real app, you would save as draft to your API here
     toast.success("Requirement saved as draft");
   };
 
@@ -45,7 +48,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-gray-900">Publish Requirement</h2>
         <p className="text-gray-600">
-          Configure final settings and publish your requirement
+          Configure final settings and publish your requirement. Relevant stakeholders will be automatically notified.
         </p>
       </div>
 
@@ -202,7 +205,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
           onClick={handlePublish}
           className="bg-blue-600 text-white hover:bg-blue-700"
         >
-          Publish Requirement
+          Publish & Notify Stakeholders
         </Button>
       </div>
     </div>

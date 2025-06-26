@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import IndustryHeader from "@/components/industry/IndustryHeader";
 import { Button } from "@/components/ui/button";
@@ -6,10 +7,68 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useStakeholder } from "@/contexts/StakeholderContext";
+import { VendorDetailsModal } from "@/components/stakeholder/VendorDetailsModal";
+import { ExpertDetailsModal } from "@/components/stakeholder/ExpertDetailsModal";
+import { StakeholderProfile } from "@/types/stakeholder";
+import { useModal } from "@/hooks/useModal";
+import { Star, MapPin, Award } from "lucide-react";
+
 const Vendors = () => {
-  // Sample skills for the professionals
-  const skillsList = [["Manufacturing", "Quality Control", "Six Sigma"], ["Supply Chain", "Logistics", "Procurement"], ["Engineering", "Product Design", "CAD"], ["Project Management", "Lean", "Automation"], ["Regulations", "Compliance", "Safety"], ["Materials Science", "Testing", "R&D"]];
-  return <div className="min-h-screen flex flex-col bg-gray-50">
+  const { stakeholderProfiles, applications } = useStakeholder();
+  const [selectedStakeholder, setSelectedStakeholder] = useState<StakeholderProfile | null>(null);
+  const { isOpen: isVendorModalOpen, openModal: openVendorModal, closeModal: closeVendorModal } = useModal();
+  const { isOpen: isExpertModalOpen, openModal: openExpertModal, closeModal: closeExpertModal } = useModal();
+
+  // Filter stakeholders by type
+  const vendors = stakeholderProfiles.filter(s => 
+    s.type === 'product_vendor' || s.type === 'service_vendor' || s.type === 'logistics_vendor'
+  );
+  const experts = stakeholderProfiles.filter(s => s.type === 'expert');
+
+  const handleViewDetails = (stakeholder: StakeholderProfile) => {
+    setSelectedStakeholder(stakeholder);
+    if (stakeholder.type === 'expert') {
+      openExpertModal();
+    } else {
+      openVendorModal();
+    }
+  };
+
+  const getStakeholderTypeLabel = (type: string) => {
+    switch (type) {
+      case 'product_vendor': return 'Product Vendor';
+      case 'service_vendor': return 'Service Vendor';
+      case 'logistics_vendor': return 'Logistics Vendor';
+      case 'expert': return 'Expert Professional';
+      default: return 'Stakeholder';
+    }
+  };
+
+  const getCategoryColor = (type: string) => {
+    switch (type) {
+      case 'product_vendor':
+        return "bg-purple-50 text-purple-700 border-purple-200";
+      case 'service_vendor':
+        return "bg-blue-50 text-blue-700 border-blue-200";
+      case 'expert':
+        return "bg-green-50 text-green-700 border-green-200";
+      case 'logistics_vendor':
+        return "bg-amber-50 text-amber-700 border-amber-200";
+      default:
+        return "bg-gray-50 text-gray-700 border-gray-200";
+    }
+  };
+
+  const hasActiveApplications = (stakeholderId: string) => {
+    return applications.some(app => 
+      app.stakeholderId === stakeholderId && 
+      (app.status === 'accepted' || app.status === 'pending')
+    );
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Helmet>
         <title>Stakeholders | Diligince.ai</title>
       </Helmet>
@@ -26,8 +85,12 @@ const Vendors = () => {
         
         <Tabs defaultValue="vendors" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-white border border-gray-100">
-            <TabsTrigger value="vendors" className="data-[state=active]:text-blue-600 bg-gray-100">Vendors</TabsTrigger>
-            <TabsTrigger value="experts" className="data-[state=active]:text-blue-600 bg-gray-100">Experts</TabsTrigger>
+            <TabsTrigger value="vendors" className="data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50">
+              Vendors ({vendors.length})
+            </TabsTrigger>
+            <TabsTrigger value="experts" className="data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50">
+              Experts ({experts.length})
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="vendors" className="space-y-6 mt-8">
@@ -38,30 +101,72 @@ const Vendors = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Sample vendor cards */}
-              {[1, 2, 3, 4, 5, 6].map(index => <Card key={index} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+              {vendors.map(vendor => (
+                <Card key={vendor.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
                   <CardHeader className="pb-4">
-                    <CardTitle className="text-lg font-semibold text-gray-900">Vendor Company {index}</CardTitle>
-                    <CardDescription className="text-gray-600">
-                      {index % 2 === 0 ? "Product Vendor" : "Service Vendor"}
-                    </CardDescription>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-lg font-semibold text-gray-900">{vendor.name}</CardTitle>
+                        <CardDescription className="text-gray-600 mt-1">
+                          {getStakeholderTypeLabel(vendor.type)}
+                        </CardDescription>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4 text-yellow-500" />
+                        <span className="text-sm font-medium">{vendor.rating.toFixed(1)}</span>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-sm text-gray-600 space-y-2">
-                      <p><span className="font-medium">Location:</span> City {index}, Country</p>
-                      <p><span className="font-medium">Rating:</span> {(Math.random() * 2 + 3).toFixed(1)} / 5</p>
-                      <p><span className="font-medium">Projects Completed:</span> {Math.floor(Math.random() * 20) + 5}</p>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <MapPin className="h-4 w-4" />
+                        <span>{vendor.location}</span>
+                      </div>
+                      
+                      <div className="text-sm text-gray-600">
+                        <span className="font-medium">Projects Completed:</span> {vendor.completedProjects}
+                      </div>
+
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-2">Specializations:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {vendor.specializations.slice(0, 2).map((spec, i) => (
+                            <Badge key={i} variant="outline" className={getCategoryColor(vendor.type) + " text-xs"}>
+                              {spec}
+                            </Badge>
+                          ))}
+                          {vendor.specializations.length > 2 && (
+                            <Badge variant="outline" className="bg-gray-50 text-gray-600 border-gray-200 text-xs">
+                              +{vendor.specializations.length - 2} more
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    <div className="mt-6 flex justify-end space-x-2">
-                      <Button variant="outline" size="sm" asChild className="border-gray-200 text-gray-700 hover:bg-gray-50">
-                        <Link to={`/vendor-details/${index}`}>View Details</Link>
+
+                    <div className="mt-6 flex justify-between gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleViewDetails(vendor)}
+                        className="flex-1 border-blue-200 text-blue-700 hover:bg-blue-50"
+                      >
+                        View Details
                       </Button>
-                      {index === 1 && <Button size="sm" asChild className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
+                      {hasActiveApplications(vendor.id) && (
+                        <Button 
+                          size="sm" 
+                          asChild 
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium"
+                        >
                           <Link to="/work-completion-payment">Review & Pay</Link>
-                        </Button>}
+                        </Button>
+                      )}
                     </div>
                   </CardContent>
-                </Card>)}
+                </Card>
+              ))}
             </div>
           </TabsContent>
           
@@ -73,38 +178,111 @@ const Vendors = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Sample expert cards */}
-              {[1, 2, 3, 4, 5, 6].map(index => <Card key={index} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+              {experts.map(expert => (
+                <Card key={expert.id} className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
                   <CardHeader className="pb-4">
-                    <CardTitle className="text-lg font-semibold text-gray-900">Expert Professional {index}</CardTitle>
-                    <CardDescription className="text-gray-600">
-                      {index % 3 === 0 ? "Manufacturing Specialist" : index % 3 === 1 ? "Supply Chain Consultant" : "Quality Assurance Professional"}
-                    </CardDescription>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-lg font-semibold text-gray-900">{expert.name}</CardTitle>
+                        <CardDescription className="text-gray-600 mt-1">
+                          Expert Professional
+                        </CardDescription>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4 text-yellow-500" />
+                        <span className="text-sm font-medium">{expert.rating.toFixed(1)}</span>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-sm text-gray-600 space-y-2">
-                      <p><span className="font-medium">Experience:</span> {Math.floor(Math.random() * 15) + 5} years</p>
-                      <p><span className="font-medium">Rating:</span> {(Math.random() * 2 + 3).toFixed(1)} / 5</p>
-                      <div className="mt-3">
-                        <p className="mb-2 font-medium text-gray-700">Expertise:</p>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <MapPin className="h-4 w-4" />
+                        <span>{expert.location}</span>
+                      </div>
+                      
+                      <div className="text-sm text-gray-600">
+                        <span className="font-medium">Experience:</span> {expert.completedProjects} projects
+                      </div>
+
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-2">Expertise:</p>
                         <div className="flex flex-wrap gap-1">
-                          {skillsList[index % skillsList.length].map((skill, i) => <Badge key={i} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
-                              {skill}
-                            </Badge>)}
+                          {expert.specializations.slice(0, 2).map((spec, i) => (
+                            <Badge key={i} variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">
+                              {spec}
+                            </Badge>
+                          ))}
+                          {expert.specializations.length > 2 && (
+                            <Badge variant="outline" className="bg-gray-50 text-gray-600 border-gray-200 text-xs">
+                              +{expert.specializations.length - 2} more
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-2">Certifications:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {expert.certifications.slice(0, 2).map((cert, i) => (
+                            <Badge key={i} variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
+                              <Award className="h-3 w-3 mr-1" />
+                              {cert}
+                            </Badge>
+                          ))}
+                          {expert.certifications.length > 2 && (
+                            <Badge variant="outline" className="bg-gray-50 text-gray-600 border-gray-200 text-xs">
+                              +{expert.certifications.length - 2} more
+                            </Badge>
+                          )}
                         </div>
                       </div>
                     </div>
+
                     <div className="mt-6 flex justify-end">
-                      <Button variant="outline" size="sm" asChild className="border-gray-200 text-gray-700 hover:bg-gray-50">
-                        <Link to={`/professional-details/${index}`}>View Profile</Link>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleViewDetails(expert)}
+                        className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                      >
+                        View Profile
                       </Button>
                     </div>
                   </CardContent>
-                </Card>)}
+                </Card>
+              ))}
             </div>
           </TabsContent>
         </Tabs>
       </main>
-    </div>;
+
+      {/* Detail Modals */}
+      {selectedStakeholder && selectedStakeholder.type !== 'expert' && (
+        <VendorDetailsModal
+          isOpen={isVendorModalOpen}
+          onClose={closeVendorModal}
+          vendor={selectedStakeholder}
+          onCreatePO={() => {
+            closeVendorModal();
+            // Navigate to create PO page with vendor pre-selected
+          }}
+        />
+      )}
+
+      {selectedStakeholder && selectedStakeholder.type === 'expert' && (
+        <ExpertDetailsModal
+          isOpen={isExpertModalOpen}
+          onClose={closeExpertModal}
+          expert={selectedStakeholder}
+          onHireExpert={() => {
+            closeExpertModal();
+            // Navigate to expert hiring workflow
+          }}
+        />
+      )}
+    </div>
+  );
 };
+
 export default Vendors;
