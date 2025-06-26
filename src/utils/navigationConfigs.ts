@@ -1,5 +1,6 @@
 
 import { Home, FileText, ShoppingCart, MessageSquare, Users, Workflow, Building2, Package, Truck, User, Calendar, Briefcase } from "lucide-react";
+import React from "react";
 
 export interface NavItem {
   label: string;
@@ -31,27 +32,27 @@ export const industryHeaderConfig: HeaderConfig = {
     {
       label: "Dashboard",
       href: "/industry-dashboard",
-      icon: <Home size={18} />
+      icon: React.createElement(Home, { size: 18 })
     },
     {
       label: "Requirements",
       href: "/industry-requirements",
-      icon: <FileText size={18} />
+      icon: React.createElement(FileText, { size: 18 })
     },
     {
       label: "Workflows",
       href: "/industry-workflows",
-      icon: <Workflow size={18} />
+      icon: React.createElement(Workflow, { size: 18 })
     },
     {
       label: "Messages",
       href: "/industry-messages",
-      icon: <MessageSquare size={18} />
+      icon: React.createElement(MessageSquare, { size: 18 })
     },
     {
       label: "Stakeholders",
       href: "/industry-stakeholders",
-      icon: <Users size={18} />
+      icon: React.createElement(Users, { size: 18 })
     }
   ],
   avatarInitials: "IN",
@@ -73,27 +74,27 @@ export const vendorHeaderConfig: HeaderConfig = {
     {
       label: "Dashboard",
       href: "/vendor-dashboard",
-      icon: <Home size={18} />
+      icon: React.createElement(Home, { size: 18 })
     },
     {
       label: "Requirements",
       href: "/vendor-requirements",
-      icon: <FileText size={18} />
+      icon: React.createElement(FileText, { size: 18 })
     },
     {
       label: "Projects",
       href: "/vendor-projects",
-      icon: <Workflow size={18} />
+      icon: React.createElement(Workflow, { size: 18 })
     },
     {
       label: "Messages",
       href: "/vendor-messages",
-      icon: <MessageSquare size={18} />
+      icon: React.createElement(MessageSquare, { size: 18 })
     },
     {
       label: "Profile",
       href: "/vendor-profile",
-      icon: <User size={18} />
+      icon: React.createElement(User, { size: 18 })
     }
   ],
   avatarInitials: "VE",
@@ -114,27 +115,27 @@ export const logisticsHeaderConfig: HeaderConfig = {
     {
       label: "Dashboard",
       href: "/logistics-dashboard",
-      icon: <Home size={18} />
+      icon: React.createElement(Home, { size: 18 })
     },
     {
       label: "Shipments",
       href: "/logistics-shipments",
-      icon: <Truck size={18} />
+      icon: React.createElement(Truck, { size: 18 })
     },
     {
       label: "Warehouse",
       href: "/logistics-warehouse",
-      icon: <Building2 size={18} />
+      icon: React.createElement(Building2, { size: 18 })
     },
     {
       label: "Messages",
       href: "/logistics-messages",
-      icon: <MessageSquare size={18} />
+      icon: React.createElement(MessageSquare, { size: 18 })
     },
     {
       label: "Profile",
       href: "/logistics-profile",
-      icon: <User size={18} />
+      icon: React.createElement(User, { size: 18 })
     }
   ],
   avatarInitials: "LG",
@@ -156,27 +157,27 @@ export const expertHeaderConfig: HeaderConfig = {
     {
       label: "Dashboard",
       href: "/expert-dashboard",
-      icon: <Home size={18} />
+      icon: React.createElement(Home, { size: 18 })
     },
     {
       label: "Projects",
       href: "/expert-projects",
-      icon: <Briefcase size={18} />
+      icon: React.createElement(Briefcase, { size: 18 })
     },
     {
       label: "Calendar",
       href: "/expert-calendar",
-      icon: <Calendar size={18} />
+      icon: React.createElement(Calendar, { size: 18 })
     },
     {
       label: "Messages",
       href: "/expert-messages",
-      icon: <MessageSquare size={18} />
+      icon: React.createElement(MessageSquare, { size: 18 })
     },
     {
       label: "Profile",
       href: "/expert-profile",
-      icon: <User size={18} />
+      icon: React.createElement(User, { size: 18 })
     }
   ],
   avatarInitials: "EX",
