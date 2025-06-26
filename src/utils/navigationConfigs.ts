@@ -1,3 +1,4 @@
+
 import { Home, FileText, ShoppingCart, MessageSquare, Users, Workflow, Building2, Package, Truck, User, Calendar, Briefcase } from "lucide-react";
 
 export interface NavItem {
@@ -34,7 +35,7 @@ export const industryHeaderConfig: HeaderConfig = {
     },
     {
       label: "Requirements",
-      href: "/create-requirement",
+      href: "/industry-requirements",
       icon: <FileText size={18} />
     },
     {
