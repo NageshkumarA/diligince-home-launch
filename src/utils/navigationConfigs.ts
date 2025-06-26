@@ -190,3 +190,60 @@ export const expertHeaderConfig: HeaderConfig = {
     avatarBorderColor: "border-blue-200"
   }
 };
+
+// Professional Dashboard Navigation (missing export)
+export const professionalHeaderConfig: HeaderConfig = {
+  brandName: "Diligence.ai",
+  brandHref: "/professional-dashboard",
+  navItems: [
+    {
+      label: "Dashboard",
+      href: "/professional-dashboard",
+      icon: React.createElement(Home, { size: 18 })
+    },
+    {
+      label: "Opportunities",
+      href: "/professional-opportunities",
+      icon: React.createElement(Briefcase, { size: 18 })
+    },
+    {
+      label: "Calendar",
+      href: "/professional-calendar",
+      icon: React.createElement(Calendar, { size: 18 })
+    },
+    {
+      label: "Messages",
+      href: "/professional-messages",
+      icon: React.createElement(MessageSquare, { size: 18 })
+    },
+    {
+      label: "Profile",
+      href: "/professional-profile",
+      icon: React.createElement(User, { size: 18 })
+    }
+  ],
+  avatarInitials: "PR",
+  theme: {
+    bgColor: "bg-white",
+    textColor: "text-gray-900",
+    hoverColor: "text-gray-600 hover:text-blue-600",
+    buttonHoverColor: "hover:bg-gray-100",
+    avatarBgColor: "bg-blue-100",
+    avatarBorderColor: "border-blue-200"
+  }
+};
+
+// Alias for logistics vendor header config (for compatibility)
+export const logisticsVendorHeaderConfig = logisticsHeaderConfig;
+
+// Utility function to get header config by path (missing export)
+export const getHeaderConfigByPath = (path: string): HeaderConfig => {
+  if (path.startsWith('/industry')) return industryHeaderConfig;
+  if (path.startsWith('/logistics')) return logisticsHeaderConfig;
+  if (path.startsWith('/expert')) return expertHeaderConfig;
+  if (path.startsWith('/professional')) return professionalHeaderConfig;
+  if (path.startsWith('/vendor')) return vendorHeaderConfig;
+  
+  // Default fallback
+  return industryHeaderConfig;
+};
