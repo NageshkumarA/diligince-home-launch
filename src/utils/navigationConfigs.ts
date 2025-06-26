@@ -1,4 +1,3 @@
-
 import { Home, FileText, ShoppingCart, MessageSquare, Users, Workflow, Building2, Package, Truck, User, Calendar, Briefcase } from "lucide-react";
 import React from "react";
 
@@ -66,7 +65,48 @@ export const industryHeaderConfig: HeaderConfig = {
   }
 };
 
-// Vendor Dashboard Navigation
+// Service Vendor Dashboard Navigation
+export const serviceVendorHeaderConfig: HeaderConfig = {
+  brandName: "Diligence.ai",
+  brandHref: "/service-vendor-dashboard",
+  navItems: [
+    {
+      label: "Dashboard",
+      href: "/service-vendor-dashboard",
+      icon: React.createElement(Home, { size: 18 })
+    },
+    {
+      label: "Requirements",
+      href: "/service-vendor-rfqs",
+      icon: React.createElement(FileText, { size: 18 })
+    },
+    {
+      label: "Projects",
+      href: "/service-vendor-projects",
+      icon: React.createElement(Workflow, { size: 18 })
+    },
+    {
+      label: "Messages",
+      href: "/service-vendor-messages",
+      icon: React.createElement(MessageSquare, { size: 18 })
+    },
+    {
+      label: "Profile",
+      href: "/service-vendor-profile",
+      icon: React.createElement(User, { size: 18 })
+    }
+  ],
+  avatarInitials: "SV",
+  theme: {
+    bgColor: "bg-gray-900",
+    textColor: "text-gray-50",
+    hoverColor: "text-gray-400 hover:text-blue-300",
+    buttonHoverColor: "hover:bg-gray-800",
+    avatarBgColor: "bg-gray-700",
+  }
+};
+
+// Vendor Dashboard Navigation (Generic)
 export const vendorHeaderConfig: HeaderConfig = {
   brandName: "Diligence.ai",
   brandHref: "/vendor-dashboard",
@@ -236,9 +276,10 @@ export const professionalHeaderConfig: HeaderConfig = {
 // Alias for logistics vendor header config (for compatibility)
 export const logisticsVendorHeaderConfig = logisticsHeaderConfig;
 
-// Utility function to get header config by path (missing export)
+// Utility function to get header config by path
 export const getHeaderConfigByPath = (path: string): HeaderConfig => {
   if (path.startsWith('/industry')) return industryHeaderConfig;
+  if (path.startsWith('/service-vendor')) return serviceVendorHeaderConfig;
   if (path.startsWith('/logistics')) return logisticsHeaderConfig;
   if (path.startsWith('/expert')) return expertHeaderConfig;
   if (path.startsWith('/professional')) return professionalHeaderConfig;
