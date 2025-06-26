@@ -1,12 +1,11 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { useUser } from "@/contexts/UserContext";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "./hooks/useAuth";
 
 export const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,10 +13,8 @@ export const SignInForm = () => {
     email: "",
     password: ""
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const { login, getDashboardUrl } = useUser();
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  
+  const { signIn, isLoading } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,50 +23,18 @@ export const SignInForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    console.log("Form submitted with:", formData);
+    
+    if (!formData.email || !formData.password) {
+      console.log("Missing email or password");
+      return;
+    }
 
     try {
-      // Get registered users from localStorage
-      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-      
-      // Find matching user
-      const matchedUser = registeredUsers.find(
-        (user: any) => user.email === formData.email && user.password === formData.password
-      );
-
-      if (matchedUser) {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Login user (remove password before storing in context)
-        const { password, ...userProfile } = matchedUser;
-        login(userProfile);
-        
-        // Show success message
-        toast({
-          title: "Sign in successful!",
-          description: `Welcome back, ${matchedUser.name}!`,
-        });
-
-        // Redirect to appropriate dashboard
-        const dashboardUrl = getDashboardUrl();
-        navigate(dashboardUrl);
-      } else {
-        // Show error message
-        toast({
-          title: "Sign in failed",
-          description: "Invalid email or password. Please try again.",
-          variant: "destructive",
-        });
-      }
+      const result = await signIn(formData.email, formData.password);
+      console.log("Sign in result:", result);
     } catch (error) {
-      toast({
-        title: "Sign in error",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
+      console.error("Sign in error:", error);
     }
   };
 

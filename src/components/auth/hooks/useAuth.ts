@@ -62,15 +62,19 @@ export const useAuth = () => {
   }, [login, toast]);
 
   const signIn = useCallback(async (email: string, password: string) => {
+    console.log("signIn called with:", { email, password: "***" });
     setIsLoading(true);
 
     try {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
+      console.log("Attempting to get user from registry...");
       const user = getUserFromRegistry(email, password);
+      console.log("User found:", user ? "YES" : "NO");
       
       if (user) {
+        console.log("Logging in user:", user.name);
         login(user);
         
         toast({
@@ -80,10 +84,12 @@ export const useAuth = () => {
 
         // Redirect to appropriate dashboard
         const dashboardUrl = getDashboardUrl();
+        console.log("Redirecting to:", dashboardUrl);
         navigate(dashboardUrl);
         
         return { success: true, user };
       } else {
+        console.log("Invalid credentials");
         toast({
           title: "Sign in failed",
           description: "Invalid email or password. Please try again.",
