@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { useStakeholder } from "@/contexts/StakeholderContext";
 import { Button } from "@/components/ui/button";
@@ -27,8 +27,32 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
   const { formData, updateFormData, validateStep, stepErrors } = useRequirement();
   const { notifyStakeholders } = useStakeholder();
 
+  // Available evaluation criteria based on ISO 9001 procurement standards
+  const availableEvaluationCriteria = [
+    "Price/Cost Competitiveness",
+    "Technical Compliance",
+    "Quality Standards",
+    "Delivery Timeline",
+    "Past Performance/Experience",
+    "Technical Capability",
+    "Financial Stability",
+    "Compliance & Certifications",
+    "Risk Assessment",
+    "Sustainability Practices"
+  ];
+
+  const handleEvaluationCriteriaChange = (criterion: string, checked: boolean) => {
+    let updatedCriteria = [...formData.evaluationCriteria];
+    if (checked) {
+      updatedCriteria.push(criterion);
+    } else {
+      updatedCriteria = updatedCriteria.filter(c => c !== criterion);
+    }
+    updateFormData({ evaluationCriteria: updatedCriteria });
+  };
+
   const handlePublish = () => {
-    if (validateStep(5)) {
+    if (validateStep(6)) {
       // Notify relevant stakeholders about the new requirement
       notifyStakeholders(formData);
       
@@ -118,6 +142,32 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
           </Popover>
           {stepErrors.submissionDeadline && (
             <p className="text-sm text-red-500">{stepErrors.submissionDeadline}</p>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <Label className="text-base">
+            Evaluation Criteria <span className="text-red-500">*</span>
+          </Label>
+          <p className="text-sm text-gray-600">
+            Select the criteria that will be used to evaluate vendor proposals (ISO 9001 compliant)
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {availableEvaluationCriteria.map((criterion) => (
+              <div key={criterion} className="flex items-center space-x-2">
+                <Checkbox
+                  id={criterion}
+                  checked={formData.evaluationCriteria.includes(criterion)}
+                  onCheckedChange={(checked) => handleEvaluationCriteriaChange(criterion, !!checked)}
+                />
+                <Label htmlFor={criterion} className="text-sm font-normal cursor-pointer">
+                  {criterion}
+                </Label>
+              </div>
+            ))}
+          </div>
+          {stepErrors.evaluationCriteria && (
+            <p className="text-sm text-red-500">{stepErrors.evaluationCriteria}</p>
           )}
         </div>
 

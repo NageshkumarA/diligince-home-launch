@@ -90,7 +90,7 @@ export interface RequirementFormData {
   currentApprovalStep: number;
   approvalStatus: ApprovalStatus;
   
-  // Publish (Step 5)
+  // Publish (Step 6)
   visibility: "all" | "selected" | "prequalified";
   selectedVendors?: string[];
   vendorCriteria?: string[];
@@ -264,18 +264,20 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
         }
       }
     } else if (step === 4) {
-      // Approval workflow validation
-      if (formData.estimatedBudget > 50000 && formData.approvalSteps.length === 0) {
-        errors.approvalSteps = "Approval workflow is required for budgets over $50,000";
+      // Approval workflow validation - only for high-value or critical requirements
+      const requiresApproval = formData.estimatedBudget > 10000 || formData.priority === "critical" || formData.complianceRequired;
+      if (requiresApproval && formData.approvalSteps.length === 0) {
+        errors.approvalSteps = "Approval workflow is required for this requirement";
         isValid = false;
       }
-    } else if (step === 5) {
+    } else if (step === 6) {
+      // Publish step validation (ISO 9001 compliant)
       if (!formData.submissionDeadline) {
         errors.submissionDeadline = "Submission deadline is required";
         isValid = false;
       }
       if (formData.evaluationCriteria.length === 0) {
-        errors.evaluationCriteria = "At least one evaluation criterion is required";
+        errors.evaluationCriteria = "At least one evaluation criterion must be selected";
         isValid = false;
       }
       if (!formData.termsAccepted) {
