@@ -1,7 +1,7 @@
 
 import { UserProfile, UserRole, VendorCategory } from '@/types/shared';
 
-// Define minimum required fields for each user type - Updated with more comprehensive requirements
+// Define minimum required fields for each user type
 const REQUIRED_FIELDS = {
   industry: ['name', 'email', 'companyName', 'industryType'],
   professional: ['name', 'email', 'fullName', 'expertise'],
@@ -21,6 +21,37 @@ export interface ProfileCompletion {
   missingFields: string[];
   completedFields: string[];
 }
+
+// Helper function to safely get nested field value
+const getFieldValue = (obj: any, path: string): any => {
+  const keys = path.split('.');
+  let current = obj;
+  
+  for (const key of keys) {
+    if (current === null || current === undefined) {
+      return undefined;
+    }
+    current = current[key];
+  }
+  
+  return current;
+};
+
+// Helper function to check if a field has a valid value
+const hasValidValue = (value: any): boolean => {
+  if (value === null || value === undefined) {
+    return false;
+  }
+  
+  // Handle objects with _type and value properties (seems to be from form data)
+  if (typeof value === 'object' && value._type === 'undefined') {
+    return false;
+  }
+  
+  // Convert to string and check if it's not empty after trimming
+  const stringValue = String(value).trim();
+  return stringValue !== '' && stringValue !== 'undefined' && stringValue !== 'null';
+};
 
 export const calculateProfileCompleteness = (user: UserProfile): ProfileCompletion => {
   console.log("Calculating profile completeness for user:", user);
@@ -54,21 +85,29 @@ export const calculateProfileCompleteness = (user: UserProfile): ProfileCompleti
   const completedFields: string[] = [];
   const missingFields: string[] = [];
 
+  // Field mapping - maps required field names to actual user object paths
+  const fieldMapping: Record<string, string> = {
+    name: 'name',
+    email: 'email',
+    businessName: 'profile.businessName',
+    specialization: 'profile.specialization',
+    phone: 'profile.phone',
+    address: 'profile.address',
+    registrationNumber: 'profile.registrationNumber',
+    companyName: 'profile.companyName',
+    industryType: 'profile.industryType',
+    fullName: 'profile.fullName',
+    expertise: 'profile.expertise'
+  };
+
   // Check each required field
   requiredFields.forEach(field => {
-    let fieldValue;
+    const fieldPath = fieldMapping[field] || field;
+    const fieldValue = getFieldValue(user, fieldPath);
     
-    // Check if field exists in user object directly
-    if (field === 'name' || field === 'email') {
-      fieldValue = user[field as keyof UserProfile];
-    } else if (user.profile) {
-      // Check if field exists in profile object
-      fieldValue = user.profile[field as keyof typeof user.profile];
-    }
+    console.log(`Checking field ${field} (path: ${fieldPath}):`, fieldValue);
     
-    console.log(`Checking field ${field}:`, fieldValue);
-    
-    if (fieldValue && String(fieldValue).trim() !== '') {
+    if (hasValidValue(fieldValue)) {
       completedFields.push(field);
     } else {
       missingFields.push(field);
