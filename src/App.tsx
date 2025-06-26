@@ -6,12 +6,10 @@ import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { FastLoadingState } from "@/components/shared/loading/FastLoadingState";
 import { NotificationStoreProvider } from "@/contexts/NotificationStoreContext";
 
-// Lazy load pages for better performance
-const LandingPage = React.lazy(() => import("@/pages/LandingPage"));
-const Index = React.lazy(() => import("@/pages/Index"));
-const NotFound = React.lazy(() => import("@/pages/NotFound"));
+// Use Index as the main landing page (it has the proper component structure)
+const HomePage = React.lazy(() => import("@/pages/Index"));
 
-// Homepage & Navigation Routes
+// Navigation & Info Routes
 const About = React.lazy(() => import("@/pages/About"));
 const Pricing = React.lazy(() => import("@/pages/Pricing"));
 const Contact = React.lazy(() => import("@/pages/Contact"));
@@ -89,6 +87,9 @@ const WorkCompletionPayment = React.lazy(() => import("@/pages/WorkCompletionPay
 const ProfileCompletion = React.lazy(() => import("@/pages/ProfileCompletion"));
 const StakeholderOnboarding = React.lazy(() => import("@/pages/StakeholderOnboarding"));
 
+// 404 Route
+const NotFound = React.lazy(() => import("@/pages/NotFound"));
+
 function App() {
   return (
     <Router>
@@ -97,9 +98,8 @@ function App() {
           <NotificationStoreProvider>
             <Suspense fallback={<FastLoadingState />}>
               <Routes>
-                {/* Homepage Routes */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/index" element={<Index />} />
+                {/* Homepage Route - Using Index as the main landing page */}
+                <Route path="/" element={<HomePage />} />
                 
                 {/* Navigation & Info Routes */}
                 <Route path="/about" element={<About />} />

@@ -12,6 +12,7 @@ interface Props {
 interface State {
   hasError: boolean;
   error?: Error;
+  errorInfo?: ErrorInfo;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -25,6 +26,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+    this.setState({
+      error,
+      errorInfo
+    });
   }
 
   public render() {
@@ -35,7 +40,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-          <Card className="w-full max-w-md">
+          <Card className="w-full max-w-lg">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
                 <AlertTriangle className="h-6 w-6 text-red-600" />
@@ -50,8 +55,13 @@ export class ErrorBoundary extends Component<Props, State> {
               </p>
               
               {process.env.NODE_ENV === 'development' && this.state.error && (
-                <div className="text-left bg-gray-100 p-3 rounded text-sm font-mono text-red-600 overflow-auto max-h-32">
-                  {this.state.error.message}
+                <div className="text-left bg-gray-100 p-3 rounded text-sm font-mono text-red-600 overflow-auto max-h-40">
+                  <div className="font-bold mb-2">Error Details:</div>
+                  <div className="mb-2">Message: {this.state.error.message}</div>
+                  <div className="mb-2">Stack: {this.state.error.stack}</div>
+                  {this.state.errorInfo && (
+                    <div>Component Stack: {this.state.errorInfo.componentStack}</div>
+                  )}
                 </div>
               )}
               
