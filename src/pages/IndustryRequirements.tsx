@@ -8,18 +8,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Filter, Plus, FileText, Eye, Workflow, ShoppingCart } from "lucide-react";
+import { Search, Filter, Plus, FileText, Eye, Workflow, ShoppingCart, Edit, Calendar, DollarSign, Users } from "lucide-react";
 
 interface Requirement {
   id: string;
   title: string;
   category: "Product" | "Service" | "Expert" | "Logistics";
-  status: "Draft" | "Active" | "Pending" | "Completed" | "Approved";
+  status: "Draft" | "Active" | "Pending" | "Completed" | "Approved" | "Published";
   priority: "Low" | "Medium" | "High" | "Critical";
   budget: number;
   createdDate: string;
   deadline: string;
   applicants: number;
+  complianceRequired: boolean;
+  riskLevel: "Low" | "Medium" | "High" | "Critical";
 }
 
 const mockRequirements: Requirement[] = [
@@ -32,7 +34,9 @@ const mockRequirements: Requirement[] = [
     budget: 25000,
     createdDate: "2024-01-10",
     deadline: "2024-01-25",
-    applicants: 8
+    applicants: 8,
+    complianceRequired: true,
+    riskLevel: "Medium"
   },
   {
     id: "REQ-002", 
@@ -43,18 +47,22 @@ const mockRequirements: Requirement[] = [
     budget: 35000,
     createdDate: "2024-01-08",
     deadline: "2024-01-20",
-    applicants: 12
+    applicants: 12,
+    complianceRequired: true,
+    riskLevel: "High"
   },
   {
     id: "REQ-003",
     title: "Chemical Engineering Consultant",
     category: "Expert",
-    status: "Active",
+    status: "Published",
     priority: "Medium",
     budget: 15000,
     createdDate: "2024-01-12",
     deadline: "2024-01-28",
-    applicants: 5
+    applicants: 5,
+    complianceRequired: false,
+    riskLevel: "Low"
   },
   {
     id: "REQ-004",
@@ -65,49 +73,75 @@ const mockRequirements: Requirement[] = [
     budget: 8000,
     createdDate: "2024-01-05",
     deadline: "2024-01-18",
-    applicants: 15
+    applicants: 15,
+    complianceRequired: true,
+    riskLevel: "Medium"
   }
 ];
 
 const IndustryRequirements = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
 
   const filteredRequirements = mockRequirements.filter(req => {
     const matchesSearch = req.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          req.id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || req.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesCategory = categoryFilter === "all" || req.category === categoryFilter;
+    const matchesPriority = priorityFilter === "all" || req.priority === priorityFilter;
+    return matchesSearch && matchesStatus && matchesCategory && matchesPriority;
   });
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Active": return "bg-green-100 text-green-800";
-      case "Pending": return "bg-yellow-100 text-yellow-800";
-      case "Completed": return "bg-blue-100 text-blue-800";
-      case "Approved": return "bg-purple-100 text-purple-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "Active": return "bg-green-100 text-green-800 border-green-200";
+      case "Published": return "bg-blue-100 text-blue-800 border-blue-200";
+      case "Pending": return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "Completed": return "bg-purple-100 text-purple-800 border-purple-200";
+      case "Approved": return "bg-emerald-100 text-emerald-800 border-emerald-200";
+      case "Draft": return "bg-gray-100 text-gray-800 border-gray-200";
+      default: return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "Critical": return "bg-red-100 text-red-800";
-      case "High": return "bg-orange-100 text-orange-800";
-      case "Medium": return "bg-blue-100 text-blue-800";
-      case "Low": return "bg-gray-100 text-gray-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "Critical": return "bg-red-100 text-red-800 border-red-200";
+      case "High": return "bg-orange-100 text-orange-800 border-orange-200";
+      case "Medium": return "bg-blue-100 text-blue-800 border-blue-200";
+      case "Low": return "bg-gray-100 text-gray-800 border-gray-200";
+      default: return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "Product": return "bg-purple-100 text-purple-800";
-      case "Service": return "bg-blue-100 text-blue-800";
-      case "Expert": return "bg-green-100 text-green-800";
-      case "Logistics": return "bg-amber-100 text-amber-800";
+      case "Product": return "bg-purple-100 text-purple-800 border-purple-200";
+      case "Service": return "bg-blue-100 text-blue-800 border-blue-200";
+      case "Expert": return "bg-green-100 text-green-800 border-green-200";
+      case "Logistics": return "bg-amber-100 text-amber-800 border-amber-200";
+      default: return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const getRiskColor = (risk: string) => {
+    switch (risk) {
+      case "Critical": return "bg-red-100 text-red-800";
+      case "High": return "bg-orange-100 text-orange-800";
+      case "Medium": return "bg-yellow-100 text-yellow-800";
+      case "Low": return "bg-green-100 text-green-800";
       default: return "bg-gray-100 text-gray-800";
     }
+  };
+
+  const stats = {
+    total: mockRequirements.length,
+    active: mockRequirements.filter(r => r.status === "Active" || r.status === "Published").length,
+    completed: mockRequirements.filter(r => r.status === "Completed").length,
+    totalBudget: mockRequirements.reduce((sum, r) => sum + r.budget, 0),
+    avgApplicants: Math.round(mockRequirements.reduce((sum, r) => sum + r.applicants, 0) / mockRequirements.length)
   };
 
   return (
@@ -120,7 +154,7 @@ const IndustryRequirements = () => {
       
       <main className="flex-1 container mx-auto px-4 py-8 pt-20">
         <div className="mb-8">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Requirements Management</h1>
               <p className="text-gray-600">Manage all your procurement requirements and track their progress</p>
@@ -132,8 +166,68 @@ const IndustryRequirements = () => {
               </Link>
             </Button>
           </div>
+
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Total Requirements</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                  </div>
+                  <FileText className="h-8 w-8 text-blue-600" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Active</p>
+                    <p className="text-2xl font-bold text-green-600">{stats.active}</p>
+                  </div>
+                  <Calendar className="h-8 w-8 text-green-600" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Completed</p>
+                    <p className="text-2xl font-bold text-purple-600">{stats.completed}</p>
+                  </div>
+                  <ShoppingCart className="h-8 w-8 text-purple-600" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Total Budget</p>
+                    <p className="text-2xl font-bold text-orange-600">${stats.totalBudget.toLocaleString()}</p>
+                  </div>
+                  <DollarSign className="h-8 w-8 text-orange-600" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Avg Applicants</p>
+                    <p className="text-2xl font-bold text-blue-600">{stats.avgApplicants}</p>
+                  </div>
+                  <Users className="h-8 w-8 text-blue-600" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
+        {/* Filters */}
         <div className="mb-6 flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
@@ -155,9 +249,32 @@ const IndustryRequirements = () => {
               <option value="all">All Status</option>
               <option value="Draft">Draft</option>
               <option value="Active">Active</option>
+              <option value="Published">Published</option>
               <option value="Pending">Pending</option>
               <option value="Completed">Completed</option>
               <option value="Approved">Approved</option>
+            </select>
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Categories</option>
+              <option value="Product">Product</option>
+              <option value="Service">Service</option>
+              <option value="Expert">Expert</option>
+              <option value="Logistics">Logistics</option>
+            </select>
+            <select
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Priority</option>
+              <option value="Critical">Critical</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
             </select>
             <Button variant="outline" className="flex items-center gap-2">
               <Filter className="h-4 w-4" />
@@ -181,6 +298,7 @@ const IndustryRequirements = () => {
                   <TableHead>Category</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Priority</TableHead>
+                  <TableHead>Risk</TableHead>
                   <TableHead>Budget</TableHead>
                   <TableHead>Deadline</TableHead>
                   <TableHead>Applicants</TableHead>
@@ -195,6 +313,9 @@ const IndustryRequirements = () => {
                         <div className="font-medium text-gray-900">{req.title}</div>
                         <div className="text-sm text-gray-500">{req.id}</div>
                         <div className="text-xs text-gray-400">Created: {new Date(req.createdDate).toLocaleDateString()}</div>
+                        {req.complianceRequired && (
+                          <Badge className="bg-blue-100 text-blue-800 text-xs mt-1">ISO 9001</Badge>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -212,6 +333,11 @@ const IndustryRequirements = () => {
                         {req.priority}
                       </Badge>
                     </TableCell>
+                    <TableCell>
+                      <Badge className={getRiskColor(req.riskLevel)}>
+                        {req.riskLevel}
+                      </Badge>
+                    </TableCell>
                     <TableCell className="font-medium">
                       ${req.budget.toLocaleString()}
                     </TableCell>
@@ -223,18 +349,28 @@ const IndustryRequirements = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
+                        {req.status === "Draft" && (
+                          <Button size="sm" variant="outline" asChild>
+                            <Link to={`/create-requirement?edit=${req.id}`} className="flex items-center gap-1">
+                              <Edit className="h-3 w-3" />
+                              Edit
+                            </Link>
+                          </Button>
+                        )}
                         <Button size="sm" variant="outline" asChild>
                           <Link to={`/requirement/${req.id}`} className="flex items-center gap-1">
                             <Eye className="h-3 w-3" />
                             View
                           </Link>
                         </Button>
-                        <Button size="sm" variant="outline" asChild>
-                          <Link to={`/industry-project-workflow/${req.id}`} className="flex items-center gap-1">
-                            <Workflow className="h-3 w-3" />
-                            Workflow
-                          </Link>
-                        </Button>
+                        {(req.status === "Active" || req.status === "Published") && (
+                          <Button size="sm" variant="outline" asChild>
+                            <Link to={`/industry-project-workflow/${req.id}`} className="flex items-center gap-1">
+                              <Workflow className="h-3 w-3" />
+                              Workflow
+                            </Link>
+                          </Button>
+                        )}
                         {req.status === "Completed" && (
                           <Button size="sm" className="bg-blue-600 hover:bg-blue-700" asChild>
                             <Link to={`/create-purchase-order?requirementId=${req.id}`} className="flex items-center gap-1">

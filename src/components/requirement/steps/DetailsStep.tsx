@@ -69,6 +69,19 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
     "Economy"
   ];
 
+  const technicalStandardsOptions = [
+    "ISO 9001:2015",
+    "ISO 14001:2015",
+    "ISO 45001:2018",
+    "ASME Standards",
+    "API Standards",
+    "ASTM Standards",
+    "IEC Standards",
+    "IEEE Standards",
+    "ANSI Standards",
+    "EN Standards"
+  ];
+
   const certificationOptions = [
     "ISO 9001",
     "ISO 14001",
@@ -280,6 +293,41 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
               )}
             </div>
 
+            <div className="space-y-2">
+              <Label className="text-base font-medium text-gray-700">
+                Technical Standards <span className="text-red-500">*</span>
+              </Label>
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                {technicalStandardsOptions.map((standard) => (
+                  <div key={standard} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`standard-${standard}`}
+                      checked={(formData.technicalStandards || []).includes(standard)}
+                      onCheckedChange={(checked) => {
+                        const currentStandards = [...(formData.technicalStandards || [])];
+                        if (checked) {
+                          currentStandards.push(standard);
+                        } else {
+                          const index = currentStandards.indexOf(standard);
+                          if (index !== -1) currentStandards.splice(index, 1);
+                        }
+                        updateFormData({ technicalStandards: currentStandards });
+                      }}
+                    />
+                    <label
+                      htmlFor={`standard-${standard}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {standard}
+                    </label>
+                  </div>
+                ))}
+              </div>
+              {stepErrors.technicalStandards && (
+                <p className="text-sm text-red-500">{stepErrors.technicalStandards}</p>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="quantity" className="text-base font-medium text-gray-700">
@@ -401,6 +449,22 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
               />
               {stepErrors.scopeOfWork && (
                 <p className="text-sm text-red-500">{stepErrors.scopeOfWork}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="performanceMetrics" className="text-base font-medium text-gray-700">
+                Performance Metrics <span className="text-red-500">*</span>
+              </Label>
+              <Textarea
+                id="performanceMetrics"
+                rows={3}
+                placeholder="Define measurable performance indicators and success criteria"
+                value={formData.performanceMetrics || ""}
+                onChange={(e) => updateFormData({ performanceMetrics: e.target.value })}
+              />
+              {stepErrors.performanceMetrics && (
+                <p className="text-sm text-red-500">{stepErrors.performanceMetrics}</p>
               )}
             </div>
 
