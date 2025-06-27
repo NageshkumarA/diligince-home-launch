@@ -1,348 +1,168 @@
 
-# Pages Directory - ISO 9001 Compliant B2B Procurement Platform
+# Pages Directory
 
 ## Overview
-This directory contains all main application pages and routes for the Diligince.ai platform. Pages represent complete business workflows that facilitate ISO 9001-compliant procurement processes between Industry Users, Vendor Stakeholders, and Expert Professionals.
+This directory contains all main application pages and routes. Pages represent complete views that users navigate to and are organized by user type and functionality.
 
-## Platform Business Model & User Journeys
+## Structure
 
-### Core Business Value Proposition
-**Diligince.ai** digitizes and standardizes industrial procurement processes, ensuring ISO 9001:2015 compliance while facilitating efficient collaboration between three primary user types:
+### Public Pages
+Marketing and informational pages accessible to all users:
 
-1. **Industry Users (Buyers)**: Manufacturing companies and enterprise buyers
-2. **Vendor Stakeholders (Suppliers)**: Product, service, and logistics providers  
-3. **Expert Professionals (Consultants)**: Specialized technical advisors
+- `Index.tsx` - Homepage with hero section and key features
+- `About.tsx` - Company information and mission
+- `Contact.tsx` - Contact information and form
+- `Blog.tsx` - Blog posts and content
+- `Careers.tsx` - Career opportunities
+- `Pricing.tsx` - Service pricing and plans
+- `Privacy.tsx` - Privacy policy
+- `Terms.tsx` - Terms of service
+- `NotFound.tsx` - 404 error page
 
-### Revenue Model
-- **Transaction Fees**: Commission from successful project completions
-- **Subscription Revenue**: Premium features and enhanced capabilities
-- **Professional Services**: Implementation and training services
-- **Compliance Services**: Audit support and regulatory consulting
+### Authentication Pages
+User registration and login flows:
 
-## User Type-Specific Page Architecture
+- `SignUp.tsx` - Multi-type user registration
+- `SignIn.tsx` - User authentication
+- `ProfileCompletion.tsx` - Post-registration profile setup
 
-### Industry User Pages (Manufacturing Companies & Enterprise Buyers)
+### User Type-Specific Dashboards
 
-#### Primary Business Objectives
-- Streamline procurement processes with built-in compliance
-- Manage vendor relationships and performance
-- Ensure regulatory compliance and audit readiness
-- Optimize procurement costs and delivery timelines
+#### Industry User Pages
+For manufacturing companies and businesses:
+- `IndustryDashboard.tsx` - Main dashboard with metrics and quick actions
+- `IndustryProfile.tsx` - Company profile management
+- `IndustryMessages.tsx` - Communication hub
+- `IndustryDocuments.tsx` - Document management
+- `IndustryProjectWorkflow.tsx` - Project tracking and workflow management
 
-#### Core Page Workflows
+#### Professional Pages
+For expert consultants and professionals:
+- `ProfessionalDashboard.tsx` - Professional overview and opportunities
+- `ProfessionalProfile.tsx` - Professional profile and skills
+- `ProfessionalCalendar.tsx` - Availability and scheduling management
+- `ProfessionalOpportunities.tsx` - Job opportunities and applications
+- `ProfessionalMessages.tsx` - Client communication
 
-**`IndustryDashboard.tsx`** - Executive Command Center
-- **Business Purpose**: Provides executive-level visibility into procurement operations
-- **Key Metrics**: Active requirements, pending reviews, budget utilization, vendor performance
-- **ISO 9001 Integration**: Process performance monitoring and management review data
-- **Workflow Triggers**: Quick access to requirement creation, vendor management, and compliance reporting
+#### Service Vendor Pages
+For service providers:
+- `ServiceVendorDashboard.tsx` - Service vendor overview
+- `ServiceVendorProfile.tsx` - Company profile and capabilities
+- `ServiceVendorRFQs.tsx` - RFQ management and responses
+- `ServiceVendorServices.tsx` - Service catalog management
+- `ServiceVendorProjects.tsx` - Active project tracking
+- `ServiceVendorMessages.tsx` - Client communication
 
-**`IndustryProfile.tsx`** - Company Profile & Compliance Management
-- **Business Purpose**: Manages company profile, certifications, and compliance documentation
-- **Key Features**: ISO certifications, quality policies, organizational structure, contact management
-- **Compliance Integration**: Document control, management system documentation, audit trail maintenance
+#### Product Vendor Pages
+For product suppliers:
+- `ProductVendorDashboard.tsx` - Product vendor overview
+- `ProductVendorProfile.tsx` - Company and product information
+- `ProductVendorRFQs.tsx` - Quote requests and responses
+- `ProductVendorCatalog.tsx` - Product catalog management
+- `ProductVendorOrders.tsx` - Order processing and fulfillment
+- `ProductVendorMessages.tsx` - Customer communication
 
-**`IndustryMessages.tsx`** - Centralized Communication Hub
-- **Business Purpose**: Manages all vendor and professional communications with audit trail
-- **Key Features**: Project-specific messaging, document sharing, compliance communication tracking
-- **ISO 9001 Alignment**: Communication effectiveness monitoring, documented information control
+#### Logistics Vendor Pages
+For logistics and transportation providers:
+- `LogisticsVendorDashboard.tsx` - Logistics overview and metrics
+- `LogisticsVendorProfile.tsx` - Fleet and service capabilities
+- `LogisticsVendorRequests.tsx` - Transportation request management
+- `LogisticsVendorFleet.tsx` - Vehicle and equipment management
+- `LogisticsVendorDeliveries.tsx` - Active delivery tracking
+- `LogisticsVendorMessages.tsx` - Client communication
 
-**`IndustryDocuments.tsx`** - Document Management System
-- **Business Purpose**: Centralized document management with version control and approval workflows
-- **Key Features**: Contract management, specification documents, compliance certificates, audit reports
-- **ISO 9001 Integration**: Document control (4.2.3), record management, version control
+### Functional Pages
+Core business functionality pages:
 
-**`IndustryProjectWorkflow.tsx`** - Project Lifecycle Management
-- **Business Purpose**: End-to-end project tracking from requirement to completion
-- **Workflow Stages**: Requirement → Vendor Selection → Execution → Quality Assurance → Closure
-- **Key Features**: Milestone tracking, payment automation, performance monitoring, risk management
+- `CreateRequirement.tsx` - Multi-step requirement creation wizard
+- `CreatePurchaseOrder.tsx` - Purchase order generation flow
+- `WorkCompletionPayment.tsx` - Work verification and payment processing
+- `Vendors.tsx` - Vendor directory and discovery
+- `Experts.tsx` - Professional directory and search
+- `VendorProfile.tsx` - Generic vendor profile viewing
 
-**`IndustryStakeholders.tsx`** - Stakeholder Relationship Management
-- **Business Purpose**: Manages vendor ecosystem with ISO 9001-compliant supplier qualification
-- **Key Features**: Vendor invitation, pre-qualification, approval workflows, performance monitoring
-- **Compliance Integration**: Supplier evaluation and selection (8.4), approved supplier list maintenance
+## Page Architecture
 
-#### Advanced Industry Workflows
-
-**`CreateRequirement.tsx`** - Multi-Step Requirement Creation Wizard
-- **Business Process**: Requirement Definition → Approval → Market Release → Vendor Matching
-- **ISO 9001 Integration**: Planning (6.1), risk assessment, resource allocation, process control
-- **Key Features**: Template-based creation, approval workflows, stakeholder matching, compliance validation
-
-**`CreatePurchaseOrder.tsx`** - Automated Purchase Order Generation
-- **Business Process**: Contract Terms → Legal Review → Approval → Vendor Notification → Execution Tracking
-- **Key Features**: Template-based generation, approval workflows, milestone management, payment automation
-
-**`WorkCompletionPayment.tsx`** - Quality Assurance & Payment Processing
-- **Business Process**: Work Verification → Quality Acceptance → Payment Authorization → Closure Documentation
-- **ISO 9001 Integration**: Acceptance criteria verification, non-conformance management, corrective action
-
-### Vendor Stakeholder Pages (Product, Service & Logistics Providers)
-
-#### Service Vendor User Journey
-**`ServiceVendorDashboard.tsx`** → **`ServiceVendorRFQs.tsx`** → **`ServiceVendorProjects.tsx`** → **`ServiceVendorMessages.tsx`**
-
-**Business Workflow**:
-1. **Opportunity Discovery**: Dashboard shows matched RFQs and project opportunities
-2. **Proposal Development**: Structured response to client requirements with capability demonstration
-3. **Project Execution**: Service delivery tracking with milestone-based progress reporting
-4. **Client Communication**: Centralized communication with project updates and issue resolution
-
-**Service Vendor Specific Features**:
-- **Service Portfolio Management**: Capability catalog with certifications and case studies
-- **Resource Allocation**: Technician scheduling and equipment deployment planning
-- **Quality Assurance**: Service delivery standards and customer satisfaction tracking
-- **Compliance Management**: Safety certifications, regulatory compliance, audit preparation
-
-#### Product Vendor User Journey
-**`ProductVendorDashboard.tsx`** → **`ProductVendorRFQs.tsx`** → **`ProductVendorCatalog.tsx`** → **`ProductVendorOrders.tsx`**
-
-**Business Workflow**:
-1. **Product Catalog Management**: Maintain comprehensive product information with specifications
-2. **Quote Management**: Respond to RFQs with competitive pricing and delivery timelines
-3. **Order Processing**: Manage order fulfillment from confirmation to delivery
-4. **Inventory Optimization**: Stock level management and supply chain coordination
-
-**Product Vendor Specific Features**:
-- **Catalog Management**: Product specifications, pricing, availability, and certifications
-- **Inventory Integration**: Real-time stock levels and supply chain visibility
-- **Order Fulfillment**: Shipping coordination, delivery tracking, and customer notifications
-- **Quality Control**: Product quality standards, testing documentation, and compliance certificates
-
-#### Logistics Vendor User Journey
-**`LogisticsVendorDashboard.tsx`** → **`LogisticsVendorRequests.tsx`** → **`LogisticsVendorFleet.tsx`** → **`LogisticsVendorDeliveries.tsx`**
-
-**Business Workflow**:
-1. **Transportation Request Management**: Evaluate shipping requirements and provide quotes
-2. **Fleet Optimization**: Vehicle assignment and route planning for optimal efficiency
-3. **Delivery Execution**: Real-time tracking and customer communication
-4. **Performance Analytics**: Delivery performance monitoring and continuous improvement
-
-**Logistics Vendor Specific Features**:
-- **Fleet Management**: Vehicle tracking, maintenance scheduling, and driver management
-- **Route Optimization**: AI-powered route planning and delivery optimization
-- **Real-Time Tracking**: GPS tracking with customer notifications and delivery confirmations
-- **Compliance Management**: DOT regulations, insurance requirements, and safety protocols
-
-### Expert Professional Pages (Consultants & Technical Advisors)
-
-#### Professional User Journey
-**`ProfessionalDashboard.tsx`** → **`ProfessionalOpportunities.tsx`** → **`ProfessionalCalendar.tsx`** → **`ProfessionalMessages.tsx`**
-
-**Business Workflow**:
-1. **Opportunity Identification**: AI-powered matching with relevant consulting opportunities
-2. **Proposal Development**: Structured consulting proposals with scope, timeline, and deliverables
-3. **Project Delivery**: Consulting engagement management with deliverable tracking
-4. **Relationship Building**: Long-term client relationship development and repeat business
-
-**Professional Specific Features**:
-- **Expertise Portfolio**: Skill documentation, certifications, and case study management
-- **Availability Management**: Calendar integration with project scheduling and resource allocation
-- **Deliverable Management**: Project deliverable tracking with client approval workflows
-- **Professional Development**: Continuing education tracking and certification management
-
-#### Specialized Professional Categories
-1. **Engineering Consultants**: Process optimization, system design, technical assessments
-2. **Quality Assurance Experts**: Audit services, compliance consulting, quality system development
-3. **Safety Specialists**: Risk assessments, safety program development, regulatory compliance
-4. **Project Management Consultants**: Project planning, execution oversight, performance optimization
-
-## Functional Business Process Pages
-
-### Core Procurement Workflow Pages
-
-**`Vendors.tsx`** - Vendor Discovery & Evaluation
-- **Business Purpose**: Centralized vendor discovery with capability-based search
-- **Key Features**: Advanced filtering, vendor comparison, performance metrics, compliance verification
-- **Integration**: Links to vendor profiles, invitation processes, and project assignment workflows
-
-**`Experts.tsx`** - Professional Services Discovery
-- **Business Purpose**: Expert consultant discovery with skill-based matching
-- **Key Features**: Expertise search, availability checking, project history review, client testimonials
-- **Integration**: Direct engagement workflows, calendar integration, and project assignment
-
-**`VendorProfile.tsx`** - Comprehensive Vendor Information
-- **Business Purpose**: Detailed vendor information with performance history and capabilities
-- **Key Features**: Company profile, service/product portfolio, performance metrics, client testimonials
-- **ISO 9001 Integration**: Supplier evaluation data, audit results, corrective action history
-
-### Authentication & Onboarding Pages
-
-**`SignUp.tsx`** - Multi-Type User Registration
-- **Business Process**: User Type Selection → Company Verification → Profile Creation → Compliance Documentation
-- **Key Features**: Business verification, compliance documentation upload, role-based access setup
-- **Integration**: Automatic routing to appropriate dashboard based on verified user type
-
-**`SignIn.tsx`** - Secure User Authentication
-- **Business Features**: Multi-factor authentication, role-based access control, session management
-- **Security Integration**: Audit trail logging, failed login monitoring, security compliance
-
-**`ProfileCompletion.tsx`** - Post-Registration Profile Setup
-- **Business Process**: Company Profile → Capability Documentation → Compliance Verification → Platform Activation
-- **ISO 9001 Integration**: Competency documentation, training records, certification management
-
-## Public-Facing Business Pages
-
-### Marketing & Information Pages
-
-**`Index.tsx`** - Platform Value Proposition
-- **Business Purpose**: Communicates platform value to potential users across all user types
-- **Key Features**: User type-specific value propositions, ROI calculators, compliance benefits
-- **Integration**: Clear calls-to-action for each user type with appropriate registration flows
-
-**`About.tsx`** - Company Information & Trust Building
-- **Business Purpose**: Establishes credibility and trust with enterprise buyers and suppliers
-- **Key Features**: Company background, team expertise, industry partnerships, compliance certifications
-- **Trust Factors**: ISO certifications, security compliance, industry testimonials, regulatory alignment
-
-**`Pricing.tsx`** - Transparent Pricing & Value Justification
-- **Business Model**: Freemium model with transaction fees and premium subscriptions
-- **Pricing Tiers**: Basic (free), Professional (subscription), Enterprise (custom pricing)
-- **Value Proposition**: ROI calculators, cost savings examples, efficiency improvements
-
-### Support & Compliance Pages
-
-**`Privacy.tsx`** - Data Privacy & Security Compliance
-- **Business Purpose**: Demonstrates commitment to data protection and regulatory compliance
-- **Key Features**: GDPR compliance, data handling procedures, security measures
-- **Enterprise Focus**: B2B data protection, audit trail transparency, compliance reporting
-
-**`Terms.tsx`** - Service Terms & Business Agreements
-- **Business Purpose**: Clear terms of service for B2B platform usage
-- **Key Features**: User responsibilities, service level agreements, liability limitations
-- **Compliance Integration**: Regulatory compliance requirements, audit cooperation, data retention
-
-## Page Architecture Patterns
-
-### Standard Business Page Structure
+### Standard Page Structure
 ```typescript
 import React from "react";
 import { Helmet } from "react-helmet";
 import UserTypeHeader from "@/components/usertype/UserTypeHeader";
-import { useUserContext } from "@/contexts/UserContext";
-import { useCompliance } from "@/contexts/ComplianceContext";
 
-const BusinessPage = () => {
-  const { user, userType } = useUserContext();
-  const { logPageView } = useCompliance();
-  
-  // Log page access for audit trail
-  useEffect(() => {
-    logPageView(window.location.pathname, user.id);
-  }, []);
-  
+const PageName = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Helmet>
-        <title>Page Title | Diligince.ai - ISO 9001 Compliant Procurement</title>
-        <meta name="description" content="Business-focused page description" />
+        <title>Page Title | Diligince.ai</title>
       </Helmet>
       
       <UserTypeHeader />
       
       <main className="flex-1 container mx-auto px-4 py-8 pt-20">
-        {/* Page content with business logic */}
+        {/* Page content */}
       </main>
     </div>
   );
 };
+
+export default PageName;
 ```
 
-### Business Workflow Integration Patterns
+### Key Patterns
 
-#### Multi-Step Business Process Pages
-```typescript
-// Example: Requirement creation workflow
-const CreateRequirement = () => {
-  const { currentStep, formData, nextStep, previousStep } = useRequirementWizard();
-  const { validateCompliance } = useCompliance();
-  
-  const handleStepCompletion = async (stepData) => {
-    const isCompliant = await validateCompliance(stepData);
-    if (isCompliant) {
-      await nextStep(stepData);
-    } else {
-      // Handle compliance issues
-    }
-  };
-  
-  return (
-    <RequirementWizardLayout>
-      <StepIndicator currentStep={currentStep} />
-      <StepContent onComplete={handleStepCompletion} />
-    </RequirementWizardLayout>
-  );
-};
-```
+#### Layout Consistency
+- Consistent header navigation per user type
+- Standardized spacing and container usage
+- Responsive design across all pages
 
-#### Real-Time Business Data Integration
-```typescript
-// Example: Dashboard with real-time business metrics
-const IndustryDashboard = () => {
-  const { metrics, loading } = useBusinessMetrics();
-  const { notifications } = useNotifications();
-  const { activeProjects } = useProjectWorkflow();
-  
-  return (
-    <DashboardLayout>
-      <MetricsSection metrics={metrics} loading={loading} />
-      <NotificationCenter notifications={notifications} />
-      <ActiveProjectsWidget projects={activeProjects} />
-    </DashboardLayout>
-  );
-};
-```
+#### SEO and Meta
+- Helmet integration for page titles and meta tags
+- Descriptive titles following pattern: "Page Name | Diligince.ai"
 
-## ISO 9001:2015 Compliance Integration
+#### Error Handling
+- RouteErrorBoundary wrapping in App.tsx
+- Proper loading states for data-dependent pages
+- User-friendly error messages
 
-### Process Control Implementation
-- **Defined Processes**: Each page represents a controlled business process with defined inputs/outputs
-- **Process Monitoring**: Real-time performance tracking and metrics collection
-- **Continuous Improvement**: User feedback integration and process optimization
-- **Risk Management**: Integrated risk assessment and mitigation workflows
+#### Navigation Integration
+- React Router Link components for internal navigation
+- Breadcrumb navigation where appropriate
+- Active state indicators in navigation
 
-### Document Control Integration
-- **Version Control**: All business data changes are versioned and tracked
-- **Access Control**: Role-based access to sensitive business information
-- **Audit Trail**: Complete user activity logging with business context
-- **Document Management**: Integrated document management with approval workflows
+## Data Flow
 
-### Management Review Support
-- **Performance Metrics**: Automated business performance data collection
-- **Compliance Monitoring**: Real-time compliance status tracking
-- **Improvement Opportunities**: AI-powered process optimization recommendations
-- **Executive Dashboards**: Management-level visibility into business performance
+### State Management
+- Page-level state for local data
+- Context providers for shared state across pages
+- React Query for server data and caching
 
-## Performance & Scalability Considerations
+### User Type Detection
+- Context-based user type detection
+- Conditional rendering based on user permissions
+- Type-safe navigation between user-specific pages
 
-### Enterprise-Scale Optimization
-- **Code Splitting**: User-type specific code bundles for optimal loading
-- **Lazy Loading**: Progressive loading of business data and components
-- **Caching Strategy**: Intelligent caching of business data and user preferences
-- **Performance Monitoring**: Real-time performance tracking and optimization
+### Route Protection
+- Authentication guards for protected routes
+- User type-based access control
+- Redirect logic for unauthorized access
 
-### Business Continuity Features
-- **Offline Capability**: Critical business functions available offline
-- **Data Synchronization**: Automatic data sync when connectivity is restored
-- **Error Recovery**: Graceful error handling with business context
-- **Backup & Recovery**: Automated backup and disaster recovery procedures
+## Routing Configuration
+All pages are registered in `App.tsx` with:
+- Lazy loading for performance optimization
+- Error boundary wrapping for fault tolerance
+- Suspense fallback for loading states
 
-## Contributing to Business Pages
+## Performance Considerations
+- Code splitting with React.lazy()
+- Optimized bundle loading
+- Efficient re-rendering patterns
+- Proper cleanup in useEffect hooks
 
-### Adding New Business Pages
-1. **Business Justification**: Clear business need and user value proposition
-2. **Workflow Integration**: Integration with existing business processes
-3. **ISO 9001 Alignment**: Compliance with quality management requirements
-4. **Performance Considerations**: Enterprise-scale performance optimization
-5. **Audit Trail Integration**: Comprehensive user activity logging
-
-### Page Enhancement Guidelines
-1. **User Experience**: Focus on business user productivity and efficiency
-2. **Compliance Integration**: Ensure audit trail and compliance requirements
-3. **Performance Optimization**: Maintain enterprise-grade performance standards
-4. **Security Considerations**: Secure handling of sensitive business data
-5. **Accessibility**: WCAG 2.1 AA compliance for all user interfaces
-
----
-
-This page architecture supports the complete Diligince.ai business model, enabling ISO 9001-compliant B2B procurement workflows while maintaining enterprise-grade performance and user experience standards.
+## Contributing Guidelines
+1. Follow established naming conventions
+2. Implement consistent layout patterns
+3. Add proper TypeScript types
+4. Include SEO meta tags with Helmet
+5. Ensure responsive design
+6. Test cross-browser compatibility
+7. Add loading and error states
