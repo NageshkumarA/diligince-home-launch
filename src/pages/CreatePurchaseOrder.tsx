@@ -120,13 +120,10 @@ const CreatePurchaseOrder: React.FC = () => {
   const getCompleteFormData = (): FormValues => {
     const formData = form.getValues();
 
-    // Ensure poNumber is always present
-    if (!formData.poNumber) {
-      formData.poNumber = generatePONumber();
-    }
+    const finalPoNumber = formData.poNumber || generatePONumber();
 
     const completeData: FormValues = {
-      poNumber: formData.poNumber,
+      poNumber: finalPoNumber,
       vendor: formData.vendor || '',
       projectTitle: formData.projectTitle || 'Industrial Equipment Procurement',
       orderValue: formData.orderValue || 0,
