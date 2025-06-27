@@ -1,4 +1,5 @@
 
+
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
 export interface RequirementFormData {
@@ -70,6 +71,15 @@ export interface RequirementFormData {
   pickupDate?: Date;
   deliveryDate?: Date;
   specialHandling?: string;
+  
+  // Additional fields for EnhancedBasicInfoStep
+  businessJustification?: string;
+  department?: string;
+  costCenter?: string;
+  requestedBy?: string;
+  urgency?: boolean;
+  estimatedBudget?: number;
+  budgetApproved?: boolean;
 }
 
 interface RequirementContextType {
@@ -79,6 +89,7 @@ interface RequirementContextType {
   validateStep: (step: number) => boolean;
   stepErrors: Record<string, string> | null;
   isFormValid: () => boolean;
+  saveAsDraft: () => void;
 }
 
 const RequirementContext = createContext<RequirementContextType | undefined>(undefined);
@@ -98,6 +109,12 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
     setStepErrors(null);
   }, []);
 
+  const saveAsDraft = useCallback(() => {
+    console.log("Saving draft:", formData);
+    // Here you would typically save to localStorage or send to API
+    localStorage.setItem('requirement-draft', JSON.stringify(formData));
+  }, [formData]);
+
   const validateStep = useCallback((step: number) => {
     const errors: Record<string, string> = {};
     
@@ -111,6 +128,18 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
         }
         if (!formData.priority) {
           errors.priority = "Priority is required";
+        }
+        if (!formData.businessJustification?.trim()) {
+          errors.businessJustification = "Business justification is required";
+        }
+        if (!formData.department?.trim()) {
+          errors.department = "Department is required";
+        }
+        if (!formData.costCenter?.trim()) {
+          errors.costCenter = "Cost center is required";
+        }
+        if (!formData.estimatedBudget || formData.estimatedBudget <= 0) {
+          errors.estimatedBudget = "Valid estimated budget is required";
         }
         break;
         
@@ -199,7 +228,8 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
       resetForm,
       validateStep,
       stepErrors,
-      isFormValid
+      isFormValid,
+      saveAsDraft
     }}>
       {children}
     </RequirementContext.Provider>
@@ -213,3 +243,4 @@ export const useRequirement = () => {
   }
   return context;
 };
+
