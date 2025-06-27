@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { useStakeholder } from "@/contexts/StakeholderContext";
@@ -25,12 +24,20 @@ interface PublishStepProps {
 }
 
 const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
+  console.log("PublishStep rendering...");
+  
   const { formData, updateFormData, validateStep, stepErrors } = useRequirement();
-  const { notifyStakeholders } = useStakeholder();
+  const stakeholderContext = useStakeholder();
   const { canPublishRequirement, getApprovalWorkflow, emergencyPublish } = useApproval();
   const [isPublishing, setIsPublishing] = useState(false);
 
   console.log("PublishStep rendered, formData:", formData);
+  console.log("Stakeholder context available:", !!stakeholderContext);
+
+  // Safe access to notifyStakeholders with fallback
+  const notifyStakeholders = stakeholderContext?.notifyStakeholders || (() => {
+    console.warn("notifyStakeholders not available - using fallback");
+  });
 
   // Check approval status
   const approvalCheck = canPublishRequirement(formData);
@@ -70,9 +77,12 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
       setIsPublishing(true);
       const success = await emergencyPublish(formData.title || 'unknown');
       if (success) {
-        // Notify stakeholders
-        if (notifyStakeholders) {
+        // Safely notify stakeholders with error handling
+        try {
           notifyStakeholders(formData);
+        } catch (error) {
+          console.warn("Failed to notify stakeholders:", error);
+          // Don't block the publish process for notification failures
         }
         toast.success("Requirement published under emergency protocol!");
         onNext();
@@ -102,11 +112,9 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
         // Simulate API call with timeout
         await new Promise(resolve => setTimeout(resolve, 2000));
         
-        // Notify relevant stakeholders about the new requirement
+        // Safely notify relevant stakeholders about the new requirement
         try {
-          if (notifyStakeholders) {
-            notifyStakeholders(formData);
-          }
+          notifyStakeholders(formData);
         } catch (error) {
           console.warn("Failed to notify stakeholders:", error);
           // Don't block the publish process for notification failures

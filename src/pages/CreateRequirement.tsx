@@ -19,6 +19,8 @@ import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 export type StepType = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 const CreateRequirement = () => {
+  console.log("CreateRequirement component mounting...");
+  
   const [currentStep, setCurrentStep] = useState<StepType>(1);
   const navigate = useNavigate();
 
@@ -70,7 +72,11 @@ const CreateRequirement = () => {
             />
           );
         case 6:
-          return <PublishStep onNext={handleNext} onPrevious={handlePrevious} />;
+          return (
+            <ErrorBoundary>
+              <PublishStep onNext={handleNext} onPrevious={handlePrevious} />
+            </ErrorBoundary>
+          );
         case 7:
           return (
             <SuccessScreen 
@@ -96,11 +102,13 @@ const CreateRequirement = () => {
     }
   };
 
+  console.log("Creating provider chain...");
+
   return (
-    <ApprovalProvider>
-      <StakeholderProvider>
-        <RequirementProvider>
-          <ErrorBoundary>
+    <ErrorBoundary>
+      <ApprovalProvider>
+        <StakeholderProvider>
+          <RequirementProvider>
             <div className="flex min-h-screen flex-col bg-gray-50">
               <IndustryHeader />
               <div className="container mx-auto px-4 py-8 md:px-6 pt-20">
@@ -134,10 +142,10 @@ const CreateRequirement = () => {
               </div>
               <Toaster />
             </div>
-          </ErrorBoundary>
-        </RequirementProvider>
-      </StakeholderProvider>
-    </ApprovalProvider>
+          </RequirementProvider>
+        </StakeholderProvider>
+      </ApprovalProvider>
+    </ErrorBoundary>
   );
 };
 
