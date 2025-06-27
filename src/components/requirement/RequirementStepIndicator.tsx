@@ -7,6 +7,7 @@ import {
   Info, 
   FileText, 
   Upload, 
+  GitBranch,
   Eye, 
   Send,
   Check
@@ -38,12 +39,18 @@ const steps = [
   },
   { 
     id: 4, 
+    name: "Workflow", 
+    description: "Set approval workflow",
+    icon: GitBranch 
+  },
+  { 
+    id: 5, 
     name: "Preview", 
     description: "Review your requirement",
     icon: Eye 
   },
   { 
-    id: 5, 
+    id: 6, 
     name: "Publish", 
     description: "Submit and publish requirement",
     icon: Send 
@@ -73,8 +80,10 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
     } else if (stepId === 3) {
       return true; // Documents are optional
     } else if (stepId === 4) {
-      return true; // Preview is just viewing
+      return true; // Workflow setup is optional for some requirements
     } else if (stepId === 5) {
+      return true; // Preview is just viewing
+    } else if (stepId === 6) {
       return formData.termsAccepted;
     }
     return false;
@@ -84,7 +93,6 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
     if (stepId === 1) return true;
     if (stepId >= 2 && !isStepCompleted(1)) return false;
     if (stepId >= 3 && !isStepCompleted(2)) return false;
-    if (stepId === 6) return false;
     if (stepId <= currentStep) return true;
     return stepId === currentStep + 1;
   };
@@ -99,7 +107,7 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
     <div className="w-full py-8">
       {/* Desktop version */}
       <div className="hidden lg:block">
-        <div className="relative max-w-4xl mx-auto">
+        <div className="relative max-w-5xl mx-auto">
           <div className="flex items-center justify-between">
             {steps.map((step, index) => {
               const status = getStepStatus(step.id);
@@ -165,62 +173,8 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
         </div>
       </div>
 
-      {/* Tablet version */}
-      <div className="hidden md:block lg:hidden">
-        <div className="relative max-w-2xl mx-auto">
-          <div className="flex items-center justify-between">
-            {steps.map((step, index) => {
-              const status = getStepStatus(step.id);
-              const Icon = step.icon;
-              const isAccessible = isStepAccessible(step.id);
-              const isLastStep = index === steps.length - 1;
-              
-              return (
-                <div key={step.id} className="flex items-center">
-                  <div className="flex flex-col items-center">
-                    <button
-                      onClick={() => isAccessible && onStepClick(step.id as StepType)}
-                      disabled={!isAccessible}
-                      className={cn(
-                        "w-10 h-10 rounded-full border-2 flex items-center justify-center transition-colors duration-200",
-                        status === "completed" && "bg-green-500 border-green-500 text-white",
-                        status === "current" && "bg-blue-500 border-blue-500 text-white",
-                        status === "upcoming" && isAccessible && "bg-white border-gray-300 text-gray-600 hover:border-blue-400",
-                        status === "upcoming" && !isAccessible && "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
-                      )}
-                    >
-                      {status === "completed" ? (
-                        <Check className="w-4 h-4" />
-                      ) : (
-                        <Icon className="w-4 h-4" />
-                      )}
-                    </button>
-                    <span className="text-xs font-medium text-gray-600 mt-2">
-                      {step.name}
-                    </span>
-                  </div>
-
-                  {!isLastStep && (
-                    <div className="flex-1 mx-3 h-0.5 bg-gray-200">
-                      <div 
-                        className={cn(
-                          "h-full transition-colors duration-300",
-                          status === "completed" || (status === "current" && index < currentStep - 1) 
-                            ? "bg-green-500" 
-                            : "bg-gray-200"
-                        )}
-                      />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
       {/* Mobile version */}
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <div className="bg-white rounded-lg shadow-sm border p-4">
           <div className="flex items-center justify-between mb-4">
             <div>

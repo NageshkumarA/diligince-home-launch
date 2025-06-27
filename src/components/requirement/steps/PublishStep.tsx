@@ -26,6 +26,7 @@ interface PublishStepProps {
 const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
   const { formData, updateFormData, validateStep, stepErrors } = useRequirement();
   const { notifyStakeholders } = useStakeholder();
+  const [isPublishing, setIsPublishing] = useState(false);
 
   // Available evaluation criteria based on ISO 9001 procurement standards
   const availableEvaluationCriteria = [
@@ -51,15 +52,37 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
     updateFormData({ evaluationCriteria: updatedCriteria });
   };
 
-  const handlePublish = () => {
-    if (validateStep(6)) {
-      // Notify relevant stakeholders about the new requirement
-      notifyStakeholders(formData);
+  const handlePublish = async () => {
+    try {
+      console.log("Starting publish process...");
+      setIsPublishing(true);
       
-      toast.success("Requirement published successfully! Relevant stakeholders have been notified.");
-      onNext();
-    } else {
-      toast.error("Please fill in all required fields");
+      if (validateStep(6)) {
+        console.log("Validation passed, proceeding with publish...");
+        
+        // Simulate API call with timeout
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Notify relevant stakeholders about the new requirement
+        try {
+          notifyStakeholders(formData);
+        } catch (error) {
+          console.warn("Failed to notify stakeholders:", error);
+          // Don't block the publish process for notification failures
+        }
+        
+        toast.success("Requirement published successfully! Relevant stakeholders have been notified.");
+        console.log("Publish successful, calling onNext...");
+        onNext();
+      } else {
+        console.log("Validation failed:", stepErrors);
+        toast.error("Please fill in all required fields");
+      }
+    } catch (error) {
+      console.error("Error during publish:", error);
+      toast.error("Failed to publish requirement. Please try again.");
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -241,21 +264,24 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
           <Button
             variant="outline"
             onClick={onPrevious}
+            disabled={isPublishing}
           >
             Previous
           </Button>
           <Button
             variant="outline"
             onClick={handleSaveDraft}
+            disabled={isPublishing}
           >
             Save as Draft
           </Button>
         </div>
         <Button 
           onClick={handlePublish}
+          disabled={isPublishing}
           className="bg-blue-600 text-white hover:bg-blue-700"
         >
-          Publish & Notify Stakeholders
+          {isPublishing ? "Publishing..." : "Publish & Notify Stakeholders"}
         </Button>
       </div>
     </div>

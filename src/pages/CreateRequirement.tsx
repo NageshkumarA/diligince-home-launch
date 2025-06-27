@@ -20,19 +20,29 @@ const CreateRequirement = () => {
   const navigate = useNavigate();
 
   const handleNext = () => {
-    setCurrentStep((prev) => (prev < 7 ? (prev + 1) as StepType : prev));
+    console.log("Current step:", currentStep);
+    if (currentStep < 7) {
+      const nextStep = (currentStep + 1) as StepType;
+      console.log("Moving to step:", nextStep);
+      setCurrentStep(nextStep);
+    }
   };
 
   const handlePrevious = () => {
-    setCurrentStep((prev) => (prev > 1 ? (prev - 1) as StepType : prev));
+    if (currentStep > 1) {
+      const prevStep = (currentStep - 1) as StepType;
+      console.log("Moving back to step:", prevStep);
+      setCurrentStep(prevStep);
+    }
   };
 
   const handleGoToStep = (step: StepType) => {
+    console.log("Jumping to step:", step);
     setCurrentStep(step);
   };
 
   const handleReturnToDashboard = () => {
-    navigate("/");
+    navigate("/industry-dashboard");
   };
 
   return (
@@ -87,7 +97,7 @@ const CreateRequirement = () => {
               {currentStep === 7 && (
                 <SuccessScreen 
                   onCreateAnother={() => setCurrentStep(1)} 
-                  onViewRequirement={() => navigate("/requirements")} 
+                  onViewRequirement={() => navigate("/industry-requirements")} 
                   onReturnToDashboard={handleReturnToDashboard} 
                 />
               )}
