@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { format, differenceInDays } from 'date-fns';
@@ -164,7 +165,7 @@ const CreatePurchaseOrder: React.FC = () => {
   const handleCreatePurchaseOrder = async () => {
     setIsSubmitting(true);
     try {
-      const formData = form.getValues();
+      const formData = getCompleteFormData();
       
       // Create the purchase order object
       const purchaseOrder = {
@@ -209,7 +210,7 @@ const CreatePurchaseOrder: React.FC = () => {
   // Handle save as draft - no validation required
   const handleSaveAsDraft = () => {
     try {
-      const formData = form.getValues();
+      const formData = getCompleteFormData();
       const draftData = {
         ...formData,
         isoTerms: selectedISOTerms,
@@ -327,9 +328,9 @@ const CreatePurchaseOrder: React.FC = () => {
             <div className="bg-blue-50 p-4 rounded-lg mb-6">
               <p className="text-sm text-blue-800">
                 <strong>What happens next:</strong><br/>
-                • PO will be created and assigned number {form.getValues('poNumber')}<br/>
+                • PO will be created and assigned number {getCompleteFormData().poNumber}<br/>
                 • Saved to your industry records<br/>
-                • Delivered to {vendors.find(v => v.id === form.getValues('vendor'))?.name || 'the vendor'}<br/>
+                • Delivered to {vendors.find(v => v.id === getCompleteFormData().vendor)?.name || 'the vendor'}<br/>
                 • Workflow will begin tracking
               </p>
             </div>
@@ -821,3 +822,4 @@ const CreatePurchaseOrder: React.FC = () => {
 };
 
 export default CreatePurchaseOrder;
+
