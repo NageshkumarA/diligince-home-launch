@@ -120,22 +120,25 @@ const CreatePurchaseOrder: React.FC = () => {
   const getCompleteFormData = (): FormValues => {
     const formData = form.getValues();
 
-    return {
-  poNumber: formData.poNumber || generatePONumber(),
-  vendor: formData.vendor || "",
-  projectTitle: formData.projectTitle || "Industrial Equipment Procurement",
-  orderValue: formData.orderValue ?? 0,
-  taxPercentage: formData.taxPercentage ?? 0,
-  totalValue: formData.totalValue ?? 0,
-  startDate: formData.startDate || new Date(),
-  endDate: formData.endDate || new Date(new Date().setDate(new Date().getDate() + 30)),
-  paymentTerms: formData.paymentTerms || "",
-  specialInstructions: formData.specialInstructions || "",
-  scopeOfWork: formData.scopeOfWork || "",
-  deliverables: formData.deliverables || [],
-  acceptanceCriteria: formData.acceptanceCriteria || []
-} as FormValues;
+    const getCompleteFormData = (): FormValues => {
+  const formData = form.getValues();
+
+  return {
+    poNumber: formData.poNumber,
+    vendor: formData.vendor,
+    projectTitle: formData.projectTitle,
+    orderValue: formData.orderValue,
+    taxPercentage: formData.taxPercentage,
+    totalValue: formData.totalValue,
+    startDate: formData.startDate,
+    endDate: formData.endDate,
+    paymentTerms: formData.paymentTerms,
+    specialInstructions: formData.specialInstructions,
+    scopeOfWork: formData.scopeOfWork,
+    deliverables: formData.deliverables,
+    acceptanceCriteria: formData.acceptanceCriteria
   };
+};
 
   // Handle step navigation
   const handleStepClick = (step: POStepType) => {
