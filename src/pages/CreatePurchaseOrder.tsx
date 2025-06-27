@@ -121,7 +121,7 @@ const CreatePurchaseOrder: React.FC = () => {
     const formData = form.getValues();
     
     // Ensure all required fields have values to match FormValues type
-    const completeData: FormValues = {
+    const completeData = {
       poNumber: formData.poNumber || generatePONumber(),
       vendor: formData.vendor || '',
       projectTitle: formData.projectTitle || 'Industrial Equipment Procurement',
@@ -135,7 +135,7 @@ const CreatePurchaseOrder: React.FC = () => {
       scopeOfWork: formData.scopeOfWork || '',
       deliverables: formData.deliverables || [],
       acceptanceCriteria: formData.acceptanceCriteria || []
-    };
+    } as FormValues;
     
     return completeData;
   };
