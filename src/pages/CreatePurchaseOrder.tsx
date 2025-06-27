@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { format, differenceInDays } from 'date-fns';
@@ -273,13 +274,33 @@ const CreatePurchaseOrder: React.FC = () => {
     return 0;
   };
 
+  // Get complete form data for review
+  const getCompleteFormData = (): FormValues => {
+    const formData = form.getValues();
+    return {
+      poNumber: formData.poNumber || '',
+      vendor: formData.vendor || '',
+      projectTitle: formData.projectTitle || '',
+      orderValue: formData.orderValue || 0,
+      taxPercentage: formData.taxPercentage || 0,
+      totalValue: formData.totalValue || 0,
+      startDate: formData.startDate || new Date(),
+      endDate: formData.endDate || new Date(),
+      paymentTerms: formData.paymentTerms || '',
+      specialInstructions: formData.specialInstructions,
+      scopeOfWork: formData.scopeOfWork || '',
+      deliverables: formData.deliverables || [],
+      acceptanceCriteria: formData.acceptanceCriteria || []
+    };
+  };
+
   // Render different content based on current step
   const renderStepContent = () => {
     if (currentStep === 4) {
       // Review Step
       return (
         <POReviewStep
-          formData={form.getValues()}
+          formData={getCompleteFormData()}
           selectedISOTerms={selectedISOTerms}
           customISOTerms={customISOTerms}
           vendors={vendors}
