@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { format, differenceInDays } from 'date-fns';
@@ -822,4 +820,3 @@ const CreatePurchaseOrder: React.FC = () => {
 };
 
 export default CreatePurchaseOrder;
-
