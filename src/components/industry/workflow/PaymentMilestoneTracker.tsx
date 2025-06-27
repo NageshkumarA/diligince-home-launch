@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,27 +5,20 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { DollarSign, Clock, CheckCircle } from 'lucide-react';
 import { PaymentMilestone } from '@/types/workflow';
-
 interface PaymentMilestoneTrackerProps {
   milestones: PaymentMilestone[];
   onReleasePayment: (milestoneId: string) => void;
   totalProjectValue: number;
 }
-
-export const PaymentMilestoneTracker: React.FC<PaymentMilestoneTrackerProps> = ({ 
-  milestones, 
-  onReleasePayment, 
-  totalProjectValue 
+export const PaymentMilestoneTracker: React.FC<PaymentMilestoneTrackerProps> = ({
+  milestones,
+  onReleasePayment,
+  totalProjectValue
 }) => {
-  const totalPaid = milestones
-    .filter(m => m.status === 'released')
-    .reduce((sum, m) => sum + m.amount, 0);
-
-  const paymentProgress = (totalPaid / totalProjectValue) * 100;
+  const totalPaid = milestones.filter(m => m.status === 'released').reduce((sum, m) => sum + m.amount, 0);
+  const paymentProgress = totalPaid / totalProjectValue * 100;
   const completedMilestones = milestones.filter(m => m.status === 'released').length;
-
-  return (
-    <Card className="bg-white shadow-sm border border-gray-200">
+  return <Card className="bg-white shadow-sm border border-gray-200">
       <CardHeader className="border-b border-gray-100 bg-blue-50">
         <CardTitle className="text-xl font-semibold text-blue-900 flex items-center gap-2">
           <DollarSign className="h-5 w-5" />
@@ -48,22 +40,13 @@ export const PaymentMilestoneTracker: React.FC<PaymentMilestoneTrackerProps> = (
         </div>
 
         <div className="space-y-4">
-          {milestones.map((milestone) => (
-            <div key={milestone.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+          {milestones.map(milestone => <div key={milestone.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  {milestone.status === 'released' ? (
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <Clock className="h-5 w-5 text-blue-600" />
-                  )}
-                  <h3 className="font-semibold text-gray-900">{milestone.name}</h3>
+                  {milestone.status === 'released' ? <CheckCircle className="h-5 w-5 text-green-600" /> : <Clock className="h-5 w-5 text-blue-600" />}
+                  <h3 className="font-semibold text-gray-900 text-lg">{milestone.name}</h3>
                 </div>
-                <Badge className={
-                  milestone.status === 'released' 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'bg-blue-100 text-blue-700'
-                }>
+                <Badge className={milestone.status === 'released' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}>
                   {milestone.status === 'released' ? 'Released' : 'Pending'}
                 </Badge>
               </div>
@@ -79,31 +62,21 @@ export const PaymentMilestoneTracker: React.FC<PaymentMilestoneTrackerProps> = (
                   </div>
                 </div>
                 
-                {milestone.releasedDate && (
-                  <div>
+                {milestone.releasedDate && <div>
                     <span className="text-sm text-gray-600">Released Date</span>
                     <div className="font-medium text-gray-900">
                       {new Date(milestone.releasedDate).toLocaleDateString()}
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
               
               <p className="text-gray-700 text-sm mb-4">{milestone.description}</p>
               
-              {milestone.status === 'pending' && (
-                <Button 
-                  onClick={() => onReleasePayment(milestone.id)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
-                  size="sm"
-                >
+              {milestone.status === 'pending' && <Button onClick={() => onReleasePayment(milestone.id)} className="bg-blue-600 hover:bg-blue-700 text-white font-medium" size="sm">
                   Release Payment
-                </Button>
-              )}
-            </div>
-          ))}
+                </Button>}
+            </div>)}
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
