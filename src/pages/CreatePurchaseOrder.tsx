@@ -119,10 +119,14 @@ const CreatePurchaseOrder: React.FC = () => {
   // Get complete form data for review - fixed with proper type handling
   const getCompleteFormData = (): FormValues => {
     const formData = form.getValues();
-    
-    // Ensure all required fields have values to match FormValues type
-    const completeData = {
-      poNumber: formData.poNumber || generatePONumber(),
+
+    // Ensure poNumber is always present
+    if (!formData.poNumber) {
+      formData.poNumber = generatePONumber();
+    }
+
+    const completeData: FormValues = {
+      poNumber: formData.poNumber,
       vendor: formData.vendor || '',
       projectTitle: formData.projectTitle || 'Industrial Equipment Procurement',
       orderValue: formData.orderValue || 0,
@@ -135,8 +139,8 @@ const CreatePurchaseOrder: React.FC = () => {
       scopeOfWork: formData.scopeOfWork || '',
       deliverables: formData.deliverables || [],
       acceptanceCriteria: formData.acceptanceCriteria || []
-    } as FormValues;
-    
+    };
+
     return completeData;
   };
 
