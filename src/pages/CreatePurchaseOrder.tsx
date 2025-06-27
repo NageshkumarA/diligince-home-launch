@@ -117,9 +117,7 @@ const CreatePurchaseOrder: React.FC = () => {
   }, [orderValue, taxPercentage, form]);
 
   // Get complete form data for review - fixed with proper type handling
-  const getCompleteFormData = (): FormValues => {
-    const formData = form.getValues();
-
+  
     const getCompleteFormData = (): FormValues => {
   const formData = form.getValues();
 
