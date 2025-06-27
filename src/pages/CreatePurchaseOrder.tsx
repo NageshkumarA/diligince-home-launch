@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
 import { v4 as uuidv4 } from 'uuid';
 
+export type POStepType = 1 | 2 | 3 | 4 | 5;
+
 interface Deliverable {
   id: string;
   title: string;
@@ -139,9 +141,7 @@ const CreatePurchaseOrder = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const completeData = getCompleteFormData();
-    // Here you would typically send the data to an API or context
     console.log('Submitting Purchase Order:', completeData);
-    // Navigate to confirmation or dashboard after submission
     navigate('/industry-workflows');
   };
 
@@ -302,7 +302,7 @@ const CreatePurchaseOrder = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    size="xs"
+                    size="sm"
                     onClick={() => removeDeliverable(deliverable.id)}
                   >
                     Remove
@@ -364,7 +364,7 @@ const CreatePurchaseOrder = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  size="xs"
+                  size="sm"
                   onClick={() => removeAcceptanceCriterion(criterion.id)}
                 >
                   Remove
