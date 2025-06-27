@@ -57,9 +57,10 @@ type FormValues = z.infer<typeof formSchema>;
 
 const CreatePurchaseOrder: React.FC = () => {
   const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState<POStepType>(3);
+  const [currentStep, setCurrentStep] = useState<POStepType>(5); // Set to step 5 to show final step
   const [selectedISOTerms, setSelectedISOTerms] = useState<string[]>([]);
   const [customISOTerms, setCustomISOTerms] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Generate unique PO number
   const generatePONumber = () => {
@@ -130,6 +131,7 @@ const CreatePurchaseOrder: React.FC = () => {
   const handleNext = async () => {
     if (currentStep === 5) {
       // Final step - submit the form
+      setIsSubmitting(true);
       try {
         const isValid = await form.trigger();
         if (isValid) {
@@ -152,8 +154,7 @@ const CreatePurchaseOrder: React.FC = () => {
             description: `PO ${formData.poNumber} has been created and issued to the vendor.`,
           });
           
-          // Here you would typically navigate to the next stage or dashboard
-          // For now, we'll just show success
+          // Navigate back to workflows page after a delay
           setTimeout(() => {
             window.location.href = '/industry-workflows';
           }, 2000);
@@ -163,9 +164,13 @@ const CreatePurchaseOrder: React.FC = () => {
           const errors = form.formState.errors;
           console.log("Form validation errors:", errors);
           
+          // Find the first error to show a more specific message
+          const firstErrorField = Object.keys(errors)[0];
+          const firstError = errors[firstErrorField as keyof typeof errors];
+          
           toast({
             title: "Please Fix Form Errors",
-            description: "Some required fields are missing or invalid. Please review the form.",
+            description: firstError?.message || "Some required fields are missing or invalid. Please review the form.",
             variant: "destructive"
           });
         }
@@ -176,6 +181,8 @@ const CreatePurchaseOrder: React.FC = () => {
           description: "There was an error creating the purchase order. Please try again.",
           variant: "destructive"
         });
+      } finally {
+        setIsSubmitting(false);
       }
     } else {
       // Navigate to next step
@@ -678,9 +685,10 @@ const CreatePurchaseOrder: React.FC = () => {
                 <Button
                   type="button"
                   onClick={handleNext}
+                  disabled={isSubmitting}
                   className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
                 >
-                  {currentStep === 5 ? "Create Purchase Order" : "Next"}
+                  {isSubmitting ? "Creating..." : currentStep === 5 ? "Create Purchase Order" : "Next"}
                 </Button>
               </div>
             </div>
