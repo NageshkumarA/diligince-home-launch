@@ -121,7 +121,7 @@ const CreatePurchaseOrder: React.FC = () => {
     const formData = form.getValues();
 
     return {
-      poNumber: formData.poNumber !== undefined ? formData.poNumber : generatePONumber(),
+      poNumber: formData.poNumber ?? generatePONumber(),
       vendor: formData.vendor ?? '',
       projectTitle: formData.projectTitle ?? 'Industrial Equipment Procurement',
       orderValue: formData.orderValue ?? 0,
