@@ -129,17 +129,17 @@ const getDefaultFormData = (): RequirementFormData => ({
 
 export const RequirementProvider = ({ children }: { children: React.ReactNode }) => {
   const [formData, setFormData] = useState<RequirementFormData>(getDefaultFormData());
-  const [stepErrors, setStepErrors] = useState<Record<string, string> | null>(null);
+  const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
 
   const updateFormData = useCallback((data: Partial<RequirementFormData>) => {
     console.log("Updating form data:", data);
     setFormData(prev => ({ ...prev, ...data }));
-    setStepErrors(null);
+    setStepErrors({});
   }, []);
 
   const resetForm = useCallback(() => {
     setFormData(getDefaultFormData());
-    setStepErrors(null);
+    setStepErrors({});
   }, []);
 
   const saveAsDraft = useCallback(() => {
@@ -242,7 +242,7 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
       }
 
       console.log("Validation errors for step", step, ":", errors);
-      setStepErrors(Object.keys(errors).length > 0 ? errors : null);
+      setStepErrors(errors);
       return Object.keys(errors).length === 0;
     } catch (error) {
       console.error("Error during validation:", error);
