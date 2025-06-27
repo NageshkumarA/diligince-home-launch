@@ -121,7 +121,7 @@ const CreatePurchaseOrder: React.FC = () => {
     const formData = form.getValues();
 
     return {
-      poNumber: formData.poNumber ?? generatePONumber(),
+      poNumber: formData.poNumber || generatePONumber(),
       vendor: formData.vendor ?? '',
       projectTitle: formData.projectTitle ?? 'Industrial Equipment Procurement',
       orderValue: formData.orderValue ?? 0,
@@ -134,7 +134,7 @@ const CreatePurchaseOrder: React.FC = () => {
       scopeOfWork: formData.scopeOfWork ?? '',
       deliverables: formData.deliverables ?? [],
       acceptanceCriteria: formData.acceptanceCriteria ?? []
-    } as FormValues;
+    };
   };
 
   // Handle step navigation
