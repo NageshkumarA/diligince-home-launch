@@ -45,46 +45,47 @@ const PurchaseOrderStepIndicator: React.FC<StepIndicatorProps> = ({
         <nav aria-label="Progress">
           <ol className="flex items-center">
             {steps.map((step, index) => (
-              <React.Fragment key={step.id}>
-                <li className={cn(
+              <li
+                key={step.id}
+                className={cn(
                   "relative flex items-center",
                   index === 0 ? "pr-8" : "px-8",
                   index === steps.length - 1 ? "w-10" : "w-full"
-                )}>
-                  <button
-                    type="button"
-                    onClick={() => isStepAccessible(step.id) && onStepClick(step.id as POStepType)}
-                    className={cn(
-                      "group relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 font-medium focus:outline-none",
-                      isStepCompleted(step.id)
-                        ? "border-blue-600 bg-blue-600 text-white"
-                        : isStepActive(step.id)
-                        ? "border-blue-600 bg-white text-blue-600"
-                        : "border-gray-300 bg-white text-gray-500",
-                      !isStepAccessible(step.id) && "cursor-not-allowed opacity-50"
-                    )}
-                    disabled={!isStepAccessible(step.id)}
-                  >
-                    <span className="text-sm">{step.id}</span>
-                  </button>
-                  <div className="absolute -bottom-8 text-center" style={{ width: "100px", marginLeft: "-45px" }}>
-                    <span className={cn(
-                      "text-xs font-medium",
-                      isStepActive(step.id) ? "text-blue-600" : "text-gray-700"
-                    )}>
-                      {step.name}
-                    </span>
-                  </div>
-                  {index !== steps.length - 1 && (
-                    <div className={cn(
-                      "absolute right-0 top-0 hidden h-0.5 w-full md:block",
-                      isStepCompleted(step.id)
-                        ? "bg-blue-600"
-                        : "bg-gray-300"
-                    )} style={{ transform: "translateY(20px)" }} />
+                )}
+              >
+                <button
+                  type="button"
+                  onClick={() => isStepAccessible(step.id) && onStepClick(step.id as POStepType)}
+                  className={cn(
+                    "group relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 font-medium focus:outline-none",
+                    isStepCompleted(step.id)
+                      ? "border-blue-600 bg-blue-600 text-white"
+                      : isStepActive(step.id)
+                      ? "border-blue-600 bg-white text-blue-600"
+                      : "border-gray-300 bg-white text-gray-500",
+                    !isStepAccessible(step.id) && "cursor-not-allowed opacity-50"
                   )}
-                </li>
-              </React.Fragment>
+                  disabled={!isStepAccessible(step.id)}
+                >
+                  <span className="text-sm">{step.id}</span>
+                </button>
+                <div className="absolute -bottom-8 text-center" style={{ width: "100px", marginLeft: "-45px" }}>
+                  <span className={cn(
+                    "text-xs font-medium",
+                    isStepActive(step.id) ? "text-blue-600" : "text-gray-700"
+                  )}>
+                    {step.name}
+                  </span>
+                </div>
+                {index !== steps.length - 1 && (
+                  <div className={cn(
+                    "absolute right-0 top-0 hidden h-0.5 w-full md:block",
+                    isStepCompleted(step.id)
+                      ? "bg-blue-600"
+                      : "bg-gray-300"
+                  )} style={{ transform: "translateY(20px)" }} />
+                )}
+              </li>
             ))}
           </ol>
         </nav>
