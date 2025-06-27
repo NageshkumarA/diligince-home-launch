@@ -116,6 +116,28 @@ const CreatePurchaseOrder: React.FC = () => {
     }
   }, [orderValue, taxPercentage, form]);
 
+  // Get complete form data for review - moved up to fix hoisting issue
+  const getCompleteFormData = (): FormValues => {
+    const partialData = form.getValues();
+    
+    // Ensure all required fields have values by providing defaults
+    return {
+      poNumber: partialData.poNumber || generatePONumber(),
+      vendor: partialData.vendor || '',
+      projectTitle: partialData.projectTitle || 'Industrial Equipment Procurement',
+      orderValue: partialData.orderValue || 0,
+      taxPercentage: partialData.taxPercentage || 0,
+      totalValue: partialData.totalValue || 0,
+      startDate: partialData.startDate || new Date(),
+      endDate: partialData.endDate || new Date(new Date().setDate(new Date().getDate() + 30)),
+      paymentTerms: partialData.paymentTerms || '',
+      specialInstructions: partialData.specialInstructions || '',
+      scopeOfWork: partialData.scopeOfWork || '',
+      deliverables: partialData.deliverables || [],
+      acceptanceCriteria: partialData.acceptanceCriteria || []
+    };
+  };
+
   // Handle step navigation
   const handleStepClick = (step: POStepType) => {
     setCurrentStep(step);
@@ -271,26 +293,6 @@ const CreatePurchaseOrder: React.FC = () => {
       return differenceInDays(endDate, startDate);
     }
     return 0;
-  };
-
-  // Get complete form data for review
-  const getCompleteFormData = (): FormValues => {
-    const formData = form.getValues();
-    return {
-      poNumber: formData.poNumber || '',
-      vendor: formData.vendor || '',
-      projectTitle: formData.projectTitle || '',
-      orderValue: formData.orderValue || 0,
-      taxPercentage: formData.taxPercentage || 0,
-      totalValue: formData.totalValue || 0,
-      startDate: formData.startDate || new Date(),
-      endDate: formData.endDate || new Date(),
-      paymentTerms: formData.paymentTerms || '',
-      specialInstructions: formData.specialInstructions,
-      scopeOfWork: formData.scopeOfWork || '',
-      deliverables: formData.deliverables || [],
-      acceptanceCriteria: formData.acceptanceCriteria || []
-    };
   };
 
   // Render different content based on current step
