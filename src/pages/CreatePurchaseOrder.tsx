@@ -24,7 +24,7 @@ export type POStepType = 1 | 2 | 3 | 4 | 5;
 
 // Define the form schema
 const formSchema = z.object({
-  poNumber: z.string(),
+  poNumber: z.string().optional().default(""),,
   vendor: z.string().min(1, "Vendor is required"),
   projectTitle: z.string().min(3, "Project title must be at least 3 characters"),
   orderValue: z.coerce.number().min(1, "Order value is required"),
