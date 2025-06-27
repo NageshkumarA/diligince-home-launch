@@ -24,7 +24,7 @@ export type POStepType = 1 | 2 | 3 | 4 | 5;
 
 // Define the form schema
 const formSchema = z.object({
-  poNumber: z.string().optional().default(""),
+  poNumber: z.string().optional(),
   vendor: z.string().min(1, "Vendor is required"),
   projectTitle: z.string().min(3, "Project title must be at least 3 characters"),
   orderValue: z.coerce.number().min(1, "Order value is required"),
@@ -135,7 +135,7 @@ const CreatePurchaseOrder: React.FC = () => {
     scopeOfWork: formData.scopeOfWork,
     deliverables: formData.deliverables,
     acceptanceCriteria: formData.acceptanceCriteria
-  } as formValues;
+  } as FormValues;
 };
 
   // Handle step navigation
