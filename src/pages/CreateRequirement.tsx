@@ -11,6 +11,8 @@ import PreviewStep from "@/components/requirement/steps/PreviewStep";
 import PublishStep from "@/components/requirement/steps/PublishStep";
 import SuccessScreen from "@/components/requirement/SuccessScreen";
 import { RequirementProvider } from "@/contexts/RequirementContext";
+import { StakeholderProvider } from "@/contexts/StakeholderContext";
+import { ApprovalProvider } from "@/contexts/ApprovalContext";
 import { Toaster } from "@/components/ui/sonner";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 
@@ -95,43 +97,47 @@ const CreateRequirement = () => {
   };
 
   return (
-    <RequirementProvider>
-      <ErrorBoundary>
-        <div className="flex min-h-screen flex-col bg-gray-50">
-          <IndustryHeader />
-          <div className="container mx-auto px-4 py-8 md:px-6 pt-20">
-            <div className="mb-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
-                    Create Procurement Requirement
-                  </h1>
-                  <p className="mt-2 text-lg text-gray-700">
-                    Enterprise-grade requirement management system
-                  </p>
+    <ApprovalProvider>
+      <StakeholderProvider>
+        <RequirementProvider>
+          <ErrorBoundary>
+            <div className="flex min-h-screen flex-col bg-gray-50">
+              <IndustryHeader />
+              <div className="container mx-auto px-4 py-8 md:px-6 pt-20">
+                <div className="mb-8">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
+                        Create Procurement Requirement
+                      </h1>
+                      <p className="mt-2 text-lg text-gray-700">
+                        Enterprise-grade requirement management system
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-500">Draft auto-saved</p>
+                      <p className="text-xs text-gray-400">Last saved: Just now</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-500">Draft auto-saved</p>
-                  <p className="text-xs text-gray-400">Last saved: Just now</p>
+
+                <RequirementStepIndicator 
+                  currentStep={currentStep} 
+                  onStepClick={handleGoToStep} 
+                />
+
+                <div className="mt-8 rounded-xl bg-white shadow-sm border border-gray-100">
+                  <div className="p-8">
+                    {renderStep()}
+                  </div>
                 </div>
               </div>
+              <Toaster />
             </div>
-
-            <RequirementStepIndicator 
-              currentStep={currentStep} 
-              onStepClick={handleGoToStep} 
-            />
-
-            <div className="mt-8 rounded-xl bg-white shadow-sm border border-gray-100">
-              <div className="p-8">
-                {renderStep()}
-              </div>
-            </div>
-          </div>
-          <Toaster />
-        </div>
-      </ErrorBoundary>
-    </RequirementProvider>
+          </ErrorBoundary>
+        </RequirementProvider>
+      </StakeholderProvider>
+    </ApprovalProvider>
   );
 };
 

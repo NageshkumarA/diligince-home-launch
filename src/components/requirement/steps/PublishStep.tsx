@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { useStakeholder } from "@/contexts/StakeholderContext";
+import { useApproval } from "@/contexts/ApprovalContext";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, AlertTriangle, Clock, Shield } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -26,10 +27,15 @@ interface PublishStepProps {
 const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
   const { formData, updateFormData, validateStep, stepErrors } = useRequirement();
   const { notifyStakeholders } = useStakeholder();
+  const { canPublishRequirement, getApprovalWorkflow, emergencyPublish } = useApproval();
   const [isPublishing, setIsPublishing] = useState(false);
 
   console.log("PublishStep rendered, formData:", formData);
 
+  // Check approval status
+  const approvalCheck = canPublishRequirement(formData);
+  const approvalWorkflow = getApprovalWorkflow(formData.title || 'unknown');
+  
   // Available evaluation criteria based on ISO 9001 procurement standards
   const availableEvaluationCriteria = [
     "Price/Cost Competitiveness",
@@ -54,13 +60,44 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
     updateFormData({ evaluationCriteria: updatedCriteria });
   };
 
+  const handleEmergencyPublish = async () => {
+    if (!formData.isUrgent) {
+      toast.error("Emergency publish is only available for urgent requirements");
+      return;
+    }
+    
+    try {
+      setIsPublishing(true);
+      const success = await emergencyPublish(formData.title || 'unknown');
+      if (success) {
+        // Notify stakeholders
+        if (notifyStakeholders) {
+          notifyStakeholders(formData);
+        }
+        toast.success("Requirement published under emergency protocol!");
+        onNext();
+      }
+    } catch (error) {
+      console.error("Emergency publish failed:", error);
+      toast.error("Emergency publish failed. Please try again.");
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   const handlePublish = async () => {
     try {
       console.log("Starting publish process...");
       setIsPublishing(true);
       
       if (validateStep(6)) {
-        console.log("Validation passed, proceeding with publish...");
+        // Check approval status
+        if (!approvalCheck.canPublish) {
+          toast.error(approvalCheck.reason || "Approval required before publishing");
+          return;
+        }
+        
+        console.log("Validation and approval checks passed, proceeding with publish...");
         
         // Simulate API call with timeout
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -101,6 +138,39 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
         <p className="text-gray-600">
           Configure final settings and publish your requirement. Relevant stakeholders will be automatically notified.
         </p>
+        
+        {/* Approval Status Display */}
+        {approvalWorkflow && (
+          <div className={cn(
+            "p-4 rounded-lg border",
+            approvalCheck.canPublish 
+              ? "bg-green-50 border-green-200" 
+              : "bg-yellow-50 border-yellow-200"
+          )}>
+            <div className="flex items-center gap-2 mb-2">
+              {approvalCheck.canPublish ? (
+                <Shield className="h-5 w-5 text-green-600" />
+              ) : (
+                <Clock className="h-5 w-5 text-yellow-600" />
+              )}
+              <h3 className="font-medium">
+                {approvalCheck.canPublish ? "Approval Completed" : "Approval Required"}
+              </h3>
+            </div>
+            {!approvalCheck.canPublish && (
+              <p className="text-sm text-gray-600 mb-3">{approvalCheck.reason}</p>
+            )}
+            <div className="text-sm">
+              <p>Workflow Status: <span className="font-medium">{approvalWorkflow.status}</span></p>
+              <p>Completed Approvals: {approvalWorkflow.completedApprovals}/{approvalWorkflow.totalApprovals}</p>
+              {approvalWorkflow.isUrgent && approvalWorkflow.emergencyPublishDeadline && (
+                <p className="text-orange-600 font-medium">
+                  Emergency Deadline: {format(new Date(approvalWorkflow.emergencyPublishDeadline), "PPp")}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="space-y-6">
@@ -280,14 +350,38 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
             Save as Draft
           </Button>
         </div>
-        <Button 
-          onClick={handlePublish}
-          disabled={isPublishing}
-          className="bg-blue-600 text-white hover:bg-blue-700"
-        >
-          {isPublishing ? "Publishing..." : "Publish & Notify Stakeholders"}
-        </Button>
+        <div className="flex items-center gap-3">
+          {formData.isUrgent && !approvalCheck.canPublish && (
+            <Button 
+              onClick={handleEmergencyPublish}
+              disabled={isPublishing}
+              variant="outline"
+              className="bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100"
+            >
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              Emergency Publish
+            </Button>
+          )}
+          <Button 
+            onClick={handlePublish}
+            disabled={isPublishing || !approvalCheck.canPublish}
+            className="bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400"
+          >
+            {isPublishing ? "Publishing..." : "Publish & Notify Stakeholders"}
+          </Button>
+        </div>
       </div>
+      
+      {!approvalCheck.canPublish && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-yellow-600" />
+            <p className="text-sm text-yellow-800">
+              {approvalCheck.reason}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
