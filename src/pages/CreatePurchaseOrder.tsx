@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -126,25 +126,54 @@ const CreatePurchaseOrder: React.FC = () => {
     }
   };
 
-  // Handle next step
+  // Handle next step and form submission
   const handleNext = async () => {
     if (currentStep === 5) {
       // Final step - submit the form
-      const isValid = await form.trigger();
-      if (isValid) {
-        const formData = form.getValues();
-        console.log("Form data:", formData);
-        console.log("ISO Terms:", selectedISOTerms);
-        console.log("Custom Terms:", customISOTerms);
-        
+      try {
+        const isValid = await form.trigger();
+        if (isValid) {
+          const formData = form.getValues();
+          
+          // Create the purchase order object
+          const purchaseOrder = {
+            ...formData,
+            isoTerms: selectedISOTerms,
+            customTerms: customISOTerms,
+            status: 'issued',
+            createdAt: new Date().toISOString(),
+          };
+          
+          console.log("Creating Purchase Order:", purchaseOrder);
+          
+          // Show success message
+          toast({
+            title: "Purchase Order Created Successfully!",
+            description: `PO ${formData.poNumber} has been created and issued to the vendor.`,
+          });
+          
+          // Here you would typically navigate to the next stage or dashboard
+          // For now, we'll just show success
+          setTimeout(() => {
+            window.location.href = '/industry-workflows';
+          }, 2000);
+          
+        } else {
+          // Show validation errors
+          const errors = form.formState.errors;
+          console.log("Form validation errors:", errors);
+          
+          toast({
+            title: "Please Fix Form Errors",
+            description: "Some required fields are missing or invalid. Please review the form.",
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
+        console.error("Error creating purchase order:", error);
         toast({
-          title: "Purchase Order Created",
-          description: "Your purchase order has been created successfully."
-        });
-      } else {
-        toast({
-          title: "Validation Error",
-          description: "Please check the form for errors.",
+          title: "Error Creating Purchase Order",
+          description: "There was an error creating the purchase order. Please try again.",
           variant: "destructive"
         });
       }
@@ -158,13 +187,30 @@ const CreatePurchaseOrder: React.FC = () => {
 
   // Handle save as draft - no validation required
   const handleSaveAsDraft = () => {
-    const formData = form.getValues();
-    console.log("Saving draft:", formData);
-    
-    toast({
-      title: "Progress Saved",
-      description: "Your purchase order has been saved as draft."
-    });
+    try {
+      const formData = form.getValues();
+      const draftData = {
+        ...formData,
+        isoTerms: selectedISOTerms,
+        customTerms: customISOTerms,
+        status: 'draft',
+        savedAt: new Date().toISOString(),
+      };
+      
+      console.log("Saving draft:", draftData);
+      
+      toast({
+        title: "Draft Saved Successfully",
+        description: "Your purchase order has been saved as a draft."
+      });
+    } catch (error) {
+      console.error("Error saving draft:", error);
+      toast({
+        title: "Error Saving Draft",
+        description: "There was an error saving your draft. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   // Handle adding a deliverable
