@@ -120,10 +120,8 @@ const CreatePurchaseOrder: React.FC = () => {
   const getCompleteFormData = (): FormValues => {
     const formData = form.getValues();
 
-    const finalPoNumber = formData.poNumber || generatePONumber();
-
-    const completeData: FormValues = {
-      poNumber: finalPoNumber,
+    const completeData = {
+      poNumber: formData.poNumber || generatePONumber(),
       vendor: formData.vendor || '',
       projectTitle: formData.projectTitle || 'Industrial Equipment Procurement',
       orderValue: formData.orderValue || 0,
@@ -138,7 +136,7 @@ const CreatePurchaseOrder: React.FC = () => {
       acceptanceCriteria: formData.acceptanceCriteria || []
     };
 
-    return completeData;
+    return completeData as FormValues;
   };
 
   // Handle step navigation
