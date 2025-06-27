@@ -222,18 +222,19 @@ const CreatePurchaseOrder: React.FC = () => {
                     <CardTitle className="text-lg font-semibold text-gray-900">Purchase Order Details</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6 p-6">
-                    <FormField control={form.control} name="poNumber" render={({ field }) => (
-                      <FormItem>
+                    <FormField control={form.control} name="poNumber" render={({
+                    field
+                  }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">PO Number*</FormLabel>
                         <FormControl>
                           <Input {...field} readOnly className="bg-gray-50 border-gray-200" />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )} />
+                      </FormItem>} />
                     
-                    <FormField control={form.control} name="vendor" render={({ field }) => (
-                      <FormItem>
+                    <FormField control={form.control} name="vendor" render={({
+                    field
+                  }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">Vendor*</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -242,30 +243,28 @@ const CreatePurchaseOrder: React.FC = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {vendors.map(vendor => (
-                              <SelectItem key={vendor.id} value={vendor.id}>
+                            {vendors.map(vendor => <SelectItem key={vendor.id} value={vendor.id}>
                                 {vendor.name}
-                              </SelectItem>
-                            ))}
+                              </SelectItem>)}
                           </SelectContent>
                         </Select>
                         <FormMessage />
-                      </FormItem>
-                    )} />
+                      </FormItem>} />
                     
-                    <FormField control={form.control} name="projectTitle" render={({ field }) => (
-                      <FormItem>
+                    <FormField control={form.control} name="projectTitle" render={({
+                    field
+                  }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">Project Title*</FormLabel>
                         <FormControl>
                           <Input {...field} className="border-gray-200" />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )} />
+                      </FormItem>} />
                     
                     <div className="grid grid-cols-2 gap-4">
-                      <FormField control={form.control} name="orderValue" render={({ field }) => (
-                        <FormItem>
+                      <FormField control={form.control} name="orderValue" render={({
+                      field
+                    }) => <FormItem>
                           <FormLabel className="text-sm font-medium text-gray-700">Order Value*</FormLabel>
                           <FormControl>
                             <div className="relative">
@@ -274,11 +273,11 @@ const CreatePurchaseOrder: React.FC = () => {
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )} />
+                        </FormItem>} />
                       
-                      <FormField control={form.control} name="taxPercentage" render={({ field }) => (
-                        <FormItem>
+                      <FormField control={form.control} name="taxPercentage" render={({
+                      field
+                    }) => <FormItem>
                           <FormLabel className="text-sm font-medium text-gray-700">Tax Percentage</FormLabel>
                           <FormControl>
                             <div className="relative">
@@ -287,12 +286,12 @@ const CreatePurchaseOrder: React.FC = () => {
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )} />
+                        </FormItem>} />
                     </div>
                     
-                    <FormField control={form.control} name="totalValue" render={({ field }) => (
-                      <FormItem>
+                    <FormField control={form.control} name="totalValue" render={({
+                    field
+                  }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">Total Value</FormLabel>
                         <FormControl>
                           <div className="relative">
@@ -301,12 +300,12 @@ const CreatePurchaseOrder: React.FC = () => {
                           </div>
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )} />
+                      </FormItem>} />
                     
                     <div className="grid grid-cols-2 gap-4">
-                      <FormField control={form.control} name="startDate" render={({ field }) => (
-                        <FormItem className="flex flex-col">
+                      <FormField control={form.control} name="startDate" render={({
+                      field
+                    }) => <FormItem className="flex flex-col">
                           <FormLabel className="text-sm font-medium text-gray-700">Start Date*</FormLabel>
                           <Popover>
                             <PopoverTrigger asChild>
@@ -322,11 +321,11 @@ const CreatePurchaseOrder: React.FC = () => {
                             </PopoverContent>
                           </Popover>
                           <FormMessage />
-                        </FormItem>
-                      )} />
+                        </FormItem>} />
                       
-                      <FormField control={form.control} name="endDate" render={({ field }) => (
-                        <FormItem className="flex flex-col">
+                      <FormField control={form.control} name="endDate" render={({
+                      field
+                    }) => <FormItem className="flex flex-col">
                           <FormLabel className="text-sm font-medium text-gray-700">End Date*</FormLabel>
                           <Popover>
                             <PopoverTrigger asChild>
@@ -345,12 +344,12 @@ const CreatePurchaseOrder: React.FC = () => {
                           {startDate && endDate && <p className="text-sm text-gray-500 mt-1">
                               Duration: {getDuration()} day(s)
                             </p>}
-                        </FormItem>
-                      )} />
+                        </FormItem>} />
                     </div>
                     
-                    <FormField control={form.control} name="paymentTerms" render={({ field }) => (
-                      <FormItem>
+                    <FormField control={form.control} name="paymentTerms" render={({
+                    field
+                  }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">Payment Terms*</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -368,18 +367,17 @@ const CreatePurchaseOrder: React.FC = () => {
                           </SelectContent>
                         </Select>
                         <FormMessage />
-                      </FormItem>
-                    )} />
+                      </FormItem>} />
                     
-                    <FormField control={form.control} name="specialInstructions" render={({ field }) => (
-                      <FormItem>
+                    <FormField control={form.control} name="specialInstructions" render={({
+                    field
+                  }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">Special Instructions</FormLabel>
                         <FormControl>
                           <Textarea className="min-h-[100px] border-gray-200 bg-gray-50" />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )} />
+                      </FormItem>} />
                   </CardContent>
                 </Card>
                 
@@ -388,67 +386,63 @@ const CreatePurchaseOrder: React.FC = () => {
                     <CardTitle className="text-lg font-semibold text-gray-900">Scope of Work</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6 p-6">
-                    <FormField control={form.control} name="scopeOfWork" render={({ field }) => (
-                      <FormItem>
+                    <FormField control={form.control} name="scopeOfWork" render={({
+                    field
+                  }) => <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">Scope of Work*</FormLabel>
                         <FormControl>
                           <Textarea className="min-h-[200px] border-gray-200 bg-gray-50" />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )} />
+                      </FormItem>} />
                     
                     <div>
                       <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-medium text-gray-900 text-xl">Deliverables</h3>
+                        <h3 className="font-medium text-gray-900 text-lg">Deliverables</h3>
                         <Button type="button" size="sm" variant="outline" onClick={handleAddDeliverable} className="border-gray-200 bg-blue-700 hover:bg-blue-600 text-gray-50">
                           <Plus className="h-4 w-4 mr-1" /> Add Deliverable
                         </Button>
                       </div>
                       
                       <div className="space-y-3">
-                        {form.getValues("deliverables").map((deliverable, index) => (
-                          <div key={deliverable.id} className="flex gap-2">
-                            <FormField control={form.control} name={`deliverables.${index}.description`} render={({ field }) => (
-                              <FormItem className="flex-1">
+                        {form.getValues("deliverables").map((deliverable, index) => <div key={deliverable.id} className="flex gap-2">
+                            <FormField control={form.control} name={`deliverables.${index}.description`} render={({
+                          field
+                        }) => <FormItem className="flex-1">
                                 <FormControl>
                                   <Input {...field} placeholder="Enter deliverable description..." className="border-gray-200" />
                                 </FormControl>
                                 <FormMessage />
-                              </FormItem>
-                            )} />
+                              </FormItem>} />
                             <Button type="button" size="sm" variant="outline" onClick={() => handleRemoveDeliverable(deliverable.id)} className="border-red-200 text-red-600 hover:bg-red-50">
                               <Trash2 className="h-4 w-4" />
                             </Button>
-                          </div>
-                        ))}
+                          </div>)}
                       </div>
                     </div>
                     
                     <div>
                       <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-medium text-gray-900 text-xl">Acceptance Criteria</h3>
+                        <h3 className="font-medium text-gray-900 text-lg">Acceptance Criteria</h3>
                         <Button type="button" size="sm" variant="outline" onClick={handleAddCriteria} className="border-gray-200 text-gray-50 bg-blue-700 hover:bg-blue-600">
                           <Plus className="h-4 w-4 mr-1" /> Add Criteria
                         </Button>
                       </div>
                       
                       <div className="space-y-3">
-                        {form.getValues("acceptanceCriteria").map((criteria, index) => (
-                          <div key={criteria.id} className="flex gap-2">
-                            <FormField control={form.control} name={`acceptanceCriteria.${index}.description`} render={({ field }) => (
-                              <FormItem className="flex-1">
+                        {form.getValues("acceptanceCriteria").map((criteria, index) => <div key={criteria.id} className="flex gap-2">
+                            <FormField control={form.control} name={`acceptanceCriteria.${index}.description`} render={({
+                          field
+                        }) => <FormItem className="flex-1">
                                 <FormControl>
                                   <Input {...field} placeholder="Enter acceptance criteria..." className="border-gray-200" />
                                 </FormControl>
                                 <FormMessage />
-                              </FormItem>
-                            )} />
+                              </FormItem>} />
                             <Button type="button" size="sm" variant="outline" onClick={() => handleRemoveCriteria(criteria.id)} className="border-red-200 text-red-600 hover:bg-red-50">
                               <Trash2 className="h-4 w-4" />
                             </Button>
-                          </div>
-                        ))}
+                          </div>)}
                       </div>
                     </div>
                   </CardContent>
@@ -457,12 +451,7 @@ const CreatePurchaseOrder: React.FC = () => {
               
               {/* Right Panel - ISO 9001 Terms */}
               <div>
-                <ISO9001TermsSection
-                  selectedTerms={selectedISOTerms}
-                  onTermsChange={setSelectedISOTerms}
-                  customTerms={customISOTerms}
-                  onCustomTermsChange={setCustomISOTerms}
-                />
+                <ISO9001TermsSection selectedTerms={selectedISOTerms} onTermsChange={setSelectedISOTerms} customTerms={customISOTerms} onCustomTermsChange={setCustomISOTerms} />
               </div>
             </div>
             
