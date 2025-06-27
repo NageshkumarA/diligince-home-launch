@@ -128,29 +128,49 @@ const IndustryProjectWorkflow = () => {
   };
 
   const handleGeneratePO = () => {
-    // In real app, this would navigate to CreatePurchaseOrder page or trigger PO generation
-    const poNumber = `PO-${Date.now()}`;
-    setProjectWorkflow(prev => ({
-      ...prev,
-      purchaseOrder: {
-        id: `po${Date.now()}`,
-        poNumber,
-        vendorId: prev.acceptedQuote?.vendorId || '',
-        amount: prev.acceptedQuote?.quoteAmount || 0,
-        status: 'sent',
-        createdDate: new Date().toISOString(),
-        terms: 'Standard payment terms apply'
-      },
-      timeline: [...prev.timeline, {
-        id: `t${Date.now()}`,
-        type: 'po_generated',
-        title: 'Purchase Order Generated',
-        description: `PO ${poNumber} sent to vendor`,
-        timestamp: new Date().toISOString(),
-        status: 'completed'
-      }]
-    }));
-    showSuccess('Purchase Order generated and sent to vendor!');
+    // Navigate to CreatePurchaseOrder page with pre-populated data
+    const acceptedQuote = projectWorkflow.acceptedQuote;
+    if (acceptedQuote) {
+      const queryParams = new URLSearchParams({
+        vendorId: acceptedQuote.vendorId,
+        vendorName: acceptedQuote.vendorName,
+        amount: acceptedQuote.quoteAmount.toString(),
+        projectTitle: projectWorkflow.projectTitle,
+        requirementId: projectWorkflow.requirementId
+      });
+      navigate(`/create-purchase-order?${queryParams.toString()}`);
+    }
+  };
+
+  const handleUploadPO = (file: File, poNumber: string) => {
+    // Handle manual PO upload
+    const acceptedQuote = projectWorkflow.acceptedQuote;
+    if (acceptedQuote) {
+      setProjectWorkflow(prev => ({
+        ...prev,
+        purchaseOrder: {
+          id: `po${Date.now()}`,
+          poNumber,
+          vendorId: acceptedQuote.vendorId,
+          amount: acceptedQuote.quoteAmount,
+          status: 'sent',
+          createdDate: new Date().toISOString(),
+          terms: 'Manual upload - terms as per uploaded document',
+          poType: 'uploaded',
+          uploadedDocument: file.name,
+          iso9001Compliance: true
+        },
+        timeline: [...prev.timeline, {
+          id: `t${Date.now()}`,
+          type: 'po_generated',
+          title: 'Manual Purchase Order Uploaded',
+          description: `PO ${poNumber} uploaded and sent to vendor`,
+          timestamp: new Date().toISOString(),
+          status: 'completed'
+        }]
+      }));
+      showSuccess(`Purchase Order ${poNumber} uploaded and sent to vendor successfully!`);
+    }
   };
 
   const handleReleasePayment = (milestoneId: string) => {
@@ -277,7 +297,8 @@ const IndustryProjectWorkflow = () => {
           {isQuoteAccepted && !isPOGenerated && projectWorkflow.acceptedQuote && (
             <POTriggerCard 
               acceptedQuote={projectWorkflow.acceptedQuote} 
-              onGeneratePO={handleGeneratePO} 
+              onGeneratePO={handleGeneratePO}
+              onUploadPO={handleUploadPO}
             />
           )}
 

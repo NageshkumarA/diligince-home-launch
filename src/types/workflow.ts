@@ -20,6 +20,10 @@ export interface PurchaseOrder {
   status: 'draft' | 'sent' | 'accepted' | 'in_progress' | 'completed';
   createdDate: string;
   terms: string;
+  poType?: 'generated' | 'uploaded';
+  uploadedDocument?: string;
+  iso9001Compliance?: boolean;
+  termsAndConditions?: string[];
 }
 
 export interface PaymentMilestone {
