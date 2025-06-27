@@ -237,7 +237,7 @@ export const useStakeholder = () => {
       getApplicationsForRequirement: () => [],
       getMatchedStakeholders: () => [],
       notifyStakeholders: () => console.warn("StakeholderProvider not available"),
-      addStakeholderProvider: () => "",
+      addStakeholderProfile: () => "",
       sendInvitation: () => Promise.resolve(),
       getInvitationStatus: () => null
     } as StakeholderContextType;
