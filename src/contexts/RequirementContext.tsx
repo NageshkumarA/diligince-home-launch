@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
 export interface RequirementFormData {
@@ -14,7 +15,17 @@ export interface RequirementFormData {
   equipmentType?: string;
   pickupLocation?: string;
   deliveryLocation?: string;
-  documents?: { name: string; url: string; }[];
+  documents?: { 
+    id: string;
+    name: string; 
+    url: string;
+    type: string;
+    size: number;
+    documentType: "specification" | "drawing" | "reference" | "compliance" | "other";
+    version: number;
+    uploadedAt: Date;
+    uploadedBy: string;
+  }[];
   submissionDeadline?: Date;
   evaluationCriteria?: string[];
   visibility?: "all" | "selected";
@@ -31,10 +42,34 @@ export interface RequirementFormData {
   // Add new approval-related fields
   isUrgent?: boolean;
   approvalWorkflowId?: string;
-  complianceRequired?: boolean;
   approvalStatus?: 'not_required' | 'pending' | 'approved' | 'rejected';
   emergencyPublished?: boolean;
   approvalDeadline?: Date;
+  
+  // Expert-specific fields
+  certifications?: string[];
+  duration?: number;
+  startDate?: Date;
+  endDate?: Date;
+  
+  // Product-specific fields
+  technicalStandards?: string[];
+  productDeliveryDate?: Date;
+  qualityRequirements?: string;
+  
+  // Service-specific fields
+  performanceMetrics?: string;
+  serviceStartDate?: Date;
+  serviceEndDate?: Date;
+  serviceBudget?: number;
+  location?: string;
+  
+  // Logistics-specific fields
+  weight?: number;
+  dimensions?: string;
+  pickupDate?: Date;
+  deliveryDate?: Date;
+  specialHandling?: string;
 }
 
 interface RequirementContextType {
@@ -100,6 +135,12 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
           }
           if (!formData.scopeOfWork?.trim()) {
             errors.scopeOfWork = "Scope of work is required";
+          }
+          if (!formData.performanceMetrics?.trim()) {
+            errors.performanceMetrics = "Performance metrics are required";
+          }
+          if (!formData.location?.trim()) {
+            errors.location = "Location is required";
           }
         } else if (formData.category === "logistics") {
           if (!formData.equipmentType?.trim()) {
