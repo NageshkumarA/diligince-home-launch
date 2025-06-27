@@ -1,129 +1,120 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, FileText, User, Calendar, DollarSign } from 'lucide-react';
+import { CheckCircle, Building, DollarSign, Calendar, Star } from 'lucide-react';
 import { VendorQuote } from '@/types/workflow';
-import { Checkbox } from '@/components/ui/checkbox';
+
 interface POTriggerCardProps {
   acceptedQuote: VendorQuote;
   onGeneratePO: () => void;
 }
-export const POTriggerCard = ({
-  acceptedQuote,
-  onGeneratePO
-}: POTriggerCardProps) => {
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [paymentTermsAccepted, setPaymentTermsAccepted] = useState(false);
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  };
-  const handleTermsChange = (checked: boolean | "indeterminate") => {
-    setTermsAccepted(checked === true);
-  };
-  const handlePaymentTermsChange = (checked: boolean | "indeterminate") => {
-    setPaymentTermsAccepted(checked === true);
-  };
-  const canGeneratePO = termsAccepted && paymentTermsAccepted;
-  return <Card className="w-full">
-      <CardHeader className="bg-blue-400">
-        <CardTitle className="flex items-center gap-2">
-          <CheckCircle className="h-5 w-5 text-green-600" />
+
+export const POTriggerCard: React.FC<POTriggerCardProps> = ({ acceptedQuote, onGeneratePO }) => {
+  return (
+    <Card className="bg-white shadow-sm border border-gray-200">
+      <CardHeader className="border-b border-gray-100 bg-green-50">
+        <CardTitle className="text-xl font-semibold text-green-900 flex items-center gap-2">
+          <CheckCircle className="h-5 w-5" />
           Quote Accepted - Generate Purchase Order
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6 bg-blue-400">
-        {/* Accepted Quote Summary */}
-        <div className="p-4 rounded-lg border border-green-200 bg-blue-400">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-green-800 text-2xl">Accepted Vendor Quote</h3>
-            <Badge className="bg-green-600">Accepted</Badge>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              <span className="font-medium">{acceptedQuote.vendorName}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
-              <span className="font-medium">{formatCurrency(acceptedQuote.quoteAmount)}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <span>{acceptedQuote.deliveryTimeWeeks} weeks delivery</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span>Rating: {acceptedQuote.vendorRating}/5</span>
+      <CardContent className="p-6">
+        <div className="bg-green-50 rounded-lg p-6 mb-6 border border-green-200">
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Accepted Vendor Quote</h3>
+              <Badge className="bg-green-100 text-green-700 font-medium">Accepted</Badge>
             </div>
           </div>
           
-          <div className="mt-3">
-            <p className="text-sm text-gray-700">
-              <strong>Proposal Summary:</strong> {acceptedQuote.proposalSummary}
-            </p>
-          </div>
-        </div>
-
-        {/* Payment Schedule Preview */}
-        <div className="border rounded-lg p-4">
-          <h4 className="font-medium mb-3">Payment Schedule Preview</h4>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>30% Advance Payment:</span>
-              <span className="font-medium">{formatCurrency(acceptedQuote.quoteAmount * 0.3)}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Building className="h-5 w-5 text-gray-600" />
+                <div>
+                  <div className="font-semibold text-gray-900">{acceptedQuote.vendorName}</div>
+                  <div className="text-sm text-gray-600">Selected Vendor</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <DollarSign className="h-5 w-5 text-gray-600" />
+                <div>
+                  <div className="font-semibold text-xl text-gray-900">
+                    ${acceptedQuote.quoteAmount.toLocaleString()}
+                  </div>
+                  <div className="text-sm text-gray-600">Contract Value</div>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span>40% Mid-project Payment:</span>
-              <span className="font-medium">{formatCurrency(acceptedQuote.quoteAmount * 0.4)}</span>
+            
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Calendar className="h-5 w-5 text-gray-600" />
+                <div>
+                  <div className="font-semibold text-gray-900">{acceptedQuote.deliveryTimeWeeks} weeks delivery</div>
+                  <div className="text-sm text-gray-600">Expected Timeline</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <Star className="h-5 w-5 text-yellow-500 fill-current" />
+                <div>
+                  <div className="font-semibold text-gray-900">Rating: {acceptedQuote.vendorRating}/5</div>
+                  <div className="text-sm text-gray-600">Vendor Performance</div>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span>20% Completion Payment:</span>
-              <span className="font-medium">{formatCurrency(acceptedQuote.quoteAmount * 0.2)}</span>
-            </div>
-            <div className="flex justify-between text-orange-600">
-              <span>10% Retention (30 days):</span>
-              <span className="font-medium">{formatCurrency(acceptedQuote.quoteAmount * 0.1)}</span>
-            </div>
-            <hr className="my-2" />
-            <div className="flex justify-between font-semibold">
-              <span>Total Project Value:</span>
-              <span>{formatCurrency(acceptedQuote.quoteAmount)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Terms and Conditions */}
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <Checkbox id="terms" checked={termsAccepted} onCheckedChange={handleTermsChange} />
-            <label htmlFor="terms" className="text-sm">
-              I accept the standard terms and conditions for this purchase order
-            </label>
           </div>
           
-          <div className="flex items-center space-x-2">
-            <Checkbox id="payment-terms" checked={paymentTermsAccepted} onCheckedChange={handlePaymentTermsChange} />
-            <label htmlFor="payment-terms" className="text-sm">
-              I agree to the payment schedule and retention terms outlined above
-            </label>
+          <div className="mt-4 p-4 bg-white rounded border border-green-200">
+            <h4 className="font-medium text-gray-900 mb-2">Proposal Summary:</h4>
+            <p className="text-gray-700">{acceptedQuote.proposalSummary}</p>
           </div>
         </div>
 
-        {/* Generate PO Button */}
-        <div className="pt-4">
-          <Button onClick={onGeneratePO} disabled={!canGeneratePO} size="lg" className="w-full bg-blue-700 hover:bg-blue-600">
-            <FileText className="h-4 w-4 mr-2" />
+        <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
+          <h3 className="text-lg font-semibold text-blue-900 mb-4">Payment Schedule Preview</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-700">30% Advance Payment:</span>
+              <span className="font-semibold text-gray-900">
+                ${(acceptedQuote.quoteAmount * 0.3).toLocaleString()}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-700">40% Mid-project Payment:</span>
+              <span className="font-semibold text-gray-900">
+                ${(acceptedQuote.quoteAmount * 0.4).toLocaleString()}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-700">20% Completion Payment:</span>
+              <span className="font-semibold text-gray-900">
+                ${(acceptedQuote.quoteAmount * 0.2).toLocaleString()}
+              </span>
+            </div>
+            <div className="flex justify-between items-center border-t border-blue-200 pt-3">
+              <span className="text-gray-700">10% Retention (30 days):</span>
+              <span className="font-semibold text-gray-900">
+                ${(acceptedQuote.quoteAmount * 0.1).toLocaleString()}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center mt-6">
+          <Button 
+            onClick={onGeneratePO}
+            size="lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3"
+          >
             Generate Purchase Order
           </Button>
-          {!canGeneratePO && <p className="text-sm text-gray-500 mt-2 text-center">
-              Please accept both terms and conditions to continue
-            </p>}
         </div>
       </CardContent>
-    </Card>;
+    </Card>
+  );
 };

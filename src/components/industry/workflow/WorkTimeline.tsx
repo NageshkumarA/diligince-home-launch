@@ -1,90 +1,84 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Wrench, CheckCircle, Star, FileText } from 'lucide-react';
+import { CheckCircle, Clock, Wrench } from 'lucide-react';
 import { WorkflowEvent } from '@/types/workflow';
+
 interface WorkTimelineProps {
   timeline: WorkflowEvent[];
-  workStatus: 'not_started' | 'in_progress' | 'completed' | 'approved';
+  workStatus: string;
 }
-export const WorkTimeline = ({
-  timeline,
-  workStatus
-}: WorkTimelineProps) => {
-  const getStatusIcon = (type: WorkflowEvent['type'], status: WorkflowEvent['status']) => {
-    if (status === 'completed') {
-      return <CheckCircle className="h-5 w-5 text-green-600" />;
-    }
-    switch (type) {
-      case 'work_started':
-        return <Clock className="h-5 w-5 text-blue-600" />;
-      case 'milestone_completed':
-        return <Wrench className="h-5 w-5 text-orange-600" />;
-      case 'work_completed':
-        return <CheckCircle className="h-5 w-5 text-green-600" />;
-      case 'payment_released':
-        return <Star className="h-5 w-5 text-yellow-600" />;
-      default:
-        return <FileText className="h-5 w-5 text-gray-600" />;
-    }
-  };
-  const getStatusBadge = (status: WorkflowEvent['status']) => {
+
+export const WorkTimeline: React.FC<WorkTimelineProps> = ({ timeline, workStatus }) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
+      case 'not_started':
+        return <Badge className="bg-gray-100 text-gray-700">NOT STARTED</Badge>;
+      case 'in_progress':
+        return <Badge className="bg-blue-100 text-blue-700">IN PROGRESS</Badge>;
       case 'completed':
-        return <Badge className="bg-green-600">Completed</Badge>;
-      case 'current':
-        return <Badge className="bg-blue-600">In Progress</Badge>;
-      case 'pending':
-        return <Badge variant="outline">Pending</Badge>;
+        return <Badge className="bg-green-100 text-green-700">COMPLETED</Badge>;
       default:
-        return null;
+        return <Badge className="bg-gray-100 text-gray-700">NOT STARTED</Badge>;
     }
   };
-  return <Card className="w-full bg-blue-500">
-      <CardHeader className="bg-blue-500">
-        <CardTitle className="flex items-center gap-2">
+
+  return (
+    <Card className="bg-white shadow-sm border border-gray-200">
+      <CardHeader className="border-b border-gray-100 bg-blue-50">
+        <CardTitle className="text-xl font-semibold text-blue-900 flex items-center gap-2">
           <Wrench className="h-5 w-5" />
           Work Progress Timeline
         </CardTitle>
       </CardHeader>
-      <CardContent className="bg-blue-500">
-        <div className="relative">
-          {/* Timeline line */}
-          <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200"></div>
-          
-          <div className="space-y-6">
-            {timeline.map((event, index) => <div key={event.id} className="relative flex items-start gap-4">
-                {/* Timeline dot */}
-                <div className="relative z-10 flex-shrink-0 w-12 h-12 bg-white border-2 border-gray-200 rounded-full flex items-center justify-center">
-                  {getStatusIcon(event.type, event.status)}
+      <CardContent className="p-6">
+        <div className="space-y-6">
+          {timeline.map((event, index) => (
+            <div key={event.id} className="flex gap-4">
+              <div className="flex flex-col items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  event.status === 'completed' ? 'bg-green-100' : 'bg-blue-100'
+                }`}>
+                  {event.status === 'completed' ? (
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <Clock className="h-5 w-5 text-blue-600" />
+                  )}
                 </div>
-                
-                {/* Event content */}
-                <div className="flex-1 min-w-0 pb-8">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium text-xl text-gray-50">{event.title}</h3>
-                    {getStatusBadge(event.status)}
-                  </div>
-                  
-                  <p className="text-sm mb-2 text-gray-300">{event.description}</p>
-                  
-                  {event.timestamp && <p className="text-xs text-gray-300">
-                      {new Date(event.timestamp).toLocaleString()}
-                    </p>}
+                {index < timeline.length - 1 && (
+                  <div className="w-0.5 h-12 bg-gray-200 mt-2"></div>
+                )}
+              </div>
+              
+              <div className="flex-1 pb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-semibold text-gray-900">{event.title}</h3>
+                  <Badge className={
+                    event.status === 'completed' 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-blue-100 text-blue-700'
+                  }>
+                    {event.status === 'completed' ? 'Completed' : 'In Progress'}
+                  </Badge>
                 </div>
-              </div>)}
-          </div>
+                <p className="text-gray-600 mb-2">{event.description}</p>
+                <p className="text-sm text-gray-500">
+                  {new Date(event.timestamp).toLocaleDateString()} at{' '}
+                  {new Date(event.timestamp).toLocaleTimeString()}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
         
-        {/* Overall Status */}
-        <div className="mt-6 p-4 rounded-lg bg-blue-400">
+        <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between">
-            <span className="font-medium">Overall Work Status:</span>
-            <Badge className={workStatus === 'approved' ? 'bg-green-600' : workStatus === 'completed' ? 'bg-blue-600' : workStatus === 'in_progress' ? 'bg-orange-600' : 'bg-gray-600'}>
-              {workStatus.replace('_', ' ').toUpperCase()}
-            </Badge>
+            <span className="font-semibold text-gray-900">Overall Work Status:</span>
+            {getStatusBadge(workStatus)}
           </div>
         </div>
       </CardContent>
-    </Card>;
+    </Card>
+  );
 };
