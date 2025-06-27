@@ -1,7 +1,6 @@
 
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
-import { useNavigate } from "react-router-dom";
 import IndustryHeader from "@/components/industry/IndustryHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Filter, Plus, Star, MapPin, Phone, Mail, Building } from "lucide-react";
+import { useModal } from "@/hooks/useModal";
+import { InviteStakeholderModal } from "@/components/stakeholder/InviteStakeholderModal";
+import { ProjectSelectionModal } from "@/components/stakeholder/ProjectSelectionModal";
+import { StakeholderStatusBadge } from "@/components/stakeholder/StakeholderStatusBadge";
 
 interface Stakeholder {
   id: string;
@@ -22,6 +25,7 @@ interface Stakeholder {
   phone: string;
   completedProjects: number;
   initials: string;
+  status: 'invited' | 'pre-qualified' | 'approved' | 'active' | 'suspended' | 'rejected';
 }
 
 const mockStakeholders: Stakeholder[] = [
@@ -35,7 +39,8 @@ const mockStakeholders: Stakeholder[] = [
     email: "contact@techvalve.com",
     phone: "+1 (555) 123-4567",
     completedProjects: 28,
-    initials: "TV"
+    initials: "TV",
+    status: 'approved'
   },
   {
     id: "2",
@@ -47,7 +52,8 @@ const mockStakeholders: Stakeholder[] = [
     email: "experts@engiconsult.com",
     phone: "+1 (555) 234-5678",
     completedProjects: 45,
-    initials: "EG"
+    initials: "EG",
+    status: 'active'
   },
   {
     id: "3",
@@ -59,7 +65,8 @@ const mockStakeholders: Stakeholder[] = [
     email: "service@servicepro.com",
     phone: "+1 (555) 345-6789",
     completedProjects: 32,
-    initials: "SP"
+    initials: "SP",
+    status: 'approved'
   },
   {
     id: "4",
@@ -71,14 +78,19 @@ const mockStakeholders: Stakeholder[] = [
     email: "logistics@fasttrack.com",
     phone: "+1 (555) 456-7890",
     completedProjects: 67,
-    initials: "FL"
+    initials: "FL",
+    status: 'active'
   }
 ];
 
 const IndustryStakeholders = () => {
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
+  const [selectedStakeholder, setSelectedStakeholder] = useState<Stakeholder | null>(null);
+  
+  // Modal states
+  const inviteModal = useModal();
+  const projectModal = useModal();
 
   const filteredStakeholders = mockStakeholders.filter(stakeholder => {
     const matchesSearch = stakeholder.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -97,20 +109,21 @@ const IndustryStakeholders = () => {
     }
   };
 
-  // Handler functions
+  // Handler functions - Updated for ISO compliance
   const handleViewProfile = (stakeholderId: string) => {
     console.log('Viewing stakeholder profile:', stakeholderId);
-    navigate(`/vendor-details/${stakeholderId}`);
+    window.open(`/vendor-details/${stakeholderId}`, '_blank');
   };
 
-  const handleInviteToProject = (stakeholderId: string) => {
-    console.log('Inviting stakeholder to project:', stakeholderId);
-    navigate(`/create-requirement?stakeholder=${stakeholderId}`);
+  const handleInviteToProject = (stakeholder: Stakeholder) => {
+    console.log('Opening project selection for stakeholder:', stakeholder.id);
+    setSelectedStakeholder(stakeholder);
+    projectModal.openModal();
   };
 
   const handleInviteStakeholder = () => {
     console.log('Opening invite stakeholder modal');
-    navigate('/stakeholder-onboarding');
+    inviteModal.openModal();
   };
 
   return (
@@ -184,9 +197,12 @@ const IndustryStakeholders = () => {
                       </div>
                     </div>
                   </div>
-                  <Badge className={getTypeColor(stakeholder.type)}>
-                    {stakeholder.type}
-                  </Badge>
+                  <div className="flex flex-col items-end gap-2">
+                    <Badge className={getTypeColor(stakeholder.type)}>
+                      {stakeholder.type}
+                    </Badge>
+                    <StakeholderStatusBadge status={stakeholder.status} size="sm" />
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -229,7 +245,8 @@ const IndustryStakeholders = () => {
                   <Button 
                     size="sm" 
                     className="flex-1 bg-blue-600 hover:bg-blue-700"
-                    onClick={() => handleInviteToProject(stakeholder.id)}
+                    onClick={() => handleInviteToProject(stakeholder)}
+                    disabled={stakeholder.status === 'suspended' || stakeholder.status === 'rejected'}
                   >
                     Invite to Project
                   </Button>
@@ -253,6 +270,24 @@ const IndustryStakeholders = () => {
           </div>
         )}
       </main>
+
+      {/* Modals */}
+      <InviteStakeholderModal
+        isOpen={inviteModal.isOpen}
+        onClose={inviteModal.closeModal}
+      />
+
+      {selectedStakeholder && (
+        <ProjectSelectionModal
+          isOpen={projectModal.isOpen}
+          onClose={() => {
+            projectModal.closeModal();
+            setSelectedStakeholder(null);
+          }}
+          stakeholderName={selectedStakeholder.name}
+          stakeholderId={selectedStakeholder.id}
+        />
+      )}
     </div>
   );
 };

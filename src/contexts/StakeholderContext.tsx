@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { StakeholderApplication, StakeholderMatch, StakeholderProfile, StakeholderInvitation } from '@/types/stakeholder';
 import { RequirementFormData } from './RequirementContext';
@@ -15,11 +16,12 @@ interface StakeholderContextType {
   addStakeholderProfile: (profile: Omit<StakeholderProfile, 'id'>) => string;
   sendInvitation: (invitation: Omit<StakeholderInvitation, 'id' | 'sentDate' | 'status'>) => Promise<void>;
   getInvitationStatus: (stakeholderId: string) => StakeholderInvitation | null;
+  updateStakeholderStatus: (stakeholderId: string, status: 'invited' | 'pre-qualified' | 'approved' | 'active' | 'suspended') => void;
+  preQualifyStakeholder: (stakeholderId: string, assessmentData: any) => Promise<boolean>;
+  getStakeholderAuditTrail: (stakeholderId: string) => any[];
 }
 
-const StakeholderContext = createContext<StakeholderContextType | undefined>(undefined);
-
-// Mock stakeholder profiles
+// Enhanced mock stakeholder profiles with status
 const mockStakeholderProfiles: StakeholderProfile[] = [
   {
     id: 'v1',
@@ -91,6 +93,7 @@ export const StakeholderProvider = ({ children }: { children: React.ReactNode })
     const [matches, setMatches] = useState<StakeholderMatch[]>([]);
     const [stakeholderProfiles, setStakeholderProfiles] = useState<StakeholderProfile[]>(mockStakeholderProfiles);
     const [invitations, setInvitations] = useState<StakeholderInvitation[]>([]);
+    const [auditTrail, setAuditTrail] = useState<any[]>([]);
 
     const submitApplication = useCallback((applicationData: Omit<StakeholderApplication, 'id' | 'submittedDate' | 'status'>) => {
       const newApplication: StakeholderApplication = {
@@ -100,6 +103,12 @@ export const StakeholderProvider = ({ children }: { children: React.ReactNode })
         status: 'pending'
       };
       setApplications(prev => [...prev, newApplication]);
+      
+      // Log audit trail
+      logAuditEvent(applicationData.stakeholderId, 'application_submitted', {
+        requirementId: applicationData.requirementId,
+        applicationId: newApplication.id
+      });
     }, []);
 
     const reviewApplication = useCallback((applicationId: string, status: 'accepted' | 'rejected', comments?: string) => {
@@ -108,7 +117,17 @@ export const StakeholderProvider = ({ children }: { children: React.ReactNode })
           ? { ...app, status, reviewedDate: new Date().toISOString(), reviewComments: comments }
           : app
       ));
-    }, []);
+      
+      // Log audit trail
+      const application = applications.find(app => app.id === applicationId);
+      if (application) {
+        logAuditEvent(application.stakeholderId, 'application_reviewed', {
+          applicationId,
+          status,
+          comments
+        });
+      }
+    }, [applications]);
 
     const getApplicationsForRequirement = useCallback((requirementId: string) => {
       return applications.filter(app => app.requirementId === requirementId);
@@ -141,6 +160,14 @@ export const StakeholderProvider = ({ children }: { children: React.ReactNode })
       }));
 
       setMatches(prev => [...prev, ...newMatches]);
+      
+      // Log audit trail for each notified stakeholder
+      relevantStakeholders.forEach(stakeholder => {
+        logAuditEvent(stakeholder.id, 'requirement_notification', {
+          requirementId: requirement.title,
+          matchScore: newMatches.find(m => m.stakeholderId === stakeholder.id)?.matchScore
+        });
+      });
     }, [stakeholderProfiles]);
 
     const addStakeholderProfile = useCallback((profileData: Omit<StakeholderProfile, 'id'>) => {
@@ -149,6 +176,10 @@ export const StakeholderProvider = ({ children }: { children: React.ReactNode })
         id: `stakeholder-${Date.now()}`
       };
       setStakeholderProfiles(prev => [...prev, newProfile]);
+      
+      // Log audit trail
+      logAuditEvent(newProfile.id, 'profile_created', profileData);
+      
       return newProfile.id;
     }, []);
 
@@ -162,6 +193,13 @@ export const StakeholderProvider = ({ children }: { children: React.ReactNode })
       
       setInvitations(prev => [...prev, newInvitation]);
       
+      // Log audit trail
+      logAuditEvent(invitationData.stakeholderId, 'invitation_sent', {
+        invitationId: newInvitation.id,
+        email: invitationData.email,
+        type: invitationData.type
+      });
+      
       // Simulate sending email invitation
       console.log(`Sending invitation email to ${invitationData.email} for ${invitationData.name}`);
       
@@ -173,6 +211,52 @@ export const StakeholderProvider = ({ children }: { children: React.ReactNode })
     const getInvitationStatus = useCallback((stakeholderId: string) => {
       return invitations.find(inv => inv.stakeholderId === stakeholderId) || null;
     }, [invitations]);
+
+    const updateStakeholderStatus = useCallback((stakeholderId: string, status: 'invited' | 'pre-qualified' | 'approved' | 'active' | 'suspended') => {
+      // In a real app, this would update the stakeholder profile
+      console.log(`Updating stakeholder ${stakeholderId} status to ${status}`);
+      
+      // Log audit trail
+      logAuditEvent(stakeholderId, 'status_updated', { newStatus: status });
+    }, []);
+
+    const preQualifyStakeholder = useCallback(async (stakeholderId: string, assessmentData: any): Promise<boolean> => {
+      // Simulate pre-qualification assessment
+      console.log(`Pre-qualifying stakeholder ${stakeholderId}:`, assessmentData);
+      
+      // Mock assessment logic
+      const passed = Math.random() > 0.2; // 80% pass rate for demo
+      
+      // Log audit trail
+      logAuditEvent(stakeholderId, 'pre_qualification_completed', {
+        assessmentData,
+        result: passed ? 'passed' : 'failed'
+      });
+      
+      if (passed) {
+        updateStakeholderStatus(stakeholderId, 'pre-qualified');
+      }
+      
+      return Promise.resolve(passed);
+    }, [updateStakeholderStatus]);
+
+    const logAuditEvent = useCallback((stakeholderId: string, eventType: string, eventData: any) => {
+      const auditEvent = {
+        id: `audit-${Date.now()}`,
+        stakeholderId,
+        eventType,
+        eventData,
+        timestamp: new Date().toISOString(),
+        userId: 'current_user' // In real app, this would come from auth context
+      };
+      
+      setAuditTrail(prev => [...prev, auditEvent]);
+      console.log('Audit event logged:', auditEvent);
+    }, []);
+
+    const getStakeholderAuditTrail = useCallback((stakeholderId: string) => {
+      return auditTrail.filter(event => event.stakeholderId === stakeholderId);
+    }, [auditTrail]);
 
     const contextValue = {
       applications,
@@ -186,7 +270,10 @@ export const StakeholderProvider = ({ children }: { children: React.ReactNode })
       notifyStakeholders,
       addStakeholderProfile,
       sendInvitation,
-      getInvitationStatus
+      getInvitationStatus,
+      updateStakeholderStatus,
+      preQualifyStakeholder,
+      getStakeholderAuditTrail
     };
 
     console.log("StakeholderProvider context value created:", contextValue);
@@ -211,7 +298,10 @@ export const StakeholderProvider = ({ children }: { children: React.ReactNode })
       notifyStakeholders: () => console.warn("StakeholderProvider not available"),
       addStakeholderProfile: () => "",
       sendInvitation: () => Promise.resolve(),
-      getInvitationStatus: () => null
+      getInvitationStatus: () => null,
+      updateStakeholderStatus: () => console.warn("StakeholderProvider not available"),
+      preQualifyStakeholder: () => Promise.resolve(false),
+      getStakeholderAuditTrail: () => []
     };
 
     return (
@@ -221,6 +311,8 @@ export const StakeholderProvider = ({ children }: { children: React.ReactNode })
     );
   }
 };
+
+const StakeholderContext = createContext<StakeholderContextType | undefined>(undefined);
 
 export const useStakeholder = () => {
   const context = useContext(StakeholderContext);
@@ -239,7 +331,10 @@ export const useStakeholder = () => {
       notifyStakeholders: () => console.warn("StakeholderProvider not available"),
       addStakeholderProfile: () => "",
       sendInvitation: () => Promise.resolve(),
-      getInvitationStatus: () => null
+      getInvitationStatus: () => null,
+      updateStakeholderStatus: () => console.warn("StakeholderProvider not available"),
+      preQualifyStakeholder: () => Promise.resolve(false),
+      getStakeholderAuditTrail: () => []
     } as StakeholderContextType;
   }
   return context;
