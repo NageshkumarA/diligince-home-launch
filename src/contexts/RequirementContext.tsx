@@ -1,5 +1,4 @@
 
-
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
 export interface RequirementFormData {
@@ -94,8 +93,42 @@ interface RequirementContextType {
 
 const RequirementContext = createContext<RequirementContextType | undefined>(undefined);
 
+// Initialize with proper default values to prevent null/undefined errors
+const getDefaultFormData = (): RequirementFormData => ({
+  title: '',
+  category: undefined,
+  priority: undefined,
+  description: '',
+  businessJustification: '',
+  department: '',
+  costCenter: '',
+  requestedBy: '',
+  estimatedBudget: 0,
+  budgetApproved: false,
+  isUrgent: false,
+  urgency: false,
+  specialization: '',
+  productSpecifications: '',
+  quantity: 0,
+  serviceDescription: '',
+  scopeOfWork: '',
+  equipmentType: '',
+  pickupLocation: '',
+  deliveryLocation: '',
+  documents: [],
+  submissionDeadline: undefined,
+  evaluationCriteria: [],
+  visibility: 'all',
+  notifyByEmail: false,
+  notifyByApp: true,
+  termsAccepted: false,
+  performanceMetrics: '',
+  location: '',
+  approvalStatus: 'not_required'
+});
+
 export const RequirementProvider = ({ children }: { children: React.ReactNode }) => {
-  const [formData, setFormData] = useState<RequirementFormData>({});
+  const [formData, setFormData] = useState<RequirementFormData>(getDefaultFormData());
   const [stepErrors, setStepErrors] = useState<Record<string, string> | null>(null);
 
   const updateFormData = useCallback((data: Partial<RequirementFormData>) => {
@@ -105,110 +138,117 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
   }, []);
 
   const resetForm = useCallback(() => {
-    setFormData({});
+    setFormData(getDefaultFormData());
     setStepErrors(null);
   }, []);
 
   const saveAsDraft = useCallback(() => {
     console.log("Saving draft:", formData);
-    // Here you would typically save to localStorage or send to API
     localStorage.setItem('requirement-draft', JSON.stringify(formData));
   }, [formData]);
 
   const validateStep = useCallback((step: number) => {
+    console.log("Validating step:", step, "with formData:", formData);
     const errors: Record<string, string> = {};
     
-    switch (step) {
-      case 1: // Basic Info
-        if (!formData.title?.trim()) {
-          errors.title = "Title is required";
-        }
-        if (!formData.category) {
-          errors.category = "Category is required";
-        }
-        if (!formData.priority) {
-          errors.priority = "Priority is required";
-        }
-        if (!formData.businessJustification?.trim()) {
-          errors.businessJustification = "Business justification is required";
-        }
-        if (!formData.department?.trim()) {
-          errors.department = "Department is required";
-        }
-        if (!formData.costCenter?.trim()) {
-          errors.costCenter = "Cost center is required";
-        }
-        if (!formData.estimatedBudget || formData.estimatedBudget <= 0) {
-          errors.estimatedBudget = "Valid estimated budget is required";
-        }
-        break;
-        
-      case 2: // Details
-        if (formData.category === "expert") {
-          if (!formData.specialization?.trim()) {
-            errors.specialization = "Specialization is required";
+    try {
+      switch (step) {
+        case 1: // Basic Info
+          if (!formData.title || formData.title.trim() === '') {
+            errors.title = "Title is required";
           }
-          if (!formData.description?.trim()) {
-            errors.description = "Description is required";
+          if (!formData.category) {
+            errors.category = "Category is required";
           }
-        } else if (formData.category === "product") {
-          if (!formData.productSpecifications?.trim()) {
-            errors.productSpecifications = "Product specifications are required";
+          if (!formData.priority) {
+            errors.priority = "Priority is required";
           }
-          if (!formData.quantity || formData.quantity <= 0) {
-            errors.quantity = "Valid quantity is required";
+          if (!formData.businessJustification || formData.businessJustification.trim() === '') {
+            errors.businessJustification = "Business justification is required";
           }
-        } else if (formData.category === "service") {
-          if (!formData.serviceDescription?.trim()) {
-            errors.serviceDescription = "Service description is required";
+          if (!formData.department || formData.department.trim() === '') {
+            errors.department = "Department is required";
           }
-          if (!formData.scopeOfWork?.trim()) {
-            errors.scopeOfWork = "Scope of work is required";
+          if (!formData.costCenter || formData.costCenter.trim() === '') {
+            errors.costCenter = "Cost center is required";
           }
-          if (!formData.performanceMetrics?.trim()) {
-            errors.performanceMetrics = "Performance metrics are required";
+          if (!formData.estimatedBudget || formData.estimatedBudget <= 0) {
+            errors.estimatedBudget = "Valid estimated budget is required";
           }
-          if (!formData.location?.trim()) {
-            errors.location = "Location is required";
+          break;
+          
+        case 2: // Details
+          if (formData.category === "expert") {
+            if (!formData.specialization || formData.specialization.trim() === '') {
+              errors.specialization = "Specialization is required";
+            }
+            if (!formData.description || formData.description.trim() === '') {
+              errors.description = "Description is required";
+            }
+          } else if (formData.category === "product") {
+            if (!formData.productSpecifications || formData.productSpecifications.trim() === '') {
+              errors.productSpecifications = "Product specifications are required";
+            }
+            if (!formData.quantity || formData.quantity <= 0) {
+              errors.quantity = "Valid quantity is required";
+            }
+          } else if (formData.category === "service") {
+            if (!formData.serviceDescription || formData.serviceDescription.trim() === '') {
+              errors.serviceDescription = "Service description is required";
+            }
+            if (!formData.scopeOfWork || formData.scopeOfWork.trim() === '') {
+              errors.scopeOfWork = "Scope of work is required";
+            }
+            if (!formData.performanceMetrics || formData.performanceMetrics.trim() === '') {
+              errors.performanceMetrics = "Performance metrics are required";
+            }
+            if (!formData.location || formData.location.trim() === '') {
+              errors.location = "Location is required";
+            }
+          } else if (formData.category === "logistics") {
+            if (!formData.equipmentType || formData.equipmentType.trim() === '') {
+              errors.equipmentType = "Equipment type is required";
+            }
+            if (!formData.pickupLocation || formData.pickupLocation.trim() === '') {
+              errors.pickupLocation = "Pickup location is required";
+            }
+            if (!formData.deliveryLocation || formData.deliveryLocation.trim() === '') {
+              errors.deliveryLocation = "Delivery location is required";
+            }
           }
-        } else if (formData.category === "logistics") {
-          if (!formData.equipmentType?.trim()) {
-            errors.equipmentType = "Equipment type is required";
+          break;
+          
+        case 3: // Documents (optional)
+          break;
+          
+        case 4: // Approval Workflow
+          // Validation handled by approval context
+          break;
+          
+        case 5: // Preview
+          break;
+          
+        case 6: // Publish
+          if (!formData.submissionDeadline) {
+            errors.submissionDeadline = "Submission deadline is required";
           }
-          if (!formData.pickupLocation?.trim()) {
-            errors.pickupLocation = "Pickup location is required";
+          if (!formData.evaluationCriteria || formData.evaluationCriteria.length === 0) {
+            errors.evaluationCriteria = "At least one evaluation criterion must be selected";
           }
-          if (!formData.deliveryLocation?.trim()) {
-            errors.deliveryLocation = "Delivery location is required";
+          if (!formData.termsAccepted) {
+            errors.termsAccepted = "You must accept the terms and conditions";
           }
-        }
-        break;
-        
-      case 3: // Documents (optional)
-        break;
-        
-      case 4: // Approval Workflow
-        // Validation handled by approval context
-        break;
-        
-      case 5: // Preview
-        break;
-        
-      case 6: // Publish
-        if (!formData.submissionDeadline) {
-          errors.submissionDeadline = "Submission deadline is required";
-        }
-        if (!formData.evaluationCriteria || formData.evaluationCriteria.length === 0) {
-          errors.evaluationCriteria = "At least one evaluation criterion must be selected";
-        }
-        if (!formData.termsAccepted) {
-          errors.termsAccepted = "You must accept the terms and conditions";
-        }
-        break;
-    }
+          break;
+      }
 
-    setStepErrors(Object.keys(errors).length > 0 ? errors : null);
-    return Object.keys(errors).length === 0;
+      console.log("Validation errors for step", step, ":", errors);
+      setStepErrors(Object.keys(errors).length > 0 ? errors : null);
+      return Object.keys(errors).length === 0;
+    } catch (error) {
+      console.error("Error during validation:", error);
+      setStepErrors({ general: "Validation error occurred" });
+      return false;
+    }
   }, [formData]);
 
   const isFormValid = useCallback(() => {
@@ -243,4 +283,3 @@ export const useRequirement = () => {
   }
   return context;
 };
-

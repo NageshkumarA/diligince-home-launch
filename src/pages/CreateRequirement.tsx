@@ -94,6 +94,7 @@ const CreateRequirement = () => {
       return (
         <div className="p-8 text-center">
           <p className="text-red-600 mb-4">Error rendering step {currentStep}</p>
+          <p className="text-sm text-gray-600 mb-4">Error: {error instanceof Error ? error.message : 'Unknown error'}</p>
           <button onClick={() => setCurrentStep(1)} className="px-4 py-2 bg-blue-600 text-white rounded">
             Return to Step 1
           </button>
