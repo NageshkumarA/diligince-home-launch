@@ -135,7 +135,7 @@ const CreatePurchaseOrder: React.FC = () => {
     scopeOfWork: formData.scopeOfWork,
     deliverables: formData.deliverables,
     acceptanceCriteria: formData.acceptanceCriteria
-  };
+  } as formValues;
 };
 
   // Handle step navigation
