@@ -120,7 +120,7 @@ const CreatePurchaseOrder: React.FC = () => {
   const getCompleteFormData = (): FormValues => {
     const formData = form.getValues();
     
-    // Return the form data directly as it matches FormValues type
+    // Return the form data with guaranteed required fields
     return {
       poNumber: formData.poNumber || generatePONumber(),
       vendor: formData.vendor || '',
