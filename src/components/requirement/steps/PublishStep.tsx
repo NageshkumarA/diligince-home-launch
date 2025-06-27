@@ -28,6 +28,8 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
   const { notifyStakeholders } = useStakeholder();
   const [isPublishing, setIsPublishing] = useState(false);
 
+  console.log("PublishStep rendered, formData:", formData);
+
   // Available evaluation criteria based on ISO 9001 procurement standards
   const availableEvaluationCriteria = [
     "Price/Cost Competitiveness",
@@ -43,7 +45,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
   ];
 
   const handleEvaluationCriteriaChange = (criterion: string, checked: boolean) => {
-    let updatedCriteria = [...formData.evaluationCriteria];
+    let updatedCriteria = [...(formData.evaluationCriteria || [])];
     if (checked) {
       updatedCriteria.push(criterion);
     } else {
@@ -65,7 +67,9 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
         
         // Notify relevant stakeholders about the new requirement
         try {
-          notifyStakeholders(formData);
+          if (notifyStakeholders) {
+            notifyStakeholders(formData);
+          }
         } catch (error) {
           console.warn("Failed to notify stakeholders:", error);
           // Don't block the publish process for notification failures
@@ -103,7 +107,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
         <div className="space-y-3">
           <Label className="text-base">Requirement Visibility</Label>
           <RadioGroup
-            value={formData.visibility}
+            value={formData.visibility || "all"}
             onValueChange={(value: "all" | "selected") => updateFormData({ visibility: value })}
             className="space-y-3"
           >
@@ -163,7 +167,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
               />
             </PopoverContent>
           </Popover>
-          {stepErrors.submissionDeadline && (
+          {stepErrors?.submissionDeadline && (
             <p className="text-sm text-red-500">{stepErrors.submissionDeadline}</p>
           )}
         </div>
@@ -180,7 +184,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
               <div key={criterion} className="flex items-center space-x-2">
                 <Checkbox
                   id={criterion}
-                  checked={formData.evaluationCriteria.includes(criterion)}
+                  checked={(formData.evaluationCriteria || []).includes(criterion)}
                   onCheckedChange={(checked) => handleEvaluationCriteriaChange(criterion, !!checked)}
                 />
                 <Label htmlFor={criterion} className="text-sm font-normal cursor-pointer">
@@ -189,7 +193,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
               </div>
             ))}
           </div>
-          {stepErrors.evaluationCriteria && (
+          {stepErrors?.evaluationCriteria && (
             <p className="text-sm text-red-500">{stepErrors.evaluationCriteria}</p>
           )}
         </div>
@@ -206,7 +210,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
               </div>
               <Switch
                 id="notify-email"
-                checked={formData.notifyByEmail}
+                checked={formData.notifyByEmail || false}
                 onCheckedChange={(checked) => updateFormData({ notifyByEmail: checked })}
               />
             </div>
@@ -219,7 +223,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
               </div>
               <Switch
                 id="notify-app"
-                checked={formData.notifyByApp}
+                checked={formData.notifyByApp || true}
                 onCheckedChange={(checked) => updateFormData({ notifyByApp: checked })}
               />
             </div>
@@ -230,7 +234,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
           <div className="flex items-start space-x-3">
             <Checkbox
               id="terms"
-              checked={formData.termsAccepted}
+              checked={formData.termsAccepted || false}
               onCheckedChange={(checked) => updateFormData({ termsAccepted: !!checked })}
             />
             <div className="space-y-1">
@@ -253,7 +257,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
               </p>
             </div>
           </div>
-          {stepErrors.termsAccepted && (
+          {stepErrors?.termsAccepted && (
             <p className="text-sm text-red-500">{stepErrors.termsAccepted}</p>
           )}
         </div>
