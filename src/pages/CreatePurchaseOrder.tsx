@@ -38,7 +38,7 @@ const formSchema = z.object({
     required_error: "End date is required"
   }),
   paymentTerms: z.string().min(1, "Payment terms are required"),
-  specialInstructions: z.string().optional(),
+  specialInstructions: z.string().default(''),
   scopeOfWork: z.string().min(1, "Scope of work is required"),
   deliverables: z.array(z.object({
     id: z.string(),
@@ -123,7 +123,6 @@ const getCompleteFormData = (): FormValues => {
   return form.getValues();
 };
   
-
   // Handle step navigation
   const handleStepClick = (step: POStepType) => {
     setCurrentStep(step);
