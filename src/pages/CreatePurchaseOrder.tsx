@@ -563,11 +563,11 @@ const getCompleteFormData = (): FormValues => { [cite: 191]
                       <SelectContent>
                         <SelectItem value="100_advance">100% advance</SelectItem>
                         <SelectItem value="50_advance_50_completion">50% advance, 50% upon completion</SelectItem>
-                        <SelectItem value="30_advance_70_completion">30% advance, 70% upon completion</SelectItem>
+                        <SelectItem value="30_advance_70_completion">30% advance, 70% upon completion</SelectItem> {/* Re-type this line carefully */}
                         <SelectItem value="net_15">Net 15 days</SelectItem>
                         <SelectItem value="net_30">Net 30 days</SelectItem>
                         <SelectItem value="net_60">Net 60 days</SelectItem>
-                      </SelectContent>
+                  </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
