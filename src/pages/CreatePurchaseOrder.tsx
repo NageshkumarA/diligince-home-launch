@@ -115,26 +115,10 @@ const CreatePurchaseOrder: React.FC = () => {
   }, [orderValue, taxPercentage, form]);
 
   // Get complete form data for review - fixed with proper type handling
-  const getCompleteFormData = (): FormValues => {
-    return form.getValues() as FormValues;
-    
-    // Ensure all required fields have values
-    return {
-      poNumber: formData.poNumber || generatePONumber(),
-      vendor: formData.vendor || "",
-      projectTitle: formData.projectTitle || "",
-      orderValue: formData.orderValue || 0,
-      taxPercentage: formData.taxPercentage || 0,
-      totalValue: formData.totalValue || 0,
-      startDate: formData.startDate || new Date(),
-      endDate: formData.endDate || new Date(),
-      paymentTerms: formData.paymentTerms || "",
-      specialInstructions: formData.specialInstructions || "",
-      scopeOfWork: formData.scopeOfWork || "",
-      deliverables: formData.deliverables || [],
-      acceptanceCriteria: formData.acceptanceCriteria || []
-    };
-  };
+  // Get complete form data for review - fixed with proper type handling
+const getCompleteFormData = (): FormValues => {
+  return form.getValues() as FormValues;
+};
 
   // Handle step navigation
   const handleStepClick = (step: POStepType) => {
