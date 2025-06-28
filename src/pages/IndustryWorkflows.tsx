@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
@@ -189,9 +190,12 @@ const IndustryWorkflows = () => {
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mb-6">
           <TabsList>
             <TabsTrigger value="all">All Workflows</TabsTrigger>
-            <TabsTrigger value="requirement">Requirements</TabsTrigger>
-            <TabsTrigger value="purchase_order">Purchase Orders</TabsTrigger>
-            <TabsTrigger value="project">Projects</TabsTrigger>
+            <TabsTrigger value="requirements">Requirements</TabsTrigger>
+            <TabsTrigger value="ai_matching">AI Matching</TabsTrigger>
+            <TabsTrigger value="rfq_sent">RFQ Sent</TabsTrigger>
+            <TabsTrigger value="quote_review">Quote Review</TabsTrigger>
+            <TabsTrigger value="purchase_orders">Purchase Orders</TabsTrigger>
+            <TabsTrigger value="work_payments">Work & Payments</TabsTrigger>
           </TabsList>
         </Tabs>
 
