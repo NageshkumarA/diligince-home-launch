@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { format, differenceInDays } from 'date-fns';
@@ -115,11 +116,12 @@ const CreatePurchaseOrder: React.FC = () => {
   }, [orderValue, taxPercentage, form]);
 
   // Get complete form data for review - fixed with proper type handling
-  const getCompleteFormData = (): FormValues => {
-    // When calling getValues(), the form state should already conform to FormValues
-    // if validation has passed or default values are set.
-    // No need for || '' or || 0 as the schema enforces these.
-    return form.getValues();
+const getCompleteFormData = (): FormValues => {
+  // When calling getValues(), the form state should already conform to FormValues
+  // if validation has passed or default values are set.
+  // No need for || '' or || 0 as the schema enforces these.
+  return form.getValues();
+};
   };
 
   // Handle step navigation
@@ -144,8 +146,10 @@ const CreatePurchaseOrder: React.FC = () => {
       } else {
         const errors = form.formState.errors;
         console.log("Form validation errors:", errors);
+        
         const firstErrorField = Object.keys(errors)[0];
         const firstError = errors[firstErrorField as keyof typeof errors];
+        
         toast({
           title: "Please Fix Form Errors",
           description: firstError?.message || "Some required fields are missing or invalid. Please review the form.",
@@ -168,6 +172,7 @@ const CreatePurchaseOrder: React.FC = () => {
     setIsSubmitting(true);
     try {
       const formData = getCompleteFormData();
+      
       // Create the purchase order object
       const purchaseOrder = {
         ...formData,
@@ -178,20 +183,24 @@ const CreatePurchaseOrder: React.FC = () => {
         deliveredToVendor: true,
         recordedInSystem: true,
       };
+      
       console.log("Creating and delivering Purchase Order:", purchaseOrder);
       
       // Simulate PO creation and delivery process
       await new Promise(resolve => setTimeout(resolve, 2000));
+      
       // Show success message
       toast({
         title: "Purchase Order Created & Delivered!",
         description: `PO ${formData.poNumber} has been created, saved to your records, 
         and delivered to ${vendors.find(v => v.id === formData.vendor)?.name || 'the vendor'}.`,
       });
+      
       // Navigate back to workflows page after a delay
       setTimeout(() => {
         window.location.href = '/industry-workflows';
       }, 3000);
+      
     } catch (error) {
       console.error("Error creating purchase order:", error);
       toast({
@@ -215,6 +224,7 @@ const CreatePurchaseOrder: React.FC = () => {
         status: 'draft',
         savedAt: new Date().toISOString(),
       };
+      
       console.log("Saving draft:", draftData);
       
       toast({
@@ -472,8 +482,9 @@ const CreatePurchaseOrder: React.FC = () => {
                                 !field.value && "text-gray-500"
                               )}
                             >
-                              {field.value ?
-                                (format(field.value, "PPP")) : (
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
                                 <span>Pick a date</span>
                               )}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -510,8 +521,9 @@ const CreatePurchaseOrder: React.FC = () => {
                                 !field.value && "text-gray-500"
                               )}
                             >
-                              {field.value ?
-                                (format(field.value, "PPP")) : (
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
                                 <span>Pick a date</span>
                               )}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
