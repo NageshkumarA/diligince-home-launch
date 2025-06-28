@@ -116,11 +116,9 @@ const CreatePurchaseOrder: React.FC = () => {
   }, [orderValue, taxPercentage, form]);
 
   // Get complete form data for review - fixed with proper type handling
-const getCompleteFormData = (): FormValues => {
-  // When calling getValues(), the form state should already conform to FormValues
-  // if validation has passed or default values are set.
-  // No need for || '' or || 0 as the schema enforces these.
-  return form.getValues();
+const getCompleteFormData = (): FormValues => { [cite: 191]
+  // The form is validated before reaching this step, so we can assert the type.
+  return form.getValues() as FormValues; // <--- Add 'as FormValues' here
 };
   
   // Handle step navigation
