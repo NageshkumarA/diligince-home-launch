@@ -24,7 +24,7 @@ export type POStepType = 1 | 2 | 3 | 4 | 5;
 
 // Define the form schema
 const formSchema = z.object({
-  poNumber: z.string().optional(),
+  poNumber: z.string().min(1, "PO Number is required"),
   vendor: z.string().min(1, "Vendor is required"),
   projectTitle: z.string().min(3, "Project title must be at least 3 characters"),
   orderValue: z.coerce.number().min(1, "Order value is required"),
@@ -35,8 +35,6 @@ const formSchema = z.object({
   }),
   endDate: z.date({
     required_error: "End date is required"
-  }).refine(data => data, {
-    message: "End date is required"
   }),
   paymentTerms: z.string().min(1, "Payment terms are required"),
   specialInstructions: z.string().optional(),
@@ -117,26 +115,26 @@ const CreatePurchaseOrder: React.FC = () => {
   }, [orderValue, taxPercentage, form]);
 
   // Get complete form data for review - fixed with proper type handling
-  
-    const getCompleteFormData = (): FormValues => {
-  const formData = form.getValues();
-
-  return {
-    poNumber: formData.poNumber,
-    vendor: formData.vendor,
-    projectTitle: formData.projectTitle,
-    orderValue: formData.orderValue,
-    taxPercentage: formData.taxPercentage,
-    totalValue: formData.totalValue,
-    startDate: formData.startDate,
-    endDate: formData.endDate,
-    paymentTerms: formData.paymentTerms,
-    specialInstructions: formData.specialInstructions,
-    scopeOfWork: formData.scopeOfWork,
-    deliverables: formData.deliverables,
-    acceptanceCriteria: formData.acceptanceCriteria
-  } as FormValues;
-};
+  const getCompleteFormData = (): FormValues => {
+    const formData = form.getValues();
+    
+    // Ensure all required fields have values
+    return {
+      poNumber: formData.poNumber || generatePONumber(),
+      vendor: formData.vendor || "",
+      projectTitle: formData.projectTitle || "",
+      orderValue: formData.orderValue || 0,
+      taxPercentage: formData.taxPercentage || 0,
+      totalValue: formData.totalValue || 0,
+      startDate: formData.startDate || new Date(),
+      endDate: formData.endDate || new Date(),
+      paymentTerms: formData.paymentTerms || "",
+      specialInstructions: formData.specialInstructions || "",
+      scopeOfWork: formData.scopeOfWork || "",
+      deliverables: formData.deliverables || [],
+      acceptanceCriteria: formData.acceptanceCriteria || []
+    };
+  };
 
   // Handle step navigation
   const handleStepClick = (step: POStepType) => {
@@ -364,7 +362,6 @@ const CreatePurchaseOrder: React.FC = () => {
                 )}
               />
               
-              
               <FormField
                 control={form.control}
                 name="vendor"
@@ -415,8 +412,13 @@ const CreatePurchaseOrder: React.FC = () => {
                         <div className="relative">
                           <span className="absolute left-3 top-2.5 text-gray-500">$</span>
                           <Input
+                            {...field}
                             type="number"
-                            onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                            onChange={(e) => {
+                              const value = parseFloat(e.target.value);
+                              field.onChange(isNaN(value) ? 0 : value);
+                            }}
+                            value={field.value || 0}
                             className="pl-7 border-gray-200 bg-gray-50"
                           />
                         </div>
@@ -435,8 +437,13 @@ const CreatePurchaseOrder: React.FC = () => {
                       <FormControl>
                         <div className="relative">
                           <Input
+                            {...field}
                             type="number"
-                            onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                            onChange={(e) => {
+                              const value = parseFloat(e.target.value);
+                              field.onChange(isNaN(value) ? 0 : value);
+                            }}
+                            value={field.value || 0}
                             className="pr-7 border-gray-200 bg-gray-50"
                           />
                           <span className="absolute right-3 top-2.5 text-gray-500">%</span>
@@ -458,8 +465,9 @@ const CreatePurchaseOrder: React.FC = () => {
                       <div className="relative">
                         <span className="absolute left-3 top-2.5 text-gray-500">$</span>
                         <Input
+                          {...field}
                           readOnly
-                          value={field.value.toFixed(2)}
+                          value={field.value?.toFixed(2) || '0.00'}
                           className="pl-7 font-semibold border-blue-200 bg-gray-50"
                         />
                       </div>
@@ -482,7 +490,7 @@ const CreatePurchaseOrder: React.FC = () => {
                             <Button
                               variant={"outline"}
                               className={cn(
-                                "pl-3 text-left font-normal border-gray-200",
+                                "w-full justify-start text-left font-normal border-gray-200",
                                 !field.value && "text-gray-500"
                               )}
                             >
@@ -501,7 +509,6 @@ const CreatePurchaseOrder: React.FC = () => {
                             selected={field.value}
                             onSelect={field.onChange}
                             initialFocus
-                            className="pointer-events-auto p-3"
                           />
                         </PopoverContent>
                       </Popover>
@@ -522,7 +529,7 @@ const CreatePurchaseOrder: React.FC = () => {
                             <Button
                               variant={"outline"}
                               className={cn(
-                                "pl-3 text-left font-normal border-gray-200",
+                                "w-full justify-start text-left font-normal border-gray-200",
                                 !field.value && "text-gray-500"
                               )}
                             >
@@ -540,9 +547,8 @@ const CreatePurchaseOrder: React.FC = () => {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            initialFocus
                             disabled={(date) => date < startDate}
-                            className="pointer-events-auto p-3"
+                            initialFocus
                           />
                         </PopoverContent>
                       </Popover>
@@ -800,25 +806,25 @@ const CreatePurchaseOrder: React.FC = () => {
                   >
                     Approve & Proceed
                   </Button>
-                )}
-                
-                {currentStep === 5 && (
-                  <Button
-                    type="button"
-                    onClick={handleCreatePurchaseOrder}
-                    disabled={isSubmitting}
-                    className="bg-green-600 hover:bg-green-700 text-white font-medium px-8"
-                  >
-                    {isSubmitting ? "Creating & Delivering..." : "Create & Deliver Purchase Order"}
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </Form>
-      </main>
-    </div>
-  );
+               )}
+               
+               {currentStep === 5 && (
+                 <Button
+                   type="button"
+                   onClick={handleCreatePurchaseOrder}
+                   disabled={isSubmitting}
+                   className="bg-green-600 hover:bg-green-700 text-white font-medium px-8"
+                 >
+                   {isSubmitting ? "Creating & Delivering..." : "Create & Deliver Purchase Order"}
+                 </Button>
+               )}
+             </div>
+           </div>
+         </div>
+       </Form>
+     </main>
+   </div>
+ );
 };
 
 export default CreatePurchaseOrder;
