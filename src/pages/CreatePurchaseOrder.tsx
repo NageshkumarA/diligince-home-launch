@@ -122,7 +122,7 @@ const getCompleteFormData = (): FormValues => {
   // No need for || '' or || 0 as the schema enforces these.
   return form.getValues();
 };
-  };
+  
 
   // Handle step navigation
   const handleStepClick = (step: POStepType) => {
