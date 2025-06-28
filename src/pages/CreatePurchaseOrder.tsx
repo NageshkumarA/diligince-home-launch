@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { format, differenceInDays } from 'date-fns';
@@ -86,19 +85,19 @@ const usePOFormData = (form: UseFormReturn<FormValues>) => {
     
     if (!isComplete) return null;
     
-    // Ensure all required fields are properly typed
+    // Ensure all required fields are properly typed and non-optional
     const validatedData: FormValues = {
-      poNumber: values.poNumber || '',
-      vendor: values.vendor || '',
-      projectTitle: values.projectTitle || '',
-      orderValue: values.orderValue || 0,
+      poNumber: values.poNumber!,
+      vendor: values.vendor!,
+      projectTitle: values.projectTitle!,
+      orderValue: values.orderValue!,
       taxPercentage: values.taxPercentage || 0,
       totalValue: values.totalValue || 0,
-      startDate: values.startDate || new Date(),
-      endDate: values.endDate || new Date(),
-      paymentTerms: values.paymentTerms || '',
+      startDate: values.startDate!,
+      endDate: values.endDate!,
+      paymentTerms: values.paymentTerms!,
       specialInstructions: values.specialInstructions || '',
-      scopeOfWork: values.scopeOfWork || '',
+      scopeOfWork: values.scopeOfWork!,
       deliverables: values.deliverables || [],
       acceptanceCriteria: values.acceptanceCriteria || []
     };

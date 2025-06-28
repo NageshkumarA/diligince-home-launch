@@ -4,7 +4,7 @@ import IndustryHeader from '@/components/industry/IndustryHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, FileText, CheckCircle, Clock, MapPin, Star, Users, Briefcase, RefreshCw } from 'lucide-react';
+import { ArrowLeft, FileText, CheckCircle, Clock, MapPin, Star, Users, Briefcase, RefreshCw, Brain, MessageSquare, ShoppingCart, DollarSign } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 
@@ -442,25 +442,42 @@ const IndustryProjectWorkflow = () => {
           </div>
         </div>
 
-        {/* Workflow Progress Indicator */}
+        {/* Updated Workflow Progress Indicator */}
         <div className="mb-8 p-6 rounded-xl shadow-sm border bg-white">
           <h2 className="font-semibold mb-6 text-gray-900 text-xl">Workflow Progress</h2>
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className={`w-4 h-4 rounded-full ${isQuoteAccepted ? 'bg-green-500' : 'bg-blue-500'}`}></div>
-              <span className={`font-medium ${isQuoteAccepted ? 'text-green-600' : 'text-blue-600'}`}>
-                {isQuoteAccepted ? 'Quote Accepted' : 'Quote Review'}
+          <div className="flex items-center gap-6 overflow-x-auto">
+            <div className="flex items-center gap-3 min-w-fit">
+              <div className="w-4 h-4 rounded-full bg-green-500"></div>
+              <span className="font-medium text-green-600 flex items-center gap-1">
+                <FileText className="h-4 w-4" />
+                Requirements Published
               </span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-fit">
+              <div className={`w-4 h-4 rounded-full ${sentRFQs.size > 0 ? 'bg-green-500' : 'bg-blue-500'}`}></div>
+              <span className={`font-medium flex items-center gap-1 ${sentRFQs.size > 0 ? 'text-green-600' : 'text-blue-600'}`}>
+                <Brain className="h-4 w-4" />
+                AI Matching & RFQ
+              </span>
+            </div>
+            <div className="flex items-center gap-3 min-w-fit">
+              <div className={`w-4 h-4 rounded-full ${hasReceivedQuotes ? 'bg-green-500' : sentRFQs.size > 0 ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
+              <span className={`font-medium flex items-center gap-1 ${hasReceivedQuotes ? 'text-green-600' : sentRFQs.size > 0 ? 'text-blue-600' : 'text-gray-500'}`}>
+                <MessageSquare className="h-4 w-4" />
+                Quote Review
+              </span>
+            </div>
+            <div className="flex items-center gap-3 min-w-fit">
               <div className={`w-4 h-4 rounded-full ${isPOGenerated ? 'bg-green-500' : isQuoteAccepted ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
-              <span className={`font-medium ${isPOGenerated ? 'text-green-600' : isQuoteAccepted ? 'text-blue-600' : 'text-gray-500'}`}>
+              <span className={`font-medium flex items-center gap-1 ${isPOGenerated ? 'text-green-600' : isQuoteAccepted ? 'text-blue-600' : 'text-gray-500'}`}>
+                <ShoppingCart className="h-4 w-4" />
                 Purchase Order
               </span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-fit">
               <div className={`w-4 h-4 rounded-full ${isWorkCompleted ? 'bg-green-500' : isPOGenerated ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
-              <span className={`font-medium ${isWorkCompleted ? 'text-green-600' : isPOGenerated ? 'text-blue-600' : 'text-gray-500'}`}>
+              <span className={`font-medium flex items-center gap-1 ${isWorkCompleted ? 'text-green-600' : isPOGenerated ? 'text-blue-600' : 'text-gray-500'}`}>
+                <DollarSign className="h-4 w-4" />
                 Work & Payments
               </span>
             </div>

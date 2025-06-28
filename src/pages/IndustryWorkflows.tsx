@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
@@ -8,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Clock, CheckCircle, AlertCircle, DollarSign, Calendar, User, ShoppingCart } from "lucide-react";
+import { FileText, Clock, CheckCircle, AlertCircle, DollarSign, Calendar, User, ShoppingCart, Brain, Users, MessageSquare } from "lucide-react";
 
 interface WorkflowItem {
   id: string;
@@ -113,15 +112,15 @@ const IndustryWorkflows = () => {
           <p className="text-gray-600">Track and manage all procurement workflows from requirements to completion</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Active Workflows</p>
-                  <p className="text-2xl font-bold text-gray-900">12</p>
+                  <p className="text-sm font-medium text-gray-600">Requirements</p>
+                  <p className="text-2xl font-bold text-gray-900">8</p>
                 </div>
-                <Clock className="h-8 w-8 text-blue-600" />
+                <FileText className="h-8 w-8 text-blue-600" />
               </div>
             </CardContent>
           </Card>
@@ -130,22 +129,46 @@ const IndustryWorkflows = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Pending Review</p>
+                  <p className="text-sm font-medium text-gray-600">AI Matching</p>
+                  <p className="text-2xl font-bold text-gray-900">5</p>
+                </div>
+                <Brain className="h-8 w-8 text-purple-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">RFQ Sent</p>
+                  <p className="text-2xl font-bold text-gray-900">12</p>
+                </div>
+                <MessageSquare className="h-8 w-8 text-orange-600" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Quote Review</p>
                   <p className="text-2xl font-bold text-gray-900">3</p>
                 </div>
                 <AlertCircle className="h-8 w-8 text-yellow-600" />
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Completed</p>
-                  <p className="text-2xl font-bold text-gray-900">27</p>
+                  <p className="text-sm font-medium text-gray-600">Purchase Orders</p>
+                  <p className="text-2xl font-bold text-gray-900">7</p>
                 </div>
-                <CheckCircle className="h-8 w-8 text-green-600" />
+                <ShoppingCart className="h-8 w-8 text-green-600" />
               </div>
             </CardContent>
           </Card>
@@ -154,10 +177,10 @@ const IndustryWorkflows = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Value</p>
+                  <p className="text-sm font-medium text-gray-600">Work & Payments</p>
                   <p className="text-2xl font-bold text-gray-900">$2.4M</p>
                 </div>
-                <DollarSign className="h-8 w-8 text-purple-600" />
+                <DollarSign className="h-8 w-8 text-indigo-600" />
               </div>
             </CardContent>
           </Card>
