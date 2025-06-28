@@ -86,8 +86,24 @@ const usePOFormData = (form: UseFormReturn<FormValues>) => {
     
     if (!isComplete) return null;
     
-    // Type assertion is safe here because we've validated completeness
-    return values as FormValues;
+    // Ensure all required fields are properly typed
+    const validatedData: FormValues = {
+      poNumber: values.poNumber || '',
+      vendor: values.vendor || '',
+      projectTitle: values.projectTitle || '',
+      orderValue: values.orderValue || 0,
+      taxPercentage: values.taxPercentage || 0,
+      totalValue: values.totalValue || 0,
+      startDate: values.startDate || new Date(),
+      endDate: values.endDate || new Date(),
+      paymentTerms: values.paymentTerms || '',
+      specialInstructions: values.specialInstructions || '',
+      scopeOfWork: values.scopeOfWork || '',
+      deliverables: values.deliverables || [],
+      acceptanceCriteria: values.acceptanceCriteria || []
+    };
+    
+    return validatedData;
   }, [form]);
   
   // Create complete PO data for final submission
@@ -268,9 +284,16 @@ const CreatePurchaseOrder: React.FC = () => {
         and delivered to ${vendors.find(v => v.id === completePOData.vendor)?.name || 'the vendor'}.`,
       });
 
-      // Navigate back to workflows page after a delay
+      // Navigate to Work Timeline page - same as upload manual PO flow
       setTimeout(() => {
-        window.location.href = '/industry-workflows';
+        const params = new URLSearchParams({
+          vendorId: completePOData.vendor,
+          vendorName: vendors.find(v => v.id === completePOData.vendor)?.name || 'Vendor',
+          amount: completePOData.totalValue.toString(),
+          projectTitle: completePOData.projectTitle,
+          requirementId: 'REQ-2024-001'
+        });
+        window.location.href = `/industry-project-workflow?${params.toString()}`;
       }, 3000);
 
     } catch (error) {
