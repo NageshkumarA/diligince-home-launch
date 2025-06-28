@@ -4,7 +4,7 @@ import IndustryHeader from '@/components/industry/IndustryHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, FileText, CheckCircle, Clock, MapPin, Star, Users, Briefcase } from 'lucide-react';
+import { ArrowLeft, FileText, CheckCircle, Clock, MapPin, Star, Users, Briefcase, RefreshCw } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 
@@ -15,6 +15,9 @@ import { WorkTimeline } from '@/components/industry/workflow/WorkTimeline';
 import { PaymentMilestoneTracker } from '@/components/industry/workflow/PaymentMilestoneTracker';
 import { RetentionPaymentCard } from '@/components/industry/workflow/RetentionPaymentCard';
 import { SendRFQModal } from '@/components/industry/SendRFQModal';
+import { AIEvaluationPanel } from '@/components/industry/workflow/AIEvaluationPanel';
+import { QuoteComparisonCard } from '@/components/industry/workflow/QuoteComparisonCard';
+import { QuoteStatusTracker } from '@/components/industry/workflow/QuoteStatusTracker';
 
 // Import types
 import { ProjectWorkflow, VendorQuote, PaymentMilestone, WorkflowEvent, RetentionPayment } from '@/types/workflow';
@@ -73,6 +76,11 @@ const IndustryProjectWorkflow = () => {
   const [selectedStakeholder, setSelectedStakeholder] = useState<any>(null);
   const [sentRFQs, setSentRFQs] = useState<Set<string>>(new Set());
 
+  // New state for AI evaluation and quote tracking
+  const [rfqStatuses, setRfqStatuses] = useState<any[]>([]);
+  const [quotesReceived, setQuotesReceived] = useState(false);
+  const [aiEvaluations, setAiEvaluations] = useState<Map<string, any>>(new Map());
+
   // Mock project workflow data
   const [projectWorkflow, setProjectWorkflow] = useState<ProjectWorkflow>({
     id: projectId || '1',
@@ -80,40 +88,7 @@ const IndustryProjectWorkflow = () => {
     projectTitle: 'Industrial Equipment Procurement',
     totalProjectValue: 150000,
     workStatus: 'not_started',
-    quotes: [{
-      id: 'q1',
-      vendorId: 'v1',
-      vendorName: 'Acme Industrial Supplies',
-      vendorRating: 4.8,
-      quoteAmount: 150000,
-      deliveryTimeWeeks: 8,
-      proposalSummary: 'Complete industrial equipment package including installation and training',
-      submittedDate: '2024-01-15',
-      status: 'pending',
-      documents: ['proposal.pdf', 'technical-specs.pdf']
-    }, {
-      id: 'q2',
-      vendorId: 'v2',
-      vendorName: 'Tech Manufacturing Co.',
-      vendorRating: 4.5,
-      quoteAmount: 165000,
-      deliveryTimeWeeks: 6,
-      proposalSummary: 'Premium equipment solution with extended warranty and 24/7 support',
-      submittedDate: '2024-01-14',
-      status: 'pending',
-      documents: ['proposal.pdf']
-    }, {
-      id: 'q3',
-      vendorId: 'v3',
-      vendorName: 'Global Equipment Ltd.',
-      vendorRating: 4.2,
-      quoteAmount: 142000,
-      deliveryTimeWeeks: 10,
-      proposalSummary: 'Cost-effective solution with standard warranty and support package',
-      submittedDate: '2024-01-16',
-      status: 'pending',
-      documents: ['proposal.pdf', 'warranty-terms.pdf']
-    }],
+    quotes: [], // Start with empty quotes
     paymentMilestones: [{
       id: 'm1',
       name: 'Advance Payment',
@@ -143,15 +118,109 @@ const IndustryProjectWorkflow = () => {
       status: 'locked',
       delayPeriodDays: 30
     },
-    timeline: [{
-      id: 't1',
-      type: 'quote_submitted',
-      title: 'Quotes Received',
-      description: '3 vendor quotes received for review',
-      timestamp: '2024-01-16T10:00:00Z',
-      status: 'completed'
-    }]
+    timeline: []
   });
+
+  // Generate mock AI evaluations for quotes
+  const generateAIEvaluation = (quote: VendorQuote) => {
+    const priceScore = Math.max(1, 10 - (quote.quoteAmount - 140000) / 5000);
+    const deliveryScore = Math.max(1, 10 - (quote.deliveryTimeWeeks - 6) * 0.5);
+    const ratingScore = quote.vendorRating * 2;
+    const specializationScore = 7 + Math.random() * 2;
+    const performanceScore = 6 + Math.random() * 3;
+    
+    const overallScore = (
+      priceScore * 0.3 + 
+      deliveryScore * 0.25 + 
+      ratingScore * 0.2 + 
+      specializationScore * 0.15 + 
+      performanceScore * 0.1
+    );
+
+    let recommendation = null;
+    let reasoning = '';
+    
+    if (overallScore >= 8.5) {
+      recommendation = 'top_pick';
+      reasoning = 'Excellent overall balance of price, delivery speed, and vendor reliability. Highly recommended choice.';
+    } else if (priceScore >= 8) {
+      recommendation = 'best_value';
+      reasoning = 'Offers competitive pricing while maintaining good quality standards and reasonable delivery timeline.';
+    } else if (deliveryScore >= 9) {
+      recommendation = 'fastest_delivery';
+      reasoning = 'Fastest delivery option available while maintaining acceptable quality and pricing standards.';
+    } else if (ratingScore >= 9) {
+      recommendation = 'highest_rated';
+      reasoning = 'Top-rated vendor with excellent track record and customer satisfaction scores.';
+    }
+
+    return {
+      overallScore: Math.round(overallScore * 10) / 10,
+      priceScore: Math.round(priceScore * 10) / 10,
+      deliveryScore: Math.round(deliveryScore * 10) / 10,
+      ratingScore: Math.round(ratingScore * 10) / 10,
+      specializationScore: Math.round(specializationScore * 10) / 10,
+      performanceScore: Math.round(performanceScore * 10) / 10,
+      recommendation,
+      reasoning,
+      riskLevel: overallScore >= 8 ? 'low' : overallScore >= 6 ? 'medium' : 'high'
+    };
+  };
+
+  // Simulate quote receiving process
+  const simulateQuoteReceiving = () => {
+    setTimeout(() => {
+      const mockQuotes = [
+        {
+          id: 'q1',
+          vendorId: 'stakeholder-1',
+          vendorName: 'TechValve Solutions',
+          vendorRating: 4.8,
+          quoteAmount: 145000,
+          deliveryTimeWeeks: 6,
+          proposalSummary: 'Complete industrial valve system with premium quality components and 2-year warranty',
+          submittedDate: new Date().toISOString().split('T')[0],
+          status: 'pending' as const,
+          documents: ['proposal.pdf', 'technical-specs.pdf']
+        },
+        {
+          id: 'q2',
+          vendorId: 'stakeholder-2',
+          vendorName: 'Pipeline Inspection Experts',
+          vendorRating: 4.9,
+          quoteAmount: 155000,
+          deliveryTimeWeeks: 8,
+          proposalSummary: 'Comprehensive pipeline inspection and valve installation with certification',
+          submittedDate: new Date().toISOString().split('T')[0],
+          status: 'pending' as const,
+          documents: ['proposal.pdf']
+        }
+      ];
+
+      // Generate AI evaluations
+      const evaluations = new Map();
+      mockQuotes.forEach(quote => {
+        evaluations.set(quote.id, generateAIEvaluation(quote));
+      });
+
+      setProjectWorkflow(prev => ({
+        ...prev,
+        quotes: mockQuotes,
+        timeline: [...prev.timeline, {
+          id: `t${Date.now()}`,
+          type: 'quote_submitted',
+          title: 'Quotes Received & AI Analyzed',
+          description: `${mockQuotes.length} vendor quotes received and analyzed by AI`,
+          timestamp: new Date().toISOString(),
+          status: 'completed'
+        }]
+      }));
+
+      setAiEvaluations(evaluations);
+      setQuotesReceived(true);
+      showSuccess(`${mockQuotes.length} quotes received and analyzed by AI!`);
+    }, 3000); // 3 second delay
+  };
 
   const handleAcceptQuote = (quoteId: string) => {
     const acceptedQuote = projectWorkflow.quotes.find(q => q.id === quoteId);
@@ -264,10 +333,6 @@ const IndustryProjectWorkflow = () => {
     navigate('/');
   };
 
-  const isQuoteAccepted = projectWorkflow.acceptedQuote !== undefined;
-  const isPOGenerated = projectWorkflow.purchaseOrder !== undefined;
-  const isWorkCompleted = projectWorkflow.workStatus === 'completed' || projectWorkflow.workStatus === 'approved';
-
   const getStakeholderTypeColor = (type: string) => {
     switch (type) {
       case 'Product Vendor':
@@ -304,8 +369,36 @@ const IndustryProjectWorkflow = () => {
 
   const handleRFQSent = (stakeholderId: string) => {
     setSentRFQs(prev => new Set([...prev, stakeholderId]));
-    showSuccess('RFQ Sent (Mock) — Functionality Not Yet Connected');
+    
+    const stakeholder = mockMatchedStakeholders.find(s => s.id === stakeholderId);
+    if (stakeholder) {
+      setRfqStatuses(prev => [...prev, {
+        stakeholderName: stakeholder.name,
+        stakeholderType: stakeholder.type,
+        rfqSentDate: new Date().toLocaleDateString(),
+        quoteStatus: 'sent',
+        expectedDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString()
+      }]);
+
+      // Simulate quote receiving after delay
+      if (!quotesReceived && rfqStatuses.length === 0) {
+        showSuccess('RFQ sent! Quotes expected in 2-3 days...');
+        simulateQuoteReceiving();
+      } else {
+        showSuccess('RFQ Sent (Mock) — Functionality Not Yet Connected');
+      }
+    }
   };
+
+  const handleCheckForQuotes = () => {
+    simulateQuoteReceiving();
+  };
+
+  const isQuoteAccepted = projectWorkflow.acceptedQuote !== undefined;
+  const isPOGenerated = projectWorkflow.purchaseOrder !== undefined;
+  const isWorkCompleted = projectWorkflow.workStatus === 'completed' || projectWorkflow.workStatus === 'approved';
+
+  const hasReceivedQuotes = projectWorkflow.quotes.length > 0;
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -459,10 +552,68 @@ const IndustryProjectWorkflow = () => {
           </div>
         </div>
 
+        {/* Quote Status Tracker - Show after RFQs are sent */}
+        {rfqStatuses.length > 0 && (
+          <div className="mb-8">
+            <QuoteStatusTracker 
+              rfqStatuses={rfqStatuses}
+              totalRFQsSent={sentRFQs.size}
+              quotesReceived={projectWorkflow.quotes.length}
+            />
+          </div>
+        )}
+
+        {/* Manual Quote Check Button - Show when RFQs sent but no quotes received */}
+        {sentRFQs.size > 0 && !quotesReceived && (
+          <div className="mb-8 p-6 rounded-xl shadow-sm border bg-white text-center">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Waiting for Vendor Responses</h3>
+            <p className="text-gray-600 mb-4">Quotes are expected within 2-3 business days</p>
+            <Button onClick={handleCheckForQuotes} className="bg-blue-600 hover:bg-blue-700">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Check for New Quotes
+            </Button>
+          </div>
+        )}
+
+        {/* AI Evaluation Panel - Show when quotes are received */}
+        {hasReceivedQuotes && !isQuoteAccepted && (
+          <div className="mb-8">
+            <AIEvaluationPanel />
+          </div>
+        )}
+
+        {/* Enhanced Quote Comparison - Show AI-evaluated quotes in cards */}
+        {hasReceivedQuotes && !isQuoteAccepted && (
+          <div className="mb-8">
+            <div className="mb-6">
+              <h2 className="font-semibold text-gray-900 text-xl mb-2">AI-Analyzed Quote Comparison</h2>
+              <p className="text-sm text-gray-600">
+                Our AI has analyzed {projectWorkflow.quotes.length} quotes based on multiple criteria. 
+                Review the recommendations below and choose the quote that best fits your needs.
+              </p>
+            </div>
+            <div className="grid lg:grid-cols-2 gap-6">
+              {projectWorkflow.quotes.map((quote) => {
+                const aiEvaluation = aiEvaluations.get(quote.id);
+                return aiEvaluation ? (
+                  <QuoteComparisonCard
+                    key={quote.id}
+                    quote={quote}
+                    aiEvaluation={aiEvaluation}
+                    onAcceptQuote={handleAcceptQuote}
+                    isLowestPrice={quote.quoteAmount === Math.min(...projectWorkflow.quotes.map(q => q.quoteAmount))}
+                    isFastestDelivery={quote.deliveryTimeWeeks === Math.min(...projectWorkflow.quotes.map(q => q.deliveryTimeWeeks))}
+                  />
+                ) : null;
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Conditional Component Rendering */}
         <div className="space-y-8">
-          {/* Quote Review Stage */}
-          {!isQuoteAccepted && (
+          {/* Legacy Quote Review Table - Only show if no AI evaluation available */}
+          {hasReceivedQuotes && !isQuoteAccepted && aiEvaluations.size === 0 && (
             <QuoteReviewTable 
               quotes={projectWorkflow.quotes} 
               onAcceptQuote={handleAcceptQuote} 
