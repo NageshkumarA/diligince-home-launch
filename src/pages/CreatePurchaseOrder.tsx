@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { format, differenceInDays } from 'date-fns';
@@ -115,12 +114,12 @@ const CreatePurchaseOrder: React.FC = () => {
     }
   }, [orderValue, taxPercentage, form]);
 
-  // Get complete form data for review - fixed with proper type handling
-const getCompleteFormData = (): FormValues => { [cite: 191];
-  // The form is validated before reaching this step so we can assert the type
-  return form.getValues() as FormValues; // <--- Add 'as FormValues' here
-};
-  
+  // Get complete form data for review
+  const getCompleteFormData = (): FormValues => {
+    // The form is validated before reaching this step, so we can assert the type.
+    return form.getValues() as FormValues;
+  };
+
   // Handle step navigation
   const handleStepClick = (step: POStepType) => {
     setCurrentStep(step);
@@ -143,10 +142,10 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
       } else {
         const errors = form.formState.errors;
         console.log("Form validation errors:", errors);
-        
+
         const firstErrorField = Object.keys(errors)[0];
         const firstError = errors[firstErrorField as keyof typeof errors];
-        
+
         toast({
           title: "Please Fix Form Errors",
           description: firstError?.message || "Some required fields are missing or invalid. Please review the form.",
@@ -169,7 +168,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
     setIsSubmitting(true);
     try {
       const formData = getCompleteFormData();
-      
+
       // Create the purchase order object
       const purchaseOrder = {
         ...formData,
@@ -180,24 +179,24 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
         deliveredToVendor: true,
         recordedInSystem: true,
       };
-      
+
       console.log("Creating and delivering Purchase Order:", purchaseOrder);
-      
+
       // Simulate PO creation and delivery process
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       // Show success message
       toast({
         title: "Purchase Order Created & Delivered!",
         description: `PO ${formData.poNumber} has been created, saved to your records, 
         and delivered to ${vendors.find(v => v.id === formData.vendor)?.name || 'the vendor'}.`,
       });
-      
+
       // Navigate back to workflows page after a delay
       setTimeout(() => {
         window.location.href = '/industry-workflows';
       }, 3000);
-      
+
     } catch (error) {
       console.error("Error creating purchase order:", error);
       toast({
@@ -221,9 +220,9 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
         status: 'draft',
         savedAt: new Date().toISOString(),
       };
-      
+
       console.log("Saving draft:", draftData);
-      
+
       toast({
         title: "Draft Saved Successfully",
         description: "Your purchase order has been saved as a draft."
@@ -303,11 +302,11 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Ready to Create Purchase Order</h2>
               <p className="text-gray-600">
-                Click the button below to create the purchase order, save it to your records, 
+                Click the button below to create the purchase order, save it to your records,
                 and deliver it to the vendor.
               </p>
             </div>
-            
+
             <div className="bg-blue-50 p-4 rounded-lg mb-6">
               <p className="text-sm text-blue-800">
                 <strong>What happens next:</strong><br/>
@@ -332,7 +331,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
               <CardTitle className="text-lg font-semibold text-gray-900">Purchase Order Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
-              
+
               <FormField
                 control={form.control}
                 name="poNumber"
@@ -346,7 +345,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="vendor"
@@ -371,7 +370,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="projectTitle"
@@ -385,7 +384,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                   </FormItem>
                 )}
               />
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -412,7 +411,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="taxPercentage"
@@ -439,7 +438,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                   )}
                 />
               </div>
-              
+
               <FormField
                 control={form.control}
                 name="totalValue"
@@ -461,7 +460,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                   </FormItem>
                 )}
               />
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -501,7 +500,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="endDate"
@@ -547,7 +546,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                   )}
                 />
               </div>
-              
+
               <FormField
                 control={form.control}
                 name="paymentTerms"
@@ -563,17 +562,17 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                       <SelectContent>
                         <SelectItem value="100_advance">100% advance</SelectItem>
                         <SelectItem value="50_advance_50_completion">50% advance, 50% upon completion</SelectItem>
-                        <SelectItem value="30_advance_70_completion">30% advance, 70% upon completion</SelectItem> {/* Re-type this line carefully */}
+                        <SelectItem value="30_advance_70_completion">30% advance, 70% upon completion</SelectItem>
                         <SelectItem value="net_15">Net 15 days</SelectItem>
                         <SelectItem value="net_30">Net 30 days</SelectItem>
                         <SelectItem value="net_60">Net 60 days</SelectItem>
-                  </SelectContent>
+                      </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="specialInstructions"
@@ -589,7 +588,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
               />
             </CardContent>
           </Card>
-          
+
           <Card className="bg-white border border-gray-100 shadow-sm">
             <CardHeader className="border-b border-gray-100">
               <CardTitle className="text-lg font-semibold text-gray-900">Scope of Work</CardTitle>
@@ -608,7 +607,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                   </FormItem>
                 )}
               />
-              
+
               <div>
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-medium text-gray-900 text-lg">Deliverables</h3>
@@ -622,7 +621,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                     <Plus className="h-4 w-4 mr-1" /> Add Deliverable
                   </Button>
                 </div>
-                
+
                 <div className="space-y-3">
                   {deliverables.map((deliverable, index) => (
                     <div key={deliverable.id} className="flex gap-2">
@@ -655,7 +654,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                   ))}
                 </div>
               </div>
-              
+
               <div>
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-medium text-gray-900 text-lg">Acceptance Criteria</h3>
@@ -669,7 +668,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                     <Plus className="h-4 w-4 mr-1" /> Add Criteria
                   </Button>
                 </div>
-                
+
                 <div className="space-y-3">
                   {acceptanceCriteria.map((criteria, index) => (
                     <div key={criteria.id} className="flex gap-2">
@@ -705,7 +704,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
             </CardContent>
           </Card>
         </div>
-        
+
         {/* Right Panel - ISO 9001 Terms */}
         <div>
           <ISO9001TermsSection
@@ -722,21 +721,21 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <IndustryHeader />
-      
+
       <main className="flex-1 container max-w-7xl mx-auto px-4 py-8 pt-20">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Purchase Order</h1>
           <p className="text-gray-700 text-lg">Enterprise-grade purchase order management</p>
         </div>
-        
+
         <div className="mb-10">
           <PurchaseOrderStepIndicator currentStep={currentStep} onStepClick={handleStepClick} />
         </div>
-        
+
         <Form {...form}>
           <div className="space-y-8">
             {renderStepContent()}
-            
+
             {/* Action Buttons */}
             <div className="flex justify-between items-center">
               <div className="flex gap-3">
@@ -748,7 +747,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                 >
                   Save as Draft
                 </Button>
-                
+
                 {currentStep === 4 && (
                   <Button
                     type="button"
@@ -761,7 +760,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                   </Button>
                 )}
               </div>
-              
+
               <div className="flex gap-3">
                 <Button
                   type="button"
@@ -772,7 +771,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                 >
                   Previous
                 </Button>
-                
+
                 {currentStep === 3 && (
                   <Button
                     type="button"
@@ -782,7 +781,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                     Review & Confirm
                   </Button>
                 )}
-                
+
                 {currentStep === 4 && (
                   <Button
                     type="button"
@@ -792,7 +791,7 @@ const getCompleteFormData = (): FormValues => { [cite: 191];
                     Approve & Proceed
                   </Button>
                 )}
-                
+
                 {currentStep === 5 && (
                   <Button
                     type="button"
