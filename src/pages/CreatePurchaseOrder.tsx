@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { format, differenceInDays } from 'date-fns';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -54,21 +55,102 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+// Type-safe interfaces for component data flow
+interface CompletePOData extends FormValues {
+  isoTerms?: string[];
+  customTerms?: string;
+}
+
+interface POValidationState {
+  isFormValid: boolean;
+  hasRequiredFields: boolean;
+  validationErrors: string[];
+}
+
+// Custom hook for form data management
+const usePOFormData = (form: UseFormReturn<FormValues>) => {
+  // Type-safe data preparation for review
+  const prepareReviewData = useCallback((): FormValues | null => {
+    const values = form.getValues();
+    
+    // Check if all required fields are present and valid
+    const requiredFields = [
+      'poNumber', 'vendor', 'projectTitle', 'orderValue', 
+      'startDate', 'endDate', 'paymentTerms', 'scopeOfWork'
+    ];
+    
+    const isComplete = requiredFields.every(field => {
+      const value = values[field as keyof typeof values];
+      return value !== undefined && value !== null && value !== '';
+    });
+    
+    if (!isComplete) return null;
+    
+    // Type assertion is safe here because we've validated completeness
+    return values as FormValues;
+  }, [form]);
+  
+  // Create complete PO data for final submission
+  const createCompletePOData = useCallback((isoTerms: string[], customTerms: string): CompletePOData | null => {
+    const reviewData = prepareReviewData();
+    if (!reviewData) return null;
+    
+    return {
+      ...reviewData,
+      isoTerms,
+      customTerms
+    };
+  }, [prepareReviewData]);
+  
+  return {
+    prepareReviewData,
+    createCompletePOData
+  };
+};
+
+// Custom hook for form validation state
+const usePOValidation = (form: UseFormReturn<FormValues>) => {
+  const [validationState, setValidationState] = useState<POValidationState>({
+    isFormValid: false,
+    hasRequiredFields: false,
+    validationErrors: []
+  });
+  
+  const validateForm = useCallback(async (): Promise<boolean> => {
+    const result = await form.trigger();
+    const errors = form.formState.errors;
+    const errorMessages = Object.values(errors).map(error => error?.message || 'Validation error').filter(Boolean);
+    
+    setValidationState({
+      isFormValid: result,
+      hasRequiredFields: result,
+      validationErrors: errorMessages
+    });
+    
+    return result;
+  }, [form]);
+  
+  return {
+    validationState,
+    validateForm
+  };
+};
+
 const CreatePurchaseOrder: React.FC = () => {
   const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState<POStepType>(3); // Start at PO Details step
+  const [currentStep, setCurrentStep] = useState<POStepType>(3);
   const [selectedISOTerms, setSelectedISOTerms] = useState<string[]>([]);
   const [customISOTerms, setCustomISOTerms] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Generate unique PO number
-  const generatePONumber = () => {
+  const generatePONumber = useCallback(() => {
     const date = new Date();
     const year = date.getFullYear().toString().slice(-2);
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
     return `PO-${year}${month}-${random}`;
-  };
+  }, []);
 
   // Vendors list - in a real app this would come from API
   const vendors = [
@@ -97,6 +179,10 @@ const CreatePurchaseOrder: React.FC = () => {
     }
   });
 
+  // Custom hooks for type-safe data management
+  const { prepareReviewData, createCompletePOData } = usePOFormData(form);
+  const { validationState, validateForm } = usePOValidation(form);
+
   // Watch form values for reactive updates
   const orderValue = form.watch("orderValue");
   const taxPercentage = form.watch("taxPercentage");
@@ -106,35 +192,13 @@ const CreatePurchaseOrder: React.FC = () => {
   const acceptanceCriteria = form.watch("acceptanceCriteria");
 
   // Calculate total value and duration
-  React.useEffect(() => {
+  useEffect(() => {
     if (orderValue && taxPercentage >= 0) {
       const taxAmount = orderValue * (taxPercentage / 100);
       const total = orderValue + taxAmount;
       form.setValue("totalValue", total);
     }
   }, [orderValue, taxPercentage, form]);
-
-  // Get complete form data for review - Type-safe version
-  const getCompleteFormData = (): FormValues => {
-    const formData = form.getValues();
-    
-    // Ensure all properties are defined with proper fallbacks
-    return {
-      poNumber: formData.poNumber ?? generatePONumber(),
-      vendor: formData.vendor ?? "",
-      projectTitle: formData.projectTitle ?? "Industrial Equipment Procurement",
-      orderValue: formData.orderValue ?? 0,
-      taxPercentage: formData.taxPercentage ?? 0,
-      totalValue: formData.totalValue ?? 0,
-      startDate: formData.startDate ?? new Date(),
-      endDate: formData.endDate ?? new Date(new Date().setDate(new Date().getDate() + 30)),
-      paymentTerms: formData.paymentTerms ?? "",
-      specialInstructions: formData.specialInstructions ?? "",
-      scopeOfWork: formData.scopeOfWork ?? "",
-      deliverables: formData.deliverables ?? [],
-      acceptanceCriteria: formData.acceptanceCriteria ?? []
-    };
-  };
 
   // Handle step navigation
   const handleStepClick = (step: POStepType) => {
@@ -152,19 +216,13 @@ const CreatePurchaseOrder: React.FC = () => {
   const handleNext = async () => {
     if (currentStep === 3) {
       // Moving from PO Details to Review - validate form
-      const isValid = await form.trigger();
+      const isValid = await validateForm();
       if (isValid) {
         setCurrentStep(4);
       } else {
-        const errors = form.formState.errors;
-        console.log("Form validation errors:", errors);
-
-        const firstErrorField = Object.keys(errors)[0];
-        const firstError = errors[firstErrorField as keyof typeof errors];
-
         toast({
           title: "Please Fix Form Errors",
-          description: firstError?.message || "Some required fields are missing or invalid. Please review the form.",
+          description: validationState.validationErrors[0] || "Some required fields are missing or invalid. Please review the form.",
           variant: "destructive"
         });
       }
@@ -183,13 +241,15 @@ const CreatePurchaseOrder: React.FC = () => {
   const handleCreatePurchaseOrder = async () => {
     setIsSubmitting(true);
     try {
-      const formData = getCompleteFormData();
+      const completePOData = createCompletePOData(selectedISOTerms, customISOTerms);
+      
+      if (!completePOData) {
+        throw new Error('Form data is incomplete');
+      }
 
       // Create the purchase order object
       const purchaseOrder = {
-        ...formData,
-        isoTerms: selectedISOTerms,
-        customTerms: customISOTerms,
+        ...completePOData,
         status: 'issued',
         createdAt: new Date().toISOString(),
         deliveredToVendor: true,
@@ -204,8 +264,8 @@ const CreatePurchaseOrder: React.FC = () => {
       // Show success message
       toast({
         title: "Purchase Order Created & Delivered!",
-        description: `PO ${formData.poNumber} has been created, saved to your records, 
-        and delivered to ${vendors.find(v => v.id === formData.vendor)?.name || 'the vendor'}.`,
+        description: `PO ${completePOData.poNumber} has been created, saved to your records, 
+        and delivered to ${vendors.find(v => v.id === completePOData.vendor)?.name || 'the vendor'}.`,
       });
 
       // Navigate back to workflows page after a delay
@@ -228,16 +288,16 @@ const CreatePurchaseOrder: React.FC = () => {
   // Handle save as draft - no validation required
   const handleSaveAsDraft = () => {
     try {
-      const formData = getCompleteFormData();
-      const draftData = {
-        ...formData,
+      const draftData = form.getValues();
+      const saveDraft = {
+        ...draftData,
         isoTerms: selectedISOTerms,
         customTerms: customISOTerms,
         status: 'draft',
         savedAt: new Date().toISOString(),
       };
 
-      console.log("Saving draft:", draftData);
+      console.log("Saving draft:", saveDraft);
 
       toast({
         title: "Draft Saved Successfully",
@@ -297,9 +357,18 @@ const CreatePurchaseOrder: React.FC = () => {
   const renderStepContent = () => {
     if (currentStep === 4) {
       // Review Step
+      const reviewData = prepareReviewData();
+      if (!reviewData) {
+        return (
+          <div className="text-center py-12">
+            <p className="text-red-600">Form data is incomplete. Please go back and fill all required fields.</p>
+          </div>
+        );
+      }
+      
       return (
         <POReviewStep
-          formData={getCompleteFormData()}
+          formData={reviewData}
           selectedISOTerms={selectedISOTerms}
           customISOTerms={customISOTerms}
           vendors={vendors}
@@ -309,6 +378,15 @@ const CreatePurchaseOrder: React.FC = () => {
 
     if (currentStep === 5) {
       // Final Creation Step
+      const reviewData = prepareReviewData();
+      if (!reviewData) {
+        return (
+          <div className="text-center py-12">
+            <p className="text-red-600">Form data is incomplete. Please go back and complete the form.</p>
+          </div>
+        );
+      }
+
       return (
         <div className="text-center py-12">
           <div className="max-w-md mx-auto">
@@ -326,9 +404,9 @@ const CreatePurchaseOrder: React.FC = () => {
             <div className="bg-blue-50 p-4 rounded-lg mb-6">
               <p className="text-sm text-blue-800">
                 <strong>What happens next:</strong><br/>
-                • PO will be created and assigned number {getCompleteFormData().poNumber}<br/>
+                • PO will be created and assigned number {reviewData.poNumber}<br/>
                 • Saved to your industry records<br/>
-                • Delivered to {vendors.find(v => v.id === getCompleteFormData().vendor)?.name || 'the vendor'}<br/>
+                • Delivered to {vendors.find(v => v.id === reviewData.vendor)?.name || 'the vendor'}<br/>
                 • Workflow will begin tracking
               </p>
             </div>
