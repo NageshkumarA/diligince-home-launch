@@ -10,11 +10,11 @@ import { VendorSpecializationProvider } from "@/contexts/VendorSpecializationCon
 import { NotificationStoreProvider } from "@/contexts/NotificationStoreContext";
 import { ApprovalProvider } from "@/contexts/ApprovalContext";
 
-import ErrorBoundary from "@/components/shared/ErrorBoundary";
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { FastLoadingState } from "@/components/shared/loading/FastLoadingState";
 
 // Lazy load pages for better performance
-const HomePage = React.lazy(() => import("@/pages/HomePage"));
+const HomePage = React.lazy(() => import("@/pages/Index"));
 const IndustryDashboard = React.lazy(() => import("@/pages/IndustryDashboard"));
 const IndustryWorkflows = React.lazy(() => import("@/pages/IndustryWorkflows"));
 const IndustryProjectWorkflow = React.lazy(() => import("@/pages/IndustryProjectWorkflow"));
