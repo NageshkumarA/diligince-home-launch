@@ -14,6 +14,7 @@ import { POTriggerCard } from '@/components/industry/workflow/POTriggerCard';
 import { WorkTimeline } from '@/components/industry/workflow/WorkTimeline';
 import { PaymentMilestoneTracker } from '@/components/industry/workflow/PaymentMilestoneTracker';
 import { RetentionPaymentCard } from '@/components/industry/workflow/RetentionPaymentCard';
+import { SendRFQModal } from '@/components/industry/SendRFQModal';
 
 // Import types
 import { ProjectWorkflow, VendorQuote, PaymentMilestone, WorkflowEvent, RetentionPayment } from '@/types/workflow';
@@ -66,6 +67,11 @@ const IndustryProjectWorkflow = () => {
   const navigate = useNavigate();
   const { projectId } = useParams();
   const { showSuccess, showError } = useNotifications();
+
+  // RFQ Modal State
+  const [isRFQModalOpen, setIsRFQModalOpen] = useState(false);
+  const [selectedStakeholder, setSelectedStakeholder] = useState<any>(null);
+  const [sentRFQs, setSentRFQs] = useState<Set<string>>(new Set());
 
   // Mock project workflow data
   const [projectWorkflow, setProjectWorkflow] = useState<ProjectWorkflow>({
@@ -291,6 +297,16 @@ const IndustryProjectWorkflow = () => {
     );
   };
 
+  const handleSendRFQ = (stakeholder: any) => {
+    setSelectedStakeholder(stakeholder);
+    setIsRFQModalOpen(true);
+  };
+
+  const handleRFQSent = (stakeholderId: string) => {
+    setSentRFQs(prev => new Set([...prev, stakeholderId]));
+    showSuccess('RFQ Sent (Mock) — Functionality Not Yet Connected');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <IndustryHeader />
@@ -418,13 +434,24 @@ const IndustryProjectWorkflow = () => {
                     >
                       View Profile
                     </Button>
-                    <Button 
-                      size="sm" 
-                      className="w-full bg-blue-600 hover:bg-blue-700" 
-                      disabled
-                    >
-                      Send RFQ
-                    </Button>
+                    {sentRFQs.has(stakeholder.id) ? (
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="w-full" 
+                        disabled
+                      >
+                        RFQ Sent
+                      </Button>
+                    ) : (
+                      <Button 
+                        size="sm" 
+                        className="w-full bg-blue-600 hover:bg-blue-700" 
+                        onClick={() => handleSendRFQ(stakeholder)}
+                      >
+                        Send RFQ
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -477,6 +504,17 @@ const IndustryProjectWorkflow = () => {
           )}
         </div>
       </main>
+
+      {/* RFQ Modal */}
+      {selectedStakeholder && (
+        <SendRFQModal
+          isOpen={isRFQModalOpen}
+          onClose={() => setIsRFQModalOpen(false)}
+          stakeholder={selectedStakeholder}
+          requirementTitle={projectWorkflow.projectTitle}
+          onSendRFQ={handleRFQSent}
+        />
+      )}
     </div>
   );
 };
