@@ -592,34 +592,30 @@ const IndustryProjectWorkflow = () => {
                 Review the recommendations below and choose the quote that best fits your needs.
               </p>
             </div>
-            <div className="grid lg:grid-cols-2 gap-6">
-              {projectWorkflow.quotes.map((quote) => {
-                const aiEvaluation = aiEvaluations.get(quote.id);
-                return aiEvaluation ? (
-                  <QuoteComparisonCard
-                    key={quote.id}
-                    quote={quote}
-                    aiEvaluation={aiEvaluation}
-                    onAcceptQuote={handleAcceptQuote}
-                    isLowestPrice={quote.quoteAmount === Math.min(...projectWorkflow.quotes.map(q => q.quoteAmount))}
-                    isFastestDelivery={quote.deliveryTimeWeeks === Math.min(...projectWorkflow.quotes.map(q => q.deliveryTimeWeeks))}
-                  />
-                ) : null;
-              })}
+            
+            {/* Enhanced Quote Review Table with AI Features */}
+            <QuoteReviewTable 
+              quotes={projectWorkflow.quotes} 
+              onAcceptQuote={handleAcceptQuote}
+              aiEvaluations={aiEvaluations}
+            />
+            
+            {/* Optional: Card View Toggle (for future enhancement) */}
+            <div className="mt-4 text-center">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="text-gray-600 hover:text-gray-700 border-gray-300"
+                disabled
+              >
+                Switch to Card View (Coming Soon)
+              </Button>
             </div>
           </div>
         )}
 
         {/* Conditional Component Rendering */}
         <div className="space-y-8">
-          {/* Legacy Quote Review Table - Only show if no AI evaluation available */}
-          {hasReceivedQuotes && !isQuoteAccepted && aiEvaluations.size === 0 && (
-            <QuoteReviewTable 
-              quotes={projectWorkflow.quotes} 
-              onAcceptQuote={handleAcceptQuote} 
-            />
-          )}
-
           {/* PO Generation Stage */}
           {isQuoteAccepted && !isPOGenerated && projectWorkflow.acceptedQuote && (
             <POTriggerCard 
