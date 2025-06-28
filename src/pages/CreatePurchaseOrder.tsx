@@ -116,7 +116,7 @@ const CreatePurchaseOrder: React.FC = () => {
 
   // Get complete form data for review - fixed with proper type handling
   const getCompleteFormData = (): FormValues => {
-    const formData = form.getValues();
+    return form.getValues() as FormValues;
     
     // Ensure all required fields have values
     return {
