@@ -1,18 +1,22 @@
-import React, { Suspense, memo } from "react";
+import React, { Suspense, memo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import IndustryHeader from "@/components/industry/IndustryHeader";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { FileText, MessageSquare, ShoppingCart, CheckCircle, Clock, AlertCircle, Plus, Workflow, Eye, DollarSign } from "lucide-react";
+import { FileText, MessageSquare, ShoppingCart, CheckCircle, Clock, AlertCircle, Plus, Workflow, Eye, DollarSign, AlertTriangle } from "lucide-react";
 import { FastLoadingState } from "@/components/shared/loading/FastLoadingState";
 import { SkeletonLoader } from "@/components/shared/loading/SkeletonLoader";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { perfUtils } from "@/utils/performance";
+import { useApproval } from "@/contexts/ApprovalContext";
+import { ApprovalModal } from "@/components/approval/ApprovalModal";
+import { useModal } from "@/hooks/useModal";
+import { toast } from "sonner";
 
 // Mock data for the dashboard - moved to module level for better performance
 const metrics = [{
@@ -161,6 +165,38 @@ const orderData = [{
   requirementId: "REQ-002"
 }];
 
+// Mock pending approvals for current user
+const mockPendingApprovals = [
+  {
+    id: "approval-001",
+    requirementId: "REQ-001",
+    requirementTitle: "Industrial Valve Procurement",
+    budget: 25000,
+    priority: "high",
+    description: "Procurement of industrial valves for manufacturing line upgrade",
+    category: "Product",
+    deadline: "2024-01-25",
+    requestedDate: "2024-01-10",
+    approverRole: "Department Head",
+    approvalLevel: 1,
+    isUrgent: false
+  },
+  {
+    id: "approval-002", 
+    requirementId: "REQ-005",
+    requirementTitle: "Emergency Chemical Transport",
+    budget: 150000,
+    priority: "critical",
+    description: "Urgent chemical transportation services for production continuity",
+    category: "Logistics",
+    deadline: "2024-01-18",
+    requestedDate: "2024-01-15",
+    approverRole: "Department Head", 
+    approvalLevel: 1,
+    isUrgent: true
+  }
+];
+
 // Helper functions - regular functions instead of memoized to fix the runtime error
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -199,6 +235,9 @@ const getCategoryColor = (category: string) => {
 // Memoized dashboard container
 const DashboardContainer = memo(() => {
   const navigate = useNavigate();
+  const { submitApproval } = useApproval();
+  const { isOpen: isApprovalModalOpen, openModal: openApprovalModal, closeModal: closeApprovalModal } = useModal();
+  const [selectedApproval, setSelectedApproval] = useState<any>(null);
 
   // Handler functions for stakeholder actions
   const handleViewProfile = (stakeholderId: string, stakeholderType: string) => {
@@ -227,6 +266,32 @@ const DashboardContainer = memo(() => {
     // Navigate to milestone management page (using project workflow for now)
     navigate(`/industry-project-workflow/${orderId}`);
   };
+
+  const handleReviewApproval = (approval: any) => {
+    setSelectedApproval(approval);
+    openApprovalModal();
+  };
+
+  const handleApprove = (comments: string) => {
+    if (selectedApproval) {
+      submitApproval(selectedApproval.id, 'approved', comments);
+      setSelectedApproval(null);
+      toast.success(`Requirement "${selectedApproval.requirementTitle}" approved successfully`);
+    }
+  };
+
+  const handleReject = (comments: string) => {
+    if (selectedApproval) {
+      submitApproval(selectedApproval.id, 'rejected', comments);
+      setSelectedApproval(null);
+      toast.error(`Requirement "${selectedApproval.requirementTitle}" rejected`);
+    }
+  };
+
+  const currentUserRole = "Department Head"; // Mock current user role
+  const userPendingApprovals = mockPendingApprovals.filter(
+    approval => approval.approverRole === currentUserRole
+  );
 
   return <main className="flex-1 container mx-auto px-4 py-8 pt-20">
       <div className="mb-8">
@@ -276,6 +341,98 @@ const DashboardContainer = memo(() => {
           </Button>
         </div>
       </div>
+      
+      {/* Pending Approvals Section - Only show if user has pending approvals */}
+      {userPendingApprovals.length > 0 && (
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <Clock className="h-5 w-5 text-orange-600" />
+              Pending Approvals ({userPendingApprovals.length})
+            </h2>
+          </div>
+          
+          <Card className="bg-white border border-orange-200 shadow-sm">
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-gray-100">
+                    <TableHead className="font-semibold text-gray-700">Requirement</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Category</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Priority</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Budget</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Deadline</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {userPendingApprovals.map(approval => (
+                    <TableRow key={approval.id} className="border-gray-100 hover:bg-gray-50">
+                      <TableCell>
+                        <div>
+                          <div className="font-medium text-gray-900 flex items-center gap-2">
+                            {approval.requirementTitle}
+                            {approval.priority === 'critical' && (
+                              <Badge className="bg-red-100 text-red-800">
+                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                Urgent
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="text-sm text-gray-500">{approval.requirementId}</div>
+                          <div className="text-xs text-gray-400">
+                            Requested: {new Date(approval.requestedDate).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getCategoryColor(approval.category)}>
+                          {approval.category}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={
+                          approval.priority === 'critical' ? 'bg-red-100 text-red-800' :
+                          approval.priority === 'high' ? 'bg-orange-100 text-orange-800' :
+                          approval.priority === 'medium' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }>
+                          {approval.priority}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        ${approval.budget.toLocaleString()}
+                      </TableCell>
+                      <TableCell>
+                        <span className={
+                          new Date(approval.deadline) < new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+                            ? "text-red-600 font-medium" 
+                            : "text-gray-700"
+                        }>
+                          {new Date(approval.deadline).toLocaleDateString()}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <Button 
+                          size="sm" 
+                          onClick={() => handleReviewApproval(approval)}
+                          className={
+                            approval.priority === 'critical' 
+                              ? "bg-red-600 hover:bg-red-700" 
+                              : "bg-blue-600 hover:bg-blue-700"
+                          }
+                        >
+                          Review
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
+      )}
       
       {/* Key Metrics Section */}
       <Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -553,6 +710,27 @@ const DashboardContainer = memo(() => {
           </div>
         </Suspense>
       </div>
+      
+      {/* Approval Modal */}
+      {selectedApproval && (
+        <ApprovalModal
+          isOpen={isApprovalModalOpen}
+          onClose={closeApprovalModal}
+          requirement={{
+            id: selectedApproval.requirementId,
+            title: selectedApproval.requirementTitle,
+            budget: selectedApproval.budget,
+            priority: selectedApproval.priority,
+            description: selectedApproval.description,
+            category: selectedApproval.category,
+            deadline: selectedApproval.deadline,
+            isUrgent: selectedApproval.isUrgent
+          }}
+          approvalLevel={selectedApproval.approvalLevel}
+          onApprove={handleApprove}
+          onReject={handleReject}
+        />
+      )}
     </main>;
 });
 

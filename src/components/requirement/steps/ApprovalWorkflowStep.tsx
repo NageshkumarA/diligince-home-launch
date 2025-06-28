@@ -8,7 +8,8 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Users, Clock, AlertTriangle, Shield, CheckCircle } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Users, Clock, AlertTriangle, Shield, CheckCircle, XCircle, User } from "lucide-react";
 import { toast } from "sonner";
 
 interface ApprovalWorkflowStepProps {
@@ -47,6 +48,8 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
                           formData.priority === 'high' || 
                           formData.complianceRequired;
 
+  const isCritical = formData.priority === 'critical';
+
   const handleCreateWorkflow = () => {
     if (!formData.title) {
       toast.error("Please complete basic information first");
@@ -56,12 +59,35 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
     const workflowId = createApprovalWorkflow(formData);
     updateFormData({ approvalWorkflowId: workflowId });
     setWorkflowCreated(true);
-    toast.success("Approval workflow created successfully");
+    
+    if (isCritical) {
+      toast.warning("URGENT: Critical requirement workflow created. Director-level approval assigned.");
+    } else {
+      toast.success("Approval workflow created successfully");
+    }
   };
 
   const handleSkipApproval = () => {
     updateFormData({ approvalStatus: 'not_required' });
     onNext();
+  };
+
+  const getApprovalStatusBadge = (status: string) => {
+    switch (status) {
+      case 'approved':
+        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Approved</Badge>;
+      case 'rejected':
+        return <Badge className="bg-red-100 text-red-800"><XCircle className="h-3 w-3 mr-1" />Rejected</Badge>;
+      case 'pending':
+        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
+      default:
+        return <Badge className="bg-gray-100 text-gray-800">Unknown</Badge>;
+    }
+  };
+
+  const getApprovalProgress = () => {
+    if (!approvalWorkflow) return 0;
+    return Math.round((approvalWorkflow.completedApprovals / approvalWorkflow.totalApprovals) * 100);
   };
 
   return (
@@ -72,6 +98,20 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
           Configure the approval process for your requirement based on ISO 9001 standards.
         </p>
       </div>
+
+      {/* Critical Requirement Alert Banner */}
+      {isCritical && (
+        <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle className="h-5 w-5 text-red-600" />
+            <h3 className="font-medium text-red-800">URGENT REQUIREMENT</h3>
+          </div>
+          <p className="text-sm text-red-700">
+            This is an URGENT requirement. Fast approval is required as per ISO 9001 guidelines.
+            Director-level approval will be automatically assigned for expedited processing.
+          </p>
+        </div>
+      )}
 
       {/* Approval Requirements Analysis */}
       <Card>
@@ -127,6 +167,49 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
 
       {requiresApproval && (
         <>
+          {/* Approval Chain Display */}
+          {workflowCreated && approvalWorkflow && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Approval Chain Progress
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="mb-4">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Overall Progress</span>
+                    <span>{getApprovalProgress()}%</span>
+                  </div>
+                  <Progress value={getApprovalProgress()} className="h-2" />
+                </div>
+                
+                <div className="space-y-3">
+                  {approvalWorkflow.approvalRequests.map((request: any, index: number) => (
+                    <div key={request.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100">
+                          <User className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div>
+                          <div className="font-medium text-gray-900">{request.approverName}</div>
+                          <div className="text-sm text-gray-500">{request.approverRole}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {getApprovalStatusBadge(request.status)}
+                        {request.isUrgent && (
+                          <Badge className="bg-red-100 text-red-800">Urgent</Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Approval Configuration */}
           <Card>
             <CardHeader>
@@ -205,17 +288,20 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
                 </div>
               </div>
 
-              {formData.isUrgent && (
+              {(formData.isUrgent || isCritical) && (
                 <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <Clock className="h-5 w-5 text-orange-600" />
-                    <h3 className="font-medium text-orange-800">Urgent Approval Timeline</h3>
+                    <h3 className="font-medium text-orange-800">
+                      {isCritical ? 'Critical' : 'Urgent'} Approval Timeline
+                    </h3>
                   </div>
                   <ul className="text-sm text-orange-700 space-y-1">
                     <li>• Approvers will be notified immediately</li>
                     <li>• Target response time: {policy.urgentApprovalHours} hours</li>
                     <li>• Emergency publish available if approvals are delayed</li>
                     <li>• Auto-escalation after {policy.autoEscalationHours} hours</li>
+                    {isCritical && <li>• Director-level approval automatically assigned</li>}
                   </ul>
                 </div>
               )}
