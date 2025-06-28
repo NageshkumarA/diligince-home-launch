@@ -118,24 +118,22 @@ const CreatePurchaseOrder: React.FC = () => {
   const getCompleteFormData = (): FormValues => {
     const formData = form.getValues();
     
-    // Create a properly typed FormValues object with all required fields
-    const completeData: FormValues = {
-      poNumber: formData.poNumber || generatePONumber(),
-      vendor: formData.vendor || "",
-      projectTitle: formData.projectTitle || "Industrial Equipment Procurement",
-      orderValue: formData.orderValue || 0,
-      taxPercentage: formData.taxPercentage || 0,
-      totalValue: formData.totalValue || 0,
-      startDate: formData.startDate || new Date(),
-      endDate: formData.endDate || new Date(new Date().setDate(new Date().getDate() + 30)),
-      paymentTerms: formData.paymentTerms || "",
-      specialInstructions: formData.specialInstructions || "",
-      scopeOfWork: formData.scopeOfWork || "",
-      deliverables: formData.deliverables || [],
-      acceptanceCriteria: formData.acceptanceCriteria || []
+    // Ensure all properties are defined with proper fallbacks
+    return {
+      poNumber: formData.poNumber ?? generatePONumber(),
+      vendor: formData.vendor ?? "",
+      projectTitle: formData.projectTitle ?? "Industrial Equipment Procurement",
+      orderValue: formData.orderValue ?? 0,
+      taxPercentage: formData.taxPercentage ?? 0,
+      totalValue: formData.totalValue ?? 0,
+      startDate: formData.startDate ?? new Date(),
+      endDate: formData.endDate ?? new Date(new Date().setDate(new Date().getDate() + 30)),
+      paymentTerms: formData.paymentTerms ?? "",
+      specialInstructions: formData.specialInstructions ?? "",
+      scopeOfWork: formData.scopeOfWork ?? "",
+      deliverables: formData.deliverables ?? [],
+      acceptanceCriteria: formData.acceptanceCriteria ?? []
     };
-    
-    return completeData;
   };
 
   // Handle step navigation
