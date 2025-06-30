@@ -72,32 +72,26 @@ const usePOFormData = (form: UseFormReturn<FormValues>) => {
   const prepareReviewData = useCallback((): FormValues | null => {
     const values = form.getValues();
     
-    // Check if all required fields are present and valid
-    const requiredFields = [
-      'poNumber', 'vendor', 'projectTitle', 'orderValue', 
-      'startDate', 'endDate', 'paymentTerms', 'scopeOfWork'
-    ];
+    // Validate that all required fields have values
+    if (!values.poNumber || !values.vendor || !values.projectTitle || 
+        !values.startDate || !values.endDate || !values.paymentTerms || 
+        !values.scopeOfWork) {
+      return null;
+    }
     
-    const isComplete = requiredFields.every(field => {
-      const value = values[field as keyof typeof values];
-      return value !== undefined && value !== null && value !== '';
-    });
-    
-    if (!isComplete) return null;
-    
-    // Ensure all required fields are properly typed and present
+    // Return properly typed FormValues object
     const validatedData: FormValues = {
-      poNumber: values.poNumber || '',
-      vendor: values.vendor || '',
-      projectTitle: values.projectTitle || '',
+      poNumber: values.poNumber,
+      vendor: values.vendor,
+      projectTitle: values.projectTitle,
       orderValue: values.orderValue || 0,
       taxPercentage: values.taxPercentage || 0,
       totalValue: values.totalValue || 0,
-      startDate: values.startDate || new Date(),
-      endDate: values.endDate || new Date(),
-      paymentTerms: values.paymentTerms || '',
+      startDate: values.startDate,
+      endDate: values.endDate,
+      paymentTerms: values.paymentTerms,
       specialInstructions: values.specialInstructions || '',
-      scopeOfWork: values.scopeOfWork || '',
+      scopeOfWork: values.scopeOfWork,
       deliverables: values.deliverables || [],
       acceptanceCriteria: values.acceptanceCriteria || []
     };
@@ -174,7 +168,7 @@ const CreatePurchaseOrder: React.FC = () => {
     { id: "3", name: "Global Equipment Ltd." }
   ];
 
-  // Initialize the form
+  // Initialize the form with all required fields properly typed
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
