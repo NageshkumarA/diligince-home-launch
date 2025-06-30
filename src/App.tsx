@@ -98,7 +98,7 @@ function App() {
                             <Route path="/create-requirement" element={<RouteErrorBoundary><CreateRequirement /></RouteErrorBoundary>} />
                             <Route path="/create-purchase-order" element={<RouteErrorBoundary><CreatePurchaseOrder /></RouteErrorBoundary>} />
                             <Route path="/industry-workflows" element={<RouteErrorBoundary><IndustryWorkflows /></RouteErrorBoundary>} />
-                            <Route path="/industry-project-workflow/:id" element={<RouteErrorBoundary><IndustryProjectWorkflow /></RouteErrorBoundary>} />
+                            <Route path="/industry-project-workflow" element={<RouteErrorBoundary><IndustryProjectWorkflow /></RouteErrorBoundary>} />
                             <Route path="/industry-stakeholders" element={<RouteErrorBoundary><IndustryStakeholders /></RouteErrorBoundary>} />
                             <Route path="/industry-documents" element={<RouteErrorBoundary><IndustryDocuments /></RouteErrorBoundary>} />
                             <Route path="/industry-messages" element={<RouteErrorBoundary><IndustryMessages /></RouteErrorBoundary>} />
