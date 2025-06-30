@@ -39,6 +39,7 @@ import EnterpriseTeamMembers from "@/components/industry/EnterpriseTeamMembers";
 import IndustryHeader from "@/components/industry/IndustryHeader";
 import { ProfileCompletionWidget } from "@/components/shared/ProfileCompletionWidget";
 import { useUser } from "@/contexts/UserContext";
+import { useEnhancedApproval } from "@/contexts/EnhancedApprovalContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -53,6 +54,7 @@ export type ContentType =
 
 const IndustryProfile = () => {
   const { user, updateProfile, profileCompletion, isAuthenticated } = useUser();
+  const { userRole, isCompanyAdmin, companyId } = useEnhancedApproval();
   const navigate = useNavigate();
 
   // Mock documents data for table
@@ -98,11 +100,6 @@ const IndustryProfile = () => {
   const [yearEstablished, setYearEstablished] = useState("1995");
   const [activeMenu, setActiveMenu] = useState<ContentType>("Company Profile");
   
-  // Company management state
-  const [companyId, setCompanyId] = useState<string>("");
-  const [isCompanyAdmin, setIsCompanyAdmin] = useState<boolean>(false);
-  const [userRole, setUserRole] = useState<'admin' | 'approver' | 'reviewer' | 'initiator'>('initiator');
-  
   // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
@@ -110,65 +107,6 @@ const IndustryProfile = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  // Initialize company management
-  useEffect(() => {
-    const initializeCompanyData = () => {
-      // Check if user has company ID
-      let currentCompanyId = user?.profile?.companyId;
-      
-      if (!currentCompanyId) {
-        // Generate company ID based on company name and domain
-        const domain = email.split('@')[1] || '';
-        currentCompanyId = `company-${companyName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${domain.replace(/[^a-z0-9]/g, '-')}`;
-        setCompanyId(currentCompanyId);
-        
-        // First user from company becomes admin
-        const existingCompanies = JSON.parse(localStorage.getItem('industryCompanies') || '[]');
-        const companyExists = existingCompanies.find((comp: any) => comp.id === currentCompanyId);
-        
-        if (!companyExists) {
-          // This is the first user - make them admin
-          setIsCompanyAdmin(true);
-          setUserRole('admin');
-          
-          // Save company data
-          const newCompany = {
-            id: currentCompanyId,
-            name: companyName,
-            domain: domain,
-            adminUserId: user?.id,
-            createdDate: new Date().toISOString(),
-            users: [user?.id]
-          };
-          
-          existingCompanies.push(newCompany);
-          localStorage.setItem('industryCompanies', JSON.stringify(existingCompanies));
-          
-          toast.success("You've been assigned as Company Administrator!");
-        } else {
-          // Subsequent user - needs approval
-          setIsCompanyAdmin(false);
-          setUserRole('initiator');
-        }
-      } else {
-        // User already has company - check their role
-        const companies = JSON.parse(localStorage.getItem('industryCompanies') || '[]');
-        const userCompany = companies.find((comp: any) => comp.id === currentCompanyId);
-        
-        if (userCompany && userCompany.adminUserId === user?.id) {
-          setIsCompanyAdmin(true);
-          setUserRole('admin');
-        }
-        
-        setCompanyId(currentCompanyId);
-      }
-    };
-
-    if (user && companyName && email) {
-      initializeCompanyData();
-    }
-  }, [user, companyName, email]);
-  
   // Mock data for team members
   const [teamMembers, setTeamMembers] = useState([
     { id: 1, name: "John Doe", role: "CEO", email: "john@steelplant.com" },
