@@ -1,4 +1,5 @@
-import { Home, FileText, ShoppingCart, MessageSquare, Users, Workflow, Building2, Package, Truck, User, Calendar, Briefcase } from "lucide-react";
+
+import { Home, FileText, ShoppingCart, MessageSquare, Users, Workflow, Building2, Package, Truck, User, Calendar, Briefcase, Settings } from "lucide-react";
 import React from "react";
 
 export interface NavItem {
@@ -42,6 +43,11 @@ export const industryHeaderConfig: HeaderConfig = {
       label: "Workflows",
       href: "/industry-workflows",
       icon: React.createElement(Workflow, { size: 18 })
+    },
+    {
+      label: "Approval Matrix",
+      href: "/industry-approval-matrix",
+      icon: React.createElement(Settings, { size: 18 })
     },
     {
       label: "Messages",

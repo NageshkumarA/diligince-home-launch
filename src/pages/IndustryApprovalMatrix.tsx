@@ -9,117 +9,36 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, Users, BarChart3, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
-
-// Mock team members data - in real app this would come from team management
-const mockTeamMembers: TeamMember[] = [
-  {
-    id: 'tm-1',
-    name: 'John Smith',
-    email: 'john.smith@company.com',
-    phone: '+91-9876543210',
-    role: 'Manager',
-    department: 'Engineering',
-    status: 'active',
-    joinDate: '2024-01-15',
-    invitationStatus: 'accepted',
-    permissions: [
-      { module: 'Requirements', actions: ['create', 'read', 'update', 'approve'], dataScope: 'department' },
-      { module: 'Team Management', actions: ['read'], dataScope: 'department' }
-    ]
-  },
-  {
-    id: 'tm-2',
-    name: 'Sarah Johnson',
-    email: 'sarah.johnson@company.com',
-    phone: '+91-9876543211',
-    role: 'Procurement Head',
-    department: 'Procurement',
-    status: 'active',
-    joinDate: '2024-02-01',
-    invitationStatus: 'accepted',
-    permissions: [
-      { module: 'Requirements', actions: ['create', 'read', 'update', 'approve'], dataScope: 'company' },
-      { module: 'Vendors', actions: ['create', 'read', 'update'], dataScope: 'company' }
-    ]
-  },
-  {
-    id: 'tm-3',
-    name: 'Michael Brown',
-    email: 'michael.brown@company.com',
-    phone: '+91-9876543212',
-    role: 'Finance Head',
-    department: 'Finance',
-    status: 'active',
-    joinDate: '2024-01-20',
-    invitationStatus: 'accepted',
-    permissions: [
-      { module: 'Requirements', actions: ['read', 'approve'], dataScope: 'company' },
-      { module: 'Payment Settings', actions: ['create', 'read', 'update'], dataScope: 'company' }
-    ]
-  },
-  {
-    id: 'tm-4',
-    name: 'Lisa Davis',
-    email: 'lisa.davis@company.com',
-    phone: '+91-9876543213',
-    role: 'CEO',
-    department: 'Management',
-    status: 'active',
-    joinDate: '2024-01-01',
-    invitationStatus: 'accepted',
-    permissions: [
-      { module: 'Requirements', actions: ['create', 'read', 'update', 'approve'], dataScope: 'company' },
-      { module: 'Team Management', actions: ['create', 'read', 'update', 'delete'], dataScope: 'company' }
-    ]
-  },
-  {
-    id: 'tm-5',
-    name: 'David Wilson',
-    email: 'david.wilson@company.com',
-    phone: '+91-9876543214',
-    role: 'Engineer',
-    department: 'Engineering',
-    status: 'active',
-    joinDate: '2024-02-15',
-    invitationStatus: 'accepted',
-    permissions: [
-      { module: 'Requirements', actions: ['create', 'read'], dataScope: 'department' }
-    ]
-  },
-  {
-    id: 'tm-6',
-    name: 'Anna Martinez',
-    email: 'anna.martinez@company.com',
-    phone: '+91-9876543215',
-    role: 'AGM',
-    department: 'Operations',
-    status: 'active',
-    joinDate: '2024-01-10',
-    invitationStatus: 'accepted',
-    permissions: [
-      { module: 'Requirements', actions: ['create', 'read', 'update', 'approve'], dataScope: 'company' }
-    ]
-  }
-];
+import { Settings, Users, BarChart3, CheckCircle, Clock, AlertTriangle, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const IndustryApprovalMatrix = () => {
   const { 
     activeConfiguration, 
     approvalWorkflows, 
+    teamMembers,
     updateTeamMembers 
   } = useEnhancedApproval();
   
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(mockTeamMembers);
   const [selectedTab, setSelectedTab] = useState('configuration');
 
+  // Load team members from localStorage (simulating data from Industry Profile)
   useEffect(() => {
-    updateTeamMembers(teamMembers);
-  }, [teamMembers, updateTeamMembers]);
+    const storedTeamMembers = localStorage.getItem('industryTeamMembers');
+    if (storedTeamMembers) {
+      try {
+        const parsedMembers = JSON.parse(storedTeamMembers);
+        updateTeamMembers(parsedMembers);
+      } catch (error) {
+        console.error('Error loading team members:', error);
+      }
+    }
+  }, [updateTeamMembers]);
 
   const handleTeamMembersUpdate = (updatedMembers: TeamMember[]) => {
-    setTeamMembers(updatedMembers);
     updateTeamMembers(updatedMembers);
+    // Save to localStorage to persist across pages
+    localStorage.setItem('industryTeamMembers', JSON.stringify(updatedMembers));
   };
 
   // Calculate approval statistics
@@ -182,6 +101,29 @@ const IndustryApprovalMatrix = () => {
         </Card>
       </div>
 
+      {/* Team Members Setup Notice */}
+      {teamMembers.length === 0 && (
+        <Card className="border-orange-200 bg-orange-50">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <AlertTriangle className="h-8 w-8 text-orange-600" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-orange-900">Team Members Required</h3>
+                <p className="text-orange-700 mb-3">
+                  To configure approval workflows, you need to add team members first.
+                </p>
+                <Link to="/industry-profile">
+                  <Button className="bg-orange-600 hover:bg-orange-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Team Members
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {activeConfiguration && (
         <Card>
           <CardHeader>
@@ -209,7 +151,7 @@ const IndustryApprovalMatrix = () => {
                   </p>
                 </div>
                 <div className="p-4 bg-purple-50 rounded-lg">
-                  <p className="font-medium text-purple-900">Assigned Users</p>
+                  <p className="font-medium text-purple-900">Assigned Team Members</p>
                   <p className="text-2xl font-bold text-purple-600">
                     {new Set(
                       activeConfiguration.thresholds.flatMap(threshold => 

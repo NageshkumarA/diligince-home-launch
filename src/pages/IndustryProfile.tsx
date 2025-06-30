@@ -84,12 +84,23 @@ const IndustryProfile = () => {
     { id: 3, name: "Robert Johnson", role: "Operations Manager", email: "robert@steelplant.com" }
   ]);
 
-  // Mock data for documents
-  const [documents, setDocuments] = useState([
-    { id: 1, name: "Company Registration", type: "PDF", uploadDate: "15 Mar 2023", expiry: "N/A", status: "Verified" },
-    { id: 2, name: "ISO 9001 Certificate", type: "PDF", uploadDate: "20 Jan 2023", expiry: "20 Jan 2026", status: "Verified" },
-    { id: 3, name: "GST Certificate", type: "PDF", uploadDate: "05 Apr 2023", expiry: "N/A", status: "Pending" }
-  ]);
+  // Load team members from localStorage on mount
+  useEffect(() => {
+    const storedTeamMembers = localStorage.getItem('industryTeamMembers');
+    if (storedTeamMembers) {
+      try {
+        const parsedMembers = JSON.parse(storedTeamMembers);
+        setTeamMembers(parsedMembers);
+      } catch (error) {
+        console.error('Error loading team members:', error);
+      }
+    }
+  }, []);
+
+  // Save team members to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('industryTeamMembers', JSON.stringify(teamMembers));
+  }, [teamMembers]);
 
   // State for new team member form
   const [newTeamMember, setNewTeamMember] = useState({ name: "", role: "", email: "" });
@@ -148,15 +159,15 @@ const IndustryProfile = () => {
           member
       ));
       setEditingTeamMember(null);
+      toast.success("Team member updated successfully!");
     } else {
       // Add new team member
-      setTeamMembers([
-        ...teamMembers, 
-        { 
-          id: teamMembers.length ? Math.max(...teamMembers.map(m => m.id)) + 1 : 1,
-          ...newTeamMember 
-        }
-      ]);
+      const newMember = { 
+        id: teamMembers.length ? Math.max(...teamMembers.map(m => m.id)) + 1 : 1,
+        ...newTeamMember 
+      };
+      setTeamMembers([...teamMembers, newMember]);
+      toast.success("Team member added successfully!");
     }
     setNewTeamMember({ name: "", role: "", email: "" });
     setShowTeamMemberForm(false);
@@ -165,6 +176,7 @@ const IndustryProfile = () => {
   // Delete team member
   const deleteTeamMember = (id) => {
     setTeamMembers(teamMembers.filter(member => member.id !== id));
+    toast.success("Team member removed successfully!");
   };
 
   // Edit team member
