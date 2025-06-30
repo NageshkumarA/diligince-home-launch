@@ -55,6 +55,34 @@ const IndustryProfile = () => {
   const { user, updateProfile, profileCompletion, isAuthenticated } = useUser();
   const navigate = useNavigate();
 
+  // Mock documents data for table
+  const documents = [
+    {
+      id: 1,
+      name: "GST Certificate",
+      type: "Tax Document",
+      uploadDate: "2024-01-15",
+      expiry: "2025-01-15",
+      status: "Verified"
+    },
+    {
+      id: 2,
+      name: "Company Registration",
+      type: "Legal Document",
+      uploadDate: "2024-01-10",
+      expiry: "N/A",
+      status: "Verified"
+    },
+    {
+      id: 3,
+      name: "ISO 9001 Certificate",
+      type: "Quality Certification",
+      uploadDate: "2024-02-01",
+      expiry: "2025-02-01",
+      status: "Under Review"
+    }
+  ];
+
   // Initialize state from user profile
   const [companyName, setCompanyName] = useState(user?.profile?.companyName || "Steel Plant Ltd.");
   const [industryType, setIndustryType] = useState(user?.profile?.industryType || "Manufacturing - Steel Processing");
@@ -70,12 +98,76 @@ const IndustryProfile = () => {
   const [yearEstablished, setYearEstablished] = useState("1995");
   const [activeMenu, setActiveMenu] = useState<ContentType>("Company Profile");
   
+  // Company management state
+  const [companyId, setCompanyId] = useState<string>("");
+  const [isCompanyAdmin, setIsCompanyAdmin] = useState<boolean>(false);
+  const [userRole, setUserRole] = useState<'admin' | 'approver' | 'reviewer' | 'initiator'>('initiator');
+  
   // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/signin');
     }
   }, [isAuthenticated, navigate]);
+
+  // Initialize company management
+  useEffect(() => {
+    const initializeCompanyData = () => {
+      // Check if user has company ID
+      let currentCompanyId = user?.profile?.companyId;
+      
+      if (!currentCompanyId) {
+        // Generate company ID based on company name and domain
+        const domain = email.split('@')[1] || '';
+        currentCompanyId = `company-${companyName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${domain.replace(/[^a-z0-9]/g, '-')}`;
+        setCompanyId(currentCompanyId);
+        
+        // First user from company becomes admin
+        const existingCompanies = JSON.parse(localStorage.getItem('industryCompanies') || '[]');
+        const companyExists = existingCompanies.find((comp: any) => comp.id === currentCompanyId);
+        
+        if (!companyExists) {
+          // This is the first user - make them admin
+          setIsCompanyAdmin(true);
+          setUserRole('admin');
+          
+          // Save company data
+          const newCompany = {
+            id: currentCompanyId,
+            name: companyName,
+            domain: domain,
+            adminUserId: user?.id,
+            createdDate: new Date().toISOString(),
+            users: [user?.id]
+          };
+          
+          existingCompanies.push(newCompany);
+          localStorage.setItem('industryCompanies', JSON.stringify(existingCompanies));
+          
+          toast.success("You've been assigned as Company Administrator!");
+        } else {
+          // Subsequent user - needs approval
+          setIsCompanyAdmin(false);
+          setUserRole('initiator');
+        }
+      } else {
+        // User already has company - check their role
+        const companies = JSON.parse(localStorage.getItem('industryCompanies') || '[]');
+        const userCompany = companies.find((comp: any) => comp.id === currentCompanyId);
+        
+        if (userCompany && userCompany.adminUserId === user?.id) {
+          setIsCompanyAdmin(true);
+          setUserRole('admin');
+        }
+        
+        setCompanyId(currentCompanyId);
+      }
+    };
+
+    if (user && companyName && email) {
+      initializeCompanyData();
+    }
+  }, [user, companyName, email]);
   
   // Mock data for team members
   const [teamMembers, setTeamMembers] = useState([
@@ -116,7 +208,7 @@ const IndustryProfile = () => {
       .toUpperCase();
   };
 
-  // Handle profile save
+  // Handle profile save with company data
   const handleProfileSave = () => {
     if (!user) return;
     
@@ -126,6 +218,9 @@ const IndustryProfile = () => {
         companyName,
         industryType,
         phone,
+        companyId,
+        userRole,
+        isCompanyAdmin,
       }
     };
     
@@ -186,7 +281,6 @@ const IndustryProfile = () => {
     setShowTeamMemberForm(true);
   };
 
-  // Render content based on active menu
   const renderContent = () => {
     switch (activeMenu) {
       case "Company Profile":
@@ -194,13 +288,39 @@ const IndustryProfile = () => {
           <>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800">Company Profile</h2>
-              <Button variant="outline" size="sm" onClick={handleProfileSave}>
-                <Save className="w-4 h-4 mr-2" />
-                Save Profile
-              </Button>
+              <div className="flex gap-2">
+                {isCompanyAdmin && (
+                  <div className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                    Company Admin
+                  </div>
+                )}
+                <Button variant="outline" size="sm" onClick={handleProfileSave}>
+                  <Save className="w-4 h-4 mr-2" />
+                  Save Profile
+                </Button>
+              </div>
             </div>
             
             <hr className="mb-6" />
+            
+            {/* Company Status */}
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+              <h3 className="font-semibold text-blue-900 mb-2">Company Status</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-600">Company ID:</span>
+                  <p className="font-medium text-blue-800">{companyId}</p>
+                </div>
+                <div>
+                  <span className="text-gray-600">Your Role:</span>
+                  <p className="font-medium text-blue-800 capitalize">{userRole}</p>
+                </div>
+                <div>
+                  <span className="text-gray-600">Team Members:</span>
+                  <p className="font-medium text-blue-800">{teamMembers.length}</p>
+                </div>
+              </div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>

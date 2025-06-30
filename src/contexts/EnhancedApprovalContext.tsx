@@ -21,6 +21,15 @@ interface EnhancedApprovalContextType {
   approvalWorkflows: EnhancedApprovalWorkflow[];
   pendingApprovals: EnhancedApprovalRequest[];
   
+  // Real-time Updates
+  notifications: ApprovalNotification[];
+  unreadNotifications: number;
+  
+  // Company Management
+  companyId: string;
+  userRole: 'admin' | 'approver' | 'reviewer' | 'initiator';
+  isCompanyAdmin: boolean;
+  
   // Actions
   updateTeamMembers: (members: TeamMember[]) => void;
   assignUsersToStage: (configId: string, thresholdId: string, stageId: string, userIds: string[]) => void;
@@ -28,6 +37,23 @@ interface EnhancedApprovalContextType {
   updateApprovalConfiguration: (config: ApprovalConfiguration) => void;
   createApprovalWorkflow: (requirementId: string, budgetAmount: number) => EnhancedApprovalWorkflow;
   submitApprovalResponse: (requestId: string, response: 'approved' | 'rejected', comments?: string) => void;
+  
+  // Real-time Actions
+  markNotificationAsRead: (notificationId: string) => void;
+  initializeCompanyData: (companyName: string, userEmail: string, userId: string) => void;
+  assignUserRole: (userId: string, role: 'admin' | 'approver' | 'reviewer' | 'initiator') => void;
+}
+
+interface ApprovalNotification {
+  id: string;
+  type: 'approval_request' | 'approval_approved' | 'approval_rejected' | 'workflow_completed' | 'escalation';
+  title: string;
+  message: string;
+  timestamp: string;
+  isRead: boolean;
+  relatedWorkflowId?: string;
+  relatedRequestId?: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
 }
 
 const EnhancedApprovalContext = createContext<EnhancedApprovalContextType | undefined>(undefined);
@@ -166,18 +192,156 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [approvalWorkflows, setApprovalWorkflows] = useState<EnhancedApprovalWorkflow[]>([]);
   const [pendingApprovals, setPendingApprovals] = useState<EnhancedApprovalRequest[]>([]);
+  
+  // Real-time state
+  const [notifications, setNotifications] = useState<ApprovalNotification[]>([]);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  
+  // Company management state
+  const [companyId, setCompanyId] = useState<string>('');
+  const [userRole, setUserRole] = useState<'admin' | 'approver' | 'reviewer' | 'initiator'>('initiator');
+  const [isCompanyAdmin, setIsCompanyAdmin] = useState<boolean>(false);
 
   // Initialize default configuration
   useEffect(() => {
-    const companyId = 'company-1'; // This would come from user context in real app
-    const defaultConfig = createDefaultConfiguration(companyId);
+    const defaultCompanyId = 'company-1'; // This would come from user context in real app
+    const defaultConfig = createDefaultConfiguration(defaultCompanyId);
     setActiveConfiguration(defaultConfig);
     setAllConfigurations([defaultConfig]);
+    setCompanyId(defaultCompanyId);
   }, []);
+
+  // Load team members from localStorage and update context
+  useEffect(() => {
+    const storedTeamMembers = localStorage.getItem('industryTeamMembers');
+    if (storedTeamMembers) {
+      try {
+        const parsedMembers = JSON.parse(storedTeamMembers);
+        console.log('Loading team members into approval context:', parsedMembers);
+        setTeamMembers(parsedMembers);
+      } catch (error) {
+        console.error('Error loading team members:', error);
+      }
+    }
+  }, []);
+
+  // Update unread notifications count
+  useEffect(() => {
+    const unreadCount = notifications.filter(n => !n.isRead).length;
+    setUnreadNotifications(unreadCount);
+  }, [notifications]);
+
+  const initializeCompanyData = (companyName: string, userEmail: string, userId: string) => {
+    const domain = userEmail.split('@')[1] || '';
+    const generatedCompanyId = `company-${companyName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${domain.replace(/[^a-z0-9]/g, '-')}`;
+    
+    // Check if company exists
+    const existingCompanies = JSON.parse(localStorage.getItem('industryCompanies') || '[]');
+    const companyExists = existingCompanies.find((comp: any) => comp.id === generatedCompanyId);
+    
+    if (!companyExists) {
+      // First user becomes admin
+      setIsCompanyAdmin(true);
+      setUserRole('admin');
+      
+      // Create company record
+      const newCompany = {
+        id: generatedCompanyId,
+        name: companyName,
+        domain: domain,
+        adminUserId: userId,
+        createdDate: new Date().toISOString(),
+        users: [userId]
+      };
+      
+      existingCompanies.push(newCompany);
+      localStorage.setItem('industryCompanies', JSON.stringify(existingCompanies));
+      
+      // Create notification
+      const notification: ApprovalNotification = {
+        id: `notif-${Date.now()}`,
+        type: 'workflow_completed',
+        title: 'Company Setup Complete',
+        message: 'You have been assigned as Company Administrator. You can now configure approval workflows.',
+        timestamp: new Date().toISOString(),
+        isRead: false,
+        priority: 'high'
+      };
+      
+      setNotifications(prev => [notification, ...prev]);
+      toast.success("Company setup complete! You're now the administrator.");
+    } else {
+      // Subsequent user
+      setIsCompanyAdmin(false);
+      setUserRole('initiator');
+      
+      // Add notification for admin
+      const notification: ApprovalNotification = {
+        id: `notif-${Date.now()}`,
+        type: 'approval_request',
+        title: 'New User Pending Approval',
+        message: `A new user has joined your company and needs role assignment.`,
+        timestamp: new Date().toISOString(),
+        isRead: false,
+        priority: 'medium'
+      };
+      
+      setNotifications(prev => [notification, ...prev]);
+    }
+    
+    setCompanyId(generatedCompanyId);
+  };
+
+  const assignUserRole = (userId: string, role: 'admin' | 'approver' | 'reviewer' | 'initiator') => {
+    // This would typically update the user's profile
+    console.log(`Assigning role ${role} to user ${userId}`);
+    
+    const notification: ApprovalNotification = {
+      id: `notif-${Date.now()}`,
+      type: 'workflow_completed',
+      title: 'Role Assignment',
+      message: `User has been assigned the role: ${role}`,
+      timestamp: new Date().toISOString(),
+      isRead: false,
+      priority: 'low'
+    };
+    
+    setNotifications(prev => [notification, ...prev]);
+    toast.success(`Role assigned successfully: ${role}`);
+  };
+
+  const createNotification = (type: ApprovalNotification['type'], title: string, message: string, priority: ApprovalNotification['priority'] = 'medium', workflowId?: string, requestId?: string) => {
+    const notification: ApprovalNotification = {
+      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      type,
+      title,
+      message,
+      timestamp: new Date().toISOString(),
+      isRead: false,
+      relatedWorkflowId: workflowId,
+      relatedRequestId: requestId,
+      priority
+    };
+    
+    setNotifications(prev => [notification, ...prev]);
+    
+    // Show toast for high priority notifications
+    if (priority === 'high' || priority === 'urgent') {
+      toast.info(title, { description: message });
+    }
+  };
 
   const updateTeamMembers = (members: TeamMember[]) => {
     setTeamMembers(members);
     console.log('Updated team members for approval matrix:', members);
+    
+    // Create notification for team updates
+    createNotification(
+      'workflow_completed',
+      'Team Updated',
+      `Team members have been updated. ${members.length} members are now available for approval assignments.`,
+      'low'
+    );
   };
 
   const assignUsersToStage = (configId: string, thresholdId: string, stageId: string, userIds: string[]) => {
@@ -200,6 +364,12 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     
     const assignedUser = teamMembers.find(tm => userIds.includes(tm.id));
     if (assignedUser) {
+      createNotification(
+        'workflow_completed',
+        'Approver Assigned',
+        `${assignedUser.name} has been assigned to approval stage`,
+        'low'
+      );
       toast.success(`${assignedUser.name} assigned to approval stage`);
     }
   };
@@ -222,6 +392,12 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     
     const removedUser = teamMembers.find(tm => tm.id === userId);
     if (removedUser) {
+      createNotification(
+        'workflow_completed',
+        'Approver Removed',
+        `${removedUser.name} has been removed from approval stage`,
+        'low'
+      );
       toast.success(`${removedUser.name} removed from approval stage`);
     }
   };
@@ -230,6 +406,13 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     setActiveConfiguration(config);
     setAllConfigurations(prev => 
       prev.map(c => c.id === config.id ? config : c)
+    );
+    
+    createNotification(
+      'workflow_completed',
+      'Approval Matrix Updated',
+      'Approval configuration has been successfully updated',
+      'medium'
     );
     toast.success('Approval configuration updated');
   };
@@ -272,6 +455,16 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     };
 
     setApprovalWorkflows(prev => [...prev, workflow]);
+    
+    // Create notification for new workflow
+    createNotification(
+      'approval_request',
+      'New Approval Workflow',
+      `Approval workflow created for requirement ${requirementId} (₹${budgetAmount.toLocaleString()})`,
+      'medium',
+      workflow.id
+    );
+    
     console.log('Created approval workflow:', workflow);
     
     return workflow;
@@ -286,7 +479,27 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
       )
     );
     
+    // Create notification for approval response
+    createNotification(
+      response === 'approved' ? 'approval_approved' : 'approval_rejected',
+      `Approval ${response === 'approved' ? 'Approved' : 'Rejected'}`,
+      `Request has been ${response}${comments ? ` with comments: ${comments}` : ''}`,
+      response === 'rejected' ? 'high' : 'medium',
+      undefined,
+      requestId
+    );
+    
     toast.success(`Approval ${response} successfully`);
+  };
+
+  const markNotificationAsRead = (notificationId: string) => {
+    setNotifications(prev => 
+      prev.map(notification => 
+        notification.id === notificationId 
+          ? { ...notification, isRead: true }
+          : notification
+      )
+    );
   };
 
   const value: EnhancedApprovalContextType = {
@@ -295,12 +508,20 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     teamMembers,
     approvalWorkflows,
     pendingApprovals,
+    notifications,
+    unreadNotifications,
+    companyId,
+    userRole,
+    isCompanyAdmin,
     updateTeamMembers,
     assignUsersToStage,
     removeUserFromStage,
     updateApprovalConfiguration,
     createApprovalWorkflow,
-    submitApprovalResponse
+    submitApprovalResponse,
+    markNotificationAsRead,
+    initializeCompanyData,
+    assignUserRole
   };
 
   return (
