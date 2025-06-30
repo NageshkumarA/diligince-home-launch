@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import IndustryHeader from '@/components/industry/IndustryHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -69,6 +69,7 @@ const mockMatchedStakeholders = [
 const IndustryProjectWorkflow = () => {
   const navigate = useNavigate();
   const { projectId } = useParams();
+  const [searchParams] = useSearchParams();
   const { showSuccess, showError } = useNotifications();
 
   // RFQ Modal State
@@ -120,6 +121,75 @@ const IndustryProjectWorkflow = () => {
     },
     timeline: []
   });
+
+  // Process query parameters from CreatePurchaseOrder redirect
+  useEffect(() => {
+    const vendorId = searchParams.get('vendorId');
+    const vendorName = searchParams.get('vendorName');
+    const amount = searchParams.get('amount');
+    const projectTitle = searchParams.get('projectTitle');
+    const requirementId = searchParams.get('requirementId');
+
+    if (vendorId && vendorName && amount) {
+      console.log('Processing query parameters from CreatePurchaseOrder redirect');
+      
+      // Create accepted quote from query parameters
+      const acceptedQuote = {
+        id: 'q1',
+        vendorId: vendorId,
+        vendorName: vendorName,
+        vendorRating: 4.8,
+        quoteAmount: parseFloat(amount),
+        deliveryTimeWeeks: 6,
+        proposalSummary: 'Complete industrial valve system with premium quality components and 2-year warranty',
+        submittedDate: new Date().toISOString().split('T')[0],
+        status: 'accepted' as const,
+        documents: ['proposal.pdf', 'technical-specs.pdf']
+      };
+
+      // Create purchase order from query parameters
+      const purchaseOrder = {
+        id: 'po1',
+        poNumber: `PO-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`,
+        vendorId: vendorId,
+        amount: parseFloat(amount),
+        status: 'sent' as const,
+        createdDate: new Date().toISOString(),
+        terms: 'Created via system - ISO 9001 compliant purchase order',
+        poType: 'system_generated' as const,
+        iso9001Compliance: true
+      };
+
+      // Update project workflow with PO data
+      setProjectWorkflow(prev => ({
+        ...prev,
+        projectTitle: projectTitle || prev.projectTitle,
+        requirementId: requirementId || prev.requirementId,
+        totalProjectValue: parseFloat(amount),
+        acceptedQuote: acceptedQuote,
+        purchaseOrder: purchaseOrder,
+        quotes: [acceptedQuote],
+        timeline: [{
+          id: 't1',
+          type: 'po_generated',
+          title: 'Purchase Order Created & Delivered',
+          description: `PO ${purchaseOrder.poNumber} created and sent to ${vendorName}`,
+          timestamp: new Date().toISOString(),
+          status: 'completed'
+        }],
+        paymentMilestones: prev.paymentMilestones.map(milestone => ({
+          ...milestone,
+          amount: (parseFloat(amount) * milestone.percentage) / 100
+        })),
+        retentionPayment: {
+          ...prev.retentionPayment,
+          amount: (parseFloat(amount) * 10) / 100
+        }
+      }));
+
+      showSuccess(`Purchase Order successfully created and delivered to ${vendorName}!`);
+    }
+  }, [searchParams, showSuccess]);
 
   // Generate mock AI evaluations for quotes
   const generateAIEvaluation = (quote: VendorQuote) => {
