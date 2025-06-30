@@ -461,7 +461,7 @@ const IndustryProfile = () => {
               <Card className="p-4 border-2 border-blue-500 bg-blue-50">
                 <div className="flex items-center mb-2">
                   <input type="radio" checked className="mr-2" readOnly />
-                  <h4 className="font-medium">Bank Transfer</h4>
+                  <h4 className="font-medium text-base">Bank Transfer</h4>
                 </div>
                 <p className="text-sm text-gray-600">
                   Direct bank transfer through NEFT/RTGS
@@ -471,7 +471,7 @@ const IndustryProfile = () => {
               <Card className="p-4">
                 <div className="flex items-center mb-2">
                   <input type="radio" className="mr-2" readOnly />
-                  <h4 className="font-medium">UPI Payment</h4>
+                  <h4 className="font-medium text-base">UPI Payment</h4>
                 </div>
                 <p className="text-sm text-gray-600">
                   Pay instantly using UPI ID
@@ -481,7 +481,7 @@ const IndustryProfile = () => {
               <Card className="p-4">
                 <div className="flex items-center mb-2">
                   <input type="radio" className="mr-2" readOnly />
-                  <h4 className="font-medium">Credit Card</h4>
+                  <h4 className="font-medium text-base">Credit Card</h4>
                 </div>
                 <p className="text-sm text-gray-600">
                   Visa, MasterCard, Rupay, etc.
