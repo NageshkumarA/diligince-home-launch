@@ -1,5 +1,4 @@
-
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
 import { 
   ApprovalConfiguration, 
   ApprovalThreshold, 
@@ -202,6 +201,9 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
   const [userRole, setUserRole] = useState<'admin' | 'approver' | 'reviewer' | 'initiator'>('initiator');
   const [isCompanyAdmin, setIsCompanyAdmin] = useState<boolean>(false);
 
+  // Track previous team members to prevent duplicate notifications
+  const previousTeamMembersRef = useRef<TeamMember[]>([]);
+
   // Initialize default configuration
   useEffect(() => {
     const defaultCompanyId = 'company-1'; // This would come from user context in real app
@@ -219,6 +221,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
         const parsedMembers = JSON.parse(storedTeamMembers);
         console.log('Loading team members into approval context:', parsedMembers);
         setTeamMembers(parsedMembers);
+        previousTeamMembersRef.current = parsedMembers;
       } catch (error) {
         console.error('Error loading team members:', error);
       }
@@ -331,18 +334,34 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     }
   };
 
-  const updateTeamMembers = (members: TeamMember[]) => {
-    setTeamMembers(members);
-    console.log('Updated team members for approval matrix:', members);
+  const updateTeamMembers = useCallback((members: TeamMember[]) => {
+    // Only create notification if there's an actual change in team members
+    const previousCount = previousTeamMembersRef.current.length;
+    const newCount = members.length;
     
-    // Create notification for team updates
-    createNotification(
-      'workflow_completed',
-      'Team Updated',
-      `Team members have been updated. ${members.length} members are now available for approval assignments.`,
-      'low'
-    );
-  };
+    // Check if there's a meaningful change (different count or different members)
+    const hasChanged = previousCount !== newCount || 
+      JSON.stringify(previousTeamMembersRef.current.map(m => m.id).sort()) !== 
+      JSON.stringify(members.map(m => m.id).sort());
+    
+    if (hasChanged && members.length > 0) {
+      setTeamMembers(members);
+      previousTeamMembersRef.current = members;
+      console.log('Updated team members for approval matrix:', members);
+      
+      // Create notification only for meaningful updates
+      createNotification(
+        'workflow_completed',
+        'Team Updated',
+        `Team members have been updated. ${members.length} members are now available for approval assignments.`,
+        'low'
+      );
+    } else if (members.length === 0) {
+      // Just update state without notification for empty arrays (initial state)
+      setTeamMembers(members);
+      previousTeamMembersRef.current = members;
+    }
+  }, []);
 
   const assignUsersToStage = (configId: string, thresholdId: string, stageId: string, userIds: string[]) => {
     setActiveConfiguration(prev => {

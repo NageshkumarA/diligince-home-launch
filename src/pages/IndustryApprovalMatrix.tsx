@@ -39,7 +39,7 @@ const IndustryApprovalMatrix = () => {
         console.error('Error loading team members:', error);
       }
     }
-  }, [updateTeamMembers]);
+  }, []); // Remove updateTeamMembers from dependency array to prevent infinite loop
 
   const handleTeamMembersUpdate = (updatedMembers: TeamMember[]) => {
     updateTeamMembers(updatedMembers);
