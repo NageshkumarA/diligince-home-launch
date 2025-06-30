@@ -6,10 +6,10 @@ import { NotificationProvider } from '@/contexts/NotificationContext';
 import { RequirementProvider } from '@/contexts/RequirementContext';
 import { ApprovalProvider } from '@/contexts/ApprovalContext';
 import { StakeholderProvider } from '@/contexts/StakeholderContext';
-import { VendorSpecializationProvider } from '@/contexts/VendorSpecializationProvider';
+import { VendorSpecializationProvider } from '@/contexts/VendorSpecializationContext';
 import { Toaster } from '@/components/ui/sonner';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import RouteErrorBoundary from '@/components/RouteErrorBoundary';
 
 import Index from '@/pages/Index';
 import About from '@/pages/About';
