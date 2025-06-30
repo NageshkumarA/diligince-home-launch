@@ -302,7 +302,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
       };
       
       setNotifications(prev => [notification, ...prev]);
-      toast.success("Company setup complete! You're now the administrator.");
+      toast("Company setup complete! You're now the administrator.");
     } else {
       // Subsequent user
       setIsCompanyAdmin(false);
@@ -343,7 +343,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     
     // Show toast for high priority notifications
     if (priority === 'high' || priority === 'urgent') {
-      toast.info(title, { description: message });
+      toast(title, { description: message });
     }
   };
 
@@ -414,7 +414,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
         userId
       );
       
-      toast.success(`${approvedUser.name} has been approved successfully`);
+      toast(`${approvedUser.name} has been approved successfully`);
     }
   };
 
@@ -439,7 +439,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
         userId
       );
       
-      toast.success(`${rejectedUser.name}'s request has been rejected`);
+      toast(`${rejectedUser.name}'s request has been rejected`);
     }
   };
 
@@ -464,7 +464,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     };
     
     setNotifications(prev => [notification, ...prev]);
-    toast.success(`Role assigned successfully: ${role}`);
+    toast(`Role assigned successfully: ${role}`);
   };
 
   const updateTeamMembers = useCallback((members: TeamMember[]) => {
@@ -522,7 +522,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
         `${assignedUser.name} has been assigned to approval stage`,
         'low'
       );
-      toast.success(`${assignedUser.name} assigned to approval stage`);
+      toast(`${assignedUser.name} assigned to approval stage`);
     }
   };
 
@@ -550,7 +550,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
         `${removedUser.name} has been removed from approval stage`,
         'low'
       );
-      toast.success(`${removedUser.name} removed from approval stage`);
+      toast(`${removedUser.name} removed from approval stage`);
     }
   };
 
@@ -566,7 +566,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
       'Approval configuration has been successfully updated',
       'medium'
     );
-    toast.success('Approval configuration updated');
+    toast('Approval configuration updated');
   };
 
   const createApprovalWorkflow = (requirementId: string, budgetAmount: number): EnhancedApprovalWorkflow => {
@@ -641,7 +641,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
       requestId
     );
     
-    toast.success(`Approval ${response} successfully`);
+    toast(`Approval ${response} successfully`);
   };
 
   const markNotificationAsRead = (notificationId: string) => {
