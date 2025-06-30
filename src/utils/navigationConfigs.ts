@@ -1,4 +1,3 @@
-
 import { Home, FileText, ShoppingCart, MessageSquare, Users, Workflow, Building2, Package, Truck, User, Calendar, Briefcase } from "lucide-react";
 import React from "react";
 
@@ -53,6 +52,11 @@ export const industryHeaderConfig: HeaderConfig = {
       label: "Stakeholders",
       href: "/industry-stakeholders",
       icon: React.createElement(Users, { size: 18 })
+    },
+    {
+      label: "Profile",
+      href: "/industry-profile",
+      icon: React.createElement(User, { size: 18 })
     }
   ],
   avatarInitials: "IN",

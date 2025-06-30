@@ -122,9 +122,10 @@ const IndustryProfile = () => {
     toast.success("Profile updated successfully!");
   };
 
-  // Handle profile completion action
+  // Handle profile completion action - stay on same page and switch to Company Profile tab
   const handleCompleteProfile = () => {
-    navigate('/profile-completion');
+    setActiveMenu("Company Profile");
+    toast.info("Please complete the missing profile information below.");
   };
 
   const menuItems = [
@@ -804,68 +805,37 @@ const IndustryProfile = () => {
               {industryType.split(" - ")[0]}
             </span>
             
-            {/* Dynamic Profile Completion */}
-            <div className="w-full mb-6">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-sm text-gray-600">Profile Completion</span>
-                <span className="text-sm text-blue-500">{profileCompletion.percentage}%</span>
-              </div>
-              <Progress 
-                value={profileCompletion.percentage} 
-                className="h-2" 
-                indicatorClassName={profileCompletion.isComplete ? "bg-green-500" : "bg-primary"}
-              />
-              {!profileCompletion.isComplete && profileCompletion.missingFields.length > 0 && (
-                <p className="text-xs text-gray-500 mt-1">
-                  Complete: {profileCompletion.missingFields.slice(0, 2).join(', ')}
-                  {profileCompletion.missingFields.length > 2 && ` +${profileCompletion.missingFields.length - 2} more`}
-                </p>
-              )}
-            </div>
+            {/* Dynamic Profile Completion Widget */}
+            <ProfileCompletionWidget 
+              completion={profileCompletion}
+              onCompleteProfile={handleCompleteProfile}
+              showCompleteButton={true}
+            />
           </div>
-          
+
           {/* Navigation Menu */}
-          <nav className="w-full">
-            <ul className="space-y-1 w-full">
-              {menuItems.map((item) => (
-                <li key={item.name}>
-                  <button
-                    className={`w-full flex items-center px-4 py-3 rounded-md text-left ${
-                      activeMenu === item.name
-                        ? "bg-blue-50 text-blue-600 font-medium"
-                        : "text-gray-600 hover:bg-gray-100"
-                    }`}
-                    onClick={() => setActiveMenu(item.name as ContentType)}
-                  >
-                    <span className="mr-3">{item.icon}</span>
-                    {item.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
+          <nav className="space-y-2">
+            {menuItems.map((item, index) => (
+              <button
+                key={index}
+                onClick={() => setActiveMenu(item.name as ContentType)}
+                className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                  activeMenu === item.name
+                    ? "bg-blue-50 text-blue-600 font-medium"
+                    : "text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                {item.icon}
+                <span className="text-sm">{item.name}</span>
+              </button>
+            ))}
           </nav>
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
-          {/* Title and Content */}
-          <div className="max-w-6xl mx-auto">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Profile & Settings</h1>
-            
-            {/* Profile Completion Widget */}
-            <ProfileCompletionWidget
-              completion={profileCompletion}
-              onCompleteProfile={handleCompleteProfile}
-              showCompleteButton={!profileCompletion.isComplete}
-            />
-            
-            {activeMenu === "Team Members" ? (
-              renderContent()
-            ) : (
-              <Card className="w-full p-6">
-                {renderContent()}
-              </Card>
-            )}
+        <main className="flex-1 p-8">
+          <div className="max-w-5xl mx-auto">
+            {renderContent()}
           </div>
         </main>
       </div>
