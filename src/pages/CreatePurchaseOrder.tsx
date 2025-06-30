@@ -277,7 +277,7 @@ const CreatePurchaseOrder: React.FC = () => {
         and delivered to ${vendors.find(v => v.id === completePOData.vendor)?.name || 'the vendor'}.`,
       });
 
-      // Navigate to Work Timeline page - same as upload manual PO flow
+      // Navigate to Work Timeline page with "new" as the ID
       setTimeout(() => {
         const params = new URLSearchParams({
           vendorId: completePOData.vendor,
@@ -286,7 +286,7 @@ const CreatePurchaseOrder: React.FC = () => {
           projectTitle: completePOData.projectTitle,
           requirementId: 'REQ-2024-001'
         });
-        window.location.href = `/industry-project-workflow?${params.toString()}`;
+        window.location.href = `/industry-project-workflow/new?${params.toString()}`;
       }, 3000);
 
     } catch (error) {
@@ -304,16 +304,28 @@ const CreatePurchaseOrder: React.FC = () => {
   // Handle save as draft - no validation required
   const handleSaveAsDraft = () => {
     try {
-      const draftData = form.getValues();
-      const saveDraft = {
-        ...draftData,
+      const formValues = form.getValues();
+      const draftData = {
+        poNumber: formValues.poNumber || '',
+        vendor: formValues.vendor || '',
+        projectTitle: formValues.projectTitle || '',
+        orderValue: formValues.orderValue || 0,
+        taxPercentage: formValues.taxPercentage || 0,
+        totalValue: formValues.totalValue || 0,
+        startDate: formValues.startDate || new Date(),
+        endDate: formValues.endDate || new Date(),
+        paymentTerms: formValues.paymentTerms || '',
+        specialInstructions: formValues.specialInstructions || '',
+        scopeOfWork: formValues.scopeOfWork || '',
+        deliverables: formValues.deliverables || [],
+        acceptanceCriteria: formValues.acceptanceCriteria || [],
         isoTerms: selectedISOTerms,
         customTerms: customISOTerms,
         status: 'draft',
         savedAt: new Date().toISOString(),
       };
 
-      console.log("Saving draft:", saveDraft);
+      console.log("Saving draft:", draftData);
 
       toast({
         title: "Draft Saved Successfully",
