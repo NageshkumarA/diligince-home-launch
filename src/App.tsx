@@ -43,6 +43,7 @@ import IndustryStakeholders from '@/pages/IndustryStakeholders';
 import IndustryDocuments from '@/pages/IndustryDocuments';
 import IndustryMessages from '@/pages/IndustryMessages';
 import IndustryApprovalMatrix from '@/pages/IndustryApprovalMatrix';
+import CreateRequirement from '@/pages/CreateRequirement';
 
 // Vendor pages
 import ServiceVendorDashboard from '@/pages/ServiceVendorDashboard';
@@ -93,6 +94,7 @@ function App() {
                             <Route path="/industry-dashboard" element={<RouteErrorBoundary><IndustryDashboard /></RouteErrorBoundary>} />
                             <Route path="/industry-profile" element={<RouteErrorBoundary><IndustryProfile /></RouteErrorBoundary>} />
                             <Route path="/industry-requirements" element={<RouteErrorBoundary><IndustryRequirements /></RouteErrorBoundary>} />
+                            <Route path="/create-requirement" element={<RouteErrorBoundary><CreateRequirement /></RouteErrorBoundary>} />
                             <Route path="/industry-workflows" element={<RouteErrorBoundary><IndustryWorkflows /></RouteErrorBoundary>} />
                             <Route path="/industry-project-workflow/:id" element={<RouteErrorBoundary><IndustryProjectWorkflow /></RouteErrorBoundary>} />
                             <Route path="/industry-stakeholders" element={<RouteErrorBoundary><IndustryStakeholders /></RouteErrorBoundary>} />
