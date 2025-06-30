@@ -8,6 +8,7 @@ import {
   ApprovalMatrixTemplate 
 } from '@/types/enhancedApproval';
 import { TeamMember } from '@/types/teamMember';
+import { PendingUser } from '@/types/pendingUser';
 import { toast } from 'sonner';
 
 interface EnhancedApprovalContextType {
@@ -19,6 +20,9 @@ interface EnhancedApprovalContextType {
   // Workflow Management
   approvalWorkflows: EnhancedApprovalWorkflow[];
   pendingApprovals: EnhancedApprovalRequest[];
+  
+  // Pending User Management
+  pendingUsers: PendingUser[];
   
   // Real-time Updates
   notifications: ApprovalNotification[];
@@ -37,6 +41,12 @@ interface EnhancedApprovalContextType {
   createApprovalWorkflow: (requirementId: string, budgetAmount: number) => EnhancedApprovalWorkflow;
   submitApprovalResponse: (requestId: string, response: 'approved' | 'rejected', comments?: string) => void;
   
+  // Pending User Actions
+  addPendingUser: (user: PendingUser) => void;
+  approvePendingUser: (userId: string, assignedRole: 'admin' | 'approver' | 'reviewer' | 'initiator') => void;
+  rejectPendingUser: (userId: string, reason?: string) => void;
+  checkUserApprovalStatus: (email: string, companyId: string) => 'approved' | 'pending' | 'rejected' | 'not_found';
+  
   // Real-time Actions
   markNotificationAsRead: (notificationId: string) => void;
   initializeCompanyData: (companyName: string, userEmail: string, userId: string) => void;
@@ -45,13 +55,14 @@ interface EnhancedApprovalContextType {
 
 interface ApprovalNotification {
   id: string;
-  type: 'approval_request' | 'approval_approved' | 'approval_rejected' | 'workflow_completed' | 'escalation';
+  type: 'approval_request' | 'approval_approved' | 'approval_rejected' | 'workflow_completed' | 'escalation' | 'user_approval_request';
   title: string;
   message: string;
   timestamp: string;
   isRead: boolean;
   relatedWorkflowId?: string;
   relatedRequestId?: string;
+  relatedUserId?: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
 }
 
@@ -192,6 +203,9 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
   const [approvalWorkflows, setApprovalWorkflows] = useState<EnhancedApprovalWorkflow[]>([]);
   const [pendingApprovals, setPendingApprovals] = useState<EnhancedApprovalRequest[]>([]);
   
+  // Pending Users state
+  const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
+  
   // Real-time state
   const [notifications, setNotifications] = useState<ApprovalNotification[]>([]);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
@@ -213,7 +227,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     setCompanyId(defaultCompanyId);
   }, []);
 
-  // Load team members from localStorage and update context
+  // Load team members and pending users from localStorage
   useEffect(() => {
     const storedTeamMembers = localStorage.getItem('industryTeamMembers');
     if (storedTeamMembers) {
@@ -226,6 +240,17 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
         console.error('Error loading team members:', error);
       }
     }
+
+    // Load pending users
+    const storedPendingUsers = localStorage.getItem('pendingUsers');
+    if (storedPendingUsers) {
+      try {
+        const parsedPendingUsers = JSON.parse(storedPendingUsers);
+        setPendingUsers(parsedPendingUsers);
+      } catch (error) {
+        console.error('Error loading pending users:', error);
+      }
+    }
   }, []);
 
   // Update unread notifications count
@@ -233,6 +258,11 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     const unreadCount = notifications.filter(n => !n.isRead).length;
     setUnreadNotifications(unreadCount);
   }, [notifications]);
+
+  // Save pending users to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('pendingUsers', JSON.stringify(pendingUsers));
+  }, [pendingUsers]);
 
   const initializeCompanyData = (companyName: string, userEmail: string, userId: string) => {
     const domain = userEmail.split('@')[1] || '';
@@ -281,7 +311,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
       // Add notification for admin
       const notification: ApprovalNotification = {
         id: `notif-${Date.now()}`,
-        type: 'approval_request',
+        type: 'user_approval_request',
         title: 'New User Pending Approval',
         message: `A new user has joined your company and needs role assignment.`,
         timestamp: new Date().toISOString(),
@@ -293,6 +323,130 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     }
     
     setCompanyId(generatedCompanyId);
+  };
+
+  const createNotification = (type: ApprovalNotification['type'], title: string, message: string, priority: ApprovalNotification['priority'] = 'medium', workflowId?: string, requestId?: string, userId?: string) => {
+    const notification: ApprovalNotification = {
+      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      type,
+      title,
+      message,
+      timestamp: new Date().toISOString(),
+      isRead: false,
+      relatedWorkflowId: workflowId,
+      relatedRequestId: requestId,
+      relatedUserId: userId,
+      priority
+    };
+    
+    setNotifications(prev => [notification, ...prev]);
+    
+    // Show toast for high priority notifications
+    if (priority === 'high' || priority === 'urgent') {
+      toast.info(title, { description: message });
+    }
+  };
+
+  // Pending User Management Functions
+  const addPendingUser = (user: PendingUser) => {
+    setPendingUsers(prev => [...prev, user]);
+    
+    // Notify admin about new pending user
+    createNotification(
+      'user_approval_request',
+      'New User Awaiting Approval',
+      `${user.name} (${user.email}) has requested to join your company`,
+      'high',
+      undefined,
+      undefined,
+      user.id
+    );
+  };
+
+  const approvePendingUser = (userId: string, assignedRole: 'admin' | 'approver' | 'reviewer' | 'initiator') => {
+    setPendingUsers(prev => 
+      prev.map(user => 
+        user.id === userId 
+          ? { ...user, status: 'approved' as const, requestedRole: assignedRole }
+          : user
+      )
+    );
+
+    const approvedUser = pendingUsers.find(u => u.id === userId);
+    if (approvedUser) {
+      // Save approved user to registry
+      const userRegistry = JSON.parse(localStorage.getItem('userRegistry') || '[]');
+      const updatedUser = {
+        id: approvedUser.id,
+        email: approvedUser.email,
+        name: approvedUser.name,
+        role: 'industry' as const,
+        avatar: '',
+        initials: approvedUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase(),
+        status: 'active' as const,
+        createdAt: approvedUser.signupDate,
+        updatedAt: new Date().toISOString(),
+        preferences: {
+          theme: 'system' as const,
+          notifications: {
+            email: true,
+            push: true,
+            sms: false,
+            marketing: false,
+          },
+          language: 'en',
+          timezone: 'UTC',
+        },
+        profile: approvedUser.profile,
+        assignedRole: assignedRole
+      };
+      
+      userRegistry.push(updatedUser);
+      localStorage.setItem('userRegistry', JSON.stringify(userRegistry));
+
+      createNotification(
+        'workflow_completed',
+        'User Approved',
+        `${approvedUser.name} has been approved and assigned the role: ${assignedRole}`,
+        'medium',
+        undefined,
+        undefined,
+        userId
+      );
+      
+      toast.success(`${approvedUser.name} has been approved successfully`);
+    }
+  };
+
+  const rejectPendingUser = (userId: string, reason?: string) => {
+    setPendingUsers(prev => 
+      prev.map(user => 
+        user.id === userId 
+          ? { ...user, status: 'rejected' as const }
+          : user
+      )
+    );
+
+    const rejectedUser = pendingUsers.find(u => u.id === userId);
+    if (rejectedUser) {
+      createNotification(
+        'workflow_completed',
+        'User Rejected',
+        `${rejectedUser.name}'s request to join has been rejected${reason ? `: ${reason}` : ''}`,
+        'low',
+        undefined,
+        undefined,
+        userId
+      );
+      
+      toast.success(`${rejectedUser.name}'s request has been rejected`);
+    }
+  };
+
+  const checkUserApprovalStatus = (email: string, companyId: string): 'approved' | 'pending' | 'rejected' | 'not_found' => {
+    const user = pendingUsers.find(u => u.email === email && u.companyId === companyId);
+    if (!user) return 'not_found';
+    return user.status;
   };
 
   const assignUserRole = (userId: string, role: 'admin' | 'approver' | 'reviewer' | 'initiator') => {
@@ -311,27 +465,6 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     
     setNotifications(prev => [notification, ...prev]);
     toast.success(`Role assigned successfully: ${role}`);
-  };
-
-  const createNotification = (type: ApprovalNotification['type'], title: string, message: string, priority: ApprovalNotification['priority'] = 'medium', workflowId?: string, requestId?: string) => {
-    const notification: ApprovalNotification = {
-      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      type,
-      title,
-      message,
-      timestamp: new Date().toISOString(),
-      isRead: false,
-      relatedWorkflowId: workflowId,
-      relatedRequestId: requestId,
-      priority
-    };
-    
-    setNotifications(prev => [notification, ...prev]);
-    
-    // Show toast for high priority notifications
-    if (priority === 'high' || priority === 'urgent') {
-      toast.info(title, { description: message });
-    }
   };
 
   const updateTeamMembers = useCallback((members: TeamMember[]) => {
@@ -527,6 +660,7 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     teamMembers,
     approvalWorkflows,
     pendingApprovals,
+    pendingUsers,
     notifications,
     unreadNotifications,
     companyId,
@@ -538,6 +672,10 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
     updateApprovalConfiguration,
     createApprovalWorkflow,
     submitApprovalResponse,
+    addPendingUser,
+    approvePendingUser,
+    rejectPendingUser,
+    checkUserApprovalStatus,
     markNotificationAsRead,
     initializeCompanyData,
     assignUserRole

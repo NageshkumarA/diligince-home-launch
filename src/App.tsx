@@ -1,186 +1,124 @@
-import React, { Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Toaster } from "@/components/ui/sonner";
-import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
-import { FastLoadingState } from "@/components/shared/loading/FastLoadingState";
-import { NotificationStoreProvider } from "@/contexts/NotificationStoreContext";
-import { UserProvider } from "@/contexts/UserContext";
-import { VendorSpecializationProvider } from "@/contexts/VendorSpecializationContext";
-import { ApprovalProvider } from "@/contexts/ApprovalContext";
-import { EnhancedApprovalProvider } from "@/contexts/EnhancedApprovalContext";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { UserProvider } from '@/contexts/UserContext';
+import { EnhancedApprovalProvider } from '@/contexts/EnhancedApprovalContext';
+import { NotificationProvider } from '@/contexts/NotificationContext';
+import { RequirementProvider } from '@/contexts/RequirementContext';
+import { ApprovalProvider } from '@/contexts/ApprovalContext';
+import { StakeholderProvider } from '@/contexts/StakeholderContext';
+import { VendorSpecializationProvider } from '@/contexts/VendorSpecializationProvider';
+import { Toaster } from '@/components/ui/sonner';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
 
-const HomePage = React.lazy(() => import("@/pages/Index"));
-const About = React.lazy(() => import("@/pages/About"));
-const Pricing = React.lazy(() => import("@/pages/Pricing"));
-const Contact = React.lazy(() => import("@/pages/Contact"));
-const Blog = React.lazy(() => import("@/pages/Blog"));
-const BlogArticle = React.lazy(() => import("@/pages/BlogArticle"));
-const Careers = React.lazy(() => import("@/pages/Careers"));
-const Privacy = React.lazy(() => import("@/pages/Privacy"));
-const Terms = React.lazy(() => import("@/pages/Terms"));
-const Legal = React.lazy(() => import("@/pages/Legal"));
-const SignIn = React.lazy(() => import("@/pages/SignIn"));
-const SignUp = React.lazy(() => import("@/pages/SignUp"));
-const ForgotPassword = React.lazy(() => import("@/pages/ForgotPassword"));
-const ResetPassword = React.lazy(() => import("@/pages/ResetPassword"));
-const IndustryDashboard = React.lazy(() => import("@/pages/IndustryDashboard"));
-const IndustryRequirements = React.lazy(() => import("@/pages/IndustryRequirements"));
-const IndustryWorkflows = React.lazy(() => import("@/pages/IndustryWorkflows"));
-const IndustryStakeholders = React.lazy(() => import("@/pages/IndustryStakeholders"));
-const IndustryMessages = React.lazy(() => import("@/pages/IndustryMessages"));
-const IndustryProfile = React.lazy(() => import("@/pages/IndustryProfile"));
-const IndustryDocuments = React.lazy(() => import("@/pages/IndustryDocuments"));
-const IndustryProjectWorkflow = React.lazy(() => import("@/pages/IndustryProjectWorkflow"));
+import Index from '@/pages/Index';
+import About from '@/pages/About';
+import Contact from '@/pages/Contact';
+import Pricing from '@/pages/Pricing';
+import Blog from '@/pages/Blog';
+import Careers from '@/pages/Careers';
+import Legal from '@/pages/Legal';
+import Privacy from '@/pages/Privacy';
+import Terms from '@/pages/Terms';
+import SignUp from '@/pages/SignUp';
+import SignIn from '@/pages/SignIn';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
+import NotFound from '@/pages/NotFound';
+import ProfileCompletion from '@/pages/ProfileCompletion';
+import TestPage from '@/pages/TestPage';
+import BlogArticle from '@/pages/BlogArticle';
+import StakeholderOnboarding from '@/pages/StakeholderOnboarding';
+import PendingApproval from '@/pages/PendingApproval';
 
-const IndustryApprovalMatrix = React.lazy(() => import("@/pages/IndustryApprovalMatrix"));
+// Industry pages
+import IndustryDashboard from '@/pages/IndustryDashboard';
+import IndustryProfile from '@/pages/IndustryProfile';
+import IndustryRequirements from '@/pages/IndustryRequirements';
+import IndustryWorkflows from '@/pages/IndustryWorkflows';
+import IndustryProjectWorkflow from '@/pages/IndustryProjectWorkflow';
+import IndustryStakeholders from '@/pages/IndustryStakeholders';
+import IndustryDocuments from '@/pages/IndustryDocuments';
+import IndustryMessages from '@/pages/IndustryMessages';
+import IndustryApprovalMatrix from '@/pages/IndustryApprovalMatrix';
 
-const ProfessionalDashboard = React.lazy(() => import("@/pages/ProfessionalDashboard"));
-const ProfessionalProfile = React.lazy(() => import("@/pages/ProfessionalProfile"));
-const ProfessionalCalendar = React.lazy(() => import("@/pages/ProfessionalCalendar"));
-const ProfessionalMessages = React.lazy(() => import("@/pages/ProfessionalMessages"));
-const ProfessionalOpportunities = React.lazy(() => import("@/pages/ProfessionalOpportunities"));
-const ProfessionalDetails = React.lazy(() => import("@/pages/ProfessionalDetails"));
-const ExpertDashboard = React.lazy(() => import("@/pages/ExpertDashboard"));
-const Experts = React.lazy(() => import("@/pages/Experts"));
-const ServiceVendorDashboard = React.lazy(() => import("@/pages/ServiceVendorDashboard"));
-const ServiceVendorProfile = React.lazy(() => import("@/pages/ServiceVendorProfile"));
-const ServiceVendorMessages = React.lazy(() => import("@/pages/ServiceVendorMessages"));
-const ServiceVendorProjects = React.lazy(() => import("@/pages/ServiceVendorProjects"));
-const ServiceVendorRFQs = React.lazy(() => import("@/pages/ServiceVendorRFQs"));
-const ServiceVendorServices = React.lazy(() => import("@/pages/ServiceVendorServices"));
-const ProductVendorDashboard = React.lazy(() => import("@/pages/ProductVendorDashboard"));
-const ProductVendorProfile = React.lazy(() => import("@/pages/ProductVendorProfile"));
-const ProductVendorCatalog = React.lazy(() => import("@/pages/ProductVendorCatalog"));
-const ProductVendorMessages = React.lazy(() => import("@/pages/ProductVendorMessages"));
-const ProductVendorOrders = React.lazy(() => import("@/pages/ProductVendorOrders"));
-const ProductVendorRFQs = React.lazy(() => import("@/pages/ProductVendorRFQs"));
-const LogisticsVendorDashboard = React.lazy(() => import("@/pages/LogisticsVendorDashboard"));
-const LogisticsVendorProfile = React.lazy(() => import("@/pages/LogisticsVendorProfile"));
-const LogisticsVendorDeliveries = React.lazy(() => import("@/pages/LogisticsVendorDeliveries"));
-const LogisticsVendorFleet = React.lazy(() => import("@/pages/LogisticsVendorFleet"));
-const LogisticsVendorMessages = React.lazy(() => import("@/pages/LogisticsVendorMessages"));
-const LogisticsVendorRequests = React.lazy(() => import("@/pages/LogisticsVendorRequests"));
-const Vendors = React.lazy(() => import("@/pages/Vendors"));
-const VendorDetails = React.lazy(() => import("@/pages/VendorDetails"));
-const VendorProfile = React.lazy(() => import("@/pages/VendorProfile"));
-const CreateRequirement = React.lazy(() => import("@/pages/CreateRequirement"));
-const RequirementDetails = React.lazy(() => import("@/pages/RequirementDetails"));
-const CreatePurchaseOrder = React.lazy(() => import("@/pages/CreatePurchaseOrder"));
-const WorkCompletionPayment = React.lazy(() => import("@/pages/WorkCompletionPayment"));
-const ProfileCompletion = React.lazy(() => import("@/pages/ProfileCompletion"));
-const StakeholderOnboarding = React.lazy(() => import("@/pages/StakeholderOnboarding"));
-const TestPage = React.lazy(() => import("@/pages/TestPage"));
-const NotFound = React.lazy(() => import("@/pages/NotFound"));
+// Vendor pages
+import ServiceVendorDashboard from '@/pages/ServiceVendorDashboard';
+import ProductVendorDashboard from '@/pages/ProductVendorDashboard';
+import LogisticsVendorDashboard from '@/pages/LogisticsVendorDashboard';
+
+// Professional pages
+import ProfessionalDashboard from '@/pages/ProfessionalDashboard';
 
 function App() {
   return (
     <Router>
-      <div className="App">
-        <ErrorBoundary>
-          <UserProvider>
-            <VendorSpecializationProvider>
-              <ApprovalProvider>
-                <EnhancedApprovalProvider>
-                  <NotificationStoreProvider>
-                    <Suspense fallback={<FastLoadingState />}>
-                      <Routes>
-                        {/* Homepage Route - Using Index as the main landing page */}
-                        <Route path="/" element={<HomePage />} />
-                        
-                        {/* Test Route */}
-                        <Route path="/test" element={<TestPage />} />
-                        
-                        {/* Navigation & Info Routes */}
-                        <Route path="/about" element={<About />} />
-                        <Route path="/pricing" element={<Pricing />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="/blog" element={<Blog />} />
-                        <Route path="/blog/:slug" element={<BlogArticle />} />
-                        <Route path="/careers" element={<Careers />} />
-                        
-                        {/* Legal Routes */}
-                        <Route path="/privacy" element={<Privacy />} />
-                        <Route path="/terms" element={<Terms />} />
-                        <Route path="/legal" element={<Legal />} />
-                        
-                        {/* Authentication Routes */}
-                        <Route path="/signin" element={<SignIn />} />
-                        <Route path="/signup" element={<SignUp />} />
-                        <Route path="/forgot-password" element={<ForgotPassword />} />
-                        <Route path="/reset-password" element={<ResetPassword />} />
-                        
-                        {/* Industry Routes */}
-                        <Route path="/industry-dashboard" element={<IndustryDashboard />} />
-                        <Route path="/industry-requirements" element={<IndustryRequirements />} />
-                        <Route path="/industry-workflows" element={<IndustryWorkflows />} />
-                        <Route path="/industry-stakeholders" element={<IndustryStakeholders />} />
-                        <Route path="/industry-messages" element={<IndustryMessages />} />
-                        <Route path="/industry-profile" element={<IndustryProfile />} />
-                        <Route path="/industry-documents" element={<IndustryDocuments />} />
-                        <Route path="/industry-project-workflow/:id" element={<IndustryProjectWorkflow />} />
-                        <Route path="/industry-approval-matrix" element={<IndustryApprovalMatrix />} />
-                        
-                        {/* Professional/Expert Routes */}
-                        <Route path="/professional-dashboard" element={<ProfessionalDashboard />} />
-                        <Route path="/professional-profile" element={<ProfessionalProfile />} />
-                        <Route path="/professional-calendar" element={<ProfessionalCalendar />} />
-                        <Route path="/professional-messages" element={<ProfessionalMessages />} />
-                        <Route path="/professional-opportunities" element={<ProfessionalOpportunities />} />
-                        <Route path="/professional-details/:id" element={<ProfessionalDetails />} />
-                        <Route path="/expert-dashboard" element={<ExpertDashboard />} />
-                        <Route path="/experts" element={<Experts />} />
-                        
-                        {/* Service Vendor Routes */}
-                        <Route path="/service-vendor-dashboard" element={<ServiceVendorDashboard />} />
-                        <Route path="/service-vendor-profile" element={<ServiceVendorProfile />} />
-                        <Route path="/service-vendor-messages" element={<ServiceVendorMessages />} />
-                        <Route path="/service-vendor-projects" element={<ServiceVendorProjects />} />
-                        <Route path="/service-vendor-rfqs" element={<ServiceVendorRFQs />} />
-                        <Route path="/service-vendor-services" element={<ServiceVendorServices />} />
-                        
-                        {/* Product Vendor Routes */}
-                        <Route path="/product-vendor-dashboard" element={<ProductVendorDashboard />} />
-                        <Route path="/product-vendor-profile" element={<ProductVendorProfile />} />
-                        <Route path="/product-vendor-catalog" element={<ProductVendorCatalog />} />
-                        <Route path="/product-vendor-messages" element={<ProductVendorMessages />} />
-                        <Route path="/product-vendor-orders" element={<ProductVendorOrders />} />
-                        <Route path="/product-vendor-rfqs" element={<ProductVendorRFQs />} />
-                        
-                        {/* Logistics Vendor Routes */}
-                        <Route path="/logistics-vendor-dashboard" element={<LogisticsVendorDashboard />} />
-                        <Route path="/logistics-vendor-profile" element={<LogisticsVendorProfile />} />
-                        <Route path="/logistics-vendor-deliveries" element={<LogisticsVendorDeliveries />} />
-                        <Route path="/logistics-vendor-fleet" element={<LogisticsVendorFleet />} />
-                        <Route path="/logistics-vendor-messages" element={<LogisticsVendorMessages />} />
-                        <Route path="/logistics-vendor-requests" element={<LogisticsVendorRequests />} />
-                        
-                        {/* Vendor Management Routes */}
-                        <Route path="/vendors" element={<Vendors />} />
-                        <Route path="/vendor-details/:id" element={<VendorDetails />} />
-                        <Route path="/vendor-profile" element={<VendorProfile />} />
-                        
-                        {/* Requirement & Purchase Order Management */}
-                        <Route path="/create-requirement" element={<CreateRequirement />} />
-                        <Route path="/requirement/:id" element={<RequirementDetails />} />
-                        <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
-                        <Route path="/work-completion-payment/:id" element={<WorkCompletionPayment />} />
-                        
-                        {/* Profile & Onboarding Routes */}
-                        <Route path="/profile-completion" element={<ProfileCompletion />} />
-                        <Route path="/stakeholder-onboarding" element={<StakeholderOnboarding />} />
-                        
-                        {/* 404 Route */}
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </Suspense>
-                    <Toaster />
-                  </NotificationStoreProvider>
-                </EnhancedApprovalProvider>
-              </ApprovalProvider>
-            </VendorSpecializationProvider>
-          </UserProvider>
-        </ErrorBoundary>
-      </div>
+      <ErrorBoundary>
+        <UserProvider>
+          <NotificationProvider>
+            <EnhancedApprovalProvider>
+              <RequirementProvider>
+                <ApprovalProvider>
+                  <StakeholderProvider>
+                    <VendorSpecializationProvider>
+                      <div className="App">
+                        <Routes>
+                          {/* Public Routes */}
+                          <Route path="/" element={<RouteErrorBoundary><Index /></RouteErrorBoundary>} />
+                          <Route path="/about" element={<RouteErrorBoundary><About /></RouteErrorBoundary>} />
+                          <Route path="/contact" element={<RouteErrorBoundary><Contact /></RouteErrorBoundary>} />
+                          <Route path="/pricing" element={<RouteErrorBoundary><Pricing /></RouteErrorBoundary>} />
+                          <Route path="/blog" element={<RouteErrorBoundary><Blog /></RouteErrorBoundary>} />
+                          <Route path="/blog/:slug" element={<RouteErrorBoundary><BlogArticle /></RouteErrorBoundary>} />
+                          <Route path="/careers" element={<RouteErrorBoundary><Careers /></RouteErrorBoundary>} />
+                          <Route path="/legal" element={<RouteErrorBoundary><Legal /></RouteErrorBoundary>} />
+                          <Route path="/privacy" element={<RouteErrorBoundary><Privacy /></RouteErrorBoundary>} />
+                          <Route path="/terms" element={<RouteErrorBoundary><Terms /></RouteErrorBoundary>} />
+                          
+                          {/* Auth Routes */}
+                          <Route path="/signup" element={<RouteErrorBoundary><SignUp /></RouteErrorBoundary>} />
+                          <Route path="/signin" element={<RouteErrorBoundary><SignIn /></RouteErrorBoundary>} />
+                          <Route path="/forgot-password" element={<RouteErrorBoundary><ForgotPassword /></RouteErrorBoundary>} />
+                          <Route path="/reset-password" element={<RouteErrorBoundary><ResetPassword /></RouteErrorBoundary>} />
+                          <Route path="/pending-approval" element={<RouteErrorBoundary><PendingApproval /></RouteErrorBoundary>} />
+                          
+                          {/* Profile and Onboarding */}
+                          <Route path="/profile-completion" element={<RouteErrorBoundary><ProfileCompletion /></RouteErrorBoundary>} />
+                          <Route path="/stakeholder-onboarding/:token" element={<RouteErrorBoundary><StakeholderOnboarding /></RouteErrorBoundary>} />
+                          
+                          {/* Industry Routes */}
+                          <Route path="/industry-dashboard" element={<RouteErrorBoundary><IndustryDashboard /></RouteErrorBoundary>} />
+                          <Route path="/industry-profile" element={<RouteErrorBoundary><IndustryProfile /></RouteErrorBoundary>} />
+                          <Route path="/industry-requirements" element={<RouteErrorBoundary><IndustryRequirements /></RouteErrorBoundary>} />
+                          <Route path="/industry-workflows" element={<RouteErrorBoundary><IndustryWorkflows /></RouteErrorBoundary>} />
+                          <Route path="/industry-project-workflow/:id" element={<RouteErrorBoundary><IndustryProjectWorkflow /></RouteErrorBoundary>} />
+                          <Route path="/industry-stakeholders" element={<RouteErrorBoundary><IndustryStakeholders /></RouteErrorBoundary>} />
+                          <Route path="/industry-documents" element={<RouteErrorBoundary><IndustryDocuments /></RouteErrorBoundary>} />
+                          <Route path="/industry-messages" element={<RouteErrorBoundary><IndustryMessages /></RouteErrorBoundary>} />
+                          <Route path="/industry-approval-matrix" element={<RouteErrorBoundary><IndustryApprovalMatrix /></RouteErrorBoundary>} />
+
+                          {/* Vendor Routes */}
+                          <Route path="/service-vendor-dashboard" element={<RouteErrorBoundary><ServiceVendorDashboard /></RouteErrorBoundary>} />
+                          <Route path="/product-vendor-dashboard" element={<RouteErrorBoundary><ProductVendorDashboard /></RouteErrorBoundary>} />
+                          <Route path="/logistics-vendor-dashboard" element={<RouteErrorBoundary><LogisticsVendorDashboard /></RouteErrorBoundary>} />
+
+                          {/* Professional Routes */}
+                          <Route path="/professional-dashboard" element={<RouteErrorBoundary><ProfessionalDashboard /></RouteErrorBoundary>} />
+                          
+                          {/* Test and 404 */}
+                          <Route path="/test" element={<RouteErrorBoundary><TestPage /></RouteErrorBoundary>} />
+                          <Route path="*" element={<RouteErrorBoundary><NotFound /></RouteErrorBoundary>} />
+                        </Routes>
+                        <Toaster />
+                      </div>
+                    </VendorSpecializationProvider>
+                  </StakeholderProvider>
+                </ApprovalProvider>
+              </RequirementProvider>
+            </EnhancedApprovalProvider>
+          </NotificationProvider>
+        </UserProvider>
+      </ErrorBoundary>
     </Router>
   );
 }

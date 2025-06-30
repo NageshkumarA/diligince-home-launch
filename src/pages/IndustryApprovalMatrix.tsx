@@ -1,16 +1,16 @@
-
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import IndustryHeader from '@/components/industry/IndustryHeader';
 import ApprovalMatrixConfiguration from '@/components/industry/approval/ApprovalMatrixConfiguration';
 import ApprovalNotificationCenter from '@/components/shared/notifications/ApprovalNotificationCenter';
+import PendingUserApproval from '@/components/industry/approval/PendingUserApproval';
 import { useEnhancedApproval } from '@/contexts/EnhancedApprovalContext';
 import { TeamMember } from '@/types/teamMember';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, Users, BarChart3, CheckCircle, Clock, AlertTriangle, Plus, Shield, Crown } from 'lucide-react';
+import { Settings, Users, BarChart3, CheckCircle, Clock, AlertTriangle, Plus, Shield, Crown, UserCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const IndustryApprovalMatrix = () => {
@@ -18,6 +18,7 @@ const IndustryApprovalMatrix = () => {
     activeConfiguration, 
     approvalWorkflows, 
     teamMembers,
+    pendingUsers,
     updateTeamMembers,
     userRole,
     isCompanyAdmin,
@@ -54,6 +55,9 @@ const IndustryApprovalMatrix = () => {
     pendingWorkflows: approvalWorkflows.filter(w => w.status === 'pending' || w.status === 'in_progress').length,
     rejectedWorkflows: approvalWorkflows.filter(w => w.status === 'rejected').length,
   };
+
+  // Calculate pending users count
+  const pendingUsersCount = pendingUsers.filter(u => u.status === 'pending').length;
 
   const renderOverviewTab = () => (
     <div className="space-y-6">
@@ -131,6 +135,32 @@ const IndustryApprovalMatrix = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Pending Users Alert for Admin */}
+      {isCompanyAdmin && pendingUsersCount > 0 && (
+        <Card className="border-orange-200 bg-orange-50">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <UserCheck className="h-8 w-8 text-orange-600" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-orange-900">Pending User Approvals</h3>
+                <p className="text-orange-700 mb-3">
+                  You have {pendingUsersCount} user{pendingUsersCount > 1 ? 's' : ''} waiting for approval to join your company.
+                </p>
+                <Button 
+                  onClick={() => setSelectedTab('user-management')}
+                  className="bg-orange-600 hover:bg-orange-700"
+                >
+                  Review Pending Users
+                </Button>
+              </div>
+              <Badge variant="destructive" className="text-lg px-3 py-1">
+                {pendingUsersCount}
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Team Members Setup Notice */}
       {teamMembers.length === 0 && (
@@ -271,12 +301,17 @@ const IndustryApprovalMatrix = () => {
               <Badge variant="outline" className="capitalize">
                 {userRole}
               </Badge>
+              {pendingUsersCount > 0 && isCompanyAdmin && (
+                <Badge variant="destructive">
+                  {pendingUsersCount} pending
+                </Badge>
+              )}
             </div>
           </div>
         </div>
 
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">
               Overview
               {unreadNotifications > 0 && (
@@ -286,6 +321,14 @@ const IndustryApprovalMatrix = () => {
               )}
             </TabsTrigger>
             <TabsTrigger value="configuration">Configuration</TabsTrigger>
+            <TabsTrigger value="user-management">
+              User Management
+              {pendingUsersCount > 0 && isCompanyAdmin && (
+                <Badge variant="destructive" className="ml-2 h-4 w-4 p-0 text-xs">
+                  {pendingUsersCount}
+                </Badge>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
 
@@ -315,6 +358,10 @@ const IndustryApprovalMatrix = () => {
                 onTeamMembersUpdate={handleTeamMembersUpdate}
               />
             )}
+          </TabsContent>
+
+          <TabsContent value="user-management" className="mt-6">
+            <PendingUserApproval />
           </TabsContent>
 
           <TabsContent value="analytics" className="mt-6">
