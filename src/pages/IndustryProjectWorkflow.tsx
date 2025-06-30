@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import IndustryHeader from '@/components/industry/IndustryHeader';
@@ -156,7 +157,7 @@ const IndustryProjectWorkflow = () => {
         status: 'sent' as const,
         createdDate: new Date().toISOString(),
         terms: 'Created via system - ISO 9001 compliant purchase order',
-        poType: 'system_generated' as const,
+        poType: 'generated' as const,
         iso9001Compliance: true
       };
 
