@@ -265,64 +265,70 @@ export const EnhancedApprovalProvider: React.FC<{ children: ReactNode }> = ({ ch
   }, [pendingUsers]);
 
   const initializeCompanyData = (companyName: string, userEmail: string, userId: string) => {
-    const domain = userEmail.split('@')[1] || '';
-    const generatedCompanyId = `company-${companyName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${domain.replace(/[^a-z0-9]/g, '-')}`;
-    
-    // Check if company exists
-    const existingCompanies = JSON.parse(localStorage.getItem('industryCompanies') || '[]');
-    const companyExists = existingCompanies.find((comp: any) => comp.id === generatedCompanyId);
-    
-    if (!companyExists) {
-      // First user becomes admin
-      setIsCompanyAdmin(true);
-      setUserRole('admin');
+    try {
+      const domain = userEmail.split('@')[1] || '';
+      const generatedCompanyId = `company-${companyName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${domain.replace(/[^a-z0-9]/g, '-')}`;
       
-      // Create company record
-      const newCompany = {
-        id: generatedCompanyId,
-        name: companyName,
-        domain: domain,
-        adminUserId: userId,
-        createdDate: new Date().toISOString(),
-        users: [userId]
-      };
+      // Check if company exists
+      const existingCompanies = JSON.parse(localStorage.getItem('industryCompanies') || '[]');
+      const companyExists = existingCompanies.find((comp: any) => comp.id === generatedCompanyId);
       
-      existingCompanies.push(newCompany);
-      localStorage.setItem('industryCompanies', JSON.stringify(existingCompanies));
-      
-      // Create notification
-      const notification: ApprovalNotification = {
-        id: `notif-${Date.now()}`,
-        type: 'workflow_completed',
-        title: 'Company Setup Complete',
-        message: 'You have been assigned as Company Administrator. You can now configure approval workflows.',
-        timestamp: new Date().toISOString(),
-        isRead: false,
-        priority: 'high'
-      };
-      
-      setNotifications(prev => [notification, ...prev]);
-      toast("Company setup complete! You're now the administrator.");
-    } else {
-      // Subsequent user
-      setIsCompanyAdmin(false);
-      setUserRole('initiator');
-      
-      // Add notification for admin
-      const notification: ApprovalNotification = {
-        id: `notif-${Date.now()}`,
-        type: 'user_approval_request',
-        title: 'New User Pending Approval',
-        message: `A new user has joined your company and needs role assignment.`,
-        timestamp: new Date().toISOString(),
-        isRead: false,
-        priority: 'medium'
-      };
-      
-      setNotifications(prev => [notification, ...prev]);
+      if (!companyExists) {
+        // First user becomes admin
+        setIsCompanyAdmin(true);
+        setUserRole('admin');
+        setCompanyId(generatedCompanyId);
+        
+        // Create company record
+        const newCompany = {
+          id: generatedCompanyId,
+          name: companyName,
+          domain: domain,
+          adminUserId: userId,
+          createdDate: new Date().toISOString(),
+          users: [userId]
+        };
+        
+        existingCompanies.push(newCompany);
+        localStorage.setItem('industryCompanies', JSON.stringify(existingCompanies));
+        
+        // Create notification without showing toast immediately
+        const notification: ApprovalNotification = {
+          id: `notif-${Date.now()}`,
+          type: 'workflow_completed',
+          title: 'Company Setup Complete',
+          message: 'You have been assigned as Company Administrator. You can now configure approval workflows.',
+          timestamp: new Date().toISOString(),
+          isRead: false,
+          priority: 'high'
+        };
+        
+        setNotifications(prev => [notification, ...prev]);
+        
+        console.log("Company initialization completed successfully");
+      } else {
+        // Subsequent user
+        setIsCompanyAdmin(false);
+        setUserRole('initiator');
+        setCompanyId(generatedCompanyId);
+        
+        // Add notification for admin
+        const notification: ApprovalNotification = {
+          id: `notif-${Date.now()}`,
+          type: 'user_approval_request',
+          title: 'New User Pending Approval',
+          message: `A new user has joined your company and needs role assignment.`,
+          timestamp: new Date().toISOString(),
+          isRead: false,
+          priority: 'medium'
+        };
+        
+        setNotifications(prev => [notification, ...prev]);
+      }
+    } catch (error) {
+      console.error("Error in initializeCompanyData:", error);
+      // Don't throw the error, just log it to prevent breaking the signup flow
     }
-    
-    setCompanyId(generatedCompanyId);
   };
 
   const createNotification = (type: ApprovalNotification['type'], title: string, message: string, priority: ApprovalNotification['priority'] = 'medium', workflowId?: string, requestId?: string, userId?: string) => {

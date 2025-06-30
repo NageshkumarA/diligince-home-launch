@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
@@ -101,7 +100,13 @@ export const useAuth = () => {
           return { success: true, user: userData, status: 'pending' };
         } else {
           // First user - becomes admin
-          initializeCompanyData(userData.profile.companyName, userData.email, userData.id);
+          // Initialize company data BEFORE login
+          try {
+            initializeCompanyData(userData.profile.companyName, userData.email, userData.id);
+            console.log("Company data initialized for first user");
+          } catch (error) {
+            console.error("Error initializing company data:", error);
+          }
         }
       }
 
@@ -121,6 +126,8 @@ export const useAuth = () => {
       // Remove password before setting user in context
       const { password, ...userProfile } = userData;
       console.log("User profile to set in context:", userProfile);
+      
+      // Login user AFTER company initialization
       login(userProfile);
       
       toast({
@@ -128,10 +135,12 @@ export const useAuth = () => {
         description: "Welcome to diligince.ai",
       });
 
-      // Redirect to appropriate dashboard
-      const dashboardUrl = getVendorDashboardUrl(userProfile.role, userProfile.profile?.vendorCategory);
-      console.log("Redirecting to dashboard:", dashboardUrl);
-      navigate(dashboardUrl);
+      // Add a small delay to ensure context state is updated before navigation
+      setTimeout(() => {
+        const dashboardUrl = getVendorDashboardUrl(userProfile.role, userProfile.profile?.vendorCategory);
+        console.log("Redirecting to dashboard:", dashboardUrl);
+        navigate(dashboardUrl);
+      }, 100);
 
       console.log("=== SIGNUP PROCESS COMPLETED ===");
       return { success: true, user: userProfile };
