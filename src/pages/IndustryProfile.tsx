@@ -651,7 +651,7 @@ const IndustryProfile = () => {
             <Card className="p-4 mb-8 max-w-md">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h4 className="font-medium">Two-Factor Authentication</h4>
+                  <h4 className="font-medium text-base">Two-Factor Authentication</h4>
                   <p className="text-sm text-gray-600">Enhance your account security</p>
                 </div>
                 <div className="flex items-center">
@@ -664,7 +664,7 @@ const IndustryProfile = () => {
             <h3 className="text-lg font-semibold text-gray-800 mt-8 mb-4">Session Management</h3>
             
             <Card className="p-4 mb-8">
-              <h4 className="font-medium mb-4">Active Sessions</h4>
+              <h4 className="font-medium mb-4 text-lg">Active Sessions</h4>
               
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
