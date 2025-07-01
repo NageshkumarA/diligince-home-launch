@@ -32,6 +32,7 @@ import TestPage from '@/pages/TestPage';
 import BlogArticle from '@/pages/BlogArticle';
 import StakeholderOnboarding from '@/pages/StakeholderOnboarding';
 import PendingApproval from '@/pages/PendingApproval';
+import WorkCompletionPayment from '@/pages/WorkCompletionPayment';
 
 // Industry pages
 import IndustryDashboard from '@/pages/IndustryDashboard';
@@ -103,6 +104,7 @@ function App() {
                             <Route path="/industry-documents" element={<RouteErrorBoundary><IndustryDocuments /></RouteErrorBoundary>} />
                             <Route path="/industry-messages" element={<RouteErrorBoundary><IndustryMessages /></RouteErrorBoundary>} />
                             <Route path="/industry-approval-matrix" element={<RouteErrorBoundary><IndustryApprovalMatrix /></RouteErrorBoundary>} />
+                            <Route path="/work-completion-payment/:id" element={<RouteErrorBoundary><WorkCompletionPayment /></RouteErrorBoundary>} />
 
                             {/* Vendor Routes */}
                             <Route path="/service-vendor-dashboard" element={<RouteErrorBoundary><ServiceVendorDashboard /></RouteErrorBoundary>} />
