@@ -54,6 +54,10 @@ import LogisticsVendorDashboard from '@/pages/LogisticsVendorDashboard';
 
 // Professional pages
 import ProfessionalDashboard from '@/pages/ProfessionalDashboard';
+import ProfessionalOpportunities from '@/pages/ProfessionalOpportunities';
+import ProfessionalCalendar from '@/pages/ProfessionalCalendar';
+import ProfessionalMessages from '@/pages/ProfessionalMessages';
+import ProfessionalProfile from '@/pages/ProfessionalProfile';
 
 function App() {
   return (
@@ -113,6 +117,10 @@ function App() {
 
                             {/* Professional Routes */}
                             <Route path="/professional-dashboard" element={<RouteErrorBoundary><ProfessionalDashboard /></RouteErrorBoundary>} />
+                            <Route path="/professional-opportunities" element={<RouteErrorBoundary><ProfessionalOpportunities /></RouteErrorBoundary>} />
+                            <Route path="/professional-calendar" element={<RouteErrorBoundary><ProfessionalCalendar /></RouteErrorBoundary>} />
+                            <Route path="/professional-messages" element={<RouteErrorBoundary><ProfessionalMessages /></RouteErrorBoundary>} />
+                            <Route path="/professional-profile" element={<RouteErrorBoundary><ProfessionalProfile /></RouteErrorBoundary>} />
                             
                             {/* Test and 404 */}
                             <Route path="/test" element={<RouteErrorBoundary><TestPage /></RouteErrorBoundary>} />
