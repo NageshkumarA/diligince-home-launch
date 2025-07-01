@@ -52,6 +52,27 @@ import ServiceVendorDashboard from '@/pages/ServiceVendorDashboard';
 import ProductVendorDashboard from '@/pages/ProductVendorDashboard';
 import LogisticsVendorDashboard from '@/pages/LogisticsVendorDashboard';
 
+// Service Vendor pages
+import ServiceVendorRFQs from '@/pages/ServiceVendorRFQs';
+import ServiceVendorProjects from '@/pages/ServiceVendorProjects';
+import ServiceVendorMessages from '@/pages/ServiceVendorMessages';
+import ServiceVendorProfile from '@/pages/ServiceVendorProfile';
+import ServiceVendorServices from '@/pages/ServiceVendorServices';
+
+// Product Vendor pages
+import ProductVendorRFQs from '@/pages/ProductVendorRFQs';
+import ProductVendorOrders from '@/pages/ProductVendorOrders';
+import ProductVendorCatalog from '@/pages/ProductVendorCatalog';
+import ProductVendorMessages from '@/pages/ProductVendorMessages';
+import ProductVendorProfile from '@/pages/ProductVendorProfile';
+
+// Logistics Vendor pages
+import LogisticsVendorRequests from '@/pages/LogisticsVendorRequests';
+import LogisticsVendorDeliveries from '@/pages/LogisticsVendorDeliveries';
+import LogisticsVendorFleet from '@/pages/LogisticsVendorFleet';
+import LogisticsVendorMessages from '@/pages/LogisticsVendorMessages';
+import LogisticsVendorProfile from '@/pages/LogisticsVendorProfile';
+
 // Professional pages
 import ProfessionalDashboard from '@/pages/ProfessionalDashboard';
 import ProfessionalOpportunities from '@/pages/ProfessionalOpportunities';
@@ -114,6 +135,27 @@ function App() {
                             <Route path="/service-vendor-dashboard" element={<RouteErrorBoundary><ServiceVendorDashboard /></RouteErrorBoundary>} />
                             <Route path="/product-vendor-dashboard" element={<RouteErrorBoundary><ProductVendorDashboard /></RouteErrorBoundary>} />
                             <Route path="/logistics-vendor-dashboard" element={<RouteErrorBoundary><LogisticsVendorDashboard /></RouteErrorBoundary>} />
+
+                            {/* Service Vendor Routes */}
+                            <Route path="/service-vendor-rfqs" element={<RouteErrorBoundary><ServiceVendorRFQs /></RouteErrorBoundary>} />
+                            <Route path="/service-vendor-projects" element={<RouteErrorBoundary><ServiceVendorProjects /></RouteErrorBoundary>} />
+                            <Route path="/service-vendor-messages" element={<RouteErrorBoundary><ServiceVendorMessages /></RouteErrorBoundary>} />
+                            <Route path="/service-vendor-profile" element={<RouteErrorBoundary><ServiceVendorProfile /></RouteErrorBoundary>} />
+                            <Route path="/service-vendor-services" element={<RouteErrorBoundary><ServiceVendorServices /></RouteErrorBoundary>} />
+
+                            {/* Product Vendor Routes */}
+                            <Route path="/product-vendor-rfqs" element={<RouteErrorBoundary><ProductVendorRFQs /></RouteErrorBoundary>} />
+                            <Route path="/product-vendor-orders" element={<RouteErrorBoundary><ProductVendorOrders /></RouteErrorBoundary>} />
+                            <Route path="/product-vendor-catalog" element={<RouteErrorBoundary><ProductVendorCatalog /></RouteErrorBoundary>} />
+                            <Route path="/product-vendor-messages" element={<RouteErrorBoundary><ProductVendorMessages /></RouteErrorBoundary>} />
+                            <Route path="/product-vendor-profile" element={<RouteErrorBoundary><ProductVendorProfile /></RouteErrorBoundary>} />
+
+                            {/* Logistics Vendor Routes */}
+                            <Route path="/logistics-vendor-requests" element={<RouteErrorBoundary><LogisticsVendorRequests /></RouteErrorBoundary>} />
+                            <Route path="/logistics-vendor-deliveries" element={<RouteErrorBoundary><LogisticsVendorDeliveries /></RouteErrorBoundary>} />
+                            <Route path="/logistics-vendor-fleet" element={<RouteErrorBoundary><LogisticsVendorFleet /></RouteErrorBoundary>} />
+                            <Route path="/logistics-vendor-messages" element={<RouteErrorBoundary><LogisticsVendorMessages /></RouteErrorBoundary>} />
+                            <Route path="/logistics-vendor-profile" element={<RouteErrorBoundary><LogisticsVendorProfile /></RouteErrorBoundary>} />
 
                             {/* Professional Routes */}
                             <Route path="/professional-dashboard" element={<RouteErrorBoundary><ProfessionalDashboard /></RouteErrorBoundary>} />
