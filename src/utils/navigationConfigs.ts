@@ -97,6 +97,11 @@ export const serviceVendorHeaderConfig: HeaderConfig = {
       icon: React.createElement(Workflow, { size: 18 })
     },
     {
+      label: "Services",
+      href: "/service-vendor-services",
+      icon: React.createElement(Briefcase, { size: 18 })
+    },
+    {
       label: "Messages",
       href: "/service-vendor-messages",
       icon: React.createElement(MessageSquare, { size: 18 })
