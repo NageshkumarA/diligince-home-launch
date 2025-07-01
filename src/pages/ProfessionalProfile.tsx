@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { User, Home, Calendar, Award, Briefcase, Wallet, Settings, LayoutGrid, MessageSquare } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -77,11 +76,11 @@ const ProfessionalProfile = () => {
 
   // Header navigation items
   const headerNavItems = [
-    { label: "Dashboard", icon: <Home size={18} />, href: "/expert-dashboard" },
-    { label: "Opportunities", icon: <Briefcase size={18} />, href: "/expert-opportunities" },
-    { label: "Calendar", icon: <Calendar size={18} />, href: "/expert-calendar" },
-    { label: "Messages", icon: <MessageSquare size={18} />, href: "/expert-messages" },
-    { label: "Profile", icon: <User size={18} />, href: "/expert-profile", active: true },
+    { label: "Dashboard", icon: <Home size={18} />, href: "/professional-dashboard" },
+    { label: "Opportunities", icon: <Briefcase size={18} />, href: "/professional-opportunities" },
+    { label: "Calendar", icon: <Calendar size={18} />, href: "/professional-calendar" },
+    { label: "Messages", icon: <MessageSquare size={18} />, href: "/professional-messages" },
+    { label: "Profile", icon: <User size={18} />, href: "/professional-profile", active: true },
   ];
 
   // Function to handle menu item click
