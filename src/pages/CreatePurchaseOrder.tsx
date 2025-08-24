@@ -43,9 +43,17 @@ const formSchema = z.object({
     id: z.string(),
     description: z.string().min(1, "Deliverable description is required")
   })),
+  paymentMilestones: z.array(z.object({
+    id: z.string(),
+    description: z.string().min(1, "Milestone description is required"),
+    percentage: z.coerce.number().min(0).max(100, "Percentage must be between 0 and 100"),
+    dueDate: z.date({
+      required_error: "Due date is required"
+    })
+  })),
   acceptanceCriteria: z.array(z.object({
     id: z.string(),
-    description: z.string().min(1, "Acceptance criteria is required")
+    criteria: z.string().min(1, "Acceptance criteria is required")
   }))
 }).refine(data => data.endDate >= data.startDate, {
   message: "End date must be after start date",
@@ -90,9 +98,10 @@ const usePOFormData = (form: UseFormReturn<FormValues>) => {
       startDate: values.startDate,
       endDate: values.endDate,
       paymentTerms: values.paymentTerms,
-      specialInstructions: values.specialInstructions || '',
+      specialInstructions: values.specialInstructions || "",
       scopeOfWork: values.scopeOfWork,
       deliverables: values.deliverables || [],
+      paymentMilestones: values.paymentMilestones || [],
       acceptanceCriteria: values.acceptanceCriteria || []
     };
     
@@ -184,6 +193,7 @@ const CreatePurchaseOrder: React.FC = () => {
       specialInstructions: "",
       scopeOfWork: "",
       deliverables: [],
+      paymentMilestones: [],
       acceptanceCriteria: []
     }
   });
@@ -362,7 +372,7 @@ const CreatePurchaseOrder: React.FC = () => {
     const currentCriteria = form.getValues("acceptanceCriteria");
     const newCriteria = {
       id: `ac-${Date.now()}`,
-      description: ""
+      criteria: ""
     };
     form.setValue("acceptanceCriteria", [...currentCriteria, newCriteria]);
   };
@@ -396,7 +406,7 @@ const CreatePurchaseOrder: React.FC = () => {
       
       return (
         <POReviewStep
-          formData={reviewData}
+          formData={reviewData as FormValues}
           selectedISOTerms={selectedISOTerms}
           customISOTerms={customISOTerms}
           vendors={vendors}
@@ -796,7 +806,7 @@ const CreatePurchaseOrder: React.FC = () => {
                     <div key={criteria.id} className="flex gap-2">
                       <FormField
                         control={form.control}
-                        name={`acceptanceCriteria.${index}.description`}
+                        name={`acceptanceCriteria.${index}.criteria`}
                         render={({ field }) => (
                           <FormItem className="flex-1">
                             <FormControl>

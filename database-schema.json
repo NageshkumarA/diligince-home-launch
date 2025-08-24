@@ -1,0 +1,494 @@
+{
+  "collections": {
+    "users": {
+      "schema": {
+        "phone": { "type": "String", "required": true },
+        "email": { "type": "String", "required": true, "unique": true },
+        "password": { "type": "String", "required": true },
+        "role": { "type": "String", "required": true, "enum": ["industry", "professional", "vendor"] },
+        "profileId": { "type": "ObjectId", "required": true },
+        "isProfile": { "type": "Boolean", "default": false },
+        "isEmailVerified": { "type": "Boolean", "default": false },
+        "isPhoneVerified": { "type": "Boolean", "default": false },
+        "preferences": {
+          "theme": { "type": "String", "enum": ["light", "dark", "system"], "default": "light" },
+          "notifications": {
+            "email": { "type": "Boolean", "default": true },
+            "push": { "type": "Boolean", "default": true },
+            "sms": { "type": "Boolean", "default": false },
+            "marketing": { "type": "Boolean", "default": false }
+          },
+          "language": { "type": "String", "default": "en" },
+          "timezone": { "type": "String", "default": "UTC" }
+        }
+      },
+      "timestamps": true
+    },
+    
+    "industryProfiles": {
+      "schema": {
+        "companyName": { "type": "String", "required": true },
+        "industryType": { "type": "String", "required": true },
+        "companySize": { "type": "String", "enum": ["1-10", "11-50", "51-200", "201-1000", "1000+"] },
+        "annualRevenue": { "type": "String" },
+        "headquartersLocation": { "type": "String" },
+        "operatingRegions": [{ "type": "String" }],
+        "complianceCertifications": [{ "type": "String" }],
+        "contactInfo": {
+          "primaryContact": { "type": "String" },
+          "phone": { "type": "String" },
+          "address": { "type": "String" },
+          "website": { "type": "String" }
+        },
+        "approvalMatrix": {
+          "roles": [{
+            "roleName": { "type": "String" },
+            "approvalLimit": { "type": "Number" },
+            "permissions": [{ "type": "String" }]
+          }],
+          "workflows": [{
+            "workflowType": { "type": "String" },
+            "steps": [{
+              "stepName": { "type": "String" },
+              "approverRole": { "type": "String" },
+              "isRequired": { "type": "Boolean" }
+            }]
+          }]
+        }
+      },
+      "timestamps": true
+    },
+
+    "professionalProfiles": {
+      "schema": {
+        "firstName": { "type": "String", "required": true },
+        "lastName": { "type": "String", "required": true },
+        "title": { "type": "String" },
+        "specialization": { "type": "String", "required": true },
+        "experience": {
+          "totalYears": { "type": "Number", "required": true },
+          "positions": [{
+            "company": { "type": "String" },
+            "role": { "type": "String" },
+            "duration": { "type": "String" },
+            "description": { "type": "String" }
+          }]
+        },
+        "skills": [{ "type": "String" }],
+        "certifications": [{
+          "name": { "type": "String" },
+          "issuer": { "type": "String" },
+          "dateObtained": { "type": "Date" },
+          "expiryDate": { "type": "Date" },
+          "certificateUrl": { "type": "String" }
+        }],
+        "availability": {
+          "isAvailable": { "type": "Boolean", "default": true },
+          "preferredProjects": [{ "type": "String" }],
+          "hourlyRate": { "type": "Number" },
+          "calendar": [{
+            "date": { "type": "Date" },
+            "isAvailable": { "type": "Boolean" },
+            "timeSlots": [{ "type": "String" }]
+          }]
+        },
+        "location": { "type": "String" },
+        "contactInfo": {
+          "phone": { "type": "String" },
+          "linkedIn": { "type": "String" },
+          "portfolio": { "type": "String" }
+        }
+      },
+      "timestamps": true
+    },
+
+    "vendorProfiles": {
+      "schema": {
+        "companyName": { "type": "String", "required": true },
+        "vendorCategory": { "type": "String", "required": true, "enum": ["service", "product", "logistics"] },
+        "businessRegistration": {
+          "registrationNumber": { "type": "String", "required": true },
+          "taxId": { "type": "String" },
+          "incorporationDate": { "type": "Date" }
+        },
+        "contactInfo": {
+          "primaryContact": { "type": "String" },
+          "email": { "type": "String" },
+          "phone": { "type": "String" },
+          "address": { "type": "String" },
+          "website": { "type": "String" }
+        },
+        "serviceDetails": {
+          "serviceCategories": [{ "type": "String" }],
+          "specializations": [{ "type": "String" }],
+          "teamSize": { "type": "Number" },
+          "experienceYears": { "type": "Number" }
+        },
+        "productDetails": {
+          "productCategories": [{ "type": "String" }],
+          "brands": [{ "type": "String" }],
+          "catalogItems": [{
+            "name": { "type": "String" },
+            "description": { "type": "String" },
+            "price": { "type": "Number" },
+            "specifications": { "type": "Object" }
+          }]
+        },
+        "logisticsDetails": {
+          "serviceTypes": [{ "type": "String" }],
+          "coverage": [{ "type": "String" }],
+          "fleet": [{
+            "vehicleType": { "type": "String" },
+            "capacity": { "type": "String" },
+            "quantity": { "type": "Number" }
+          }],
+          "licenses": [{ "type": "String" }]
+        },
+        "certifications": [{
+          "name": { "type": "String" },
+          "issuer": { "type": "String" },
+          "dateObtained": { "type": "Date" },
+          "expiryDate": { "type": "Date" },
+          "certificateUrl": { "type": "String" }
+        }],
+        "qualityStandards": [{ "type": "String" }],
+        "paymentTerms": [{ "type": "String" }]
+      },
+      "timestamps": true
+    },
+
+    "requirements": {
+      "schema": {
+        "industryId": { "type": "ObjectId", "ref": "industryProfiles", "required": true },
+        "title": { "type": "String", "required": true },
+        "description": { "type": "String", "required": true },
+        "category": { "type": "String", "required": true },
+        "priority": { "type": "String", "enum": ["low", "medium", "high", "urgent"], "default": "medium" },
+        "budget": {
+          "min": { "type": "Number" },
+          "max": { "type": "Number" },
+          "currency": { "type": "String", "default": "USD" }
+        },
+        "timeline": {
+          "startDate": { "type": "Date" },
+          "endDate": { "type": "Date" },
+          "milestones": [{
+            "name": { "type": "String" },
+            "date": { "type": "Date" },
+            "description": { "type": "String" }
+          }]
+        },
+        "technicalSpecs": { "type": "Object" },
+        "complianceRequirements": [{ "type": "String" }],
+        "deliverables": [{
+          "name": { "type": "String" },
+          "description": { "type": "String" },
+          "dueDate": { "type": "Date" }
+        }],
+        "evaluationCriteria": [{
+          "criterion": { "type": "String" },
+          "weight": { "type": "Number" },
+          "description": { "type": "String" }
+        }],
+        "approvalWorkflow": {
+          "steps": [{
+            "stepName": { "type": "String" },
+            "approverRole": { "type": "String" },
+            "status": { "type": "String", "enum": ["pending", "approved", "rejected"], "default": "pending" },
+            "approvedBy": { "type": "ObjectId", "ref": "users" },
+            "approvedAt": { "type": "Date" },
+            "comments": { "type": "String" }
+          }]
+        },
+        "documents": [{
+          "name": { "type": "String" },
+          "url": { "type": "String" },
+          "type": { "type": "String" },
+          "uploadedAt": { "type": "Date" }
+        }],
+        "status": { "type": "String", "enum": ["draft", "pending_approval", "approved", "published", "closed"], "default": "draft" },
+        "publishedAt": { "type": "Date" },
+        "rfqSentTo": [{ "type": "ObjectId", "ref": "vendorProfiles" }]
+      },
+      "timestamps": true
+    },
+
+    "rfqs": {
+      "schema": {
+        "requirementId": { "type": "ObjectId", "ref": "requirements", "required": true },
+        "industryId": { "type": "ObjectId", "ref": "industryProfiles", "required": true },
+        "stakeholderId": { "type": "ObjectId", "required": true },
+        "stakeholderType": { "type": "String", "enum": ["vendor", "professional"], "required": true },
+        "title": { "type": "String", "required": true },
+        "description": { "type": "String", "required": true },
+        "deliveryTimeline": { "type": "String" },
+        "termsAndConditions": { "type": "String" },
+        "technicalSpecs": { "type": "Object" },
+        "budget": {
+          "min": { "type": "Number" },
+          "max": { "type": "Number" },
+          "currency": { "type": "String", "default": "USD" }
+        },
+        "dueDate": { "type": "Date" },
+        "status": { "type": "String", "enum": ["sent", "viewed", "responded", "expired"], "default": "sent" },
+        "priority": { "type": "String", "enum": ["low", "medium", "high", "urgent"], "default": "medium" },
+        "attachments": [{
+          "name": { "type": "String" },
+          "url": { "type": "String" },
+          "type": { "type": "String" }
+        }],
+        "viewedAt": { "type": "Date" },
+        "respondedAt": { "type": "Date" }
+      },
+      "timestamps": true
+    },
+
+    "quotes": {
+      "schema": {
+        "rfqId": { "type": "ObjectId", "ref": "rfqs", "required": true },
+        "stakeholderId": { "type": "ObjectId", "required": true },
+        "stakeholderType": { "type": "String", "enum": ["vendor", "professional"], "required": true },
+        "pricing": {
+          "totalAmount": { "type": "Number", "required": true },
+          "currency": { "type": "String", "default": "USD" },
+          "breakdown": [{
+            "item": { "type": "String" },
+            "quantity": { "type": "Number" },
+            "unitPrice": { "type": "Number" },
+            "totalPrice": { "type": "Number" }
+          }],
+          "taxes": { "type": "Number" },
+          "discounts": { "type": "Number" }
+        },
+        "timeline": {
+          "estimatedStartDate": { "type": "Date" },
+          "estimatedEndDate": { "type": "Date" },
+          "milestones": [{
+            "name": { "type": "String" },
+            "date": { "type": "Date" },
+            "deliverable": { "type": "String" }
+          }]
+        },
+        "technicalProposal": { "type": "String" },
+        "terms": { "type": "String" },
+        "validUntil": { "type": "Date" },
+        "attachments": [{
+          "name": { "type": "String" },
+          "url": { "type": "String" },
+          "type": { "type": "String" }
+        }],
+        "status": { "type": "String", "enum": ["submitted", "under_review", "accepted", "rejected", "expired"], "default": "submitted" },
+        "evaluationScore": { "type": "Number" },
+        "evaluationNotes": { "type": "String" },
+        "reviewedBy": { "type": "ObjectId", "ref": "users" },
+        "reviewedAt": { "type": "Date" }
+      },
+      "timestamps": true
+    },
+
+    "purchaseOrders": {
+      "schema": {
+        "poNumber": { "type": "String", "required": true, "unique": true },
+        "industryId": { "type": "ObjectId", "ref": "industryProfiles", "required": true },
+        "vendorId": { "type": "ObjectId", "ref": "vendorProfiles", "required": true },
+        "requirementId": { "type": "ObjectId", "ref": "requirements" },
+        "quoteId": { "type": "ObjectId", "ref": "quotes" },
+        "projectTitle": { "type": "String", "required": true },
+        "orderValue": { "type": "Number", "required": true },
+        "taxPercentage": { "type": "Number", "default": 0 },
+        "totalValue": { "type": "Number", "required": true },
+        "startDate": { "type": "Date", "required": true },
+        "endDate": { "type": "Date", "required": true },
+        "paymentTerms": { "type": "String", "required": true },
+        "specialInstructions": { "type": "String" },
+        "scopeOfWork": { "type": "String", "required": true },
+        "deliverables": [{
+          "id": { "type": "String" },
+          "description": { "type": "String", "required": true },
+          "dueDate": { "type": "Date" },
+          "status": { "type": "String", "enum": ["pending", "in_progress", "completed"], "default": "pending" }
+        }],
+        "paymentMilestones": [{
+          "id": { "type": "String" },
+          "description": { "type": "String", "required": true },
+          "percentage": { "type": "Number", "required": true },
+          "dueDate": { "type": "Date", "required": true },
+          "amount": { "type": "Number" },
+          "status": { "type": "String", "enum": ["pending", "due", "paid"], "default": "pending" }
+        }],
+        "acceptanceCriteria": [{
+          "id": { "type": "String" },
+          "criteria": { "type": "String", "required": true },
+          "isCompleted": { "type": "Boolean", "default": false }
+        }],
+        "isoTerms": [{ "type": "String" }],
+        "customTerms": { "type": "String" },
+        "status": { "type": "String", "enum": ["draft", "issued", "acknowledged", "in_progress", "completed", "cancelled"], "default": "draft" },
+        "workflowStatus": {
+          "currentPhase": { "type": "String" },
+          "phases": [{
+            "name": { "type": "String" },
+            "status": { "type": "String", "enum": ["pending", "in_progress", "completed"] },
+            "startDate": { "type": "Date" },
+            "endDate": { "type": "Date" }
+          }]
+        },
+        "documents": [{
+          "name": { "type": "String" },
+          "url": { "type": "String" },
+          "type": { "type": "String" },
+          "uploadedBy": { "type": "ObjectId", "ref": "users" },
+          "uploadedAt": { "type": "Date" }
+        }],
+        "approvals": [{
+          "approverRole": { "type": "String" },
+          "approvedBy": { "type": "ObjectId", "ref": "users" },
+          "approvedAt": { "type": "Date" },
+          "status": { "type": "String", "enum": ["pending", "approved", "rejected"] },
+          "comments": { "type": "String" }
+        }],
+        "riskAssessment": {
+          "level": { "type": "String", "enum": ["low", "medium", "high"] },
+          "factors": [{ "type": "String" }],
+          "mitigationPlan": { "type": "String" }
+        },
+        "qualityMetrics": {
+          "kpis": [{
+            "name": { "type": "String" },
+            "target": { "type": "Number" },
+            "actual": { "type": "Number" },
+            "unit": { "type": "String" }
+          }],
+          "qualityGates": [{
+            "name": { "type": "String" },
+            "criteria": { "type": "String" },
+            "status": { "type": "String", "enum": ["pending", "passed", "failed"] }
+          }]
+        }
+      },
+      "timestamps": true
+    },
+
+    "workflowActivities": {
+      "schema": {
+        "purchaseOrderId": { "type": "ObjectId", "ref": "purchaseOrders", "required": true },
+        "activityType": { "type": "String", "required": true },
+        "description": { "type": "String", "required": true },
+        "performedBy": { "type": "ObjectId", "ref": "users", "required": true },
+        "timestamp": { "type": "Date", "default": "Date.now" },
+        "metadata": { "type": "Object" },
+        "documents": [{
+          "name": { "type": "String" },
+          "url": { "type": "String" },
+          "type": { "type": "String" }
+        }],
+        "status": { "type": "String", "enum": ["pending", "completed", "failed"], "default": "completed" }
+      },
+      "timestamps": true
+    },
+
+    "notifications": {
+      "schema": {
+        "userId": { "type": "ObjectId", "ref": "users", "required": true },
+        "title": { "type": "String", "required": true },
+        "message": { "type": "String", "required": true },
+        "type": { "type": "String", "enum": ["info", "success", "warning", "error", "rfq", "quote", "approval"], "required": true },
+        "relatedId": { "type": "ObjectId" },
+        "relatedType": { "type": "String", "enum": ["requirement", "rfq", "quote", "purchaseOrder"] },
+        "priority": { "type": "String", "enum": ["low", "medium", "high"], "default": "medium" },
+        "read": { "type": "Boolean", "default": false },
+        "readAt": { "type": "Date" },
+        "actionRequired": { "type": "Boolean", "default": false },
+        "actionUrl": { "type": "String" },
+        "metadata": { "type": "Object" }
+      },
+      "timestamps": true
+    },
+
+    "auditLogs": {
+      "schema": {
+        "userId": { "type": "ObjectId", "ref": "users", "required": true },
+        "action": { "type": "String", "required": true },
+        "resource": { "type": "String", "required": true },
+        "resourceId": { "type": "ObjectId", "required": true },
+        "changes": { "type": "Object" },
+        "ipAddress": { "type": "String" },
+        "userAgent": { "type": "String" },
+        "timestamp": { "type": "Date", "default": "Date.now" },
+        "severity": { "type": "String", "enum": ["low", "medium", "high", "critical"], "default": "low" },
+        "outcome": { "type": "String", "enum": ["success", "failure", "warning"], "default": "success" }
+      },
+      "timestamps": true
+    },
+
+    "complianceRecords": {
+      "schema": {
+        "entityId": { "type": "ObjectId", "required": true },
+        "entityType": { "type": "String", "enum": ["requirement", "purchaseOrder", "vendor", "industry"], "required": true },
+        "standard": { "type": "String", "required": true },
+        "version": { "type": "String" },
+        "assessmentDate": { "type": "Date", "required": true },
+        "assessedBy": { "type": "ObjectId", "ref": "users", "required": true },
+        "score": { "type": "Number" },
+        "maxScore": { "type": "Number" },
+        "status": { "type": "String", "enum": ["compliant", "non_compliant", "partially_compliant"], "required": true },
+        "findings": [{
+          "category": { "type": "String" },
+          "description": { "type": "String" },
+          "severity": { "type": "String", "enum": ["low", "medium", "high", "critical"] },
+          "recommendation": { "type": "String" }
+        }],
+        "remediation": [{
+          "action": { "type": "String" },
+          "assignedTo": { "type": "ObjectId", "ref": "users" },
+          "dueDate": { "type": "Date" },
+          "status": { "type": "String", "enum": ["pending", "in_progress", "completed"] }
+        }],
+        "documents": [{
+          "name": { "type": "String" },
+          "url": { "type": "String" },
+          "type": { "type": "String" }
+        }],
+        "nextAssessmentDate": { "type": "Date" }
+      },
+      "timestamps": true
+    }
+  },
+
+  "indexes": {
+    "users": [
+      { "fields": { "email": 1 }, "unique": true },
+      { "fields": { "role": 1 } }
+    ],
+    "requirements": [
+      { "fields": { "industryId": 1, "status": 1 } },
+      { "fields": { "category": 1, "priority": 1 } },
+      { "fields": { "publishedAt": -1 } }
+    ],
+    "rfqs": [
+      { "fields": { "stakeholderId": 1, "status": 1 } },
+      { "fields": { "requirementId": 1 } },
+      { "fields": { "dueDate": 1 } }
+    ],
+    "quotes": [
+      { "fields": { "rfqId": 1 } },
+      { "fields": { "stakeholderId": 1, "status": 1 } },
+      { "fields": { "validUntil": 1 } }
+    ],
+    "purchaseOrders": [
+      { "fields": { "poNumber": 1 }, "unique": true },
+      { "fields": { "industryId": 1, "status": 1 } },
+      { "fields": { "vendorId": 1, "status": 1 } }
+    ],
+    "notifications": [
+      { "fields": { "userId": 1, "read": 1 } },
+      { "fields": { "createdAt": -1 } },
+      { "fields": { "type": 1, "priority": 1 } }
+    ],
+    "auditLogs": [
+      { "fields": { "userId": 1, "timestamp": -1 } },
+      { "fields": { "resource": 1, "resourceId": 1 } },
+      { "fields": { "timestamp": -1 } }
+    ]
+  }
+}
