@@ -87,7 +87,7 @@ const usePOFormData = (form: UseFormReturn<FormValues>) => {
       return null;
     }
     
-    // Return properly typed FormValues object
+    // Return properly typed FormValues object with all required fields
     const validatedData: FormValues = {
       poNumber: values.poNumber,
       vendor: values.vendor,
