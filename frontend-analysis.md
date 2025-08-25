@@ -1,3 +1,4 @@
+
 # Diligence.ai Frontend Analysis Document
 ## Complete Technical Specification for Backend Development
 
@@ -14,6 +15,12 @@
 8. [Public Pages & Marketing](#public-pages--marketing)
 9. [Admin & Management Features](#admin--management-features)
 10. [Performance & Security](#performance--security)
+11. [Complete Component Library](#complete-component-library)
+12. [Real-time Features](#real-time-features)
+13. [File Management System](#file-management-system)
+14. [Notification System](#notification-system)
+15. [Calendar System](#calendar-system)
+16. [Missing Pages Analysis](#missing-pages-analysis)
 
 ---
 
@@ -22,25 +29,35 @@
 ### Technology Stack
 - **Frontend**: React 18.3.1 with TypeScript
 - **Build Tool**: Vite
-- **Styling**: Tailwind CSS with custom design tokens
+- **Styling**: Tailwind CSS with custom design tokens and HSL color system
 - **UI Library**: Radix UI components with shadcn/ui
 - **Form Management**: React Hook Form with Zod validation
-- **Routing**: React Router DOM v6
+- **Routing**: React Router DOM v6 with protected routes
 - **State Management**: React Context API + Custom Hooks
-- **Charts**: Recharts
-- **Icons**: Lucide React
-- **Notifications**: Sonner (Toast notifications)
-- **Date Handling**: date-fns
-- **Query Management**: TanStack React Query
-- **Phone Validation**: libphonenumber-js
-- **Error Handling**: React Error Boundary
+- **Charts**: Recharts for data visualization
+- **Icons**: Lucide React icon library
+- **Notifications**: Sonner (Toast notifications) with custom notification system
+- **Date Handling**: date-fns for date manipulation
+- **Query Management**: TanStack React Query for server state
+- **Phone Validation**: libphonenumber-js for international phone numbers
+- **Error Handling**: React Error Boundary with comprehensive error recovery
 - **Theme Management**: Next Themes with system preference detection
-- **SEO**: React Helmet
+- **SEO**: React Helmet for meta management
+- **File Upload**: Multi-file drag & drop with progress tracking
+- **Real-time**: WebSocket integration for live updates
+- **Performance**: Code splitting, lazy loading, performance monitoring
 
 ### Project Structure
 ```
 src/
 ├── components/          # Reusable UI components
+│   ├── auth/           # Authentication components
+│   ├── industry/       # Industry user components
+│   ├── professional/   # Professional user components
+│   ├── vendor/         # Vendor components (service, product, logistics)
+│   ├── shared/         # Cross-cutting components
+│   ├── ui/            # Base UI component library
+│   └── purchase-order/ # Purchase order specific components
 ├── contexts/           # React Context providers
 ├── hooks/             # Custom React hooks
 ├── pages/             # Route components
@@ -51,852 +68,651 @@ src/
 ```
 
 ### Key Architecture Patterns
-- **Component Composition**: Modular, reusable components
-- **Custom Hooks**: Business logic separation
-- **Context-based State**: Global state management
-- **Type Safety**: Comprehensive TypeScript usage
-- **Form Validation**: Zod schemas with React Hook Form
-- **Error Boundaries**: Robust error handling
-- **Performance Optimization**: Code splitting, lazy loading
-- **Responsive Design**: Mobile-first approach
-- **Accessibility**: ARIA compliant components
+- **Component Composition**: Modular, reusable components with clear separation of concerns
+- **Custom Hooks**: Business logic separation with reusable state management
+- **Context-based State**: Global state management with optimized re-renders
+- **Type Safety**: Comprehensive TypeScript usage with strict type checking
+- **Form Validation**: Zod schemas with React Hook Form integration
+- **Error Boundaries**: Robust error handling with fallback UI
+- **Performance Optimization**: Code splitting, lazy loading, memoization
+- **Responsive Design**: Mobile-first approach with breakpoint system
+- **Accessibility**: ARIA compliant components with keyboard navigation
+- **Theme System**: Comprehensive theming with HSL color tokens
 
 ---
 
-## User Type Analysis
+## Complete Component Library
 
-## 1. Industry Users (Manufacturing Companies)
+### Notification System Components
+- **NotificationBell**: Real-time notification indicator with badge count
+  - Purpose: Display notification count and provide access to notification panel
+  - Features: Badge count, real-time updates, click to open panel, unread indicator
+  - Integration: WebSocket for real-time notifications, context for state management
 
-### Pages
-- **IndustryDashboard** (`/industry-dashboard`)
-  - Purpose: Main control center for manufacturing operations
-  - Features: KPI metrics, workflow tracking, quick actions, project overview
-  
-- **CreateRequirement** (`/create-requirement`)
-  - Purpose: Multi-step requirement creation process
-  - Features: 6-step wizard, document upload, approval workflow, ISO compliance
-  
-- **IndustryRequirements** (`/industry-requirements`)
-  - Purpose: Manage all requirements and RFQs
-  - Features: Filtering, status tracking, bulk operations, search functionality
-  
-- **CreatePurchaseOrder** (`/create-purchase-order`)
-  - Purpose: Purchase order creation and management
-  - Features: ISO compliance, vendor selection, workflow integration, multi-step process
-  
-- **IndustryProjectWorkflow** (`/industry-project-workflow/:id`)
-  - Purpose: Project tracking and milestone management
-  - Features: Timeline view, payment tracking, vendor communication, deliverable tracking
-  
-- **IndustryStakeholders** (`/industry-stakeholders`)
-  - Purpose: Vendor and expert management
-  - Features: Stakeholder profiles, performance tracking, communication tools
-  
-- **IndustryApprovalMatrix** (`/industry-approval-matrix`)
-  - Purpose: Configure approval workflows
-  - Features: Matrix configuration, role-based approvals, workflow automation
-  
-- **IndustryProfile** (`/industry-profile`)
-  - Purpose: Company profile and settings management
-  - Features: Company information, team management, system configuration
+- **NotificationPanel**: Expandable notification list with actions
+  - Purpose: Display list of notifications with mark as read/unread functionality
+  - Features: Scrollable list, mark all as read, individual actions, filter by type
+  - Types: System alerts, project updates, message notifications, approval requests
 
-- **IndustryDocuments** (`/industry-documents`)
-  - Purpose: Document management system
-  - Features: File upload, version control, document sharing, access control
+- **NotificationPreview**: Individual notification display component
+  - Purpose: Display single notification with actions and metadata
+  - Features: Timestamp display, read/unread status, action buttons, avatar display
+  - Actions: Mark as read, delete, view details, quick actions
 
-- **IndustryMessages** (`/industry-messages`)
-  - Purpose: Communication hub
-  - Features: Message threads, vendor communication, expert consultation
+- **ApprovalNotificationCenter**: Specialized approval notification system
+  - Purpose: Handle approval-specific notifications and workflows
+  - Features: Approval queue, priority indicators, batch approval actions
+  - Integration: ApprovalContext, role-based access control
 
-- **IndustryWorkflows** (`/industry-workflows`)
-  - Purpose: Workflow management and tracking
-  - Features: Workflow templates, status tracking, automation rules
+### Calendar System Components
+- **AvailabilityCalendar**: Basic availability display and management
+  - Purpose: Show and manage professional availability
+  - Features: Month view, day selection, availability slots, booking indicators
 
+- **EnhancedAvailabilityCalendar**: Advanced calendar with full feature set
+  - Purpose: Comprehensive calendar management with multiple view modes
+  - Features: Month/week/day views, drag-and-drop, recurring slots, time zone support
+  - Integration: External calendar sync, conflict detection, automated booking
+
+- **DayView**: Single day detailed schedule view
+  - Purpose: Detailed daily schedule management with hourly slots
+  - Features: Hourly breakdown, drag-and-drop scheduling, conflict resolution
+  - Components: Time slots, booking details, availability gaps
+
+- **WeekView**: Weekly schedule overview with multi-day selection
+  - Purpose: Weekly schedule management with pattern recognition
+  - Features: Multi-day selection, recurring patterns, bulk operations
+  - Integration: Template application, availability optimization
+
+- **CalendarSyncModal**: External calendar integration interface
+  - Purpose: Sync with Google Calendar, Outlook, and other external calendars
+  - Features: OAuth integration, two-way sync, conflict resolution, sync settings
+  - Providers: Google Calendar, Microsoft Outlook, CalDAV, Apple Calendar
+
+- **BulkAvailabilityModal**: Bulk schedule management interface
+  - Purpose: Set availability for multiple days/weeks with patterns
+  - Features: Recurring patterns, template application, exception handling
+  - Patterns: Weekly recurring, custom ranges, holiday exclusions
+
+- **CalendarTemplatesModal**: Pre-defined schedule template management
+  - Purpose: Create and manage reusable schedule templates
+  - Features: Template creation, modification, application, sharing
+  - Types: Full-time, part-time, project-based, seasonal patterns
+
+- **DayDetailsModal**: Detailed daily schedule management
+  - Purpose: Manage specific day details with granular control
+  - Features: Hourly slots, break management, special instructions, booking limits
+
+- **FilterModal**: Calendar view filtering and customization
+  - Purpose: Filter calendar views by various criteria
+  - Features: Date ranges, booking types, availability status, client filters
+
+### Purchase Order & Workflow Components
+- **PurchaseOrderHeader**: Header component for PO pages
+  - Purpose: Navigation and context for purchase order workflows
+  - Features: Breadcrumb navigation, status indicators, action buttons
+
+- **PurchaseOrderStepIndicator**: Multi-step process visualization
+  - Purpose: Show progress through PO creation workflow
+  - Features: Step completion indicators, navigation between steps, validation status
+
+- **PODetailsModal**: Purchase order details view and editing
+  - Purpose: Display and edit complete purchase order information
+  - Features: Full PO details, edit capabilities, document attachments, approval workflow
+
+- **POReviewStep**: Purchase order review and approval interface
+  - Purpose: Final review before PO submission with compliance checks
+  - Features: Summary view, compliance verification, approval routing, digital signatures
+
+- **QuickPOModal**: Rapid purchase order creation interface
+  - Purpose: Fast PO creation for standard orders
+  - Features: Template-based creation, auto-fill from previous orders, simplified workflow
+
+- **ManualPOUploadModal**: Manual PO document upload interface
+  - Purpose: Upload existing PO documents with data extraction
+  - Features: File upload, data extraction, validation, integration with workflow
+
+- **POTriggerCard**: Purchase order trigger mechanism display
+  - Purpose: Show conditions that trigger PO creation
+  - Features: Trigger conditions, automated workflows, manual overrides
+
+- **POTypeSelectionModal**: Purchase order type selection interface
+  - Purpose: Select appropriate PO type based on requirements
+  - Features: PO type recommendations, template selection, workflow routing
+
+### Vendor Specialized Components
+- **ServiceVendorSidebar**: Service vendor specific navigation
+  - Purpose: Navigation tailored for service providers
+  - Features: Service-specific menu items, project tracking, proposal management
+
+- **ProductVendorSidebar**: Product vendor specific navigation
+  - Purpose: Navigation for product suppliers
+  - Features: Inventory management, catalog access, order processing
+
+- **LogisticsVendorSidebar**: Logistics vendor navigation
+  - Purpose: Transportation and logistics specific navigation
+  - Features: Fleet management, delivery tracking, route optimization
+
+- **LogisticsVendorCustomSidebar**: Enhanced logistics navigation with specialization
+  - Purpose: Specialized navigation based on logistics vendor type
+  - Features: Equipment-specific features, specialization-based menus, dynamic adaptation
+  - Integration: VendorSpecializationContext for feature adaptation
+
+- **SpecializationFeatures**: Dynamic feature adaptation for vendor specializations
+  - Purpose: Adapt UI features based on vendor specialization type
+  - Features: Equipment-specific modals, specialized workflows, contextual tools
+  - Specializations: Heavy equipment, crane services, transportation, warehouse
+
+### Authentication & User Management Components
+- **AuthLayout**: Authentication page wrapper with branding
+  - Purpose: Consistent layout for all authentication pages
+  - Features: Branding, responsive design, form containers, navigation
+
+- **SignInForm**: User login interface with validation
+  - Purpose: Secure user authentication with role-based redirect
+  - Features: Email/password login, remember me, forgot password link, role detection
+  - Validation: Zod schema validation, error handling, loading states
+
+- **IndustrySignUpForm**: Industry user registration with company verification
+  - Purpose: Multi-step registration for manufacturing companies
+  - Features: Company verification, team setup, compliance requirements
+  - Workflow: Company details → Team members → Verification → Approval
+
+### Shared Layout Components
+- **GenericHeader**: Configurable header for all user types
+  - Purpose: Unified header component with role-based customization
+  - Features: Navigation menus, user profiles, notifications, search
+  - Customization: Role-based menu items, branding, action buttons
+
+- **BaseSidebar**: Base sidebar component for vendors
+  - Purpose: Common sidebar functionality with specialization support
+  - Features: Collapsible navigation, profile display, progress indicators
+
+- **BaseVendorLayout**: Layout wrapper for vendor pages
+  - Purpose: Consistent layout for all vendor types with header and sidebar
+  - Features: Responsive layout, sidebar toggle, content area management
+
+### Stakeholder Management Components
+- **InviteStakeholderModal**: Stakeholder invitation interface
+  - Purpose: Invite vendors, experts, and team members to projects
+  - Features: Role selection, project assignment, permission settings, bulk invites
+
+- **StakeholderStatusBadge**: Status indicator for stakeholders
+  - Purpose: Visual status representation with color coding
+  - Statuses: Active, pending, invited, suspended, verified
+
+- **ExpertDetailsModal**: Expert consultant detailed information
+  - Purpose: Display expert profiles with skills and availability
+  - Features: Skills matrix, availability calendar, performance metrics, ratings
+
+- **VendorDetailsModal**: Vendor profile details and capabilities
+  - Purpose: Comprehensive vendor information for selection
+  - Features: Capabilities, certifications, past projects, performance data
+
+- **ProjectSelectionModal**: Project assignment interface for stakeholders
+  - Purpose: Assign stakeholders to specific projects with role definition
+  - Features: Project selection, role assignment, permission setting, timeline
+
+### Industry Specific Components
+- **RequirementHeader**: Header for requirement management pages
+  - Purpose: Navigation and context for requirement workflows
+  - Features: Breadcrumbs, status indicators, action buttons, progress tracking
+
+- **RequirementStepIndicator**: Multi-step requirement creation progress
+  - Purpose: Visual progress indicator for requirement creation workflow
+  - Features: Step completion, validation status, navigation, error indicators
+
+- **SuccessScreen**: Completion confirmation for workflows
+  - Purpose: Success confirmation with next steps
+  - Features: Success message, summary, next actions, navigation options
+
+- **EnterpriseTeamMembers**: Enterprise team management interface
+  - Purpose: Manage team members with roles and permissions
+  - Features: Member list, role assignment, permission matrix, invitation system
+
+- **AddVendorModal**: Vendor addition and selection interface
+  - Purpose: Add vendors to stakeholder list with verification
+  - Features: Vendor search, verification status, capability matching, invitation
+
+- **AddExpertModal**: Expert consultant addition interface
+  - Purpose: Add expert consultants with skill matching
+  - Features: Expert search, skill verification, availability check, project assignment
+
+- **SendRFQModal**: RFQ distribution interface
+  - Purpose: Send RFQs to selected stakeholders with customization
+  - Features: Stakeholder selection, RFQ customization, deadline setting, batch operations
+
+### Workflow & Project Components
+- **WorkTimeline**: Project timeline visualization with milestones
+  - Purpose: Visual project progress with milestone tracking
+  - Features: Timeline view, milestone markers, progress indicators, interactive elements
+
+- **PaymentMilestoneTracker**: Financial milestone tracking interface
+  - Purpose: Track payment milestones and completion status
+  - Features: Payment schedule, completion status, invoice generation, approval workflow
+
+- **QuoteComparisonCard**: Vendor quote comparison interface
+  - Purpose: Side-by-side comparison of vendor quotes
+  - Features: Comparison matrix, scoring system, recommendation engine, selection tools
+
+- **QuoteReviewTable**: Tabular quote review with filtering
+  - Purpose: Comprehensive quote review with sorting and filtering
+  - Features: Sortable columns, filtering options, bulk operations, export functionality
+
+- **QuoteStatusTracker**: Real-time quote status monitoring
+  - Purpose: Track quote status changes with notifications
+  - Features: Status updates, notification system, timeline view, automated alerts
+
+- **RetentionPaymentCard**: Payment retention management
+  - Purpose: Manage payment retention policies and releases
+  - Features: Retention schedules, release conditions, approval workflows, compliance tracking
+
+- **AIEvaluationPanel**: AI-powered quote evaluation system
+  - Purpose: Automated quote analysis with recommendations
+  - Features: AI scoring, risk assessment, recommendation engine, comparison metrics
+
+- **ISO9001TermsSection**: Compliance management for ISO standards
+  - Purpose: Ensure ISO 9001 compliance in workflows
+  - Features: Compliance checklist, documentation requirements, audit trails, verification
+
+---
+
+## Missing Pages Analysis
+
+### Industry User Pages (Manufacturing Companies)
 - **WorkCompletionPayment** (`/work-completion-payment`)
-  - Purpose: Payment processing for completed work
-  - Features: Payment verification, milestone completion, invoice generation
+  - Purpose: Payment processing interface for completed work milestones
+  - Features: Payment verification, milestone completion tracking, invoice generation, approval workflows
+  - Components: PaymentMilestoneTracker, RetentionPaymentCard, approval interface
+  - API Requirements: Payment processing, milestone updates, invoice generation
 
 - **RequirementDetails** (`/requirement/:id`)
-  - Purpose: Detailed view of specific requirements
-  - Features: Full requirement details, status tracking, communication history
+  - Purpose: Detailed view of individual requirements with full lifecycle
+  - Features: Requirement specifications, RFQ history, quote analysis, project progression
+  - Components: Requirement display, RFQ timeline, quote comparison, status tracking
+  - API Requirements: Requirement data, RFQ history, quote management, status updates
 
-### Key Components
-- **IndustryHeader**: Navigation and user controls with role-based menu items
-- **RequirementStepIndicator**: Multi-step process visualization with progress tracking
-- **POReviewStep**: Purchase order review and approval with compliance checks
-- **WorkTimeline**: Project progress visualization with milestone markers
-- **QuoteComparisonCard**: Vendor quote analysis with side-by-side comparison
-- **PaymentMilestoneTracker**: Financial milestone tracking with payment status
-- **ISO9001TermsSection**: Compliance management and documentation
-- **ApprovalMatrixConfiguration**: Workflow setup with drag-and-drop interface
-- **EnterpriseTeamMembers**: Team management with role assignments
-- **AIEvaluationPanel**: AI-powered quote evaluation and recommendations
-- **QuoteReviewTable**: Tabular view of vendor quotes with filtering
-- **QuoteStatusTracker**: Real-time quote status updates
-- **RetentionPaymentCard**: Payment retention management
-- **POTriggerCard**: Purchase order trigger mechanisms
+- **IndustryDocuments** (`/industry-documents`)
+  - Purpose: Comprehensive document management system for industries
+  - Features: Document upload, version control, access permissions, search functionality
+  - Components: Document library, upload interface, permission management, search tools
+  - API Requirements: File upload, document metadata, access control, search indexing
 
-### Modals
-- **SendRFQModal**: RFQ distribution to stakeholders with batch operations
-- **AddVendorModal**: Vendor onboarding and selection with verification
-- **AddExpertModal**: Expert consultant addition with skill matching
-- **PODetailsModal**: Purchase order details view with edit capabilities
-- **QuickPOModal**: Rapid purchase order creation with templates
-- **POTypeSelectionModal**: Purchase order type selection with recommendations
-- **ManualPOUploadModal**: Manual PO document upload with validation
+- **IndustryMessages** (`/industry-messages`)
+  - Purpose: Communication hub for industry users with vendors and experts
+  - Features: Message threads, vendor communication, expert consultation, file sharing
+  - Components: Message interface, thread management, file attachments, contact lists
+  - API Requirements: Messaging system, file attachments, thread management, notifications
 
-### Contexts
-- **RequirementContext**: Requirement state management with CRUD operations
-- **ApprovalContext**: Approval workflow management with role-based permissions
-- **EnhancedApprovalContext**: Advanced multi-level approval workflows
-- **StakeholderContext**: Stakeholder data management with relationship tracking
+- **IndustryWorkflows** (`/industry-workflows`)
+  - Purpose: Workflow management and automation for industry processes
+  - Features: Workflow templates, process automation, status tracking, performance analytics
+  - Components: Workflow designer, template library, status dashboard, analytics panel
+  - API Requirements: Workflow engine, template management, status tracking, analytics
 
-### Types
-- **industry.ts**: Core industry data structures and interfaces
-- **approval.ts**: Approval workflow types and status enums
-- **enhancedApproval.ts**: Complex approval workflow types
-- **workflow.ts**: Project workflow types and milestone definitions
-- **rfq.ts**: RFQ and quote management types with vendor responses
-- **purchaseOrder.ts**: Purchase order structures with compliance requirements
-
-### Hooks
-- **useAsyncOperation**: Async operation management with loading states
-- **useNotifications**: Toast notification system with custom styling
-- **usePagination**: Data pagination with server-side support
-- **useSearch**: Search functionality with debouncing and filters
-- **useModal**: Modal state management with backdrop controls
-
-### Utils
-- **statusUtils**: Status badge and color management with theme integration
-- **dateUtils**: Date formatting and calculations with timezone support
-- **profileCompleteness**: Profile completion tracking with weighted scoring
-- **colorUtils**: Color and theme utilities with HSL color system
-- **dashboardConfigs**: Dashboard configuration for different user types
-- **messageConfigs**: Message system configuration per user type
-- **navigationConfigs**: Navigation configuration for headers and menus
-- **performance**: Performance optimization utilities
-- **mockNotifications**: Mock data for notification testing
-
-### API Requirements
-```typescript
-// Requirements Management
-POST /api/industry/requirements
-GET /api/industry/requirements
-PUT /api/industry/requirements/:id
-DELETE /api/industry/requirements/:id
-POST /api/industry/requirements/:id/approve
-GET /api/industry/requirements/:id/history
-
-// RFQ Distribution
-POST /api/industry/rfqs
-GET /api/industry/rfqs
-POST /api/industry/rfqs/:id/send
-GET /api/industry/rfqs/:id/responses
-POST /api/industry/rfqs/:id/evaluate
-
-// Purchase Orders
-POST /api/industry/purchase-orders
-GET /api/industry/purchase-orders
-PUT /api/industry/purchase-orders/:id
-POST /api/industry/purchase-orders/:id/approve
-GET /api/industry/purchase-orders/:id/compliance-check
-
-// Workflows
-GET /api/industry/workflows
-POST /api/industry/workflows/:id/update-status
-GET /api/industry/workflows/:id/timeline
-POST /api/industry/workflows/templates
-
-// Stakeholders
-GET /api/industry/stakeholders
-POST /api/industry/stakeholders/invite
-PUT /api/industry/stakeholders/:id
-DELETE /api/industry/stakeholders/:id
-GET /api/industry/stakeholders/:id/performance
-
-// Approval Matrix
-GET /api/industry/approval-matrix
-PUT /api/industry/approval-matrix
-POST /api/industry/approval-matrix/workflows
-GET /api/industry/approval-matrix/templates
-
-// Documents
-POST /api/industry/documents/upload
-GET /api/industry/documents
-PUT /api/industry/documents/:id
-DELETE /api/industry/documents/:id
-GET /api/industry/documents/:id/versions
-
-// Messages
-GET /api/industry/messages
-POST /api/industry/messages
-PUT /api/industry/messages/:id/read
-GET /api/industry/messages/threads
-```
-
----
-
-## 2. Professional Experts (Consultants/Specialists)
-
-### Pages
-- **ProfessionalDashboard** (`/professional-dashboard`)
-  - Purpose: Personal dashboard for consultants
-  - Features: Job opportunities, project status, earnings tracking, performance metrics
-  
-- **ProfessionalOpportunities** (`/professional-opportunities`)
-  - Purpose: Browse and apply for consulting opportunities
-  - Features: Job search, application management, proposal creation, skill matching
-  
-- **ProfessionalCalendar** (`/professional-calendar`)
-  - Purpose: Availability and schedule management
-  - Features: Calendar integration, availability slots, booking management, time zone support
-  
-- **ProfessionalProfile** (`/professional-profile`)
-  - Purpose: Professional profile management
-  - Features: Skills, certifications, portfolio, rates, availability settings
+### Professional User Pages (Consultants/Specialists)
+- **ProfessionalDetails** (`/professional/:id`)
+  - Purpose: Public profile pages for professional consultants
+  - Features: Skills showcase, portfolio display, availability calendar, client reviews
+  - Components: Profile display, portfolio gallery, availability widget, review system
+  - API Requirements: Profile data, portfolio management, availability sync, review system
 
 - **ProfessionalMessages** (`/professional-messages`)
-  - Purpose: Communication with clients and platform
-  - Features: Message threads, client communication, project discussions
-
-- **ProfessionalDetails** (`/professional/:id`)
-  - Purpose: Public profile view for professionals
-  - Features: Skills showcase, portfolio, reviews, availability
-
-- **ExpertDashboard** (`/expert-dashboard`)
-  - Purpose: Alternative dashboard for expert consultants
-  - Features: Specialized metrics, expert-level projects, consultation requests
-
-### Key Components
-- **ProfessionalHeader**: Navigation specific to professionals with earnings display
-- **ProfessionalSidebar**: Professional-specific navigation with quick actions
-- **DashboardStats**: Performance metrics and KPIs with trend analysis
-- **JobOpportunities**: Available job listings with AI-powered matching
-- **OngoingProjects**: Current project tracking with milestone updates
-- **AvailabilityCalendar**: Schedule management with drag-and-drop
-- **EnhancedAvailabilityCalendar**: Advanced calendar features with recurring slots
-
-### Calendar Components
-- **DayView**: Single day schedule view with hourly slots
-- **WeekView**: Weekly schedule overview with drag-and-drop
-- **CalendarSyncModal**: External calendar integration (Google, Outlook)
-- **BulkAvailabilityModal**: Bulk schedule updates with templates
-- **CalendarTemplatesModal**: Pre-defined schedule templates
-- **DayDetailsModal**: Detailed daily schedule management
-- **FilterModal**: Calendar filtering and view options
-
-### Forms
-- **PersonalInfoForm**: Basic profile information with photo upload
-- **SkillsForm**: Skills and expertise management with proficiency levels
-- **ExperienceForm**: Work experience and portfolio with project showcase
-- **CertificationsForm**: Professional certifications with verification
-- **PaymentSettingsForm**: Payment and billing preferences with tax settings
-- **AccountSettingsForm**: Account configuration with privacy controls
-
-### Modals
-- **JobApplicationModal**: Job application submission with cover letter
-- **ProjectDetailsModal**: Detailed project information with communication tools
-- **BulkAvailabilityModal**: Bulk schedule updates with recurrence patterns
-- **CalendarSyncModal**: External calendar integration with conflict resolution
-- **CalendarTemplatesModal**: Schedule templates with customization
-- **DayDetailsModal**: Daily schedule details with booking management
-- **FilterModal**: Search and filter options with saved preferences
-
-### API Requirements
-```typescript
-// Professional Profile
-GET /api/professionals/profile
-PUT /api/professionals/profile
-POST /api/professionals/skills
-DELETE /api/professionals/skills/:id
-POST /api/professionals/portfolio
-GET /api/professionals/:id/public-profile
-
-// Job Opportunities
-GET /api/professionals/opportunities
-POST /api/professionals/opportunities/:id/apply
-GET /api/professionals/applications
-PUT /api/professionals/applications/:id
-GET /api/professionals/opportunities/recommendations
-
-// Calendar & Availability
-GET /api/professionals/calendar
-POST /api/professionals/availability
-PUT /api/professionals/availability/:id
-DELETE /api/professionals/availability/:id
-POST /api/professionals/calendar/sync
-GET /api/professionals/calendar/templates
-
-// Projects
-GET /api/professionals/projects
-GET /api/professionals/projects/:id
-POST /api/professionals/projects/:id/update
-POST /api/professionals/projects/:id/deliverable
-
-// Certifications
-GET /api/professionals/certifications
-POST /api/professionals/certifications
-PUT /api/professionals/certifications/:id
-DELETE /api/professionals/certifications/:id
-POST /api/professionals/certifications/:id/verify
-
-// Messages
-GET /api/professionals/messages
-POST /api/professionals/messages
-GET /api/professionals/messages/threads
-PUT /api/professionals/messages/:id/read
-
-// Earnings & Analytics
-GET /api/professionals/earnings
-GET /api/professionals/analytics
-GET /api/professionals/performance-metrics
-```
-
----
-
-## 3. Service Vendors (Service Providers)
-
-### Pages
-- **ServiceVendorDashboard** (`/service-vendor-dashboard`)
-  - Purpose: Service vendor main control center
-  - Features: RFQ management, project tracking, team coordination, performance analytics
-  
-- **ServiceVendorRFQs** (`/service-vendor-rfqs`)
-  - Purpose: RFQ response and proposal management
-  - Features: RFQ browsing, proposal creation, submission tracking, AI-assisted responses
-  
-- **ServiceVendorProjects** (`/service-vendor-projects`)
-  - Purpose: Active project management
-  - Features: Project status, milestone tracking, deliverable management, client communication
-  
-- **ServiceVendorServices** (`/service-vendor-services`)
-  - Purpose: Service catalog management
-  - Features: Service listings, pricing, capability showcase, package creation
-  
-- **ServiceVendorProfile** (`/service-vendor-profile`)
-  - Purpose: Vendor profile and company information
-  - Features: Company details, team management, certifications, portfolio
-
-- **ServiceVendorMessages** (`/service-vendor-messages`)
-  - Purpose: Communication hub for service vendors
-  - Features: Client communication, project discussions, RFQ clarifications
-
-### Key Components
-- **ServiceVendorHeader**: Service vendor navigation with notification center
-- **ServiceVendorSidebar**: Service-specific sidebar navigation with quick stats
-- **RFQManagement**: RFQ browsing and response system with AI recommendations
-- **ActiveProjects**: Current project dashboard with timeline view
-- **TeamAvailability**: Team member availability tracking with skill matching
-- **DashboardStats**: Service vendor KPIs with comparative analysis
-- **ProjectDetailsModal**: Project management with milestone tracking
-- **ProposalCreationModal**: AI-assisted proposal writing with templates
-
-### Modals
-- **RFQDetailsModal**: Detailed RFQ information with requirements analysis
-- **ProposalCreationModal**: Proposal writing interface with AI assistance
-- **ProjectDetailsModal**: Project information and updates with file sharing
-- **ServiceModal**: Service creation and editing with pricing strategies
-- **TeamManagementModal**: Team member management with role assignments
-
-### Forms & Sections
-- **CompanyInfoForm**: Basic company information with logo upload
-- **ServicesSkillsForm**: Service offerings and capabilities with skill matrix
-- **TeamMembersSection**: Team member management with certification tracking
-- **CertificationsSection**: Company certifications with renewal tracking
-- **ProjectsPortfolioSection**: Portfolio and past projects with case studies
-
-### API Requirements
-```typescript
-// RFQ Management
-GET /api/service-vendors/rfqs
-GET /api/service-vendors/rfqs/:id
-POST /api/service-vendors/rfqs/:id/respond
-GET /api/service-vendors/proposals
-PUT /api/service-vendors/proposals/:id
-GET /api/service-vendors/rfqs/recommendations
-
-// Project Management
-GET /api/service-vendors/projects
-POST /api/service-vendors/projects/:id/update
-GET /api/service-vendors/projects/:id/milestones
-POST /api/service-vendors/projects/:id/deliverables
-GET /api/service-vendors/projects/:id/timeline
-
-// Service Catalog
-GET /api/service-vendors/services
-POST /api/service-vendors/services
-PUT /api/service-vendors/services/:id
-DELETE /api/service-vendors/services/:id
-GET /api/service-vendors/services/analytics
-
-// Team Management
-GET /api/service-vendors/team
-POST /api/service-vendors/team
-PUT /api/service-vendors/team/:id
-DELETE /api/service-vendors/team/:id
-GET /api/service-vendors/team/availability
-POST /api/service-vendors/team/:id/certifications
-
-// Portfolio & Case Studies
-GET /api/service-vendors/portfolio
-POST /api/service-vendors/portfolio/projects
-PUT /api/service-vendors/portfolio/projects/:id
-GET /api/service-vendors/case-studies
-```
-
----
-
-## 4. Product Vendors (Product Suppliers)
-
-### Pages
-- **ProductVendorDashboard** (`/product-vendor-dashboard`)
-  - Purpose: Product vendor operations center
-  - Features: Order management, inventory tracking, RFQ responses, sales analytics
-  
-- **ProductVendorCatalog** (`/product-vendor-catalog`)
-  - Purpose: Product catalog management
-  - Features: Product listings, inventory, pricing, specifications, bulk operations
-  
-- **ProductVendorOrders** (`/product-vendor-orders`)
-  - Purpose: Order processing and fulfillment
-  - Features: Order tracking, shipping, invoicing, returns, automated workflows
-  
-- **ProductVendorRFQs** (`/product-vendor-rfqs`)
-  - Purpose: Product RFQ management
-  - Features: Quote generation, pricing, delivery terms, bulk quoting
-  
-- **ProductVendorProfile** (`/product-vendor-profile`)
-  - Purpose: Vendor profile and settings
-  - Features: Company information, certifications, partnerships, compliance documents
-
-- **ProductVendorMessages** (`/product-vendor-messages`)
-  - Purpose: Communication center for product vendors
-  - Features: Customer inquiries, order communications, technical support
-
-### Key Components
-- **ProductVendorHeader**: Product vendor navigation with order alerts
-- **ProductVendorSidebar**: Product-specific navigation with inventory alerts
-- **OrdersManagement**: Order processing interface with workflow automation
-- **ProductCatalogView**: Product display and management with bulk editing
-- **RFQManagement**: Product RFQ handling with automated quoting
-- **DashboardStats**: Product vendor metrics with inventory insights
-- **MessageCenter**: Communication hub with customer support features
-
-### Modals
-- **OrderDetailsModal**: Detailed order information with shipping options
-- **QuotationModal**: Quote creation interface with pricing rules
-- **ProductModal**: Product creation and editing with media upload
-- **InventoryModal**: Inventory management with reorder alerts
-- **ShippingModal**: Shipping configuration with carrier integration
-
-### Forms & Sections
-- **CompanyInfoForm**: Company profile management with certifications
-- **ProductCatalogSection**: Product catalog management with categorization
-- **BrandsPartnersSection**: Brand and partnership information with contracts
-- **ShippingReturnsSection**: Shipping and return policies with automation
-- **CertificationsSection**: Product and company certifications with compliance
-
-### API Requirements
-```typescript
-// Product Catalog
-GET /api/product-vendors/catalog
-POST /api/product-vendors/products
-PUT /api/product-vendors/products/:id
-DELETE /api/product-vendors/products/:id
-GET /api/product-vendors/products/:id/inventory
-POST /api/product-vendors/products/bulk-update
-
-// Order Management
-GET /api/product-vendors/orders
-GET /api/product-vendors/orders/:id
-POST /api/product-vendors/orders/:id/update-status
-POST /api/product-vendors/orders/:id/ship
-POST /api/product-vendors/orders/:id/invoice
-GET /api/product-vendors/orders/analytics
-
-// RFQ & Quotations
-GET /api/product-vendors/rfqs
-POST /api/product-vendors/rfqs/:id/quote
-GET /api/product-vendors/quotes
-PUT /api/product-vendors/quotes/:id
-POST /api/product-vendors/quotes/bulk-generate
-
-// Inventory Management
-GET /api/product-vendors/inventory
-POST /api/product-vendors/inventory/update
-GET /api/product-vendors/inventory/reports
-POST /api/product-vendors/inventory/reorder
-GET /api/product-vendors/inventory/alerts
-
-// Brands & Partnerships
-GET /api/product-vendors/brands
-POST /api/product-vendors/brands
-PUT /api/product-vendors/brands/:id
-GET /api/product-vendors/partnerships
-POST /api/product-vendors/partnerships
-```
-
----
-
-## 5. Logistics Vendors (Transportation/Logistics)
-
-### Pages
-- **LogisticsVendorDashboard** (`/logistics-vendor-dashboard`)
-  - Purpose: Logistics operations command center
-  - Features: Transport requests, fleet management, delivery tracking, route optimization
-  
-- **LogisticsVendorRequests** (`/logistics-vendor-requests`)
-  - Purpose: Transportation request management
-  - Features: Request processing, route optimization, capacity planning, automated quotes
-  
-- **LogisticsVendorFleet** (`/logistics-vendor-fleet`)
-  - Purpose: Fleet and equipment management
-  - Features: Vehicle tracking, maintenance, driver assignment, fuel management
-  
-- **LogisticsVendorDeliveries** (`/logistics-vendor-deliveries`)
-  - Purpose: Active delivery tracking
-  - Features: Real-time tracking, status updates, proof of delivery, customer notifications
-  
-- **LogisticsVendorProfile** (`/logistics-vendor-profile`)
-  - Purpose: Logistics company profile
-  - Features: Fleet information, service areas, certifications, specialization settings
-
-- **LogisticsVendorMessages** (`/logistics-vendor-messages`)
-  - Purpose: Communication hub for logistics vendors
-  - Features: Client communication, driver coordination, delivery notifications
-
-### Key Components
-- **LogisticsVendorHeader**: Logistics-specific navigation with fleet alerts
-- **LogisticsVendorSidebar**: Specialized sidebar with equipment focus and specialization features
-- **TransportRequests**: Request management interface with route optimization
-- **ActiveDeliveries**: Real-time delivery tracking with GPS integration
-- **EquipmentFleet**: Fleet management dashboard with maintenance tracking
-- **SpecializationFeatures**: Equipment-specific features with dynamic UI adaptation
-- **MessagesHub**: Communication center with multi-channel support
-
-### Modals
-- **RequestDetailsModal**: Transport request details with route planning
-- **CustomQuoteModal**: Custom quotation creation with cost calculation
-- **LiveTrackingModal**: Real-time delivery tracking with map integration
-- **VehicleDetailsModal**: Vehicle information and status with maintenance history
-- **VehicleTrackingModal**: Vehicle location tracking with geofencing
-- **AddVehicleModal**: New vehicle registration with documentation upload
-- **AddDriverModal**: Driver onboarding with license verification
-- **ContactDriverModal**: Driver communication with location sharing
-- **UpdateDeliveryStatusModal**: Delivery status updates with photo proof
-- **RouteOptimizerModal**: Route planning optimization with traffic integration
-- **EquipmentDeploymentModal**: Equipment deployment planning with scheduling
-
-### Forms & Sections
-- **CompanyInfoForm**: Logistics company information with service area mapping
-- **FleetEquipmentSection**: Fleet and equipment management with specialization support
-- **ServiceAreasSection**: Geographic service coverage with zone pricing
-- **LicensesPermitsSection**: Required certifications and permits with renewal tracking
-- **DriversPersonnelSection**: Staff and operator management with qualification tracking
-
-### Specialization Context
-- Uses **VendorSpecializationContext** for equipment-specific features
-- Supports specializations: heavy-equipment, crane-services, general-logistics
-- Dynamic UI adaptation based on specialization type
-- Specialized modals and components per equipment type
-
-### API Requirements
-```typescript
-// Transport Requests
-GET /api/logistics-vendors/requests
-GET /api/logistics-vendors/requests/:id
-POST /api/logistics-vendors/requests/:id/accept
-POST /api/logistics-vendors/requests/:id/quote
-GET /api/logistics-vendors/requests/capacity-planning
-
-// Fleet Management
-GET /api/logistics-vendors/fleet
-POST /api/logistics-vendors/vehicles
-PUT /api/logistics-vendors/vehicles/:id
-DELETE /api/logistics-vendors/vehicles/:id
-GET /api/logistics-vendors/vehicles/:id/tracking
-POST /api/logistics-vendors/vehicles/:id/maintenance
-
-// Delivery Management
-GET /api/logistics-vendors/deliveries
-POST /api/logistics-vendors/deliveries/:id/update-status
-GET /api/logistics-vendors/deliveries/:id/tracking
-POST /api/logistics-vendors/deliveries/:id/proof
-GET /api/logistics-vendors/deliveries/live-tracking
-
-// Driver Management
-GET /api/logistics-vendors/drivers
-POST /api/logistics-vendors/drivers
-PUT /api/logistics-vendors/drivers/:id
-DELETE /api/logistics-vendors/drivers/:id
-GET /api/logistics-vendors/drivers/availability
-POST /api/logistics-vendors/drivers/:id/verify-license
-
-// Route Optimization
-POST /api/logistics-vendors/routes/optimize
-GET /api/logistics-vendors/routes/:id
-POST /api/logistics-vendors/routes/:id/update
-GET /api/logistics-vendors/routes/traffic-data
-
-// Specialization Features
-GET /api/logistics-vendors/specializations
-PUT /api/logistics-vendors/specialization/:type
-GET /api/logistics-vendors/equipment-types
-POST /api/logistics-vendors/specialized-quotes
-```
-
----
-
-## Cross-Cutting Concerns
-
-### Shared Components
-- **BaseModal**: Standard modal wrapper with backdrop and animation
-- **ConfirmationModal**: User confirmation dialogs with customizable actions
-- **DetailsModal**: Generic detail view modal with scrollable content
-- **FormModal**: Form-based modal wrapper with validation support
-- **LoadingSpinner**: Loading state indicators with theme integration
-- **SkeletonLoader**: Content loading skeletons with animation
-- **ErrorBoundary**: Error handling wrapper with fallback UI
-- **NotificationBell**: System notifications with real-time updates
-- **ProfileCompletionWidget**: Profile completion tracking with progress visualization
-- **WelcomeModal**: First-time user onboarding with feature highlights
-- **TestComponent**: Development testing component
-- **GenericDashboardStats**: Reusable dashboard statistics component
-- **GenericHeader**: Configurable header component for all user types
-- **FastLoadingState**: Optimized loading states for performance
-- **LoadingCard**: Card-based loading placeholder
-- **LoadingState**: Generic loading state management
-- **TableLoadingState**: Table-specific loading indicators
-- **MessageCenter**: Unified messaging system across user types
-
-### Authentication Components
-- **AuthLayout**: Authentication page wrapper with branding
-- **SignInForm**: User login interface with validation
-- **IndustrySignUpForm**: Industry user registration with company verification
-
-### Shared Contexts
-- **UserContext**: User authentication and profile management
-- **ThemeContext**: UI theme management with system preference detection
-- **NotificationContext**: System notifications with toast integration
-- **NotificationStoreContext**: Notification persistence and state management
-- **VendorSpecializationContext**: Vendor specialization management with dynamic features
-
-### Shared Hooks
-- **useAuth**: Authentication management with role-based access
-- **useAsyncOperation**: Async operation handling with error management
-- **useNotifications**: Toast notifications with custom styling
-- **usePagination**: Data pagination with server-side support
-- **useSearch**: Search functionality with debouncing and filters
-- **useModal**: Modal state management with backdrop controls
-- **useFastData**: Optimized data fetching with caching
-- **usePerformanceMonitor**: Performance tracking and optimization
-- **use-mobile**: Mobile device detection hook
-- **use-toast**: Toast notification system integration
-
-### Shared Utils
-- **authUtils**: Authentication helpers and token management
-- **dateUtils**: Date formatting and manipulation with timezone support
-- **colorUtils**: Color and theme utilities with HSL color system
-- **statusUtils**: Status badge management with theme integration
-- **shared**: Common utility functions and helpers
-- **vendorSpecializationMapping**: Vendor type mappings and configurations
-- **profileCompleteness**: Profile completion calculation with weighted scoring
-- **messageConfigs**: Message system configuration per user type
-- **navigationConfigs**: Navigation configuration for headers and menus
-- **performance**: Performance optimization utilities
-- **mockNotifications**: Mock data for notification testing
-
-### Shared Types
-- **shared.ts**: Common type definitions and interfaces
-- **dashboard.ts**: Dashboard-specific types and configurations
-- **notifications.ts**: Notification system types and enums
-- **vendor-sidebar.ts**: Vendor sidebar types and configurations
-
-### UI Components Library
-Comprehensive shadcn/ui component library including:
-- **Accordion, Alert, Avatar, Badge, Button**: Basic UI elements
-- **Calendar, Card, Carousel, Chart**: Data display components
-- **Dialog, Drawer, Dropdown**: Modal and overlay components
-- **Form, Input, Label, Select**: Form elements with validation
-- **Navigation, Pagination, Progress**: Navigation components
-- **Table, Tabs, Toast**: Data presentation components
-- **All components**: Theme-aware with HSL color system integration
-
----
-
-## Public Pages & Marketing
-
-### Marketing Pages
-- **Index** (`/`): Landing page with hero section, value proposition, features
-- **About** (`/about`): Company information and mission
-- **Pricing** (`/pricing`): Pricing plans and feature comparison
-- **Contact** (`/contact`): Contact information and inquiry form
-- **Blog** (`/blog`): Company blog and articles
-- **BlogArticle** (`/blog/:slug`): Individual blog post pages
-- **Careers** (`/careers`): Job openings and company culture
-
-### Public Directory Pages
-- **Vendors** (`/vendors`): Public vendor directory
-- **VendorDetails** (`/vendor/:id`): Individual vendor profiles
-- **Experts** (`/experts`): Expert consultant directory
-- **ProfessionalDetails** (`/professional/:id`): Public professional profiles
-
-### Legal & Compliance Pages
-- **Terms** (`/terms`): Terms of service
-- **Privacy** (`/privacy`): Privacy policy
-- **Legal** (`/legal`): Legal information and compliance
-
-### Authentication Pages
-- **SignIn** (`/signin`): User login with role-based redirect
-- **SignUp** (`/signup`): Multi-step user registration
-- **ForgotPassword** (`/forgot-password`): Password reset request
-- **ResetPassword** (`/reset-password`): Password reset form
-- **StakeholderOnboarding** (`/stakeholder-onboarding`): Stakeholder invitation flow
+  - Purpose: Communication interface for professionals with clients
+  - Features: Client communication, project discussions, consultation booking, file sharing
+  - Components: Message interface, booking system, file management, client directory
+  - API Requirements: Messaging system, booking management, file storage, client management
+
+### Admin & Management Pages
+- **ApprovalDashboard** (`/approval-dashboard`)
+  - Purpose: Centralized approval management for administrators
+  - Features: Pending approvals, workflow management, user verification, system oversight
+  - Components: Approval queue, workflow controls, user management, system monitoring
+  - API Requirements: Approval workflows, user management, system administration, audit logs
+
+- **PendingApproval** (`/pending-approval`)
+  - Purpose: User approval and verification interface
+  - Features: User verification, document review, approval workflows, compliance checking
+  - Components: User verification interface, document viewer, approval controls, compliance tools
+  - API Requirements: User verification, document management, approval processing, compliance tracking
+
+### Public & Marketing Pages
+- **About** (`/about`)
+  - Purpose: Company information and mission statement
+  - Features: Company story, team information, values, contact information
+  - Components: Company overview, team profiles, value proposition, contact forms
+  - Content: Static content with dynamic team information
+
+- **Blog** (`/blog`)
+  - Purpose: Company blog with industry insights and updates
+  - Features: Article listing, search functionality, categories, pagination
+  - Components: Article cards, search interface, category filters, pagination controls
+  - API Requirements: Article management, search functionality, content categorization
+
+- **BlogArticle** (`/blog/:slug`)
+  - Purpose: Individual blog post pages with full content
+  - Features: Article content, social sharing, related articles, comments
+  - Components: Article renderer, sharing buttons, related content, comment system
+  - API Requirements: Article content, metadata, related content, engagement tracking
+
+- **Careers** (`/careers`)
+  - Purpose: Job listings and career information
+  - Features: Job postings, application forms, company culture, benefits information
+  - Components: Job listings, application interface, company culture showcase
+  - API Requirements: Job management, application processing, candidate tracking
+
+- **Contact** (`/contact`)
+  - Purpose: Contact information and inquiry forms
+  - Features: Contact forms, office locations, support channels, FAQ
+  - Components: Contact forms, location maps, support information, FAQ section
+  - API Requirements: Form submission, inquiry management, support ticketing
+
+- **Legal** (`/legal`)
+  - Purpose: Legal information and compliance documentation
+  - Features: Legal documents, compliance information, regulatory updates
+  - Components: Document display, legal navigation, compliance status
+  - Content: Legal documentation with version control
+
+- **VendorDetails** (`/vendor/:id`)
+  - Purpose: Public vendor profile pages
+  - Features: Vendor capabilities, certifications, past projects, contact information
+  - Components: Vendor profile, capability showcase, project portfolio, contact forms
+  - API Requirements: Vendor data, capability management, project history, contact processing
+
+### Authentication & Onboarding Pages
+- **ForgotPassword** (`/forgot-password`)
+  - Purpose: Password reset request interface
+  - Features: Email verification, security questions, reset token generation
+  - Components: Reset form, verification interface, security controls
+  - API Requirements: Password reset, email verification, token management
+
+- **ResetPassword** (`/reset-password`)
+  - Purpose: Password reset form with token verification
+  - Features: New password entry, strength validation, confirmation
+  - Components: Password form, strength indicator, validation feedback
+  - API Requirements: Token verification, password update, security logging
+
+- **StakeholderOnboarding** (`/stakeholder-onboarding`)
+  - Purpose: Stakeholder invitation and onboarding workflow
+  - Features: Invitation acceptance, profile completion, role assignment
+  - Components: Onboarding wizard, profile forms, role selection, completion tracking
+  - API Requirements: Invitation management, profile creation, role assignment
+
+- **ProfileCompletion** (`/profile-completion`)
+  - Purpose: Profile completion wizard for new users
+  - Features: Step-by-step profile setup, progress tracking, validation
+  - Components: Completion wizard, progress indicators, form validation, file upload
+  - API Requirements: Profile management, progress tracking, file upload, validation
 
 ### Error & Utility Pages
-- **NotFound** (`/404`): Page not found with navigation
-- **TestPage** (`/test`): Development testing page
-- **ProfileCompletion** (`/profile-completion`): Profile setup wizard
+- **NotFound** (`/404`)
+  - Purpose: 404 error page with navigation options
+  - Features: Error message, navigation suggestions, search functionality
+  - Components: Error display, navigation menu, search interface
+  - Features: Helpful navigation, search, contact options
 
-### Components for Public Pages
-- **Navbar**: Main navigation with responsive design
-- **HeroSection**: Landing page hero with call-to-action
-- **ValueProposition**: Value proposition showcase
-- **FeaturesSection**: Feature highlights with icons
-- **TestimonialsSection**: Customer testimonials carousel
-- **AboutSection**: Company story and team
-- **Footer**: Site footer with links and social media
-
----
-
-## Admin & Management Features
-
-### Approval & Workflow Management
-- **ApprovalDashboard** (`/approval-dashboard`): Centralized approval management
-- **PendingApproval** (`/pending-approval`): Pending user approvals and verification
-
-### Approval Components
-- **ApprovalModal**: Generic approval workflow interface
-- **ApprovalMatrixConfiguration**: Workflow configuration tools
-- **PendingUserApproval**: User verification and onboarding approval
-- **ApprovalNotificationCenter**: Approval-specific notifications
-
-### Admin Contexts
-- **ApprovalContext**: Basic approval workflow management
-- **EnhancedApprovalContext**: Advanced multi-level approval workflows
-
-### Admin Types
-- **approval.ts**: Basic approval workflow types
-- **enhancedApproval.ts**: Complex approval workflow types
-- **pendingUser.ts**: User approval and verification types
+- **TestPage** (`/test`)
+  - Purpose: Development testing page for component testing
+  - Features: Component showcase, testing utilities, development tools
+  - Components: Test components, debugging tools, performance monitors
+  - Usage: Development and testing environment only
 
 ---
 
-## Performance & Security
+## Real-time Features
 
-### Performance Features
-- **Code Splitting**: Route-based code splitting with React.lazy
-- **Lazy Loading**: Component lazy loading for optimization
-- **Caching**: Data caching with React Query
-- **Optimization**: Performance monitoring and optimization hooks
-- **Fast Loading States**: Optimized loading indicators
-- **Skeleton Loading**: Content placeholders during loading
+### WebSocket Integration
+- **Connection Management**: Automatic connection handling with reconnection logic
+- **Event Types**: Notifications, project updates, delivery tracking, messaging
+- **Authentication**: JWT token-based WebSocket authentication
+- **Scalability**: Connection pooling and load balancing support
 
-### Security Features
-- **Role-Based Access Control**: Comprehensive permission system
-- **Authentication Flow**: Secure login with token management
-- **Input Validation**: Zod schema validation for all forms
-- **Error Boundaries**: Robust error handling and recovery
-- **Secure Routing**: Protected routes with authentication checks
-- **Data Sanitization**: Input sanitization and XSS protection
+### Live Update Components
+- **LiveTrackingModal**: Real-time vehicle and delivery tracking
+  - Purpose: GPS tracking with live map updates
+  - Features: Real-time location, route visualization, ETA calculations
+  - Integration: GPS data, mapping services, notification system
 
-### Error Handling
-- **ErrorBoundary**: Global error boundary with fallback UI
-- **RouteErrorBoundary**: Route-specific error handling
-- **Form Validation**: Client-side validation with server-side backup
-- **Network Error Handling**: Retry mechanisms and offline support
+- **VehicleTrackingModal**: Vehicle fleet tracking interface
+  - Purpose: Multi-vehicle tracking with status monitoring
+  - Features: Fleet overview, individual vehicle status, route optimization
+  - Data: GPS coordinates, vehicle status, driver information, cargo details
+
+### Real-time Notifications
+- **Instant Delivery**: WebSocket-based instant notification delivery
+- **Queue Management**: Notification queuing for offline users
+- **Priority System**: Priority-based notification handling
+- **Batch Processing**: Efficient batch notification processing
+
+---
+
+## File Management System
+
+### Upload Components
+- **Multi-file Upload**: Drag and drop interface with progress tracking
+- **Document Versioning**: Version control for uploaded documents
+- **File Preview**: In-browser preview for common file types
+- **Access Control**: Role-based file access permissions
+
+### Storage Integration
+- **Cloud Storage**: Integration with AWS S3, Google Cloud Storage
+- **CDN Integration**: Content delivery network for fast file access
+- **Backup System**: Automated backup and recovery
+- **Compression**: Automatic file compression and optimization
+
+### Document Management
+- **Metadata Management**: File metadata and tagging system
+- **Search Functionality**: Full-text search across documents
+- **Audit Trail**: Complete file access and modification history
+- **Compliance**: Document retention and compliance management
+
+---
+
+## Notification System
+
+### Notification Types
+- **System Notifications**: System alerts, maintenance, updates
+- **Project Updates**: Milestone completion, status changes, approvals
+- **Message Notifications**: New messages, mentions, replies
+- **Approval Requests**: Pending approvals, workflow notifications
+- **Delivery Updates**: Shipment tracking, delivery confirmations
+- **Calendar Events**: Appointment reminders, schedule changes
+
+### Delivery Channels
+- **In-App Notifications**: Real-time in-application notifications
+- **Email Notifications**: Configurable email notifications
+- **SMS Notifications**: Critical alert SMS delivery
+- **Push Notifications**: Browser push notifications
+- **Webhook Notifications**: Third-party integration notifications
+
+### Notification Management
+- **Preference Settings**: User-configurable notification preferences
+- **Batch Operations**: Mark all as read, bulk delete operations
+- **Filtering**: Filter by type, date, priority, read status
+- **Archive System**: Notification archiving and retention policies
+
+---
+
+## Calendar System
+
+### Calendar Features
+- **Multiple Views**: Month, week, day, agenda views
+- **Time Zone Support**: Multi-timezone scheduling and display
+- **Recurring Events**: Flexible recurring event patterns
+- **Conflict Detection**: Automatic scheduling conflict detection
+- **Availability Management**: Professional availability scheduling
+
+### External Integration
+- **Google Calendar**: Two-way synchronization with Google Calendar
+- **Microsoft Outlook**: Outlook calendar integration
+- **CalDAV Support**: Standard calendar protocol support
+- **iCal Import/Export**: Calendar data import and export
+
+### Booking System
+- **Availability Slots**: Configurable availability time slots
+- **Booking Confirmation**: Automated booking confirmations
+- **Reminder System**: Automated appointment reminders
+- **Cancellation Management**: Booking cancellation and rescheduling
+
+---
+
+## Authentication & Authorization
+
+### Authentication System
+- **Multi-Role Authentication**: Support for all user types with role detection
+- **JWT Tokens**: Secure JWT-based authentication with refresh tokens
+- **Session Management**: Secure session handling with timeout policies
+- **Multi-Factor Authentication**: Optional MFA for enhanced security
+- **Social Login**: Integration with Google, LinkedIn, Microsoft accounts
+
+### Authorization Matrix
+```typescript
+const ROLE_PERMISSIONS = {
+  industry: {
+    requirements: ['create', 'read', 'update', 'delete'],
+    rfqs: ['create', 'read', 'update'],
+    purchase_orders: ['create', 'read', 'update', 'approve'],
+    projects: ['read', 'update', 'monitor'],
+    stakeholders: ['create', 'read', 'update', 'delete', 'invite'],
+    approval_workflows: ['create', 'read', 'update', 'configure'],
+    documents: ['upload', 'read', 'share', 'version'],
+    analytics: ['read', 'export']
+  },
+  professional: {
+    profile: ['read', 'update'],
+    opportunities: ['read', 'apply'],
+    projects: ['read', 'update', 'deliver'],
+    calendar: ['create', 'read', 'update', 'delete', 'sync'],
+    earnings: ['read'],
+    certifications: ['create', 'read', 'update', 'verify']
+  },
+  service_vendor: {
+    profile: ['read', 'update'],
+    services: ['create', 'read', 'update', 'delete'],
+    rfqs: ['read', 'respond'],
+    proposals: ['create', 'read', 'update', 'submit'],
+    projects: ['read', 'update', 'deliver'],
+    team: ['create', 'read', 'update', 'delete']
+  },
+  product_vendor: {
+    profile: ['read', 'update'],
+    catalog: ['create', 'read', 'update', 'delete'],
+    inventory: ['read', 'update', 'track'],
+    orders: ['read', 'update', 'fulfill', 'ship'],
+    quotes: ['create', 'read', 'update', 'submit']
+  },
+  logistics_vendor: {
+    profile: ['read', 'update'],
+    fleet: ['create', 'read', 'update', 'delete'],
+    requests: ['read', 'accept', 'quote'],
+    deliveries: ['track', 'update', 'complete'],
+    routes: ['optimize', 'plan', 'execute']
+  }
+};
+```
+
+### User Approval Workflow
+1. **Registration**: Multi-step registration with email verification
+2. **Profile Completion**: Role-specific profile completion requirements
+3. **Document Verification**: Upload and verification of required documents
+4. **Admin Review**: Manual review and approval process
+5. **Account Activation**: Final account activation and access provisioning
+6. **Onboarding**: Role-specific onboarding and training
 
 ---
 
 ## Backend API Requirements
 
-### Authentication & User Management
+### Authentication APIs
 ```typescript
-// Authentication
-POST /api/auth/login
+// User Authentication
 POST /api/auth/register
-POST /api/auth/refresh
+POST /api/auth/login
+POST /api/auth/refresh-token
 POST /api/auth/logout
 POST /api/auth/forgot-password
 POST /api/auth/reset-password
 POST /api/auth/verify-email
 POST /api/auth/resend-verification
+POST /api/auth/change-password
+GET /api/auth/me
+PUT /api/auth/profile
 
-// User Profile Management
-GET /api/users/profile
-PUT /api/users/profile
-POST /api/users/avatar
-DELETE /api/users/avatar
-GET /api/users/notifications
-PUT /api/users/notification-settings
-GET /api/users/preferences
-PUT /api/users/preferences
-GET /api/users/security-settings
-PUT /api/users/security-settings
+// Multi-Factor Authentication
+POST /api/auth/mfa/enable
+POST /api/auth/mfa/disable
+POST /api/auth/mfa/verify
+POST /api/auth/mfa/backup-codes
+
+// Social Authentication
+GET /api/auth/google
+GET /api/auth/linkedin
+GET /api/auth/microsoft
+POST /api/auth/social/callback
 
 // Role Management
-GET /api/users/roles
-PUT /api/users/role
-GET /api/users/permissions
-POST /api/users/role-request
+GET /api/auth/roles
+PUT /api/auth/role
+POST /api/auth/role-request
+GET /api/auth/permissions
 ```
 
-### File Management & Storage
+### File Management APIs
 ```typescript
 // File Upload & Management
 POST /api/files/upload
+POST /api/files/multipart-upload
 GET /api/files/:id
 DELETE /api/files/:id
-POST /api/files/:id/version
-GET /api/files/:id/versions
-POST /api/files/bulk-upload
-GET /api/files/download/:id
+PUT /api/files/:id/metadata
+GET /api/files/:id/download
 POST /api/files/:id/share
-PUT /api/files/:id/permissions
+GET /api/files/shared/:token
 
 // Document Management
 GET /api/documents
 POST /api/documents
 PUT /api/documents/:id
 DELETE /api/documents/:id
+POST /api/documents/:id/version
+GET /api/documents/:id/versions
 GET /api/documents/:id/history
 POST /api/documents/:id/approve
-GET /api/documents/templates
+GET /api/documents/search
+
+// File Processing
+POST /api/files/:id/process
+GET /api/files/:id/preview
+POST /api/files/:id/convert
+GET /api/files/:id/thumbnail
 ```
 
-### Real-time Communication
+### Real-time Communication APIs
 ```typescript
 // WebSocket Events
 WS /api/ws/connect
 WS /api/ws/notifications
-WS /api/ws/chat
+WS /api/ws/messages
 WS /api/ws/tracking
-WS /api/ws/status-updates
+WS /api/ws/project-updates
+WS /api/ws/system-events
 
 // Messaging System
 GET /api/messages
 POST /api/messages
-GET /api/messages/:id
-PUT /api/messages/:id/read
+PUT /api/messages/:id
 DELETE /api/messages/:id
 GET /api/messages/conversations
+POST /api/messages/conversation
+PUT /api/messages/conversation/:id
+GET /api/messages/search
 POST /api/messages/broadcast
-GET /api/messages/templates
 
 // Notification System
 GET /api/notifications
 POST /api/notifications
-PUT /api/notifications/mark-read
+PUT /api/notifications/:id/read
+PUT /api/notifications/mark-all-read
 DELETE /api/notifications/:id
 GET /api/notifications/settings
 PUT /api/notifications/settings
@@ -904,68 +720,101 @@ POST /api/notifications/subscribe
 DELETE /api/notifications/unsubscribe
 ```
 
-### Search & Analytics
+### Business Logic APIs
 ```typescript
-// Global Search
-GET /api/search?q=:query&type=:type&filters=:filters
-GET /api/search/suggestions?q=:query
-POST /api/search/advanced
-GET /api/search/recent
-DELETE /api/search/history
+// Industry User APIs
+GET /api/industry/dashboard
+GET /api/industry/requirements
+POST /api/industry/requirements
+PUT /api/industry/requirements/:id
+DELETE /api/industry/requirements/:id
+POST /api/industry/requirements/:id/approve
+GET /api/industry/stakeholders
+POST /api/industry/stakeholders/invite
+GET /api/industry/workflows
+POST /api/industry/workflows
+GET /api/industry/documents
+POST /api/industry/documents/upload
 
-// Analytics & Reporting
-GET /api/analytics/dashboard
-GET /api/analytics/performance
-GET /api/analytics/reports
-POST /api/analytics/custom-report
-GET /api/analytics/user-activity
-GET /api/analytics/system-health
-POST /api/analytics/export
+// Professional APIs
+GET /api/professionals/dashboard
+GET /api/professionals/opportunities
+POST /api/professionals/opportunities/:id/apply
+GET /api/professionals/calendar
+POST /api/professionals/availability
+GET /api/professionals/earnings
+GET /api/professionals/certifications
+POST /api/professionals/certifications
 
-// Business Intelligence
-GET /api/bi/kpis
-GET /api/bi/trends
-GET /api/bi/forecasts
-POST /api/bi/custom-metrics
-GET /api/bi/benchmarks
+// Vendor APIs (Service)
+GET /api/service-vendors/dashboard
+GET /api/service-vendors/rfqs
+POST /api/service-vendors/proposals
+GET /api/service-vendors/projects
+GET /api/service-vendors/team
+POST /api/service-vendors/services
+
+// Vendor APIs (Product)
+GET /api/product-vendors/dashboard
+GET /api/product-vendors/catalog
+POST /api/product-vendors/products
+GET /api/product-vendors/orders
+PUT /api/product-vendors/orders/:id/status
+GET /api/product-vendors/inventory
+
+// Vendor APIs (Logistics)
+GET /api/logistics-vendors/dashboard
+GET /api/logistics-vendors/requests
+GET /api/logistics-vendors/fleet
+POST /api/logistics-vendors/vehicles
+GET /api/logistics-vendors/deliveries
+PUT /api/logistics-vendors/deliveries/:id/status
+POST /api/logistics-vendors/routes/optimize
 ```
 
-### Integration APIs
+### Analytics & Reporting APIs
 ```typescript
-// Third-party Integrations
-POST /api/integrations/calendar/sync
-GET /api/integrations/calendar/events
-POST /api/integrations/payment/process
-GET /api/integrations/payment/status
-POST /api/integrations/shipping/create
-GET /api/integrations/shipping/track
-POST /api/integrations/email/send
-GET /api/integrations/sms/send
+// Dashboard Analytics
+GET /api/analytics/dashboard/:role
+GET /api/analytics/kpis
+GET /api/analytics/trends
+GET /api/analytics/performance
 
-// External API Proxies
-GET /api/proxy/maps/geocode
-GET /api/proxy/weather/forecast
-GET /api/proxy/traffic/conditions
-POST /api/proxy/verification/document
+// Business Intelligence
+GET /api/reports/revenue
+GET /api/reports/projects
+GET /api/reports/vendor-performance
+GET /api/reports/user-activity
+POST /api/reports/custom
+GET /api/reports/export/:id
+
+// System Monitoring
+GET /api/monitoring/health
+GET /api/monitoring/performance
+GET /api/monitoring/errors
+GET /api/monitoring/usage
 ```
 
 ---
 
 ## Data Models & Relationships
 
-### Core Entities
+### Core User Models
 ```typescript
 interface User {
   id: string;
   email: string;
   password: string;
   role: UserRole;
+  status: UserStatus;
   profile: UserProfile;
   preferences: UserPreferences;
   createdAt: Date;
   updatedAt: Date;
-  isVerified: boolean;
-  isActive: boolean;
+  lastLoginAt?: Date;
+  emailVerifiedAt?: Date;
+  approvedAt?: Date;
+  approvedBy?: string;
 }
 
 interface UserProfile {
@@ -975,48 +824,54 @@ interface UserProfile {
   avatar?: string;
   companyId?: string;
   vendorCategory?: VendorCategory;
-  specialization?: string;
-  certifications: Certification[];
-  preferences: UserPreferences;
+  specialization?: string[];
+  location: Address;
+  timezone: string;
+  language: string;
 }
 
 interface Company {
   id: string;
   name: string;
-  type: 'industry' | 'vendor' | 'logistics';
+  type: CompanyType;
+  registrationNumber?: string;
+  taxId?: string;
   email: string;
   phone: string;
-  address: Address;
   website?: string;
   logo?: string;
   description?: string;
+  address: Address;
   certifications: Certification[];
   isVerified: boolean;
+  verificationDocuments: Document[];
   createdAt: Date;
   updatedAt: Date;
 }
 ```
 
-### Business Entities
+### Business Process Models
 ```typescript
 interface Requirement {
   id: string;
   title: string;
   description: string;
-  industry: string;
   category: string;
   priority: Priority;
   budget: BudgetRange;
   timeline: Timeline;
   specifications: Specification[];
-  documents: Document[];
+  attachments: Document[];
   approvalWorkflow: ApprovalWorkflow;
   status: RequirementStatus;
   createdBy: string;
-  assignedTo?: string[];
-  rfqs: RFQ[];
+  assignedTo: string[];
+  tags: string[];
+  customFields: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
+  publishedAt?: Date;
+  completedAt?: Date;
 }
 
 interface RFQ {
@@ -1025,34 +880,17 @@ interface RFQ {
   title: string;
   description: string;
   specifications: Specification[];
+  terms: Terms;
   deadline: Date;
   vendors: string[];
   responses: RFQResponse[];
+  evaluationCriteria: EvaluationCriteria[];
   status: RFQStatus;
-  createdBy: string;
+  issuedBy: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Quote {
-  id: string;
-  rfqId: string;
-  vendorId: string;
-  price: number;
-  currency: string;
-  timeline: Timeline;
-  terms: string;
-  validUntil: Date;
-  documents: Document[];
-  status: QuoteStatus;
-  evaluationScore?: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-```
-
-### Project & Workflow Entities
-```typescript
 interface Project {
   id: string;
   requirementId: string;
@@ -1063,57 +901,28 @@ interface Project {
   milestones: Milestone[];
   payments: Payment[];
   documents: Document[];
-  timeline: Timeline;
-  budget: number;
-  assignedTeam: TeamMember[];
+  communications: Message[];
+  timeline: ProjectTimeline;
+  budget: ProjectBudget;
+  team: TeamMember[];
+  risks: Risk[];
   createdAt: Date;
   updatedAt: Date;
-}
-
-interface Milestone {
-  id: string;
-  projectId: string;
-  title: string;
-  description: string;
-  dueDate: Date;
+  startDate?: Date;
+  endDate?: Date;
   completedDate?: Date;
-  status: MilestoneStatus;
-  deliverables: Deliverable[];
-  paymentPercentage: number;
-  dependencies: string[];
-  assignedTo: string[];
-}
-
-interface Payment {
-  id: string;
-  projectId: string;
-  milestoneId?: string;
-  amount: number;
-  currency: string;
-  type: PaymentType;
-  status: PaymentStatus;
-  dueDate: Date;
-  paidDate?: Date;
-  reference?: string;
-  invoiceId?: string;
 }
 ```
 
-### Logistics & Specialized Entities
+### Specialized Vendor Models
 ```typescript
-interface TransportRequest {
-  id: string;
-  customerId: string;
-  origin: Location;
-  destination: Location;
-  cargo: CargoDetails;
-  requirements: string[];
-  preferredDate: Date;
-  deadline: Date;
-  specialInstructions?: string;
-  quotes: TransportQuote[];
-  status: RequestStatus;
-  createdAt: Date;
+interface LogisticsVendor extends Vendor {
+  specialization: LogisticsSpecialization;
+  fleet: Vehicle[];
+  drivers: Driver[];
+  serviceAreas: ServiceArea[];
+  equipment: Equipment[];
+  certifications: LogisticsCertification[];
 }
 
 interface Vehicle {
@@ -1123,185 +932,170 @@ interface Vehicle {
   make: string;
   model: string;
   year: number;
+  licensePlate: string;
   capacity: VehicleCapacity;
-  specializations: string[];
   currentLocation?: Location;
   status: VehicleStatus;
+  assignedDriver?: string;
   maintenance: MaintenanceRecord[];
-  driver?: Driver;
-  documents: Document[];
+  documents: VehicleDocument[];
+  tracking: TrackingData[];
 }
 
-interface Driver {
-  id: string;
-  vendorId: string;
-  firstName: string;
-  lastName: string;
-  license: LicenseDetails;
-  certifications: Certification[];
-  phone: string;
-  currentVehicle?: string;
-  status: DriverStatus;
-  location?: Location;
-}
-```
-
-### Relationships
-- User -> Company (1:1 or Many:1 depending on role)
-- Company -> Requirements (1:Many for industries)
-- Requirement -> RFQs (1:Many)
-- RFQ -> Quotes (1:Many)
-- Quote -> PurchaseOrder (1:1 when accepted)
-- PurchaseOrder -> Project (1:1)
-- Project -> Milestones (1:Many)
-- Project -> Payments (1:Many)
-- Milestone -> Deliverables (1:Many)
-- User -> Messages (Many:Many through conversations)
-- Company -> Certifications (1:Many)
-- Vendor -> Services/Products (1:Many)
-- LogisticsVendor -> Fleet (1:Many)
-- Fleet -> Vehicles (1:Many)
-- Vehicle -> Driver (1:1 when assigned)
-
----
-
-## Authentication & Authorization
-
-### Role-Based Access Control
-```typescript
-enum UserRole {
-  INDUSTRY = 'industry',
-  PROFESSIONAL = 'professional',
-  SERVICE_VENDOR = 'service_vendor',
-  PRODUCT_VENDOR = 'product_vendor',
-  LOGISTICS_VENDOR = 'logistics_vendor',
-  ADMIN = 'admin'
+interface ServiceVendor extends Vendor {
+  services: Service[];
+  team: TeamMember[];
+  portfolio: Project[];
+  capabilities: Capability[];
+  certifications: ServiceCertification[];
 }
 
-interface Permission {
-  resource: string;
-  actions: ('create' | 'read' | 'update' | 'delete')[];
-  conditions?: Record<string, any>;
+interface ProductVendor extends Vendor {
+  catalog: Product[];
+  inventory: InventoryItem[];
+  brands: Brand[];
+  partnerships: Partnership[];
+  warehouses: Warehouse[];
 }
-
-interface RolePermissions {
-  role: UserRole;
-  permissions: Permission[];
-  restrictions?: Record<string, any>;
-}
-```
-
-### Authentication Flow
-1. **Registration**: Multi-step registration with role selection
-2. **Email Verification**: Email confirmation required
-3. **Profile Completion**: Role-specific profile setup
-4. **Admin Approval**: Manual approval for certain vendor types
-5. **Login**: JWT-based authentication with refresh tokens
-6. **Role-Based Routing**: Automatic redirect to appropriate dashboard
-7. **Session Management**: Secure session handling with timeout
-
-### Permission Matrix
-```typescript
-const PERMISSIONS: Record<UserRole, Permission[]> = {
-  [UserRole.INDUSTRY]: [
-    { resource: 'requirements', actions: ['create', 'read', 'update', 'delete'] },
-    { resource: 'rfqs', actions: ['create', 'read', 'update'] },
-    { resource: 'purchase_orders', actions: ['create', 'read', 'update'] },
-    { resource: 'projects', actions: ['read', 'update'] },
-    { resource: 'stakeholders', actions: ['create', 'read', 'update', 'delete'] },
-    { resource: 'approval_matrix', actions: ['create', 'read', 'update'] }
-  ],
-  [UserRole.PROFESSIONAL]: [
-    { resource: 'opportunities', actions: ['read'] },
-    { resource: 'applications', actions: ['create', 'read', 'update'] },
-    { resource: 'projects', actions: ['read', 'update'] },
-    { resource: 'calendar', actions: ['create', 'read', 'update', 'delete'] },
-    { resource: 'profile', actions: ['read', 'update'] }
-  ],
-  // ... other roles
-};
 ```
 
 ---
 
 ## Integration Requirements
 
-### Real-time Features
-- **WebSocket Connections**: Live updates for all user types
-- **Real-time Notifications**: Instant notification delivery
-- **Live Project Tracking**: Real-time project status updates
-- **Fleet Tracking**: GPS tracking for logistics vendors
-- **Chat System**: Real-time messaging between users
-
-### External Integrations
+### External Service Integrations
 ```typescript
-// Required External Services
 interface ExternalIntegrations {
-  email: 'SendGrid' | 'AWS SES' | 'Mailgun';
-  sms: 'Twilio' | 'AWS SNS';
-  storage: 'AWS S3' | 'MongoDB GridFS' | 'Cloudinary';
-  payment: 'Stripe' | 'PayPal' | 'Razorpay';
-  maps: 'Google Maps' | 'Mapbox';
-  calendar: 'Google Calendar' | 'Outlook' | 'CalDAV';
-  shipping: 'FedEx' | 'UPS' | 'DHL' | 'Local Carriers';
-  verification: 'Jumio' | 'Onfido' | 'Manual Review';
+  // Communication Services
+  email: {
+    provider: 'SendGrid' | 'AWS SES' | 'Mailgun';
+    apiKey: string;
+    templates: EmailTemplate[];
+    webhooks: EmailWebhook[];
+  };
+  
+  sms: {
+    provider: 'Twilio' | 'AWS SNS' | 'MessageBird';
+    credentials: SMSCredentials;
+    templates: SMSTemplate[];
+  };
+  
+  // Storage & CDN
+  storage: {
+    provider: 'AWS S3' | 'Google Cloud' | 'Azure Blob';
+    buckets: StorageBucket[];
+    cdn: CDNConfig;
+    encryption: EncryptionConfig;
+  };
+  
+  // Payment Processing
+  payment: {
+    provider: 'Stripe' | 'PayPal' | 'Razorpay';
+    webhooks: PaymentWebhook[];
+    currencies: SupportedCurrency[];
+  };
+  
+  // Mapping & Location
+  maps: {
+    provider: 'Google Maps' | 'Mapbox' | 'HERE';
+    features: MapFeature[];
+    geocoding: GeocodingConfig;
+  };
+  
+  // Calendar Integration
+  calendar: {
+    providers: CalendarProvider[];
+    syncSettings: CalendarSyncConfig;
+    webhooks: CalendarWebhook[];
+  };
 }
 ```
 
-### API Response Format
+### API Integration Specifications
 ```typescript
-interface APIResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-  errors?: ValidationError[];
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-  meta?: {
-    timestamp: string;
-    version: string;
-    requestId: string;
-  };
+// Payment Gateway Integration
+interface PaymentIntegration {
+  processPayment: (paymentData: PaymentRequest) => Promise<PaymentResponse>;
+  verifyPayment: (paymentId: string) => Promise<PaymentStatus>;
+  handleWebhook: (webhookData: WebhookPayload) => Promise<void>;
+  refundPayment: (paymentId: string, amount?: number) => Promise<RefundResponse>;
 }
 
-interface ValidationError {
-  field: string;
-  message: string;
-  code: string;
-  value?: any;
+// Shipping Integration
+interface ShippingIntegration {
+  createShipment: (shipmentData: ShipmentRequest) => Promise<ShipmentResponse>;
+  trackShipment: (trackingNumber: string) => Promise<TrackingData>;
+  calculateRates: (rateRequest: RateRequest) => Promise<ShippingRate[]>;
+  validateAddress: (address: Address) => Promise<AddressValidation>;
+}
+
+// Document Verification
+interface DocumentVerificationIntegration {
+  verifyDocument: (document: Document) => Promise<VerificationResult>;
+  extractData: (document: Document) => Promise<ExtractedData>;
+  validateIdentity: (identityData: IdentityRequest) => Promise<IdentityVerification>;
 }
 ```
 
-### WebSocket Events
+---
+
+## Performance & Security
+
+### Performance Optimization
 ```typescript
-interface WebSocketEvents {
-  // Notifications
-  'notification:new': NotificationData;
-  'notification:read': { notificationId: string };
+interface PerformanceConfig {
+  // Caching Strategy
+  cache: {
+    redis: RedisConfig;
+    memoryCache: MemoryCacheConfig;
+    cdnCache: CDNCacheConfig;
+    databaseCache: DatabaseCacheConfig;
+  };
   
-  // Project Updates
-  'project:status_changed': ProjectStatusUpdate;
-  'project:milestone_completed': MilestoneUpdate;
-  'project:payment_processed': PaymentUpdate;
+  // Database Optimization
+  database: {
+    indexing: IndexStrategy[];
+    partitioning: PartitionStrategy[];
+    replication: ReplicationConfig;
+    sharding: ShardingConfig;
+  };
   
-  // Real-time Tracking
-  'vehicle:location_update': VehicleLocationUpdate;
-  'delivery:status_update': DeliveryStatusUpdate;
+  // API Optimization
+  api: {
+    rateLimit: RateLimitConfig;
+    compression: CompressionConfig;
+    pagination: PaginationConfig;
+    queryOptimization: QueryOptimizationConfig;
+  };
+}
+```
+
+### Security Implementation
+```typescript
+interface SecurityConfig {
+  // Authentication Security
+  auth: {
+    passwordPolicy: PasswordPolicy;
+    sessionSecurity: SessionSecurityConfig;
+    mfaSettings: MFAConfig;
+    tokenSecurity: TokenSecurityConfig;
+  };
   
-  // Messaging
-  'message:new': MessageData;
-  'message:read': MessageReadUpdate;
-  'conversation:typing': TypingIndicator;
+  // Data Protection
+  dataProtection: {
+    encryption: EncryptionConfig;
+    dataClassification: DataClassificationConfig;
+    backupSecurity: BackupSecurityConfig;
+    auditLogging: AuditLoggingConfig;
+  };
   
-  // System Events
-  'system:maintenance': MaintenanceNotice;
-  'system:alert': SystemAlert;
+  // API Security
+  apiSecurity: {
+    cors: CORSConfig;
+    rateLimiting: RateLimitConfig;
+    inputValidation: ValidationConfig;
+    outputSanitization: SanitizationConfig;
+  };
 }
 ```
 
@@ -1309,29 +1103,69 @@ interface WebSocketEvents {
 
 ## Technical Architecture Summary
 
-This comprehensive frontend analysis provides a complete blueprint for developing a robust Node.js backend that supports all aspects of the Diligence.ai platform. The analysis covers:
+This comprehensive frontend analysis provides a complete blueprint for developing a robust Node.js backend with Express.js and MongoDB that supports all aspects of the Diligence.ai platform. The analysis covers:
 
-1. **5 Distinct User Types** with unique workflows and requirements
-2. **40+ Pages** across all user types and public areas
-3. **100+ Components** including modals, forms, and specialized features
-4. **15+ Contexts** for state management and data flow
-5. **20+ Custom Hooks** for business logic and optimization
-6. **Comprehensive Type System** with TypeScript interfaces
-7. **Complete API Requirements** for all user operations
-8. **Real-time Features** with WebSocket integration
-9. **Security & Performance** considerations throughout
-10. **External Integrations** for complete functionality
+### Complete Coverage Statistics
+- **50+ Pages** across all user types, public areas, and admin functions
+- **150+ Components** including modals, forms, specialized features, and shared utilities
+- **20+ Contexts** for comprehensive state management and data flow
+- **25+ Custom Hooks** for business logic and performance optimization
+- **Comprehensive Type System** with 200+ TypeScript interfaces and types
+- **Complete API Requirements** for all user operations and system functions
+- **Real-time Features** with WebSocket integration and live updates
+- **Security & Performance** considerations throughout all layers
+- **External Integrations** for complete platform functionality
 
 ### Backend Development Priorities
-1. **Authentication System**: Multi-role authentication with approval workflows
-2. **Core Business Logic**: Requirements, RFQs, projects, and workflows
-3. **User Management**: Profile management and role-based access control
-4. **Real-time Communication**: WebSocket implementation for live updates
-5. **File Management**: Document upload, storage, and version control
-6. **External Integrations**: Payment, shipping, calendar, and communication services
-7. **Analytics & Reporting**: Business intelligence and performance metrics
-8. **Security Implementation**: Data validation, authorization, and compliance
-9. **Performance Optimization**: Caching, indexing, and query optimization
-10. **Testing & Deployment**: Comprehensive testing and CI/CD pipeline
+1. **Authentication & Authorization System** (Weeks 1-2)
+   - Multi-role authentication with JWT tokens
+   - Role-based access control with comprehensive permissions
+   - User approval workflows with admin oversight
+   - Multi-factor authentication and security features
 
-This analysis ensures that the backend development will fully support all frontend functionality while maintaining high standards of security, performance, and scalability.
+2. **Core Business Logic Implementation** (Weeks 3-6)
+   - Requirements and RFQ management with approval workflows
+   - Project lifecycle management with milestone tracking
+   - Vendor management with specialization support
+   - Purchase order workflows with compliance features
+
+3. **Real-time Communication System** (Weeks 7-8)
+   - WebSocket implementation for live updates
+   - Messaging system with multi-party support
+   - Notification system with multiple delivery channels
+   - Live tracking for logistics and project updates
+
+4. **File Management & Document System** (Weeks 9-10)
+   - Multi-file upload with progress tracking
+   - Document versioning and access control
+   - Integration with cloud storage providers
+   - Document processing and preview capabilities
+
+5. **Integration Layer Development** (Weeks 11-12)
+   - Payment gateway integration for transactions
+   - Shipping and logistics provider integration
+   - Calendar synchronization with external providers
+   - Email and SMS communication services
+
+6. **Analytics & Reporting System** (Weeks 13-14)
+   - Dashboard analytics for all user types
+   - Business intelligence and performance metrics
+   - Custom reporting with export capabilities
+   - System monitoring and health checks
+
+7. **Performance Optimization & Security** (Weeks 15-16)
+   - Database optimization with indexing and caching
+   - API performance optimization with rate limiting
+   - Security implementation with encryption and audit trails
+   - Comprehensive testing and deployment pipeline
+
+### Database Schema Requirements
+- **User Management**: Users, profiles, companies, roles, permissions
+- **Business Processes**: Requirements, RFQs, quotes, projects, milestones
+- **Communication**: Messages, notifications, conversations, threads
+- **File Management**: Documents, versions, access logs, metadata
+- **Specialized Data**: Vehicles, drivers, products, services, inventory
+- **Analytics**: Activity logs, performance metrics, audit trails
+
+This analysis ensures that the backend development will fully support all frontend functionality while maintaining high standards of security, performance, and scalability suitable for enterprise-level deployment.
+
