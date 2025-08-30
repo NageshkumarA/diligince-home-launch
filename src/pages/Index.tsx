@@ -111,12 +111,10 @@ const Index: React.FC = () => {
                 </div>
                 <span className="text-xl font-bold text-[#1A2A4F]">Diligence.ai</span>
               </div>
-              <div>
+
               {/* Navigation Menu */}
               <nav className="hidden md:flex items-center space-x-8">
-                <a href="#features" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Features</a>
-                <a href="#modules" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Modules</a>
-                <a href="#benefits" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Benefits</a>
+                <a href="#benefits" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">About-Us</a>
                 <a href="#pricing" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Pricing</a>
                 <a href="#contact" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Contact</a>
               </nav>
@@ -127,8 +125,6 @@ const Index: React.FC = () => {
               >
                 Start Free Trial
               </Link>
-              </div>
-              
             </div>
           </div>
         </div>
