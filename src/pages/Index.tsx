@@ -1,27 +1,62 @@
 import React from 'react';
-import { ArrowRight, CheckCircle, Users, Building2, TrendingUp, Zap, Shield, Globe, Clock, Star, Target, Workflow, MessageSquare, FileText, Award, BarChart3 } from 'lucide-react';
+import { ArrowRight, CheckCircle, Users, Building2, TrendingUp, Zap, Shield, Globe, Clock, Star, Target, Workflow, MessageSquare, FileText, Award, BarChart3, Truck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Helmet } from "react-helmet";
+import { useStaggeredAnimation } from '../hooks/useScrollAnimation';
 
 const Index: React.FC = () => {
+  const { elementRef: servicesRef, visibleItems } = useStaggeredAnimation(3, 200);
   const services = [
     {
-      title: 'For Industries',
-      description: 'Post requirements and connect with qualified professionals and vendors to solve your business challenges',
-      image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800',
-      features: ['Post Requirements', 'Review Proposals', 'Manage Projects', 'Track Progress']
+      title: 'Enterprise Industries',
+      description: 'Streamline procurement processes with AI-powered vendor matching and requirement management for enterprise-level efficiency',
+      icon: Building2,
+      gradient: 'from-[#1A2A4F] to-[#2F80ED]',
+      features: [
+        'AI-Powered Vendor Matching',
+        'Automated RFQ Processing', 
+        'Real-time Project Analytics',
+        'Compliance Management',
+        'ROI Optimization Tools'
+      ],
+      metrics: {
+        improvement: '65% Faster',
+        description: 'Procurement Cycles'
+      }
     },
     {
-      title: 'For Professionals',
-      description: 'Discover opportunities, showcase your expertise, and collaborate with leading industries',
-      image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800',
-      features: ['Browse Opportunities', 'Submit Proposals', 'Direct Communication', 'Build Portfolio']
+      title: 'Certified Professionals',
+      description: 'Connect with vetted industry experts and showcase your expertise through our premium professional network platform',
+      icon: Users,
+      gradient: 'from-[#2F80ED] to-[#27AE60]',
+      features: [
+        'Verified Expert Network',
+        'Skills Assessment Tools',
+        'Portfolio Management',
+        'Direct Client Communication',
+        'Performance Analytics'
+      ],
+      metrics: {
+        improvement: '85% Success',
+        description: 'Project Completion Rate'
+      }
     },
     {
-      title: 'For Vendors',
-      description: 'Access business requirements, submit competitive quotations, and grow your client base',
-      image: 'https://images.pexels.com/photos/590020/pexels-photo-590020.jpg?auto=compress&cs=tinysrgb&w=800',
-      features: ['View Requirements', 'Send Quotations', 'Negotiate Terms', 'Deliver Solutions']
+      title: 'Premium Vendors',
+      description: 'Access high-value opportunities and deliver exceptional solutions through our enterprise vendor marketplace',
+      icon: Truck,
+      gradient: 'from-[#27AE60] to-[#F2994A]',
+      features: [
+        'Enterprise Opportunity Access',
+        'Automated Quote Generation',
+        'Supply Chain Integration',
+        'Quality Assurance Tools',
+        'Payment Protection'
+      ],
+      metrics: {
+        improvement: '40% Higher',
+        description: 'Contract Values'
+      }
     }
   ];
 
@@ -377,42 +412,98 @@ const Index: React.FC = () => {
       </section>
 
       {/* Services Section */}
-      <section className="py-20 bg-white" id="modules">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-[#333333] mb-4">Our Services</h2>
-            <p className="text-[#828282] text-lg max-w-2xl mx-auto">
-              Tailored solutions for every stakeholder in the business ecosystem
-            </p>
+      <section className="py-24 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden" id="modules">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 25% 25%, #2F80ED 2px, transparent 2px), radial-gradient(circle at 75% 75%, #27AE60 2px, transparent 2px)`,
+            backgroundSize: '60px 60px'
+          }} />
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center mb-20">
+            <div className="animate-corporate-fade-up">
+              <h2 className="text-5xl font-bold text-[#1A2A4F] mb-6">
+                Enterprise Solutions
+              </h2>
+              <p className="text-[#4F4F4F] text-xl max-w-3xl mx-auto leading-relaxed">
+                Empowering businesses with AI-driven procurement intelligence and seamless stakeholder collaboration
+              </p>
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <div key={index} className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-[#E0E0E0]">
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-full h-56 object-cover"
-                />
-                <div className="p-8">
-                  <h3 className="text-xl font-semibold text-[#333333] mb-3">{service.title}</h3>
-                  <p className="text-[#828282] mb-4">{service.description}</p>
-                  <ul className="space-y-2">
-                    {service.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center text-sm text-[#333333]">
-                        <CheckCircle className="w-4 h-4 text-[#27AE60] mr-3 flex-shrink-0" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-6">
-                    <button className="w-full bg-gradient-to-r from-[#2F80ED] to-[#27AE60] text-white py-3 rounded-lg hover:shadow-lg transition-all duration-300 font-medium">
-                      Learn More
+          <div ref={servicesRef} className="grid lg:grid-cols-3 gap-8">
+            {services.map((service, index) => {
+              const IconComponent = service.icon;
+              return (
+                <div 
+                  key={index} 
+                  className={`corporate-service-card rounded-3xl overflow-hidden opacity-0 ${
+                    visibleItems[index] ? 'animate-corporate-scale-in' : ''
+                  }`}
+                  style={{ 
+                    animationDelay: visibleItems[index] ? `${index * 0.2}s` : '0s',
+                    animationFillMode: 'forwards'
+                  }}
+                >
+                  {/* Icon Header */}
+                  <div className="relative p-8 pb-6">
+                    <div className="absolute top-6 right-6 w-16 h-16 corporate-icon-wrapper rounded-2xl flex items-center justify-center animate-corporate-float"
+                         style={{ animationDelay: `${index * 0.5}s` }}>
+                      <IconComponent className="w-8 h-8 text-white" />
+                    </div>
+                    
+                    <div className="mt-4">
+                      <h3 className="text-2xl font-bold text-[#1A2A4F] mb-3">
+                        {service.title}
+                      </h3>
+                      <p className="text-[#4F4F4F] text-base leading-relaxed">
+                        {service.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Features List */}
+                  <div className="px-8 pb-6">
+                    <ul className="space-y-3">
+                      {service.features.map((feature, idx) => (
+                        <li 
+                          key={idx} 
+                          className={`corporate-feature-item flex items-center text-sm text-[#333333] ${
+                            visibleItems[index] ? '' : 'opacity-0'
+                          }`}
+                          style={{ 
+                            animationDelay: visibleItems[index] ? `${(index * 0.2) + (idx * 0.1) + 0.3}s` : '0s'
+                          }}
+                        >
+                          <div className="w-2 h-2 bg-gradient-to-r from-[#2F80ED] to-[#27AE60] rounded-full mr-3 flex-shrink-0" />
+                          <span className="font-medium">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Metrics & CTA */}
+                  <div className="px-8 pb-8">
+                    <div className="bg-gradient-to-r from-[#1A2A4F]/5 to-[#2F80ED]/5 rounded-2xl p-4 mb-6">
+                      <div className="text-center">
+                        <div className={`text-2xl font-bold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}>
+                          {service.metrics.improvement}
+                        </div>
+                        <div className="text-sm text-[#4F4F4F] font-medium">
+                          {service.metrics.description}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <button className="w-full corporate-cta-button text-white py-4 rounded-2xl font-semibold text-base shadow-lg">
+                      Explore Solutions
                     </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
