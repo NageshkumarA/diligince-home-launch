@@ -50,6 +50,9 @@ import IndustryStakeholders from '@/pages/IndustryStakeholders';
 import IndustryDocuments from '@/pages/IndustryDocuments';
 import IndustryMessages from '@/pages/IndustryMessages';
 import IndustryApprovalMatrix from '@/pages/IndustryApprovalMatrix';
+import IndustryAnalytics from '@/pages/IndustryAnalytics';
+import IndustryTeam from '@/pages/IndustryTeam';
+import IndustryNotifications from '@/pages/IndustryNotifications';
 import CreateRequirement from '@/pages/CreateRequirement';
 import CreatePurchaseOrder from '@/pages/CreatePurchaseOrder';
 
@@ -117,6 +120,8 @@ import ProfessionalOpportunities from '@/pages/ProfessionalOpportunities';
 import ProfessionalCalendar from '@/pages/ProfessionalCalendar';
 import ProfessionalMessages from '@/pages/ProfessionalMessages';
 import ProfessionalProfile from '@/pages/ProfessionalProfile';
+import ProfessionalPortfolio from '@/pages/ProfessionalPortfolio';
+import ProfessionalCertifications from '@/pages/ProfessionalCertifications';
 
 function App() {
   return (
@@ -173,7 +178,11 @@ function App() {
                 <Route path="industry-documents" element={<RouteErrorBoundary><IndustryDocuments /></RouteErrorBoundary>} />
                 <Route path="industry-messages" element={<RouteErrorBoundary><IndustryMessages /></RouteErrorBoundary>} />
                 <Route path="industry-approval-matrix" element={<RouteErrorBoundary><IndustryApprovalMatrix /></RouteErrorBoundary>} />
-                <Route path="work-completion-payment/:id" element={<RouteErrorBoundary><WorkCompletionPayment /></RouteErrorBoundary>} />
+                <Route path="industry-analytics" element={<RouteErrorBoundary><IndustryAnalytics /></RouteErrorBoundary>} />
+                <Route path="industry-team" element={<RouteErrorBoundary><IndustryTeam /></RouteErrorBoundary>} />
+                <Route path="industry-notifications" element={<RouteErrorBoundary><IndustryNotifications /></RouteErrorBoundary>} />
+                <Route path="professional-portfolio" element={<RouteErrorBoundary><ProfessionalPortfolio /></RouteErrorBoundary>} />
+                <Route path="professional-certifications" element={<RouteErrorBoundary><ProfessionalCertifications /></RouteErrorBoundary>} />
                 
                 {/* Requirements Sub-routes */}
                 <Route path="requirements/drafts" element={<RouteErrorBoundary><RequirementsDrafts /></RouteErrorBoundary>} />
