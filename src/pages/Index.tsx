@@ -107,7 +107,7 @@ const Index: React.FC = () => {
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-[#2F80ED] rounded-md flex items-center justify-center font-bold text-white">
-                  D
+                  <img src='./logo-main-no-bg.svg'></img>
                 </div>
                 <span className="text-xl font-bold text-[#1A2A4F]">Diligence.ai</span>
               </div>
