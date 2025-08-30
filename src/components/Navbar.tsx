@@ -39,8 +39,9 @@ const Navbar = () => {
     }`}>
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
-          <Link to="/" className="text-xl font-bold text-white">
-            Diligince.ai
+          <Link to="/" className="flex items-center space-x-2">
+            <img src="/logo-main-no-bg.svg" alt="Diligince.ai" className="h-8 w-8" />
+            <span className="text-xl font-bold text-white">Diligince.ai</span>
           </Link>
         </div>
         
@@ -62,7 +63,7 @@ const Navbar = () => {
             <Link to="/signin">Log In</Link>
           </Button>
           <Button className="bg-white text-primary hover:bg-primary/5 hover:text-primary transition-all duration-200" asChild>
-            <Link to="/signup">Sign Up</Link>
+            <Link to="/signup">Start Free Trial</Link>
           </Button>
         </div>
         
@@ -95,7 +96,7 @@ const Navbar = () => {
                 <Link to="/signin">Log In</Link>
               </Button>
               <Button className="bg-white text-primary hover:bg-primary/5 hover:text-primary" asChild>
-                <Link to="/signup">Sign Up</Link>
+                <Link to="/signup">Start Free Trial</Link>
               </Button>
             </div>
           </div>
