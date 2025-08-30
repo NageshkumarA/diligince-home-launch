@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { useEnhancedApproval } from '@/contexts/EnhancedApprovalContext';
 import { useToast } from '@/hooks/use-toast';
-import { saveUserToRegistry, getUserFromRegistry, checkEmailExists, listAllRegisteredUsers } from '../utils/authUtils';
+import { saveUserToRegistry, getUserFromRegistry, checkEmailExists, listAllRegisteredUsers, createDemoAccounts } from '../utils/authUtils';
 import { UserProfile } from '@/types/shared';
 import { PendingUser } from '@/types/pendingUser';
 
@@ -163,11 +163,14 @@ export const useAuth = () => {
     setIsLoading(true);
 
     try {
+      // Create demo accounts if they don't exist
+      createDemoAccounts();
+      
       // List all registered users for debugging
       listAllRegisteredUsers();
       
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       console.log("Attempting to get user from registry...");
       const user = getUserFromRegistry(email, password);

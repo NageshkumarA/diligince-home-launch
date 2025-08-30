@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { useAuth } from "./hooks/useAuth";
+import { DemoAccountsInfo } from "./DemoAccountsInfo";
 
 export const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,6 +20,10 @@ export const SignInForm = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCredentialClick = (email: string, password: string) => {
+    setFormData({ email, password });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,6 +45,9 @@ export const SignInForm = () => {
 
   return (
     <div className="space-y-6">
+      {/* Demo Accounts Info */}
+      <DemoAccountsInfo onCredentialClick={handleCredentialClick} />
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">

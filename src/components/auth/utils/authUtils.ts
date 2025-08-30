@@ -96,3 +96,109 @@ export const listAllRegisteredUsers = (): void => {
     console.error('Error listing registered users:', error);
   }
 };
+
+// Create demo accounts for testing
+export const createDemoAccounts = (): void => {
+  const demoUsers = [
+    {
+      id: 'demo-industry-1',
+      email: 'industry@demo.com',
+      password: 'demo123',
+      name: 'John Doe',
+      role: 'industry',
+      profile: {
+        companyName: 'Demo Industries Ltd',
+        phone: '+1234567890',
+        address: '123 Business St',
+        city: 'Demo City',
+        state: 'Demo State',
+        zipCode: '12345',
+        country: 'Demo Country'
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: 'demo-professional-1',
+      email: 'professional@demo.com',
+      password: 'demo123',
+      name: 'Jane Smith',
+      role: 'professional',
+      profile: {
+        specialization: 'Engineering',
+        experience: 5,
+        location: 'Demo City',
+        hourlyRate: 75,
+        skills: ['Project Management', 'Technical Leadership']
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: 'demo-vendor-service-1',
+      email: 'service@demo.com',
+      password: 'demo123',
+      name: 'Service Vendor Co',
+      role: 'vendor',
+      profile: {
+        vendorCategory: 'service',
+        companyName: 'Demo Service Vendor',
+        services: ['Consulting', 'Implementation'],
+        location: 'Demo City'
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: 'demo-vendor-product-1',
+      email: 'product@demo.com',
+      password: 'demo123',
+      name: 'Product Vendor Inc',
+      role: 'vendor',
+      profile: {
+        vendorCategory: 'product',
+        companyName: 'Demo Product Vendor',
+        products: ['Software', 'Hardware'],
+        location: 'Demo City'
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: 'demo-vendor-logistics-1',
+      email: 'logistics@demo.com',
+      password: 'demo123',
+      name: 'Logistics Vendor LLC',
+      role: 'vendor',
+      profile: {
+        vendorCategory: 'logistics',
+        companyName: 'Demo Logistics Vendor',
+        services: ['Transportation', 'Warehousing'],
+        location: 'Demo City'
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+  ];
+
+  try {
+    const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    
+    demoUsers.forEach(user => {
+      const existingUser = existingUsers.find((u: any) => u.email === user.email);
+      if (!existingUser) {
+        const userWithHashedPassword = {
+          ...user,
+          password: hashPassword(user.password)
+        };
+        existingUsers.push(userWithHashedPassword);
+        console.log(`Created demo account: ${user.email}`);
+      }
+    });
+
+    localStorage.setItem('registeredUsers', JSON.stringify(existingUsers));
+    console.log('Demo accounts initialized successfully');
+  } catch (error) {
+    console.error('Error creating demo accounts:', error);
+  }
+};
