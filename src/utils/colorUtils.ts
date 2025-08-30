@@ -17,7 +17,7 @@ export const themeColors: ThemeColors = {
   success: 'bg-green-600 text-white',
   warning: 'bg-yellow-600 text-white',
   error: 'bg-red-600 text-white',
-  info: 'bg-blue-600 text-white',
+  info: 'bg-primary text-white',
   neutral: 'bg-gray-600 text-white',
 };
 
@@ -51,7 +51,7 @@ export const getBadgeColors = (variant: keyof ThemeColors): string => {
     success: 'bg-green-100 text-green-800 border-green-200',
     warning: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     error: 'bg-red-100 text-red-800 border-red-200',
-    info: 'bg-blue-100 text-blue-800 border-blue-200',
+    info: 'bg-primary/10 text-primary border-primary/20',
     neutral: 'bg-gray-100 text-gray-800 border-gray-200',
   };
   
@@ -65,7 +65,7 @@ export const getButtonColors = (variant: keyof ThemeColors): string => {
     success: 'bg-green-600 hover:bg-green-700 text-white',
     warning: 'bg-yellow-600 hover:bg-yellow-700 text-white',
     error: 'bg-red-600 hover:bg-red-700 text-white',
-    info: 'bg-blue-600 hover:bg-blue-700 text-white',
+    info: 'bg-primary hover:bg-primary/90 text-white',
     neutral: 'bg-gray-600 hover:bg-gray-700 text-white',
   };
   
@@ -79,7 +79,7 @@ export const getTextColors = (variant: keyof ThemeColors): string => {
     success: 'text-green-600',
     warning: 'text-yellow-600',
     error: 'text-red-600',
-    info: 'text-blue-600',
+    info: 'text-primary',
     neutral: 'text-gray-600',
   };
   
@@ -93,7 +93,7 @@ export const getHoverColors = (variant: keyof ThemeColors): string => {
     success: 'hover:bg-green-50',
     warning: 'hover:bg-yellow-50',
     error: 'hover:bg-red-50',
-    info: 'hover:bg-blue-50',
+    info: 'hover:bg-primary/5',
     neutral: 'hover:bg-gray-50',
   };
   
@@ -111,7 +111,7 @@ export const getStatusColors = (status: string): string => {
     error: 'text-red-600',
     failed: 'text-red-600',
     cancelled: 'text-red-600',
-    info: 'text-blue-600',
+    info: 'text-primary',
     draft: 'text-gray-600',
     inactive: 'text-gray-600',
   };

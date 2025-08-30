@@ -26,7 +26,7 @@ export interface MessageCenterConfig {
 
 export const industryMessageConfig: MessageCenterConfig = {
   title: "Message Center",
-  theme: "blue-600",
+  theme: "primary",
   showSearch: true,
   showFilters: true,
   showReply: true,

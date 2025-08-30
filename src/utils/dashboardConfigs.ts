@@ -16,8 +16,8 @@ export const productVendorStats: StatItem[] = [
     value: "6",
     subtitle: "awaiting response",
     icon: Send,
-    color: "text-blue-600",
-    bgColor: "bg-blue-100"
+    color: "text-primary",
+    bgColor: "bg-primary/10"
   },
   {
     title: "Active Orders",
@@ -51,8 +51,8 @@ export const serviceVendorStats: StatItem[] = [
     value: "5",
     subtitle: "awaiting response",
     icon: Send,
-    color: "text-blue-600",
-    bgColor: "bg-blue-100"
+    color: "text-primary",
+    bgColor: "bg-primary/10"
   },
   {
     title: "Active Projects",
@@ -86,8 +86,8 @@ export const professionalStats: StatItem[] = [
     value: "3",
     subtitle: "awaiting response",
     icon: Calendar,
-    color: "text-blue-600",
-    bgColor: "bg-blue-100"
+    color: "text-primary",
+    bgColor: "bg-primary/10"
   },
   {
     title: "Ongoing Projects",
@@ -121,8 +121,8 @@ export const logisticsVendorStats: StatItem[] = [
     value: "5",
     subtitle: "awaiting approval",
     icon: Package,
-    color: "text-blue-600",
-    bgColor: "bg-blue-100"
+    color: "text-primary",
+    bgColor: "bg-primary/10"
   },
   {
     title: "Active Deliveries",

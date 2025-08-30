@@ -27,7 +27,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
       
       <div className="flex flex-col md:flex-row flex-grow mt-16">
         {leftContent && (
-          <div className="bg-blue-600 text-white p-8 flex flex-col items-center justify-between md:w-2/5">
+          <div className="bg-primary text-white p-8 flex flex-col items-center justify-between md:w-2/5">
             <div className="pt-10 md:pt-20 text-center max-w-md mx-auto">
               <h2 className="text-2xl md:text-3xl font-bold mb-4">{leftContent.title}</h2>
               <p className="text-base md:text-lg opacity-90">

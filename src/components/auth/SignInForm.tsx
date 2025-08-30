@@ -62,7 +62,7 @@ export const SignInForm = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="pl-10 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-200"
+              className="pl-10 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary/20"
               autoComplete="email"
               required
               disabled={isLoading}
@@ -83,7 +83,7 @@ export const SignInForm = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              className="pl-10 pr-10 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-200"
+              className="pl-10 pr-10 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary/20"
               autoComplete="current-password"
               required
               disabled={isLoading}
@@ -105,21 +105,21 @@ export const SignInForm = () => {
               id="remember-me"
               name="remember-me"
               type="checkbox"
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
               disabled={isLoading}
             />
             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
               Remember me
             </label>
           </div>
-          <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-500">
+          <Link to="/forgot-password" className="text-sm text-primary hover:text-primary/80">
             Forgot password?
           </Link>
         </div>
 
         <Button 
           type="submit" 
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5"
+          className="w-full bg-primary hover:bg-primary/90 text-white py-2.5"
           disabled={isLoading}
         >
           {isLoading ? "Signing In..." : "Sign In"}
@@ -178,7 +178,7 @@ export const SignInForm = () => {
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-blue-600 hover:text-blue-500 font-medium">
+          <Link to="/signup" className="text-primary hover:text-primary/80 font-medium">
             Sign up
           </Link>
         </p>

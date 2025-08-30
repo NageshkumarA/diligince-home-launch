@@ -36,7 +36,7 @@ export const getSpecializationDisplayName = (specialization: VendorSpecializatio
 // Get badge color for specialization
 export const getSpecializationBadgeColor = (specialization: VendorSpecialization): string => {
   const colors: Record<VendorSpecialization, string> = {
-    "transportation": "bg-blue-100 text-blue-800",
+    "transportation": "bg-primary/10 text-primary",
     "heavy-equipment": "bg-orange-100 text-orange-800",
     "crane-services": "bg-purple-100 text-purple-800",
     "warehouse": "bg-green-100 text-green-800",

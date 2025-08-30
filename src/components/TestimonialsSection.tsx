@@ -59,8 +59,8 @@ const TestimonialsSection = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-blue-50 p-8 rounded-lg max-w-2xl mx-auto">
-            <p className="text-center text-blue-700">
+          <div className="bg-primary/5 p-8 rounded-lg max-w-2xl mx-auto">
+            <p className="text-center text-primary">
               Testimonials will be populated with organic user data. Once users start providing feedback, their testimonials will appear here.
             </p>
           </div>

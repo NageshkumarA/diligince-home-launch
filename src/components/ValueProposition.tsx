@@ -4,17 +4,17 @@ import { Users, Wrench, Truck } from "lucide-react";
 const ValueProposition = () => {
   const values = [
     {
-      icon: <Users className="h-12 w-12 text-blue-600 mx-auto mb-4" />,
+      icon: <Users className="h-12 w-12 text-primary mx-auto mb-4" />,
       title: "Professionals",
       description: "Find verified experts fast for maintenance, operations, safety inspections, and specialized technical roles across all industrial sectors. Our platform connects you with pre-vetted professionals with proven experience.",
     },
     {
-      icon: <Wrench className="h-12 w-12 text-blue-600 mx-auto mb-4" />,
+      icon: <Wrench className="h-12 w-12 text-primary mx-auto mb-4" />,
       title: "Vendors",
       description: "Access quality services from verified vendors offering maintenance services, spare parts, equipment repairs, and specialized machinery like cranes, forklifts, and industrial tools for various plant operations.",
     },
     {
-      icon: <Truck className="h-12 w-12 text-blue-600 mx-auto mb-4" />,
+      icon: <Truck className="h-12 w-12 text-primary mx-auto mb-4" />,
       title: "Logistics",
       description: "Optimize supply chains with logistics providers offering transportation solutions, heavy equipment rentals including trucks, cranes, and bulldozers, and specialized material handling for industrial operations.",
     },

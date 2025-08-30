@@ -106,8 +106,8 @@ export const DemoAccountsInfo: React.FC<DemoAccountsInfoProps> = ({ onCredential
           ))}
         </div>
         
-        <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <p className="text-sm text-blue-700 dark:text-blue-300">
+        <div className="mt-4 p-3 bg-primary/5 dark:bg-primary/10 border border-primary/20 dark:border-primary/30 rounded-lg">
+          <p className="text-sm text-primary dark:text-primary/80">
             <strong>💡 Tip:</strong> After logging in, you'll see a role-specific sidebar with navigation items based on your user type.
           </p>
         </div>

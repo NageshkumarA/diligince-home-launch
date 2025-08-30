@@ -11,7 +11,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, color }) => {
     
     const statusLower = status.toLowerCase();
     
-    if (statusLower.includes('awaiting') || statusLower.includes('pending')) return 'bg-blue-100 text-blue-800';
+    if (statusLower.includes('awaiting') || statusLower.includes('pending')) return 'bg-primary/10 text-primary';
     if (statusLower.includes('todo')) return 'bg-purple-100 text-purple-800';
     if (statusLower.includes('condemn')) return 'bg-green-100 text-green-800';
     if (statusLower.includes('inspection')) return 'bg-orange-100 text-orange-800';

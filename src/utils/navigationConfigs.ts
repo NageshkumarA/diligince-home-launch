@@ -69,10 +69,10 @@ export const industryHeaderConfig: HeaderConfig = {
   theme: {
     bgColor: "bg-white",
     textColor: "text-gray-900",
-    hoverColor: "text-gray-600 hover:text-blue-600",
+    hoverColor: "text-gray-600 hover:text-primary",
     buttonHoverColor: "hover:bg-gray-100",
-    avatarBgColor: "bg-blue-100",
-    avatarBorderColor: "border-blue-200"
+    avatarBgColor: "bg-primary/10",
+    avatarBorderColor: "border-primary/20"
   }
 };
 
@@ -116,7 +116,7 @@ export const serviceVendorHeaderConfig: HeaderConfig = {
   theme: {
     bgColor: "bg-gray-900",
     textColor: "text-gray-50",
-    hoverColor: "text-gray-400 hover:text-blue-300",
+    hoverColor: "text-gray-400 hover:text-primary/80",
     buttonHoverColor: "hover:bg-gray-800",
     avatarBgColor: "bg-gray-700",
   }
@@ -162,7 +162,7 @@ export const productVendorHeaderConfig: HeaderConfig = {
   theme: {
     bgColor: "bg-white",
     textColor: "text-gray-900",
-    hoverColor: "text-gray-600 hover:text-blue-600",
+    hoverColor: "text-gray-600 hover:text-primary",
     buttonHoverColor: "hover:bg-gray-100",
     avatarBgColor: "bg-orange-100",
     avatarBorderColor: "border-orange-200"
@@ -204,7 +204,7 @@ export const vendorHeaderConfig: HeaderConfig = {
   theme: {
     bgColor: "bg-gray-900",
     textColor: "text-gray-50",
-    hoverColor: "text-gray-400 hover:text-blue-300",
+    hoverColor: "text-gray-400 hover:text-primary/80",
     buttonHoverColor: "hover:bg-gray-800",
     avatarBgColor: "bg-gray-700",
   }
@@ -250,10 +250,10 @@ export const logisticsVendorHeaderConfig: HeaderConfig = {
   theme: {
     bgColor: "bg-white",
     textColor: "text-gray-900",
-    hoverColor: "text-gray-600 hover:text-blue-600",
+    hoverColor: "text-gray-600 hover:text-primary",
     buttonHoverColor: "hover:bg-gray-100",
-    avatarBgColor: "bg-blue-100",
-    avatarBorderColor: "border-blue-200"
+    avatarBgColor: "bg-primary/10",
+    avatarBorderColor: "border-primary/20"
   }
 };
 
@@ -295,10 +295,10 @@ export const expertHeaderConfig: HeaderConfig = {
   theme: {
     bgColor: "bg-white",
     textColor: "text-gray-900",
-    hoverColor: "text-gray-600 hover:text-blue-600",
+    hoverColor: "text-gray-600 hover:text-primary",
     buttonHoverColor: "hover:bg-gray-100",
-    avatarBgColor: "bg-blue-100",
-    avatarBorderColor: "border-blue-200"
+    avatarBgColor: "bg-primary/10",
+    avatarBorderColor: "border-primary/20"
   }
 };
 
@@ -337,10 +337,10 @@ export const professionalHeaderConfig: HeaderConfig = {
   theme: {
     bgColor: "bg-white",
     textColor: "text-gray-900",
-    hoverColor: "text-gray-600 hover:text-blue-600",
+    hoverColor: "text-gray-600 hover:text-primary",
     buttonHoverColor: "hover:bg-gray-100",
-    avatarBgColor: "bg-blue-100",
-    avatarBorderColor: "border-blue-200"
+    avatarBgColor: "bg-primary/10",
+    avatarBorderColor: "border-primary/20"
   }
 };
 

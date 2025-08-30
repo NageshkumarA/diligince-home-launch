@@ -6,7 +6,7 @@ export const getPriorityColor = (priority: string) => {
     case "high":
       return "bg-orange-100 text-orange-800";
     case "medium":
-      return "bg-blue-100 text-blue-800";
+      return "bg-primary/10 text-primary";
     case "low":
       return "bg-gray-100 text-gray-800";
     default:
@@ -32,7 +32,7 @@ export const getStatusColor = (status: string) => {
       return "bg-yellow-100 text-yellow-800";
     case "open":
     case "available":
-      return "bg-blue-100 text-blue-800";
+      return "bg-primary/10 text-primary";
     default:
       return "bg-gray-100 text-gray-800";
   }

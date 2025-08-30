@@ -5,22 +5,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 const FeaturesSection = () => {
   const features = [
     {
-      icon: <BrainCircuit className="h-8 w-8 text-blue-600" />,
+      icon: <BrainCircuit className="h-8 w-8 text-primary" />,
       title: "AI Matching",
       description: "Our intelligent system analyzes requirements and capabilities to connect industries with the perfect service providers, considering expertise, location, availability and past performance.",
     },
     {
-      icon: <Workflow className="h-8 w-8 text-blue-600" />,
+      icon: <Workflow className="h-8 w-8 text-primary" />,
       title: "Project Management",
       description: "Track requirements, schedules and payments seamlessly with our comprehensive industrial project management tools, customized dashboards, and automated milestone tracking.",
     },
     {
-      icon: <ShieldCheck className="h-8 w-8 text-blue-600" />,
+      icon: <ShieldCheck className="h-8 w-8 text-primary" />,
       title: "Quality Control",
       description: "Verify services with real feedback and ratings from other industries, ensuring reliability through our transparent verification system and performance history tracking.",
     },
     {
-      icon: <LineChart className="h-8 w-8 text-blue-600" />,
+      icon: <LineChart className="h-8 w-8 text-primary" />,
       title: "Real-Time Tools",
       description: "Make data-driven decisions with live analytics on service performance, costs and timelines, giving you actionable insights into your industrial operations and vendor relationships.",
     },
