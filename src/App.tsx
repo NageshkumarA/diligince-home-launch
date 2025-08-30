@@ -53,6 +53,38 @@ import IndustryApprovalMatrix from '@/pages/IndustryApprovalMatrix';
 import CreateRequirement from '@/pages/CreateRequirement';
 import CreatePurchaseOrder from '@/pages/CreatePurchaseOrder';
 
+// Requirements sub-pages
+import RequirementsDrafts from '@/pages/RequirementsDrafts';
+import RequirementsPending from '@/pages/RequirementsPending';
+import RequirementsApproved from '@/pages/RequirementsApproved';
+import RequirementsPublished from '@/pages/RequirementsPublished';
+import RequirementsArchived from '@/pages/RequirementsArchived';
+
+// Quotations sub-pages
+import QuotationsPending from '@/pages/QuotationsPending';
+import QuotationsApproved from '@/pages/QuotationsApproved';
+import QuotationsComparison from '@/pages/QuotationsComparison';
+
+// Purchase Orders sub-pages
+import PurchaseOrdersPending from '@/pages/PurchaseOrdersPending';
+import PurchaseOrdersInProgress from '@/pages/PurchaseOrdersInProgress';
+import PurchaseOrdersCompleted from '@/pages/PurchaseOrdersCompleted';
+
+// Professional sub-pages
+import OpportunitiesSaved from '@/pages/OpportunitiesSaved';
+import OpportunitiesApplications from '@/pages/OpportunitiesApplications';
+import ProjectsActive from '@/pages/ProjectsActive';
+
+// Vendor sub-pages
+import VendorRFQsBrowse from '@/pages/VendorRFQsBrowse';
+
+// Workflow sub-pages
+import WorkflowsActive from '@/pages/WorkflowsActive';
+
+// Stakeholder sub-pages
+import StakeholdersVendors from '@/pages/StakeholdersVendors';
+import StakeholdersProfessionals from '@/pages/StakeholdersProfessionals';
+
 // Vendor pages
 import ServiceVendorDashboard from '@/pages/ServiceVendorDashboard';
 import ProductVendorDashboard from '@/pages/ProductVendorDashboard';
@@ -124,24 +156,51 @@ function App() {
                               <Route path="profile-completion" element={<RouteErrorBoundary><ProfileCompletion /></RouteErrorBoundary>} />
                               <Route path="stakeholder-onboarding/:token" element={<RouteErrorBoundary><StakeholderOnboarding /></RouteErrorBoundary>} />
                               
-                              {/* Industry Routes */}
-                              <Route path="industry-dashboard" element={<RouteErrorBoundary><IndustryDashboard /></RouteErrorBoundary>} />
-                              <Route path="industry-profile" element={<RouteErrorBoundary><IndustryProfile /></RouteErrorBoundary>} />
-                              <Route path="industry-requirements" element={<RouteErrorBoundary><IndustryRequirements /></RouteErrorBoundary>} />
-                              <Route path="industry-approvals" element={<RouteErrorBoundary><IndustryApprovals /></RouteErrorBoundary>} />
-                              <Route path="industry-purchase-orders" element={<RouteErrorBoundary><IndustryPurchaseOrders /></RouteErrorBoundary>} />
-                              <Route path="industry-quotes" element={<RouteErrorBoundary><IndustryQuotes /></RouteErrorBoundary>} />
-                              <Route path="industry-reports" element={<RouteErrorBoundary><IndustryReports /></RouteErrorBoundary>} />
-                              <Route path="industry-settings" element={<RouteErrorBoundary><IndustrySettings /></RouteErrorBoundary>} />
-                              <Route path="create-requirement" element={<RouteErrorBoundary><CreateRequirement /></RouteErrorBoundary>} />
-                              <Route path="create-purchase-order" element={<RouteErrorBoundary><CreatePurchaseOrder /></RouteErrorBoundary>} />
-                              <Route path="industry-workflows" element={<RouteErrorBoundary><IndustryWorkflows /></RouteErrorBoundary>} />
-                              <Route path="industry-project-workflow/:id" element={<RouteErrorBoundary><IndustryProjectWorkflow /></RouteErrorBoundary>} />
-                              <Route path="industry-stakeholders" element={<RouteErrorBoundary><IndustryStakeholders /></RouteErrorBoundary>} />
-                              <Route path="industry-documents" element={<RouteErrorBoundary><IndustryDocuments /></RouteErrorBoundary>} />
-                              <Route path="industry-messages" element={<RouteErrorBoundary><IndustryMessages /></RouteErrorBoundary>} />
-                              <Route path="industry-approval-matrix" element={<RouteErrorBoundary><IndustryApprovalMatrix /></RouteErrorBoundary>} />
-                              <Route path="work-completion-payment/:id" element={<RouteErrorBoundary><WorkCompletionPayment /></RouteErrorBoundary>} />
+                {/* Industry Routes */}
+                <Route path="industry-dashboard" element={<RouteErrorBoundary><IndustryDashboard /></RouteErrorBoundary>} />
+                <Route path="industry-profile" element={<RouteErrorBoundary><IndustryProfile /></RouteErrorBoundary>} />
+                <Route path="industry-requirements" element={<RouteErrorBoundary><IndustryRequirements /></RouteErrorBoundary>} />
+                <Route path="industry-approvals" element={<RouteErrorBoundary><IndustryApprovals /></RouteErrorBoundary>} />
+                <Route path="industry-purchase-orders" element={<RouteErrorBoundary><IndustryPurchaseOrders /></RouteErrorBoundary>} />
+                <Route path="industry-quotes" element={<RouteErrorBoundary><IndustryQuotes /></RouteErrorBoundary>} />
+                <Route path="industry-reports" element={<RouteErrorBoundary><IndustryReports /></RouteErrorBoundary>} />
+                <Route path="industry-settings" element={<RouteErrorBoundary><IndustrySettings /></RouteErrorBoundary>} />
+                <Route path="create-requirement" element={<RouteErrorBoundary><CreateRequirement /></RouteErrorBoundary>} />
+                <Route path="create-purchase-order" element={<RouteErrorBoundary><CreatePurchaseOrder /></RouteErrorBoundary>} />
+                <Route path="industry-workflows" element={<RouteErrorBoundary><IndustryWorkflows /></RouteErrorBoundary>} />
+                <Route path="industry-project-workflow/:id" element={<RouteErrorBoundary><IndustryProjectWorkflow /></RouteErrorBoundary>} />
+                <Route path="industry-stakeholders" element={<RouteErrorBoundary><IndustryStakeholders /></RouteErrorBoundary>} />
+                <Route path="industry-documents" element={<RouteErrorBoundary><IndustryDocuments /></RouteErrorBoundary>} />
+                <Route path="industry-messages" element={<RouteErrorBoundary><IndustryMessages /></RouteErrorBoundary>} />
+                <Route path="industry-approval-matrix" element={<RouteErrorBoundary><IndustryApprovalMatrix /></RouteErrorBoundary>} />
+                <Route path="work-completion-payment/:id" element={<RouteErrorBoundary><WorkCompletionPayment /></RouteErrorBoundary>} />
+                
+                {/* Requirements Sub-routes */}
+                <Route path="requirements/drafts" element={<RouteErrorBoundary><RequirementsDrafts /></RouteErrorBoundary>} />
+                <Route path="requirements/pending" element={<RouteErrorBoundary><RequirementsPending /></RouteErrorBoundary>} />
+                <Route path="requirements/approved" element={<RouteErrorBoundary><RequirementsApproved /></RouteErrorBoundary>} />
+                <Route path="requirements/published" element={<RouteErrorBoundary><RequirementsPublished /></RouteErrorBoundary>} />
+                <Route path="requirements/archived" element={<RouteErrorBoundary><RequirementsArchived /></RouteErrorBoundary>} />
+                
+                {/* Quotations Sub-routes */}
+                <Route path="quotations" element={<RouteErrorBoundary><IndustryQuotes /></RouteErrorBoundary>} />
+                <Route path="quotations/pending" element={<RouteErrorBoundary><QuotationsPending /></RouteErrorBoundary>} />
+                <Route path="quotations/approved" element={<RouteErrorBoundary><QuotationsApproved /></RouteErrorBoundary>} />
+                <Route path="quotations/comparison" element={<RouteErrorBoundary><QuotationsComparison /></RouteErrorBoundary>} />
+                
+                {/* Purchase Orders Sub-routes */}
+                <Route path="purchase-orders" element={<RouteErrorBoundary><IndustryPurchaseOrders /></RouteErrorBoundary>} />
+                <Route path="purchase-orders/pending" element={<RouteErrorBoundary><PurchaseOrdersPending /></RouteErrorBoundary>} />
+                <Route path="purchase-orders/in-progress" element={<RouteErrorBoundary><PurchaseOrdersInProgress /></RouteErrorBoundary>} />
+                <Route path="purchase-orders/completed" element={<RouteErrorBoundary><PurchaseOrdersCompleted /></RouteErrorBoundary>} />
+
+                {/* Workflow Sub-routes */}
+                <Route path="workflows" element={<RouteErrorBoundary><IndustryWorkflows /></RouteErrorBoundary>} />
+                <Route path="workflows/active" element={<RouteErrorBoundary><WorkflowsActive /></RouteErrorBoundary>} />
+
+                {/* Stakeholder Sub-routes */}
+                <Route path="stakeholders/vendors" element={<RouteErrorBoundary><StakeholdersVendors /></RouteErrorBoundary>} />
+                <Route path="stakeholders/professionals" element={<RouteErrorBoundary><StakeholdersProfessionals /></RouteErrorBoundary>} />
 
                               {/* Vendor Routes */}
                               <Route path="service-vendor-dashboard" element={<RouteErrorBoundary><ServiceVendorDashboard /></RouteErrorBoundary>} />
@@ -169,12 +228,21 @@ function App() {
                               <Route path="logistics-vendor-messages" element={<RouteErrorBoundary><LogisticsVendorMessages /></RouteErrorBoundary>} />
                               <Route path="logistics-vendor-profile" element={<RouteErrorBoundary><LogisticsVendorProfile /></RouteErrorBoundary>} />
 
-                              {/* Professional Routes */}
-                              <Route path="professional-dashboard" element={<RouteErrorBoundary><ProfessionalDashboard /></RouteErrorBoundary>} />
-                              <Route path="professional-opportunities" element={<RouteErrorBoundary><ProfessionalOpportunities /></RouteErrorBoundary>} />
-                              <Route path="professional-calendar" element={<RouteErrorBoundary><ProfessionalCalendar /></RouteErrorBoundary>} />
-                              <Route path="professional-messages" element={<RouteErrorBoundary><ProfessionalMessages /></RouteErrorBoundary>} />
-                              <Route path="professional-profile" element={<RouteErrorBoundary><ProfessionalProfile /></RouteErrorBoundary>} />
+                {/* Professional Routes */}
+                <Route path="professional-dashboard" element={<RouteErrorBoundary><ProfessionalDashboard /></RouteErrorBoundary>} />
+                <Route path="professional-opportunities" element={<RouteErrorBoundary><ProfessionalOpportunities /></RouteErrorBoundary>} />
+                <Route path="professional-calendar" element={<RouteErrorBoundary><ProfessionalCalendar /></RouteErrorBoundary>} />
+                <Route path="professional-messages" element={<RouteErrorBoundary><ProfessionalMessages /></RouteErrorBoundary>} />
+                <Route path="professional-profile" element={<RouteErrorBoundary><ProfessionalProfile /></RouteErrorBoundary>} />
+
+                {/* Professional Sub-routes */}
+                <Route path="opportunities" element={<RouteErrorBoundary><ProfessionalOpportunities /></RouteErrorBoundary>} />
+                <Route path="opportunities/saved" element={<RouteErrorBoundary><OpportunitiesSaved /></RouteErrorBoundary>} />
+                <Route path="opportunities/applications" element={<RouteErrorBoundary><OpportunitiesApplications /></RouteErrorBoundary>} />
+                <Route path="projects/active" element={<RouteErrorBoundary><ProjectsActive /></RouteErrorBoundary>} />
+
+                {/* Vendor Sub-routes */}
+                <Route path="rfqs/browse" element={<RouteErrorBoundary><VendorRFQsBrowse /></RouteErrorBoundary>} />
                               
                               {/* Test and 404 */}
                               <Route path="test" element={<RouteErrorBoundary><TestPage /></RouteErrorBoundary>} />
