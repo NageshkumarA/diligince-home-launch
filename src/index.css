@@ -300,6 +300,10 @@
     animation: pulse-subtle 2s infinite;
   }
 
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s ease-out forwards;
+  }
+
   /* Staggered animations for multiple elements */
   .stagger-item:nth-child(1) { animation-delay: 0.1s; }
   .stagger-item:nth-child(2) { animation-delay: 0.2s; }
@@ -363,6 +367,17 @@
   50% {
     opacity: 0.9;
     transform: scale(1.03);
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
   }
 }
 

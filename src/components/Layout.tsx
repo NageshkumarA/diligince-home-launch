@@ -13,8 +13,10 @@ const Layout: React.FC = () => {
   return (
     <div className="h-screen w-screen overflow-hidden flex bg-background">
       <Sidebar />
-      <main className="flex-1 h-full overflow-y-auto bg-muted/30">
-        <Outlet />
+      <main className="flex-1 h-full overflow-y-auto bg-muted/30 relative">
+        <div className="min-h-full">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

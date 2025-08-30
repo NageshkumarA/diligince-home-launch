@@ -251,19 +251,21 @@ const Sidebar: React.FC = () => {
         <>
           {/* Backdrop to close submenu */}
           <div 
-            className="fixed inset-0 z-30 bg-black bg-opacity-20" 
+            className="fixed inset-0 z-30 bg-transparent" 
             onClick={() => setActiveSubmenu(null)}
           />
           
-          {/* Submenu panel */}
-          <div className="fixed left-16 top-0 bottom-0 w-72 bg-background border-r border-border shadow-xl z-40 overflow-y-auto">
-            <div className="p-4 border-b border-border">
+          {/* Submenu panel - positioned absolutely to avoid overflow */}
+          <div className="fixed left-16 top-0 bottom-0 w-72 bg-background border border-border shadow-2xl z-50 overflow-y-auto animate-slide-in-right">
+            <div className="p-4 border-b border-border bg-muted/30">
               <h3 className="text-lg font-semibold text-foreground">
-                {menuItems.find(item => item.path === activeSubmenu)?.label}
+                {menuItems.find(item => item.path === activeSubmenu)?.label ||
+                 userProfileItems.find(item => item.path === activeSubmenu)?.label}
               </h3>
             </div>
             <div className="p-4">
-              <nav className="space-y-2">
+              <nav className="space-y-1">
+                {/* Regular menu items submenu */}
                 {menuItems
                   .find(item => item.path === activeSubmenu)
                   ?.submenu?.map((subItem, index) => (
@@ -271,13 +273,13 @@ const Sidebar: React.FC = () => {
                       key={index}
                       to={subItem.path}
                       onClick={() => setActiveSubmenu(null)}
-                      className={`flex items-center space-x-3 px-3 py-2 text-sm rounded-lg transition-colors ${
+                      className={`flex items-center space-x-3 px-3 py-3 text-sm rounded-lg transition-all duration-200 ${
                         location.pathname === subItem.path
-                          ? 'bg-accent text-accent-foreground'
-                          : 'text-foreground hover:bg-muted'
+                          ? 'bg-primary text-primary-foreground shadow-sm'
+                          : 'text-foreground hover:bg-muted hover:translate-x-1'
                       }`}
                     >
-                      <subItem.icon className="w-4 h-4" />
+                      <subItem.icon className="w-4 h-4 flex-shrink-0" />
                       <span>{subItem.label}</span>
                     </Link>
                   ))}
@@ -293,9 +295,9 @@ const Sidebar: React.FC = () => {
                           subItem.onClick!();
                           setActiveSubmenu(null);
                         }}
-                        className="flex items-center space-x-3 px-3 py-2 text-sm rounded-lg transition-colors w-full text-left text-foreground hover:bg-muted"
+                        className="flex items-center space-x-3 px-3 py-3 text-sm rounded-lg transition-all duration-200 w-full text-left text-foreground hover:bg-muted hover:translate-x-1"
                       >
-                        <subItem.icon className="w-4 h-4" />
+                        <subItem.icon className="w-4 h-4 flex-shrink-0" />
                         <span>{subItem.label}</span>
                       </button>
                     ) : (
@@ -303,13 +305,13 @@ const Sidebar: React.FC = () => {
                         key={index}
                         to={subItem.path}
                         onClick={() => setActiveSubmenu(null)}
-                        className={`flex items-center space-x-3 px-3 py-2 text-sm rounded-lg transition-colors ${
+                        className={`flex items-center space-x-3 px-3 py-3 text-sm rounded-lg transition-all duration-200 ${
                           location.pathname === subItem.path
-                            ? 'bg-accent text-accent-foreground'
-                            : 'text-foreground hover:bg-muted'
+                            ? 'bg-primary text-primary-foreground shadow-sm'
+                            : 'text-foreground hover:bg-muted hover:translate-x-1'
                         }`}
                       >
-                        <subItem.icon className="w-4 h-4" />
+                        <subItem.icon className="w-4 h-4 flex-shrink-0" />
                         <span>{subItem.label}</span>
                       </Link>
                     )

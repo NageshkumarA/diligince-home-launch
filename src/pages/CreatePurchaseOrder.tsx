@@ -15,7 +15,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PurchaseOrderStepIndicator from '@/components/purchase-order/PurchaseOrderStepIndicator';
-import IndustryHeader from '@/components/industry/IndustryHeader';
 import { ISO9001TermsSection } from '@/components/industry/workflow/ISO9001TermsSection';
 import POReviewStep from '@/components/purchase-order/POReviewStep';
 
@@ -430,10 +429,10 @@ const CreatePurchaseOrder: React.FC = () => {
                 • Delivered to {vendors.find(v => v.id === reviewData.vendor)?.name || 'the vendor'}<br/>
                 • Workflow will begin tracking
               </p>
-            </div>
-          </div>
         </div>
-      );
+      </div>
+    </div>
+  );
     }
 
     // Default - PO Details Step (Step 3)
@@ -834,10 +833,8 @@ const CreatePurchaseOrder: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <IndustryHeader />
-
-      <main className="flex-1 container max-w-7xl mx-auto px-4 py-8 pt-20">
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Purchase Order</h1>
           <p className="text-gray-700 text-lg">Enterprise-grade purchase order management</p>
@@ -921,7 +918,7 @@ const CreatePurchaseOrder: React.FC = () => {
             </div>
           </div>
         </Form>
-      </main>
+      </div>
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import React, { Suspense, memo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
-import IndustryHeader from "@/components/industry/IndustryHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -293,11 +292,13 @@ const DashboardContainer = memo(() => {
     approval => approval.approverRole === currentUserRole
   );
 
-  return <main className="flex-1 container mx-auto px-4 py-8 pt-20">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Industry Dashboard</h1>
-        <p className="text-gray-700 text-lg">Welcome back to your procurement dashboard</p>
-      </div>
+  return (
+    <main className="p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Industry Dashboard</h1>
+          <p className="text-gray-700 text-lg">Welcome back to your procurement dashboard</p>
+        </div>
       
       {/* Quick Actions Section - ISO 9001 Compliant Flow */}
       <div className="mb-8">
@@ -731,7 +732,9 @@ const DashboardContainer = memo(() => {
           onReject={handleReject}
         />
       )}
-    </main>;
+      </div>
+    </main>
+  );
 });
 
 DashboardContainer.displayName = "DashboardContainer";
@@ -745,15 +748,15 @@ const IndustryDashboard = () => {
     perfUtils.measureCoreWebVitals();
   }, []);
   
-  return <div className="min-h-screen flex flex-col bg-gray-50">
+  return (
+    <div className="min-h-screen bg-gray-50">
       <Helmet>
         <title>Industry Dashboard | Diligince.ai</title>
       </Helmet>
       
-      <IndustryHeader />
-      
       <DashboardContainer />
-    </div>;
+    </div>
+  );
 };
 
 export default memo(IndustryDashboard);
