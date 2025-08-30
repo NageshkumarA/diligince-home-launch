@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import IndustryHeader from '@/components/industry/IndustryHeader';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Search, Filter, Eye, Edit, Trash2, FileText, Calendar, DollarSign } from 'lucide-react';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import CustomTable, { ColumnConfig, FilterConfig } from '@/components/CustomTable';
 
 const IndustryRequirements = () => {
   const navigate = useNavigate();
@@ -64,21 +59,106 @@ const IndustryRequirements = () => {
   };
 
   const handleCreateRequirement = () => {
-    // Navigate to the create requirement page
-    navigate('/create-industry-requirement');
+    navigate('/create-requirement');
+  };
+
+  // Define columns for CustomTable
+  const columns: ColumnConfig[] = [
+    {
+      name: 'id',
+      label: 'Requirement ID',
+      isSortable: true,
+      isSearchable: true,
+      action: (row) => handleViewRequirement(row.id),
+      width: '32',
+    },
+    {
+      name: 'title',
+      label: 'Title',
+      isSortable: true,
+      isSearchable: true,
+    },
+    {
+      name: 'category',
+      label: 'Category',
+      isSortable: true,
+      isSearchable: true,
+      isFilterable: true,
+      filterOptions: [
+        { key: 'Equipment', value: 'Equipment' },
+        { key: 'Services', value: 'Services' },
+        { key: 'Professional Services', value: 'Professional Services' },
+        { key: 'Logistics', value: 'Logistics' },
+      ],
+    },
+    {
+      name: 'priority',
+      label: 'Priority',
+      isSortable: true,
+      isFilterable: true,
+      filterOptions: [
+        { key: 'High', value: 'High', color: '#fecaca' },
+        { key: 'Medium', value: 'Medium', color: '#fed7aa' },
+        { key: 'Low', value: 'Low', color: '#bbf7d0' },
+      ],
+    },
+    {
+      name: 'status',
+      label: 'Status',
+      isSortable: true,
+      isFilterable: true,
+      filterOptions: [
+        { key: 'Active', value: 'Active', color: '#bbf7d0' },
+        { key: 'Draft', value: 'Draft', color: '#e5e7eb' },
+        { key: 'Completed', value: 'Completed', color: '#dcfce7' },
+        { key: 'Pending', value: 'Pending', color: '#fef3c7' },
+      ],
+    },
+    {
+      name: 'budget',
+      label: 'Budget',
+      isSortable: true,
+      render: (value) => `$${value.toLocaleString()}`,
+      align: 'right' as const,
+    },
+    {
+      name: 'deadline',
+      label: 'Deadline',
+      isSortable: true,
+      isSearchable: true,
+    },
+  ];
+
+  // Handle callbacks
+  const handleFilterCallback = (filters: FilterConfig) => {
+    console.log('Applied filters:', filters);
+  };
+
+  const handleSearchCallback = (searchTerm: string, selectedColumns: string[]) => {
+    console.log('Search term:', searchTerm, 'Columns:', selectedColumns);
+  };
+
+  const handleRowClick = (row: any) => {
+    handleViewRequirement(row.id);
+  };
+
+  const handleExportXLSX = () => {
+    console.log('Exporting to XLSX...');
+  };
+
+  const handleExportCSV = () => {
+    console.log('Exporting to CSV...');
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <IndustryHeader />
-      
-      <main className="flex-1 container max-w-7xl mx-auto px-4 py-8 pt-20">
+    <div className="min-h-screen flex flex-col bg-gray-50">      
+      <main className="flex-1 container max-w-7xl mx-auto px-4 py-8">
         {/* Header Section */}
         <div className="mb-8">
           <Breadcrumb className="mb-6">
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/" className="cursor-pointer text-blue-600 hover:text-blue-700">
+                <BreadcrumbLink href="/industry-dashboard" className="cursor-pointer text-primary hover:text-primary-dark">
                   Dashboard
                 </BreadcrumbLink>
               </BreadcrumbItem>
@@ -96,92 +176,29 @@ const IndustryRequirements = () => {
                 Manage and track your project requirements.
               </p>
             </div>
-            <Button onClick={handleCreateRequirement} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Create Requirement
-            </Button>
           </div>
         </div>
 
-        {/* Search and Filter Section */}
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-              <input
-                type="text"
-                placeholder="Search requirements..."
-                className="pl-10 pr-4 py-2 border rounded-md w-full max-w-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <Button variant="outline" className="flex items-center gap-2 border-gray-300 text-gray-700 hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </Button>
-          </div>
-        </div>
-
-        {/* Requirements Table */}
-        <Card className="bg-white shadow-sm border border-gray-200">
-          <CardHeader className="py-4 px-5 border-b border-gray-100">
-            <CardTitle className="text-lg font-semibold text-gray-800">
-              Requirement List
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead className="font-semibold text-gray-700">Title</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Category</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Priority</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Status</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Budget</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Deadline</TableHead>
-                  <TableHead className="font-semibold text-gray-700 text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {requirements.map((requirement) => (
-                  <TableRow key={requirement.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium text-gray-900">{requirement.title}</TableCell>
-                    <TableCell className="text-gray-600">{requirement.category}</TableCell>
-                    <TableCell className="text-gray-600">{requirement.priority}</TableCell>
-                    <TableCell className="text-gray-600">{requirement.status}</TableCell>
-                    <TableCell className="text-gray-600">${requirement.budget.toLocaleString()}</TableCell>
-                    <TableCell className="text-gray-600">{requirement.deadline}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="border-gray-300 text-gray-500 hover:bg-gray-50"
-                          onClick={() => handleViewRequirement(requirement.id)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="border-gray-300 text-gray-500 hover:bg-gray-50"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="border-gray-300 text-gray-500 hover:bg-gray-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        {/* Custom Table */}
+        <CustomTable
+          columns={columns}
+          data={requirements}
+          filterCallback={handleFilterCallback}
+          searchCallback={handleSearchCallback}
+          onRowClick={handleRowClick}
+          onExport={{
+            xlsx: handleExportXLSX,
+            csv: handleExportCSV,
+          }}
+          onAdd={handleCreateRequirement}
+          selectable={true}
+          globalSearchPlaceholder="Search requirements..."
+          pagination={{
+            enabled: true,
+            pageSize: 10,
+            currentPage: 1,
+          }}
+        />
       </main>
     </div>
   );
