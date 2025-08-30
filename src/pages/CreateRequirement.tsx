@@ -111,7 +111,6 @@ const CreateRequirement = () => {
         <StakeholderProvider>
           <RequirementProvider>
             <div className="flex min-h-screen flex-col bg-gray-50">
-              <IndustryHeader />
               <div className="container mx-auto px-4 py-8 md:px-6 pt-20">
                 <div className="mb-8">
                   <div className="flex items-center justify-between">
