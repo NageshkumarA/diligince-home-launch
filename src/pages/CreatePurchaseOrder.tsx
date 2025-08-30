@@ -87,25 +87,8 @@ const usePOFormData = (form: UseFormReturn<FormValues>) => {
       return null;
     }
     
-    // Return properly typed FormValues object with all required fields
-    const validatedData: FormValues = {
-      poNumber: values.poNumber,
-      vendor: values.vendor,
-      projectTitle: values.projectTitle,
-      orderValue: values.orderValue || 0,
-      taxPercentage: values.taxPercentage || 0,
-      totalValue: values.totalValue || 0,
-      startDate: values.startDate,
-      endDate: values.endDate,
-      paymentTerms: values.paymentTerms,
-      specialInstructions: values.specialInstructions || "",
-      scopeOfWork: values.scopeOfWork,
-      deliverables: values.deliverables || [],
-      paymentMilestones: values.paymentMilestones || [],
-      acceptanceCriteria: values.acceptanceCriteria || []
-    };
-    
-    return validatedData;
+    // After validation, we can safely cast - all required fields are guaranteed to exist
+    return values as FormValues;
   }, [form]);
   
   // Create complete PO data for final submission
@@ -406,7 +389,7 @@ const CreatePurchaseOrder: React.FC = () => {
       
       return (
         <POReviewStep
-          formData={reviewData as FormValues}
+          formData={reviewData as any}
           selectedISOTerms={selectedISOTerms}
           customISOTerms={customISOTerms}
           vendors={vendors}

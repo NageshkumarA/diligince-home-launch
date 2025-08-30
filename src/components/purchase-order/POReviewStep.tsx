@@ -18,7 +18,13 @@ interface FormValues {
   specialInstructions?: string;
   scopeOfWork: string;
   deliverables: Array<{ id: string; description: string }>;
-  acceptanceCriteria: Array<{ id: string; description: string }>;
+  paymentMilestones: Array<{
+    id: string;
+    description: string;
+    percentage: number;
+    dueDate: Date;
+  }>;
+  acceptanceCriteria: Array<{ id: string; criteria: string }>;
 }
 
 interface POReviewStepProps {
@@ -169,7 +175,7 @@ const POReviewStep: React.FC<POReviewStepProps> = ({
                 {formData.acceptanceCriteria.map((criteria, index) => (
                   <li key={criteria.id} className="flex items-start gap-2">
                     <Badge variant="outline" className="mt-1">{index + 1}</Badge>
-                    <span className="text-gray-900">{criteria.description}</span>
+                    <span className="text-gray-900">{criteria.criteria}</span>
                   </li>
                 ))}
               </ul>

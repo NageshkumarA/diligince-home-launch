@@ -1,13 +1,16 @@
 
 export interface FormValues {
+  poNumber: string;
   vendor: string;
   projectTitle: string;
-  poNumber: string;
   orderValue: number;
   taxPercentage: number;
   totalValue: number;
   startDate: Date;
   endDate: Date;
+  paymentTerms: string;
+  specialInstructions?: string;
+  scopeOfWork: string;
   deliverables: {
     id: string;
     description: string;
