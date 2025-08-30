@@ -105,27 +105,33 @@ const Index: React.FC = () => {
         <div className="bg-white/60 backdrop-blur-lg border border-white/20 shadow-lg rounded-2xl w-[80%]">
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <div className="flex items-center space-x-2">
+              <Link to="/" className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-[#2F80ED] rounded-md flex items-center justify-center font-bold text-white">
-                  <img src='./logo-main-no-bg.svg'></img>
+                  <img src="/logo-main-no-bg.svg" alt="Diligence.ai" />
                 </div>
                 <span className="text-xl font-bold text-[#1A2A4F]">Diligence.ai</span>
-              </div>
-              <div>
-              {/* Navigation Menu */}
-              <nav className="hidden md:flex items-center space-x-8">
-                <a href="/aboutus" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">About-Us</a>
-                <a href="/pricing" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Pricing</a>
-                <a href="/contact" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Contact</a>
-              </nav>
-
-              <Link
-                to="/signin"
-                className="bg-gradient-to-r from-[#1A2A4F] to-[#2F80ED] text-white px-6 py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 font-medium"
-              >
-                Start Free Trial
               </Link>
-                </div>
+              <div className="flex items-center space-x-6">
+                {/* Navigation Menu */}
+                <nav className="hidden md:flex items-center space-x-8">
+                  <Link to="/about" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">
+                    About
+                  </Link>
+                  <Link to="/pricing" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">
+                    Pricing
+                  </Link>
+                  <Link to="/contact" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">
+                    Contact
+                  </Link>
+                </nav>
+
+                <Link
+                  to="/signin"
+                  className="bg-gradient-to-r from-[#1A2A4F] to-[#2F80ED] text-white px-6 py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 font-medium"
+                >
+                  Start Free Trial
+                </Link>
+              </div>
             </div>
           </div>
         </div>
