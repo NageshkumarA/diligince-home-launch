@@ -1,6 +1,7 @@
 
 import React, { useRef, useState } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
+import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -98,7 +99,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
 
   const getFileIcon = (type: string) => {
     if (type.startsWith("image/")) {
-      return <ImageIcon className="h-6 w-6 text-blue-500" />;
+      return <ImageIcon className="h-6 w-6 text-primary" />;
     } else if (
       type === "application/pdf" ||
       type === "application/msword" ||
@@ -135,9 +136,9 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900">Supporting Documents</h2>
+        <h2 className="text-2xl font-bold text-gray-900">{steps[2].name}</h2>
         <p className="text-gray-600">
-          Upload any relevant documents for your requirement
+          {steps[2].description}
         </p>
       </div>
 
@@ -147,7 +148,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
             <div
               className={`flex h-32 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors ${
                 dragActive
-                  ? "border-blue-400 bg-blue-50"
+                  ? "border-primary bg-primary/5"
                   : "border-gray-300 hover:bg-gray-50"
               }`}
               onDragEnter={handleDrag}
@@ -214,7 +215,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
                       href={doc.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="rounded-md px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50"
+                      className="rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-primary/5"
                     >
                       View
                     </a>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { useStakeholder } from "@/contexts/StakeholderContext";
 import { useApproval } from "@/contexts/ApprovalContext";
+import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -142,9 +143,9 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900">Publish Requirement</h2>
+        <h2 className="text-2xl font-bold text-gray-900">{steps[5].name}</h2>
         <p className="text-gray-600">
-          Configure final settings and publish your requirement. Relevant stakeholders will be automatically notified.
+          {steps[5].description}
         </p>
         
         {/* Approval Status Display */}
@@ -324,11 +325,11 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
               </Label>
               <p className="text-sm text-gray-500">
                 I acknowledge that I have read and agree to the{" "}
-                <a href="/terms" className="text-blue-600 hover:underline">
+                <a href="/terms" className="text-primary hover:underline">
                   Terms of Service
                 </a>{" "}
                 and{" "}
-                <a href="/privacy" className="text-blue-600 hover:underline">
+                <a href="/privacy" className="text-primary hover:underline">
                   Privacy Policy
                 </a>
                 .
@@ -373,7 +374,6 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
           <Button 
             onClick={handlePublish}
             disabled={isPublishing || !approvalCheck.canPublish}
-            className="bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400"
           >
             {isPublishing ? "Publishing..." : "Publish & Notify Stakeholders"}
           </Button>

@@ -1,5 +1,6 @@
 import React from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
+import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -110,13 +111,13 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Basic Information</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{steps[0].name}</h2>
             <p className="text-gray-600 mt-1">
-              Provide essential details for your procurement requirement
+              {steps[0].description}
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
               Step 1 of 6
             </Badge>
           </div>
@@ -164,9 +165,9 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
                       key={category.id} 
                       className={`relative cursor-pointer rounded-lg border-2 p-4 transition-all hover:shadow-md bg-white ${
                         formData.category === category.id 
-                          ? "border-blue-500 bg-blue-50 shadow-sm" 
+                          ? "border-primary bg-primary/5 shadow-sm" 
                           : "border-gray-200 hover:border-gray-300"
-                      }`} 
+                      }`}
                       onClick={() => updateFormData({ category: category.id as any })}
                     >
                       <div className="flex items-start gap-3">
@@ -293,9 +294,9 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
                       key={priority.value} 
                       className={`cursor-pointer rounded-lg border p-3 transition-all hover:shadow-sm bg-white ${
                         formData.priority === priority.value 
-                          ? "border-blue-500 bg-blue-50" 
+                          ? "border-primary bg-primary/5" 
                           : "border-gray-200 hover:border-gray-300"
-                      }`} 
+                      }`}
                       onClick={() => updateFormData({ priority: priority.value as any })}
                     >
                       <div className="flex items-center justify-between">
@@ -335,7 +336,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
                   </Label>
                   <p className="text-xs text-orange-600">Requires expedited processing</p>
                 </div>
-                <Switch id="urgency" checked={formData.urgency} onCheckedChange={checked => updateFormData({ urgency: checked })} className="bg-blue-700 hover:bg-blue-600 text-gray-300" />
+                <Switch id="urgency" checked={formData.urgency} onCheckedChange={checked => updateFormData({ urgency: checked })} />
               </div>
             </CardContent>
           </Card>
@@ -375,7 +376,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
                   </Label>
                   <p className="text-xs text-green-600">Budget already approved by finance</p>
                 </div>
-                <Switch id="budgetApproved" checked={formData.budgetApproved} onCheckedChange={checked => updateFormData({ budgetApproved: checked })} className="bg-blue-700 hover:bg-blue-600 text-gray-300" />
+                <Switch id="budgetApproved" checked={formData.budgetApproved} onCheckedChange={checked => updateFormData({ budgetApproved: checked })} />
               </div>
 
               <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
@@ -385,7 +386,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
                   </Label>
                   <p className="text-xs text-blue-600">Subject to regulatory compliance</p>
                 </div>
-                <Switch id="complianceRequired" checked={formData.complianceRequired} onCheckedChange={checked => updateFormData({ complianceRequired: checked })} className="bg-blue-700 hover:bg-blue-600 text-gray-300" />
+                <Switch id="complianceRequired" checked={formData.complianceRequired} onCheckedChange={checked => updateFormData({ complianceRequired: checked })} />
               </div>
             </CardContent>
           </Card>
@@ -394,11 +395,11 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
 
       {/* Action Buttons */}
       <div className="flex items-center justify-between pt-6 border-t">
-        <Button variant="outline" onClick={handleSaveDraft} className="flex items-center gap-2 bg-blue-700 hover:bg-blue-600">
+        <Button variant="outline" onClick={handleSaveDraft} className="flex items-center gap-2">
           <FileText className="h-4 w-4" />
           Save as Draft
         </Button>
-        <Button onClick={handleNext} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 font-medium">
+        <Button onClick={handleNext} size="lg" className="px-8 font-medium">
           Continue to Details
         </Button>
       </div>

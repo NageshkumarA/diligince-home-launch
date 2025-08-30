@@ -18,7 +18,7 @@ interface StepIndicatorProps {
   onStepClick: (step: StepType) => void;
 }
 
-const steps = [
+export const steps = [
   { 
     id: 1, 
     name: "Basic Info", 
@@ -126,8 +126,8 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
                       className={cn(
                         "w-12 h-12 rounded-full border-2 flex items-center justify-center transition-colors duration-200",
                         status === "completed" && "bg-green-500 border-green-500 text-white",
-                        status === "current" && "bg-blue-500 border-blue-500 text-white",
-                        status === "upcoming" && isAccessible && "bg-white border-gray-300 text-gray-600 hover:border-blue-400",
+                        status === "current" && "bg-primary border-primary text-primary-foreground",
+                        status === "upcoming" && isAccessible && "bg-white border-gray-300 text-gray-600 hover:border-primary",
                         status === "upcoming" && !isAccessible && "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
                       )}
                     >
@@ -142,14 +142,11 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
                       <h3 className={cn(
                         "text-sm font-medium",
                         status === "completed" && "text-green-600",
-                        status === "current" && "text-blue-600",
+                        status === "current" && "text-primary",
                         status === "upcoming" && "text-gray-500"
                       )}>
                         {step.name}
                       </h3>
-                      <p className="text-xs text-gray-400 mt-1 max-w-24">
-                        {step.description}
-                      </p>
                     </div>
                   </div>
 
@@ -186,7 +183,7 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
               </p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-primary">
                 {Math.round(((currentStep - 1) / (steps.length - 1)) * 100)}%
               </div>
               <div className="text-xs text-gray-500">Complete</div>
@@ -196,7 +193,7 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
           {/* Mobile progress bar */}
           <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
             <div 
-              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+              className="bg-primary h-2 rounded-full transition-all duration-300"
               style={{ width: `${Math.max(8, ((currentStep - 1) / (steps.length - 1)) * 100)}%` }}
             />
           </div>
@@ -213,7 +210,7 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
                   className={cn(
                     "w-3 h-3 rounded-full transition-colors duration-200",
                     status === "completed" && "bg-green-500",
-                    status === "current" && "bg-blue-500",
+                    status === "current" && "bg-primary",
                     status === "upcoming" && "bg-gray-300"
                   )}
                 />

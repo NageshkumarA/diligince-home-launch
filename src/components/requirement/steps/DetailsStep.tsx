@@ -1,5 +1,6 @@
 import React from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
+import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -96,9 +97,9 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-gray-900">Requirement Details</h2>
+        <h2 className="text-2xl font-bold text-gray-900">{steps[1].name}</h2>
         <p className="text-gray-600">
-          Complete the specific details for your {formData.category} requirement
+          {steps[1].description}
         </p>
       </div>
 
@@ -732,7 +733,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
         >
           Previous
         </Button>
-        <Button onClick={handleNext} className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
+        <Button onClick={handleNext}>
           Next
         </Button>
       </div>

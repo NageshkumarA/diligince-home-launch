@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { useApproval } from "@/contexts/ApprovalContext";
+import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -93,9 +94,9 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900">Approval Workflow</h2>
+        <h2 className="text-2xl font-bold text-gray-900">{steps[3].name}</h2>
         <p className="text-gray-600">
-          Configure the approval process for your requirement based on ISO 9001 standards.
+          {steps[3].description}
         </p>
       </div>
 
@@ -124,7 +125,7 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-primary">
                 ${(formData.budget || 0).toLocaleString()}
               </div>
               <div className="text-sm text-gray-500">Budget</div>
@@ -189,8 +190,8 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
                   {approvalWorkflow.approvalRequests.map((request: any, index: number) => (
                     <div key={request.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100">
-                          <User className="h-4 w-4 text-blue-600" />
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                        <User className="h-4 w-4 text-primary" />
                         </div>
                         <div>
                           <div className="font-medium text-gray-900">{request.approverName}</div>
@@ -323,7 +324,7 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
                   <p className="text-gray-600 mb-4">
                     Click the button below to create and initiate the approval workflow for this requirement.
                   </p>
-                  <Button onClick={handleCreateWorkflow} className="bg-blue-600 hover:bg-blue-700">
+                  <Button onClick={handleCreateWorkflow}>
                     Create Approval Workflow
                   </Button>
                 </div>
@@ -372,7 +373,6 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = ({ onNext, onP
           <Button 
             onClick={onNext}
             disabled={requiresApproval && !workflowCreated}
-            className="bg-blue-600 text-white hover:bg-blue-700"
           >
             Continue to Preview
           </Button>

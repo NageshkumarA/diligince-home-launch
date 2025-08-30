@@ -1,6 +1,7 @@
 
 import React from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
+import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
@@ -23,7 +24,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
   const getCategoryIcon = () => {
     switch (formData.category) {
       case "expert":
-        return <User className="h-5 w-5 text-blue-600" />;
+        return <User className="h-5 w-5 text-primary" />;
       case "product":
         return <Package className="h-5 w-5 text-green-600" />;
       case "service":
@@ -48,9 +49,9 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900">Preview Requirement</h2>
+        <h2 className="text-2xl font-bold text-gray-900">{steps[4].name}</h2>
         <p className="text-gray-600">
-          Review all details before publishing your requirement
+          {steps[4].description}
         </p>
       </div>
 
@@ -61,7 +62,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-8 gap-1 text-gray-500 hover:text-blue-600"
+            className="h-8 gap-1 text-gray-500 hover:text-primary"
             onClick={() => onEdit(1)}
           >
             <Edit className="h-4 w-4" />
@@ -90,7 +91,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-8 gap-1 text-gray-500 hover:text-blue-600"
+            className="h-8 gap-1 text-gray-500 hover:text-primary"
             onClick={() => onEdit(2)}
           >
             <Edit className="h-4 w-4" />
@@ -255,7 +256,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-8 gap-1 text-gray-500 hover:text-blue-600"
+            className="h-8 gap-1 text-gray-500 hover:text-primary"
             onClick={() => onEdit(3)}
           >
             <Edit className="h-4 w-4" />
@@ -272,7 +273,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
                   key={doc.id}
                   className="flex items-center gap-3 rounded-md border p-3"
                 >
-                  <File className="h-5 w-5 text-blue-600" />
+                  <File className="h-5 w-5 text-primary" />
                   <div className="flex-1 truncate">
                     <p className="font-medium text-gray-900 truncate">{doc.name}</p>
                     <p className="text-xs text-gray-500 capitalize">{doc.documentType}</p>
@@ -281,7 +282,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
                     href={doc.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs font-medium text-blue-600 hover:underline"
+                    className="text-xs font-medium text-primary hover:underline"
                   >
                     View
                   </a>
