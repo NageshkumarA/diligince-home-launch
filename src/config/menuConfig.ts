@@ -169,7 +169,10 @@ export const menuConfig: MenuConfig = {
         { icon: Shield, label: 'Approval Matrix', path: '/industry-approval-matrix' },
         { icon: CreditCard, label: 'Payment Settings', path: '/settings/payments' },
         { icon: Workflow, label: 'Workflow Templates', path: '/settings/workflows' },
-        { icon: Database, label: 'Data Management', path: '/settings/data' }
+        { icon: Database, label: 'Data Management', path: '/settings/data' },
+        { icon: User, label: 'Personal Info', path: '/settings/personal' },
+        { icon: Bell, label: 'Notifications', path: '/settings/notifications' },
+        { icon: Shield, label: 'Privacy & Security', path: '/settings/privacy' }
       ]
     }
   ],
@@ -323,7 +326,10 @@ export const menuConfig: MenuConfig = {
         { icon: Building, label: 'Company Profile', path: '/service-vendor-profile' },
         { icon: Zap, label: 'Services & Skills', path: '/settings/services' },
         { icon: CreditCard, label: 'Payment Settings', path: '/settings/payments' },
-        { icon: Award, label: 'Certifications', path: '/settings/certifications' }
+        { icon: Award, label: 'Certifications', path: '/settings/certifications' },
+        { icon: User, label: 'Personal Info', path: '/settings/personal' },
+        { icon: Bell, label: 'Notifications', path: '/settings/notifications' },
+        { icon: Shield, label: 'Privacy & Security', path: '/settings/privacy' }
       ]
     }
   ],
