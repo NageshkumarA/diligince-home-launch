@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import PublicHeader from "../components/PublicHeader";
 import Footer from "../components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -10,7 +10,7 @@ const BlogArticle = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <PublicHeader />
       <main className="flex-grow pt-24 pb-16">
         <section className="py-12">
           <div className="container mx-auto px-4 md:px-8 max-w-4xl">

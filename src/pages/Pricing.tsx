@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import PublicHeader from "../components/PublicHeader";
 import Footer from "../components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,7 +29,7 @@ const Pricing = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Navbar />
+      <PublicHeader />
       <main className="flex-grow pt-24 pb-16">
         <section className="py-12">
           <div className="container mx-auto px-4 md:px-8">

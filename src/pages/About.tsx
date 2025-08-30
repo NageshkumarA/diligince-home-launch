@@ -1,12 +1,12 @@
 
-import Navbar from "../components/Navbar";
+import PublicHeader from "../components/PublicHeader";
 import Footer from "../components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 
 const About = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <PublicHeader />
       <main className="flex-grow pt-24 pb-16">
         <section className="py-12 bg-gray-50">
           <div className="container mx-auto px-4 md:px-8">
