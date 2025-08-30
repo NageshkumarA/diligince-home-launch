@@ -39,6 +39,11 @@ import WorkCompletionPayment from '@/pages/WorkCompletionPayment';
 import IndustryDashboard from '@/pages/IndustryDashboard';
 import IndustryProfile from '@/pages/IndustryProfile';
 import IndustryRequirements from '@/pages/IndustryRequirements';
+import IndustryApprovals from '@/pages/IndustryApprovals';
+import IndustryPurchaseOrders from '@/pages/IndustryPurchaseOrders';
+import IndustryQuotes from '@/pages/IndustryQuotes';
+import IndustryReports from '@/pages/IndustryReports';
+import IndustrySettings from '@/pages/IndustrySettings';
 import IndustryWorkflows from '@/pages/IndustryWorkflows';
 import IndustryProjectWorkflow from '@/pages/IndustryProjectWorkflow';
 import IndustryStakeholders from '@/pages/IndustryStakeholders';
@@ -123,6 +128,11 @@ function App() {
                               <Route path="industry-dashboard" element={<RouteErrorBoundary><IndustryDashboard /></RouteErrorBoundary>} />
                               <Route path="industry-profile" element={<RouteErrorBoundary><IndustryProfile /></RouteErrorBoundary>} />
                               <Route path="industry-requirements" element={<RouteErrorBoundary><IndustryRequirements /></RouteErrorBoundary>} />
+                              <Route path="industry-approvals" element={<RouteErrorBoundary><IndustryApprovals /></RouteErrorBoundary>} />
+                              <Route path="industry-purchase-orders" element={<RouteErrorBoundary><IndustryPurchaseOrders /></RouteErrorBoundary>} />
+                              <Route path="industry-quotes" element={<RouteErrorBoundary><IndustryQuotes /></RouteErrorBoundary>} />
+                              <Route path="industry-reports" element={<RouteErrorBoundary><IndustryReports /></RouteErrorBoundary>} />
+                              <Route path="industry-settings" element={<RouteErrorBoundary><IndustrySettings /></RouteErrorBoundary>} />
                               <Route path="create-requirement" element={<RouteErrorBoundary><CreateRequirement /></RouteErrorBoundary>} />
                               <Route path="create-purchase-order" element={<RouteErrorBoundary><CreatePurchaseOrder /></RouteErrorBoundary>} />
                               <Route path="industry-workflows" element={<RouteErrorBoundary><IndustryWorkflows /></RouteErrorBoundary>} />

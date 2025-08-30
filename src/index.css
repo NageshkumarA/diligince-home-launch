@@ -4,57 +4,68 @@
 
 @layer base {
   :root {
+    /* Light mode colors based on #1a365d primary */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
+    --foreground: 210 40% 15%;
+    
+    /* Primary - Navy Blue (#1a365d) */
+    --primary: 210 65% 23%;
+    --primary-foreground: 0 0% 98%;
+    
+    /* Secondary - Light variant */
+    --secondary: 210 40% 93%;
+    --secondary-foreground: 210 65% 23%;
+    
+    /* Muted backgrounds */
+    --muted: 210 40% 96%;
+    --muted-foreground: 210 25% 40%;
+    
+    /* Accents */
+    --accent: 210 40% 93%;
+    --accent-foreground: 210 65% 23%;
+    
+    /* Borders and rings */
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 210 65% 23%;
+    
+    /* Card styling */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card-foreground: 210 40% 15%;
+    
+    /* Popover styling */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 15%;
+    
+    /* Destructive states */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --primary: 211 69% 20%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 211 39% 23%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 211 50% 15%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 211 69% 20%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 211 69% 20%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 211 50% 15%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 211 39% 23%;
-    --sidebar-ring: 211 69% 35%;
+    /* Radius */
+    --radius: 0.75rem;
+    
+    /* Sidebar colors */
+    --sidebar-background: 210 65% 18%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 210 65% 23%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 210 65% 25%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 210 65% 30%;
+    --sidebar-ring: 210 65% 23%;
 
     /* User Type Color Tokens */
-    --industry-50: 259 100% 98%;
-    --industry-100: 258 100% 94%;
-    --industry-200: 258 96% 87%;
-    --industry-300: 258 94% 77%;
-    --industry-400: 258 92% 65%;
-    --industry-500: 258 90% 53%;
-    --industry-600: 258 83% 47%;
-    --industry-700: 258 75% 42%;
-    --industry-800: 258 69% 35%;
-    --industry-900: 258 66% 29%;
-    --industry-foreground: 0 0% 100%;
+    --industry-50: 210 100% 97%;
+    --industry-100: 210 95% 92%;
+    --industry-200: 210 85% 82%;
+    --industry-300: 210 75% 72%;
+    --industry-400: 210 65% 55%;
+    --industry-500: 210 65% 23%;
+    --industry-600: 210 75% 18%;
+    --industry-700: 210 85% 13%;
+    --industry-800: 210 95% 10%;
+    --industry-900: 210 100% 7%;
+    --industry-foreground: 0 0% 98%;
 
     --professional-50: 258 100% 98%;
     --professional-100: 258 100% 94%;
@@ -68,17 +79,17 @@
     --professional-900: 258 66% 29%;
     --professional-foreground: 0 0% 100%;
 
-    --vendor-50: 120 60% 98%;
-    --vendor-100: 120 60% 93%;
-    --vendor-200: 120 58% 85%;
-    --vendor-300: 120 56% 74%;
-    --vendor-400: 120 53% 62%;
-    --vendor-500: 120 50% 51%;
-    --vendor-600: 120 43% 45%;
-    --vendor-700: 120 37% 39%;
-    --vendor-800: 120 32% 32%;
-    --vendor-900: 120 28% 26%;
-    --vendor-foreground: 0 0% 100%;
+    --vendor-50: 24 100% 96%;
+    --vendor-100: 24 100% 88%;
+    --vendor-200: 24 100% 76%;
+    --vendor-300: 24 100% 64%;  
+    --vendor-400: 24 100% 45%;
+    --vendor-500: 24 100% 36%;
+    --vendor-600: 24 100% 29%;
+    --vendor-700: 24 100% 22%;
+    --vendor-800: 24 100% 16%;
+    --vendor-900: 24 100% 10%;
+    --vendor-foreground: 0 0% 98%;
 
     --admin-50: 0 86% 98%;
     --admin-100: 0 86% 93%;
@@ -96,7 +107,7 @@
     --status-success: 142 76% 36%;
     --status-warning: 45 93% 47%;
     --status-error: 0 84% 60%;
-    --status-info: 221 83% 53%;
+    --status-info: 210 65% 23%;
     --status-pending: 45 93% 62%;
   }
 
