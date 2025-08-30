@@ -107,16 +107,14 @@ const Index: React.FC = () => {
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-[#2F80ED] rounded-md flex items-center justify-center font-bold text-white">
-                  <img src='/logo-main-no-bg.svg'></img>
+                  <img src='./logo-main-no-bg.svg'></img>
                 </div>
                 <span className="text-xl font-bold text-[#1A2A4F]">Diligence.ai</span>
               </div>
 
               {/* Navigation Menu */}
               <nav className="hidden md:flex items-center space-x-8">
-                <a href="#features" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Features</a>
-                <a href="#modules" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Modules</a>
-                <a href="#benefits" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Benefits</a>
+                <a href="#benefits" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">About-Us</a>
                 <a href="#pricing" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Pricing</a>
                 <a href="#contact" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Contact</a>
               </nav>
