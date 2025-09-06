@@ -54,6 +54,7 @@ import IndustryTeam from '@/pages/IndustryTeam';
 import IndustryNotifications from '@/pages/IndustryNotifications';
 import CreateRequirement from '@/pages/CreateRequirement';
 import CreatePurchaseOrder from '@/pages/CreatePurchaseOrder';
+import RoleManagement from '@/pages/RoleManagement';
 
 // Requirements sub-pages
 import RequirementsDrafts from '@/pages/RequirementsDrafts';
@@ -181,6 +182,7 @@ function App() {
                               <Route path="industry-analytics" element={<RouteErrorBoundary><IndustryAnalytics /></RouteErrorBoundary>} />
                               <Route path="industry-team" element={<RouteErrorBoundary><IndustryTeam /></RouteErrorBoundary>} />
                               <Route path="industry-notifications" element={<RouteErrorBoundary><IndustryNotifications /></RouteErrorBoundary>} />
+                              <Route path="role-management" element={<RouteErrorBoundary><RoleManagement /></RouteErrorBoundary>} />
                               
                               {/* Requirements Sub-routes */}
                               <Route path="requirements/drafts" element={<RouteErrorBoundary><RequirementsDrafts /></RouteErrorBoundary>} />

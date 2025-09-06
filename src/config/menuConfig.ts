@@ -166,6 +166,7 @@ export const menuConfig: MenuConfig = {
       submenu: [
         { icon: Building, label: 'Company Profile', path: '/industry-profile' },
         { icon: Users, label: 'Team Members', path: '/settings/members' },
+        { icon: Shield, label: 'Role Management', path: '/dashboard/role-management' },
         { icon: Shield, label: 'Approval Matrix', path: '/industry-approval-matrix' },
         { icon: CreditCard, label: 'Payment Settings', path: '/settings/payments' },
         { icon: Workflow, label: 'Workflow Templates', path: '/settings/workflows' },
@@ -325,6 +326,7 @@ export const menuConfig: MenuConfig = {
       submenu: [
         { icon: Building, label: 'Company Profile', path: '/service-vendor-profile' },
         { icon: Zap, label: 'Services & Skills', path: '/settings/services' },
+        { icon: Shield, label: 'Role Management', path: '/dashboard/role-management' },
         { icon: CreditCard, label: 'Payment Settings', path: '/settings/payments' },
         { icon: Award, label: 'Certifications', path: '/settings/certifications' },
         { icon: User, label: 'Personal Info', path: '/settings/personal' },
