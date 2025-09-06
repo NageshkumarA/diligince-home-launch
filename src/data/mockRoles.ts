@@ -1,5 +1,12 @@
 import { Role, UserRole, Module, RoleTemplate } from "@/types/roleManagement";
+import { getModulesForUserType } from "@/utils/moduleMapper";
 
+// Dynamic modules based on menu configuration
+export const getMockModules = (userType: 'IndustryAdmin' | 'ServiceVendor' | 'ProductVendor' | 'LogisticsVendor') => {
+  return getModulesForUserType(userType);
+};
+
+// Legacy static modules - kept for backwards compatibility
 export const mockModules: Module[] = [
   {
     id: 'dashboard',

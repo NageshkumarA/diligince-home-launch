@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { mockRoles, mockUserRoles } from "@/data/mockRoles";
+import { mockRoles, mockUserRoles, getMockModules } from "@/data/mockRoles";
 import { Role, UserRole, RoleFilters } from "@/types/roleManagement";
+import { canManageUserType } from "@/utils/moduleMapper";
 import { RoleCreationModal } from "./RoleCreationModal";
 import { UserRoleAssignment } from "./UserRoleAssignment";
 import { RoleTemplates } from "./RoleTemplates";
@@ -31,9 +32,9 @@ export const RoleManagementDashboard = ({ userType }: RoleManagementDashboardPro
     const matchesSearch = role.name.toLowerCase().includes(filters.search.toLowerCase()) ||
                          role.description.toLowerCase().includes(filters.search.toLowerCase());
     const matchesUserType = filters.userType === 'all' || role.userType === filters.userType;
-    const matchesCurrentUser = userType === 'IndustryAdmin' || role.userType === userType;
+    const canViewRole = canManageUserType(userType, role.userType);
     
-    return matchesSearch && matchesUserType && matchesCurrentUser;
+    return matchesSearch && matchesUserType && canViewRole;
   });
 
   const roleStats = {
@@ -174,7 +175,7 @@ export const RoleManagementDashboard = ({ userType }: RoleManagementDashboardPro
                 </div>
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm">
-                    View Permissions
+                    View Permissions ({role.permissions.length})
                   </Button>
                   {!role.isSystemRole && (
                     <Button variant="outline" size="sm">

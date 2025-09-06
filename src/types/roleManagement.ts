@@ -6,6 +6,7 @@ export interface Permission {
   moduleId: string;
   moduleName: string;
   actions: PermissionAction[];
+  subModuleId?: string; // For sub-module level permissions
 }
 
 export interface Role {

@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PermissionMatrix } from "./PermissionMatrix";
-import { mockModules, mockRoleTemplates } from "@/data/mockRoles";
+import { getMockModules, mockRoleTemplates } from "@/data/mockRoles";
 import { CreateRoleFormData, UserType, Permission } from "@/types/roleManagement";
 import { useToast } from "@/hooks/use-toast";
 
@@ -31,9 +31,7 @@ export const RoleCreationModal = ({ isOpen, onClose, userType }: RoleCreationMod
     userType === 'IndustryAdmin' || template.userType === userType
   );
 
-  const availableModules = mockModules.filter(module =>
-    module.userTypes.includes(formData.userType)
-  );
+  const availableModules = getMockModules(formData.userType);
 
   const handleTemplateSelect = (templateId: string) => {
     setSelectedTemplate(templateId);
@@ -79,6 +77,16 @@ export const RoleCreationModal = ({ isOpen, onClose, userType }: RoleCreationMod
         title: "Role Created",
         description: `Role "${formData.name}" has been created successfully.`,
       });
+      
+      // Reset form data
+      setFormData({
+        name: '',
+        description: '',
+        userType: userType,
+        permissions: [],
+        templateId: undefined
+      });
+      setSelectedTemplate('');
       
       onClose();
     } catch (error) {

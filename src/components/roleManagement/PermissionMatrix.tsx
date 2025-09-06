@@ -19,36 +19,71 @@ export const PermissionMatrix = ({
     return selectedPermissions.find(p => p.moduleId === moduleId);
   };
 
-  const hasAction = (moduleId: string, action: PermissionAction): boolean => {
+  const hasAction = (moduleId: string, action: PermissionAction, subModuleId?: string): boolean => {
+    if (subModuleId) {
+      const permission = selectedPermissions.find(p => p.moduleId === moduleId && p.subModuleId === subModuleId);
+      return permission ? permission.actions.includes(action) : false;
+    }
     const permission = getModulePermission(moduleId);
     return permission ? permission.actions.includes(action) : false;
   };
 
-  const toggleAction = (moduleId: string, moduleName: string, action: PermissionAction) => {
-    const existingPermission = getModulePermission(moduleId);
-    
-    if (!existingPermission) {
-      // Create new permission with this action
-      const newPermission: Permission = {
-        moduleId,
-        moduleName,
-        actions: [action]
-      };
-      onPermissionChange([...selectedPermissions, newPermission]);
-    } else {
-      // Update existing permission
-      const updatedPermissions = selectedPermissions.map(p => {
-        if (p.moduleId === moduleId) {
-          const actions = p.actions.includes(action)
-            ? p.actions.filter(a => a !== action)
-            : [...p.actions, action];
-          
-          return { ...p, actions };
-        }
-        return p;
-      }).filter(p => p.actions.length > 0); // Remove permissions with no actions
+  const toggleAction = (moduleId: string, moduleName: string, action: PermissionAction, subModuleId?: string, subModuleName?: string) => {
+    if (subModuleId && subModuleName) {
+      // Handle sub-module permission
+      const existingPermission = selectedPermissions.find(p => p.moduleId === moduleId && p.subModuleId === subModuleId);
       
-      onPermissionChange(updatedPermissions);
+      if (!existingPermission) {
+        // Create new sub-module permission
+        const newPermission: Permission = {
+          moduleId,
+          moduleName: `${moduleName} > ${subModuleName}`,
+          actions: [action],
+          subModuleId
+        };
+        onPermissionChange([...selectedPermissions, newPermission]);
+      } else {
+        // Update existing sub-module permission
+        const updatedPermissions = selectedPermissions.map(p => {
+          if (p.moduleId === moduleId && p.subModuleId === subModuleId) {
+            const actions = p.actions.includes(action)
+              ? p.actions.filter(a => a !== action)
+              : [...p.actions, action];
+            
+            return { ...p, actions };
+          }
+          return p;
+        }).filter(p => p.actions.length > 0);
+        
+        onPermissionChange(updatedPermissions);
+      }
+    } else {
+      // Handle module-level permission
+      const existingPermission = getModulePermission(moduleId);
+      
+      if (!existingPermission) {
+        // Create new permission with this action
+        const newPermission: Permission = {
+          moduleId,
+          moduleName,
+          actions: [action]
+        };
+        onPermissionChange([...selectedPermissions, newPermission]);
+      } else {
+        // Update existing permission
+        const updatedPermissions = selectedPermissions.map(p => {
+          if (p.moduleId === moduleId && !p.subModuleId) {
+            const actions = p.actions.includes(action)
+              ? p.actions.filter(a => a !== action)
+              : [...p.actions, action];
+            
+            return { ...p, actions };
+          }
+          return p;
+        }).filter(p => p.actions.length > 0);
+        
+        onPermissionChange(updatedPermissions);
+      }
     }
   };
 
@@ -123,31 +158,54 @@ export const PermissionMatrix = ({
                 </div>
               </div>
 
-              {/* Actions Grid */}
-              <div className="ml-6 grid grid-cols-5 gap-3">
-                {module.availableActions.map(action => (
-                  <label
-                    key={action}
-                    className="flex items-center space-x-2 cursor-pointer"
-                  >
-                    <Checkbox
-                      checked={hasAction(module.id, action)}
-                      onCheckedChange={() => toggleAction(module.id, module.name, action)}
-                    />
-                    <span className={`text-sm px-2 py-1 rounded-md border ${getActionColor(action)}`}>
-                      {action}
-                    </span>
-                  </label>
-                ))}
-              </div>
+              {/* Actions Grid - Only show if no sub-modules */}
+              {(!module.subModules || module.subModules.length === 0) && (
+                <div className="ml-6 grid grid-cols-5 gap-3">
+                  {module.availableActions.map(action => (
+                    <label
+                      key={action}
+                      className="flex items-center space-x-2 cursor-pointer"
+                    >
+                      <Checkbox
+                        checked={hasAction(module.id, action)}
+                        onCheckedChange={() => toggleAction(module.id, module.name, action)}
+                      />
+                      <span className={`text-sm px-2 py-1 rounded-md border ${getActionColor(action)}`}>
+                        {action}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
 
               {/* Sub-modules */}
               {module.subModules && module.subModules.length > 0 && (
-                <div className="ml-6 mt-4 space-y-2 border-l-2 border-muted pl-4">
+                <div className="ml-6 mt-4 space-y-3 border-l-2 border-muted pl-4">
                   {module.subModules.map(subModule => (
-                    <div key={subModule.id} className="text-sm">
-                      <div className="font-medium text-muted-foreground">{subModule.name}</div>
-                      <div className="text-xs text-muted-foreground">{subModule.description}</div>
+                    <div key={subModule.id} className="border rounded-md p-3 bg-muted/30">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h5 className="font-medium text-sm">{subModule.name}</h5>
+                        <Badge variant="outline" className="text-xs">Sub-module</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-3">{subModule.description}</p>
+                      
+                      {/* Sub-module Actions Grid */}
+                      <div className="grid grid-cols-5 gap-2">
+                        {subModule.availableActions.map(action => (
+                          <label
+                            key={action}
+                            className="flex items-center space-x-1 cursor-pointer"
+                          >
+                            <Checkbox
+                              checked={hasAction(module.id, action, subModule.id)}
+                              onCheckedChange={() => toggleAction(module.id, module.name, action, subModule.id, subModule.name)}
+                            />
+                            <span className={`text-xs px-1 py-0.5 rounded border ${getActionColor(action)}`}>
+                              {action}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
                   ))}
                 </div>
