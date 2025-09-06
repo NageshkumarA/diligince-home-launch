@@ -32,6 +32,7 @@ export const RoleCreationModal = ({ isOpen, onClose, userType }: RoleCreationMod
   );
 
   const availableModules = getMockModules(formData.userType);
+  console.log("RoleCreationModal - Available modules:", availableModules);
 
   const handleTemplateSelect = (templateId: string) => {
     setSelectedTemplate(templateId);
@@ -99,6 +100,11 @@ export const RoleCreationModal = ({ isOpen, onClose, userType }: RoleCreationMod
       setIsSubmitting(false);
     }
   };
+
+  if (!isOpen) {
+    console.log("RoleCreationModal not rendering - isOpen is false");
+    return null;
+  }
 
   return (
     <FormModal

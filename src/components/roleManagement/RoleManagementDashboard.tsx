@@ -17,6 +17,8 @@ interface RoleManagementDashboardProps {
 }
 
 export const RoleManagementDashboard = ({ userType }: RoleManagementDashboardProps) => {
+  console.log("RoleManagementDashboard - Received userType:", userType);
+  
   const [roles] = useState<Role[]>(mockRoles);
   const [userRoles] = useState<UserRole[]>(mockUserRoles);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -29,10 +31,13 @@ export const RoleManagementDashboard = ({ userType }: RoleManagementDashboardPro
   });
 
   const filteredRoles = roles.filter(role => {
+    console.log(`Filtering role ${role.name} for userType ${userType}`);
     const matchesSearch = role.name.toLowerCase().includes(filters.search.toLowerCase()) ||
                          role.description.toLowerCase().includes(filters.search.toLowerCase());
     const matchesUserType = filters.userType === 'all' || role.userType === filters.userType;
     const canViewRole = canManageUserType(userType, role.userType);
+    
+    console.log(`Role ${role.name}: matchesSearch=${matchesSearch}, matchesUserType=${matchesUserType}, canViewRole=${canViewRole}`);
     
     return matchesSearch && matchesUserType && canViewRole;
   });

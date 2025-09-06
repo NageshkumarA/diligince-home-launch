@@ -37,26 +37,40 @@ export const mapMenuToModules = (userType: UserType): Module[] => {
  * Maps UserProfile role to UserType for role management
  */
 export const mapUserRoleToUserType = (user: UserProfile | null): UserType => {
-  if (!user) return 'IndustryAdmin';
+  console.log("mapUserRoleToUserType - Input user:", user);
   
+  if (!user) {
+    console.log("mapUserRoleToUserType - No user, defaulting to IndustryAdmin");
+    return 'IndustryAdmin';
+  }
+  
+  let userType: UserType;
   switch (user.role) {
     case 'industry':
-      return 'IndustryAdmin';
+      userType = 'IndustryAdmin';
+      break;
     case 'vendor':
       if (user.profile?.vendorCategory === 'service') {
-        return 'ServiceVendor';
+        userType = 'ServiceVendor';
       } else if (user.profile?.vendorCategory === 'product') {
-        return 'ProductVendor';
+        userType = 'ProductVendor';
       } else if (user.profile?.vendorCategory === 'logistics') {
-        return 'LogisticsVendor';
+        userType = 'LogisticsVendor';
+      } else {
+        userType = 'ServiceVendor'; // Default fallback
       }
-      return 'ServiceVendor'; // Default fallback
+      break;
     case 'professional':
       // Professionals don't have role management access in this context
-      return 'IndustryAdmin'; 
+      userType = 'IndustryAdmin'; 
+      break;
     default:
-      return 'IndustryAdmin';
+      userType = 'IndustryAdmin';
+      break;
   }
+  
+  console.log("mapUserRoleToUserType - Output userType:", userType);
+  return userType;
 };
 
 /**
