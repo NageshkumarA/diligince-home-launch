@@ -34,6 +34,16 @@ import StakeholderOnboarding from '@/pages/StakeholderOnboarding';
 import PendingApproval from '@/pages/PendingApproval';
 import WorkCompletionPayment from '@/pages/WorkCompletionPayment';
 
+// Settings components
+import { SettingsLayout } from '@/components/settings/SettingsLayout';
+import SettingsPersonal from '@/pages/settings/SettingsPersonal';
+import SettingsMembers from '@/pages/settings/SettingsMembers';
+import SettingsPayments from '@/pages/settings/SettingsPayments';
+import SettingsWorkflows from '@/pages/settings/SettingsWorkflows';
+import SettingsData from '@/pages/settings/SettingsData';
+import SettingsNotifications from '@/pages/settings/SettingsNotifications';
+import SettingsPrivacy from '@/pages/settings/SettingsPrivacy';
+
 // Industry pages
 import IndustryDashboard from '@/pages/IndustryDashboard';
 import IndustryProfile from '@/pages/IndustryProfile';
