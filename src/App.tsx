@@ -248,12 +248,23 @@ function App() {
                               <Route path="opportunities/applications" element={<RouteErrorBoundary><OpportunitiesApplications /></RouteErrorBoundary>} />
                               <Route path="projects/active" element={<RouteErrorBoundary><ProjectsActive /></RouteErrorBoundary>} />
 
-                              {/* Vendor Sub-routes */}
-                              <Route path="rfqs/browse" element={<RouteErrorBoundary><VendorRFQsBrowse /></RouteErrorBoundary>} />
-                              
-                              {/* Test */}
-                              <Route path="test" element={<RouteErrorBoundary><TestPage /></RouteErrorBoundary>} />
-                              <Route path="work-completion-payment" element={<RouteErrorBoundary><WorkCompletionPayment /></RouteErrorBoundary>} />
+                               {/* Vendor Sub-routes */}
+                               <Route path="rfqs/browse" element={<RouteErrorBoundary><VendorRFQsBrowse /></RouteErrorBoundary>} />
+                               
+                               {/* Settings Routes */}
+                               <Route path="settings" element={<SettingsLayout />}>
+                                 <Route path="personal" element={<RouteErrorBoundary><SettingsPersonal /></RouteErrorBoundary>} />
+                                 <Route path="members" element={<RouteErrorBoundary><SettingsMembers /></RouteErrorBoundary>} />
+                                 <Route path="payments" element={<RouteErrorBoundary><SettingsPayments /></RouteErrorBoundary>} />
+                                 <Route path="workflows" element={<RouteErrorBoundary><SettingsWorkflows /></RouteErrorBoundary>} />
+                                 <Route path="data" element={<RouteErrorBoundary><SettingsData /></RouteErrorBoundary>} />
+                                 <Route path="notifications" element={<RouteErrorBoundary><SettingsNotifications /></RouteErrorBoundary>} />
+                                 <Route path="privacy" element={<RouteErrorBoundary><SettingsPrivacy /></RouteErrorBoundary>} />
+                               </Route>
+                               
+                               {/* Test */}
+                               <Route path="test" element={<RouteErrorBoundary><TestPage /></RouteErrorBoundary>} />
+                               <Route path="work-completion-payment" element={<RouteErrorBoundary><WorkCompletionPayment /></RouteErrorBoundary>} />
                             </Route>
                             
                             {/* Standalone authenticated routes for legacy paths */}
