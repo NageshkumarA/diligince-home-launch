@@ -1,123 +1,145 @@
-import React, { useState } from 'react';
-import CustomTable from '@/components/CustomTable';
-import { ColumnConfig, FilterConfig } from '@/types/table';
+import React, { useState } from "react";
+import CustomTable from "@/components/CustomTable";
+import { ColumnConfig, FilterConfig } from "@/types/table";
+
+interface Quotation {
+  id: string;
+  requirementId: string;
+  requirementTitle: string;
+  vendorName: string;
+  quotedAmount: string;
+  submittedDate: string;
+  validUntil: string;
+  responseTime: string;
+  status: string;
+}
 
 const QuotationsPending = () => {
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [selectedRows, setSelectedRows] = useState<Quotation[]>([]);
 
-  const mockData = [
+  const mockData: Quotation[] = [
     {
-      id: 'QUO-001',
-      requirementId: 'REQ-007',
-      requirementTitle: 'Mobile App Development',
-      vendorName: 'TechSolutions Inc.',
-      quotedAmount: '$115,000',
-      submittedDate: '2024-01-29',
-      validUntil: '2024-02-15',
-      responseTime: '2 days',
-      status: 'Pending Review'
+      id: "QUO-001",
+      requirementId: "REQ-007",
+      requirementTitle: "Mobile App Development",
+      vendorName: "TechSolutions Inc.",
+      quotedAmount: "$115,000",
+      submittedDate: "2024-01-29",
+      validUntil: "2024-02-15",
+      responseTime: "2 days",
+      status: "Pending Review",
     },
     {
-      id: 'QUO-002',
-      requirementId: 'REQ-008',
-      requirementTitle: 'Supply Chain Optimization',
-      vendorName: 'LogiFlow Systems',
-      quotedAmount: '$62,000',
-      submittedDate: '2024-01-28',
-      validUntil: '2024-02-20',
-      responseTime: '1 day',
-      status: 'Under Evaluation'
-    }
+      id: "QUO-002",
+      requirementId: "REQ-008",
+      requirementTitle: "Supply Chain Optimization",
+      vendorName: "LogiFlow Systems",
+      quotedAmount: "$62,000",
+      submittedDate: "2024-01-28",
+      validUntil: "2024-02-20",
+      responseTime: "1 day",
+      status: "Under Evaluation",
+    },
   ];
 
   const columns: ColumnConfig[] = [
     {
-      name: 'id',
-      label: 'Quote ID',
+      name: "id",
+      label: "Quote ID",
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log('View quote:', row.id),
-      width: '120px'
+      action: (row) => console.log("View quote:", row.id),
+      width: "120px",
     },
     {
-      name: 'requirementId',
-      label: 'Requirement',
+      name: "requirementId",
+      label: "Requirement",
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log('View requirement:', row.requirementId),
-      width: '120px'
+      action: (row) => console.log("View requirement:", row.requirementId),
+      width: "120px",
     },
     {
-      name: 'requirementTitle',
-      label: 'Title',
+      name: "requirementTitle",
+      label: "Title",
       isSortable: true,
-      isSearchable: true
+      isSearchable: true,
     },
     {
-      name: 'vendorName',
-      label: 'Vendor',
+      name: "vendorName",
+      label: "Vendor",
       isSortable: true,
-      isSearchable: true
+      isSearchable: true,
     },
     {
-      name: 'quotedAmount',
-      label: 'Quoted Amount',
+      name: "quotedAmount",
+      label: "Quoted Amount",
       isSortable: true,
-      align: 'right'
+      align: "right",
     },
     {
-      name: 'submittedDate',
-      label: 'Submitted',
-      isSortable: true
-    },
-    {
-      name: 'validUntil',
-      label: 'Valid Until',
-      isSortable: true
-    },
-    {
-      name: 'responseTime',
-      label: 'Response Time',
+      name: "submittedDate",
+      label: "Submitted",
       isSortable: true,
-      align: 'center'
     },
     {
-      name: 'status',
-      label: 'Status',
+      name: "validUntil",
+      label: "Valid Until",
+      isSortable: true,
+    },
+    {
+      name: "responseTime",
+      label: "Response Time",
+      isSortable: true,
+      align: "center",
+    },
+    {
+      name: "status",
+      label: "Status",
       isSortable: true,
       isFilterable: true,
       filterOptions: [
-        { key: 'Pending Review', value: 'Pending Review', color: '#fef3c7' },
-        { key: 'Under Evaluation', value: 'Under Evaluation', color: '#ddd6fe' },
-        { key: 'Awaiting Clarification', value: 'Awaiting Clarification', color: '#fed7aa' }
-      ]
-    }
+        { key: "Pending Review", value: "Pending Review", color: "#fef3c7" },
+        {
+          key: "Under Evaluation",
+          value: "Under Evaluation",
+          color: "#ddd6fe",
+        },
+        {
+          key: "Awaiting Clarification",
+          value: "Awaiting Clarification",
+          color: "#fed7aa",
+        },
+      ],
+    },
   ];
 
   const handleFilter = (filters: FilterConfig) => {
-    console.log('Applied filters:', filters);
+    console.log("Applied filters:", filters);
   };
 
   const handleSearch = (searchTerm: string, selectedColumns: string[]) => {
-    console.log('Search:', searchTerm, selectedColumns);
+    console.log("Search:", searchTerm, selectedColumns);
   };
 
   const handleExportXLSX = () => {
-    console.log('Export XLSX');
+    console.log("Export XLSX");
   };
 
   const handleExportCSV = () => {
-    console.log('Export CSV');
+    console.log("Export CSV");
   };
 
-  const handleSelectionChange = (selected: any[]) => {
+  const handleSelectionChange = (selected: Quotation[]) => {
     setSelectedRows(selected);
   };
 
   return (
     <div className="p-6 bg-background min-h-screen">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Pending Quotations</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          Pending Quotations
+        </h1>
         <p className="text-muted-foreground">
           Quotations received from vendors awaiting your review and decision
         </p>
@@ -130,7 +152,7 @@ const QuotationsPending = () => {
         searchCallback={handleSearch}
         onExport={{
           xlsx: handleExportXLSX,
-          csv: handleExportCSV
+          csv: handleExportCSV,
         }}
         selectable={true}
         onSelectionChange={handleSelectionChange}
@@ -138,7 +160,7 @@ const QuotationsPending = () => {
         pagination={{
           enabled: true,
           pageSize: 10,
-          currentPage: 1
+          currentPage: 1,
         }}
       />
     </div>

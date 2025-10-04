@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ServiceVendorHeader } from "@/components/vendor/ServiceVendorHeader";
 import { ServiceVendorSidebar } from "@/components/vendor/service/ServiceVendorSidebar";
@@ -13,49 +12,56 @@ import { ProfileCompletionWidget } from "@/components/shared/ProfileCompletionWi
 import { useUser } from "@/contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 
-// Types for content sections
-export type ContentType = 
-  | "company-info" 
-  | "team-members" 
-  | "services-skills" 
-  | "certifications" 
-  | "projects-portfolio" 
-  | "payment-settings" 
+// ✅ Define allowed content types
+export type ContentType =
+  | "company-info"
+  | "team-members"
+  | "services-skills"
+  | "certifications"
+  | "projects-portfolio"
+  | "payment-settings"
   | "account-settings";
 
-const ServiceVendorProfile = () => {
+const ServiceVendorProfile: React.FC = () => {
   const { user, isAuthenticated, profileCompletion } = useUser();
   const navigate = useNavigate();
-  
-  const [activeContent, setActiveContent] = useState<ContentType>("company-info");
-  
+
+  const [activeContent, setActiveContent] =
+    useState<ContentType>("company-info");
+
+  // Debug logs
   console.log("ServiceVendorProfile - user:", user);
   console.log("ServiceVendorProfile - profileCompletion:", profileCompletion);
-  
-  // Redirect if not authenticated
+
+  // ✅ Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/signin');
+      navigate("/signin");
     }
   }, [isAuthenticated, navigate]);
-  
-  // Vendor data from user context
+
+  if (!user) {
+    return null;
+  }
+
+  // ✅ Vendor data for sidebar
   const vendorData = {
     companyName: user?.profile?.businessName || "TechServe Solutions",
     specialization: user?.profile?.specialization || "Industrial Automation",
     initials: user?.initials || "TS",
-    isVerified: true
+    isVerified: true,
   };
 
-  // Handle profile completion action
+  // ✅ Profile completion handler
   const handleCompleteProfile = () => {
-    navigate('/profile-completion');
+    navigate("/profile-completion");
   };
 
   const handleMenuItemClick = (contentType: ContentType) => {
     setActiveContent(contentType);
   };
 
+  // ✅ Dynamic content rendering
   const renderContent = () => {
     switch (activeContent) {
       case "company-info":
@@ -77,31 +83,31 @@ const ServiceVendorProfile = () => {
     }
   };
 
-  if (!user) {
-    return null;
-  }
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Header */}
       <ServiceVendorHeader />
-      
+
       <div className="flex flex-grow pt-16">
+        {/* Sidebar */}
         <ServiceVendorSidebar
           activeSection={activeContent}
           onSectionChange={handleMenuItemClick}
           vendorData={vendorData}
           profileCompletion={profileCompletion.percentage}
         />
-        
+
+        {/* Main Content */}
         <main className="flex-1 p-6 lg:p-8 overflow-y-auto bg-gray-50">
           <div className="w-full max-w-4xl mx-auto">
-            {/* Profile Completion Widget - Always show for better user experience */}
+            {/* Profile Completion Widget */}
             <ProfileCompletionWidget
               completion={profileCompletion}
               onCompleteProfile={handleCompleteProfile}
               showCompleteButton={!profileCompletion.isComplete}
             />
-            
+
+            {/* Content Section */}
             <div className="bg-white border border-gray-100 shadow-sm rounded-lg">
               {renderContent()}
             </div>

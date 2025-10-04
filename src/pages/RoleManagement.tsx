@@ -7,11 +7,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function RoleManagement() {
   const { user, isLoading } = useUser();
-  
+
   // Add debugging
   console.log("RoleManagement - User:", user);
   console.log("RoleManagement - Loading:", isLoading);
-  
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-6">

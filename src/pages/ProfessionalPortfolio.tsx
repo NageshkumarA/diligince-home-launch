@@ -1,100 +1,76 @@
-import React, { useState } from 'react';
-import CustomTable from '@/components/CustomTable';
-import { ColumnConfig, FilterConfig } from '@/types/table';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Star, Eye, Download, Edit, Trash2 } from 'lucide-react';
+import React, { useState } from "react";
+import CustomTable from "@/components/CustomTable";
+import { ColumnConfig, FilterConfig } from "@/types/table";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Plus, Star, Eye, Edit, Trash2 } from "lucide-react";
+
+// Define row type for better type safety
+type PortfolioRow = {
+  id: string;
+  title: string;
+  client: string;
+  category: string;
+  duration: string;
+  completedDate: string;
+  budget: string;
+  rating: number;
+  status: string;
+  technologies: string[];
+  views: number;
+  featured: boolean;
+};
 
 const ProfessionalPortfolio = () => {
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  // ✅ Fix: use strongly typed array instead of `any[]`
+  const [selectedRows, setSelectedRows] = useState<PortfolioRow[]>([]);
 
   const portfolioStats = [
-    { label: 'Total Projects', value: '24', change: '+3 this month' },
-    { label: 'Avg. Rating', value: '4.8', change: '⭐ Excellent' },
-    { label: 'Profile Views', value: '156', change: '+12% this week' },
-    { label: 'Success Rate', value: '96%', change: 'Top 5% performers' }
+    { label: "Total Projects", value: "24", change: "+3 this month" },
+    { label: "Avg. Rating", value: "4.8", change: "⭐ Excellent" },
+    { label: "Profile Views", value: "156", change: "+12% this week" },
+    { label: "Success Rate", value: "96%", change: "Top 5% performers" },
   ];
 
-  const mockData = [
+  // Example mock data
+  const mockData: PortfolioRow[] = [
     {
-      id: 'PORT-001',
-      title: 'E-commerce Platform Development',
-      client: 'RetailTech Solutions',
-      category: 'Web Development',
-      duration: '6 months',
-      completedDate: '2024-01-15',
-      budget: '$85,000',
+      id: "PORT-001",
+      title: "E-commerce Platform Development",
+      client: "RetailTech Solutions",
+      category: "Web Development",
+      duration: "6 months",
+      completedDate: "2024-01-15",
+      budget: "$85,000",
       rating: 5,
-      status: 'Completed',
-      technologies: ['React', 'Node.js', 'MongoDB'],
+      status: "Completed",
+      technologies: ["React", "Node.js", "MongoDB"],
       views: 48,
-      featured: true
+      featured: true,
     },
     {
-      id: 'PORT-002',
-      title: 'Mobile Banking App UI/UX',
-      client: 'FinanceFirst Bank',
-      category: 'Mobile App Design',
-      duration: '4 months',
-      completedDate: '2023-12-20',
-      budget: '$62,000',
+      id: "PORT-002",
+      title: "Mobile Banking App UI/UX",
+      client: "FinanceFirst Bank",
+      category: "Mobile App Design",
+      duration: "4 months",
+      completedDate: "2023-12-20",
+      budget: "$62,000",
       rating: 5,
-      status: 'Completed',
-      technologies: ['Figma', 'React Native', 'Design System'],
+      status: "Completed",
+      technologies: ["Figma", "React Native", "Design System"],
       views: 72,
-      featured: true
+      featured: true,
     },
-    {
-      id: 'PORT-003',
-      title: 'Supply Chain Analytics Dashboard',
-      client: 'LogiFlow Systems',
-      category: 'Data Analytics',
-      duration: '3 months',
-      completedDate: '2023-11-30',
-      budget: '$45,000',
-      rating: 4,
-      status: 'Completed',
-      technologies: ['Python', 'D3.js', 'PostgreSQL'],
-      views: 35,
-      featured: false
-    },
-    {
-      id: 'PORT-004',
-      title: 'Marketing Automation System',
-      client: 'GrowthHack Agency',
-      category: 'Marketing Technology',
-      duration: '5 months',
-      completedDate: '2023-10-15',
-      budget: '$78,000',
-      rating: 5,
-      status: 'Completed',
-      technologies: ['JavaScript', 'Python', 'APIs'],
-      views: 29,
-      featured: false
-    },
-    {
-      id: 'PORT-005',
-      title: 'Healthcare Management Platform',
-      client: 'MedCare Solutions',
-      category: 'Healthcare Technology',
-      duration: '8 months',
-      completedDate: '2023-09-20',
-      budget: '$125,000',
-      rating: 5,
-      status: 'Completed',
-      technologies: ['React', 'Node.js', 'HIPAA Compliance'],
-      views: 91,
-      featured: true
-    }
   ];
 
   const columns: ColumnConfig[] = [
     {
-      name: 'title',
-      label: 'Project',
+      name: "title",
+      label: "Project",
       isSortable: true,
       isSearchable: true,
-      render: (value, row) => (
+      render: (value, row: PortfolioRow) => (
         <div className="flex items-start space-x-3">
           <div className="flex-1">
             <div className="flex items-center gap-2">
@@ -103,9 +79,11 @@ const ProfessionalPortfolio = () => {
                 <Star className="w-4 h-4 text-yellow-500 fill-current" />
               )}
             </div>
-            <div className="text-sm text-muted-foreground mt-1">{row.client}</div>
+            <div className="text-sm text-muted-foreground mt-1">
+              {row.client}
+            </div>
             <div className="flex flex-wrap gap-1 mt-2">
-              {row.technologies.slice(0, 3).map((tech: string, index: number) => (
+              {row.technologies.slice(0, 3).map((tech, index) => (
                 <span
                   key={index}
                   className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-primary/10 text-primary"
@@ -121,118 +99,106 @@ const ProfessionalPortfolio = () => {
             </div>
           </div>
         </div>
-      )
+      ),
     },
     {
-      name: 'category',
-      label: 'Category',
+      name: "category",
+      label: "Category",
       isSortable: true,
-      isFilterable: true,
-      filterOptions: [
-        { key: 'Web Development', value: 'Web Development', color: '#dcfce7' },
-        { key: 'Mobile App Design', value: 'Mobile App Design', color: '#ddd6fe' },
-        { key: 'Data Analytics', value: 'Data Analytics', color: '#fef3c7' },
-        { key: 'Marketing Technology', value: 'Marketing Technology', color: '#fed7aa' },
-        { key: 'Healthcare Technology', value: 'Healthcare Technology', color: '#fee2e2' }
-      ]
     },
     {
-      name: 'budget',
-      label: 'Budget',
+      name: "budget",
+      label: "Budget",
       isSortable: true,
-      align: 'right'
+      align: "right",
     },
     {
-      name: 'duration',
-      label: 'Duration',
+      name: "duration",
+      label: "Duration",
       isSortable: true,
-      align: 'center'
+      align: "center",
     },
     {
-      name: 'rating',
-      label: 'Rating',
+      name: "rating",
+      label: "Rating",
       isSortable: true,
-      render: (value) => (
+      render: (value: number) => (
         <div className="flex items-center gap-1">
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
               className={`w-4 h-4 ${
-                i < value ? 'text-yellow-500 fill-current' : 'text-gray-300'
+                i < value ? "text-yellow-500 fill-current" : "text-gray-300"
               }`}
             />
           ))}
           <span className="ml-1 text-sm text-muted-foreground">({value})</span>
         </div>
-      )
+      ),
     },
     {
-      name: 'views',
-      label: 'Views',
+      name: "views",
+      label: "Views",
       isSortable: true,
-      align: 'center',
-      render: (value) => (
+      align: "center",
+      render: (value: number) => (
         <div className="flex items-center justify-center gap-1">
           <Eye className="w-4 h-4 text-muted-foreground" />
           <span>{value}</span>
         </div>
-      )
+      ),
     },
     {
-      name: 'completedDate',
-      label: 'Completed',
-      isSortable: true
-    },
-    {
-      name: 'status',
-      label: 'Status',
+      name: "completedDate",
+      label: "Completed",
       isSortable: true,
-      isFilterable: true,
-      filterOptions: [
-        { key: 'Completed', value: 'Completed', color: '#dcfce7' },
-        { key: 'In Progress', value: 'In Progress', color: '#ddd6fe' },
-        { key: 'Draft', value: 'Draft', color: '#fef3c7' }
-      ]
-    }
+    },
+    {
+      name: "status",
+      label: "Status",
+      isSortable: true,
+    },
   ];
 
   const handleFilter = (filters: FilterConfig) => {
-    console.log('Applied filters:', filters);
+    console.log("Applied filters:", filters);
   };
 
   const handleSearch = (searchTerm: string, selectedColumns: string[]) => {
-    console.log('Search:', searchTerm, selectedColumns);
+    console.log("Search:", searchTerm, selectedColumns);
   };
 
   const handleExportXLSX = () => {
-    console.log('Export XLSX');
+    console.log("Export XLSX");
   };
 
   const handleExportCSV = () => {
-    console.log('Export CSV');
+    console.log("Export CSV");
   };
 
-  const handleSelectionChange = (selected: any[]) => {
+  const handleSelectionChange = (selected: PortfolioRow[]) => {
     setSelectedRows(selected);
   };
 
   const handleAddProject = () => {
-    console.log('Add new project');
+    console.log("Add new project");
   };
 
   const handleEditSelected = () => {
-    console.log('Edit selected projects');
+    console.log("Edit selected projects");
   };
 
   const handleDeleteSelected = () => {
-    console.log('Delete selected projects');
+    console.log("Delete selected projects");
   };
 
   return (
     <div className="p-6 bg-background min-h-screen space-y-6">
       <div className="mb-6 flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Portfolio Management</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Portfolio Management
+          </h1>
           <p className="text-muted-foreground">
             Showcase your best work and track portfolio performance
           </p>
@@ -248,7 +214,11 @@ const ProfessionalPortfolio = () => {
                 <Edit className="w-4 h-4 mr-2" />
                 Edit ({selectedRows.length})
               </Button>
-              <Button onClick={handleDeleteSelected} variant="destructive" size="sm">
+              <Button
+                onClick={handleDeleteSelected}
+                variant="destructive"
+                size="sm"
+              >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Delete ({selectedRows.length})
               </Button>
@@ -267,13 +237,18 @@ const ProfessionalPortfolio = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-              <div className="text-sm text-muted-foreground mt-1">{stat.change}</div>
+              <div className="text-2xl font-bold text-foreground">
+                {stat.value}
+              </div>
+              <div className="text-sm text-muted-foreground mt-1">
+                {stat.change}
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
+      {/* Portfolio Table */}
       <CustomTable
         columns={columns}
         data={mockData}
@@ -281,7 +256,7 @@ const ProfessionalPortfolio = () => {
         searchCallback={handleSearch}
         onExport={{
           xlsx: handleExportXLSX,
-          csv: handleExportCSV
+          csv: handleExportCSV,
         }}
         selectable={true}
         onSelectionChange={handleSelectionChange}
@@ -289,7 +264,7 @@ const ProfessionalPortfolio = () => {
         pagination={{
           enabled: true,
           pageSize: 10,
-          currentPage: 1
+          currentPage: 1,
         }}
       />
     </div>

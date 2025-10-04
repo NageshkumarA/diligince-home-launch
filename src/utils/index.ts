@@ -1,11 +1,10 @@
-
-// Export all utility functions and hooks for easy importing
-export * from './colorUtils';
-export * from './navigationConfigs';
-export * from './dashboardConfigs';
+// Export all general utility modules
+export * from "./colorUtils";
+export * from "./navigationConfigs";
+export * from "./dashboardConfigs";
 
 // Export specific functions from dateUtils
-export { 
+export {
   formatDate,
   formatDateRange,
   getDaysRemaining,
@@ -13,13 +12,13 @@ export {
   getDeadlineStatus,
   formatTimeAgo,
   addBusinessDays,
-  type DateFormatOptions
-} from './dateUtils';
+  type DateFormatOptions,
+} from "./dateUtils";
 
-// Export specific functions from statusUtils to avoid conflicts
-export { 
-  statusConfigs, 
-  priorityConfigs, 
+// Export specific functions from statusUtils (avoid duplicate exports)
+export {
+  statusConfigs,
+  priorityConfigs,
   paymentStatusConfigs,
   getStatusConfig,
   getPriorityConfig,
@@ -27,25 +26,28 @@ export {
   type StatusType,
   type PriorityType,
   type PaymentStatusType,
-  type StatusConfig
-} from './statusUtils';
+  type StatusConfig,
+} from "./statusUtils";
 
 // Export shared utilities
-export * from './shared';
+export * from "./shared";
 
 // Re-export hooks for convenience
-export { useModal } from '../hooks/useModal';
-export { useSearch } from '../hooks/useSearch';
-export { usePagination } from '../hooks/usePagination';
-export { useNotifications } from '../hooks/useNotifications';
+export { useModal } from "@/hooks/useModal";
+export { useSearch } from "@/hooks/useSearch";
+export { usePagination } from "@/hooks/usePagination";
+export { useNotifications } from "@/hooks/useNotifications";
 
-// Re-export contexts and types - being explicit to avoid conflicts
-export { ThemeProvider, useTheme } from '../contexts/ThemeContext';
-export { NotificationProvider, useNotificationContext } from '../contexts/NotificationContext';
-export { UserProvider, useUser } from '../contexts/UserContext';
+// Re-export contexts and hooks explicitly
+export { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
+export {
+  NotificationProvider,
+  useNotificationContext,
+} from "@/contexts/NotificationContext";
+export { UserProvider, useUser } from "@/contexts/UserContext";
 
-// Export types from shared - being explicit about which types to avoid conflicts
-export type { 
+// Export types from shared (explicit to avoid conflicts)
+export type {
   BaseMessage,
   StatItem,
   BaseModal,
@@ -53,34 +55,27 @@ export type {
   UserRole,
   BaseNotification,
   ThemeConfig,
-  ThemeColors as SharedThemeColors
-} from '../types/shared';
+  ThemeColors as SharedThemeColors,
+} from "@/types/shared";
 
-// Export domain-specific types
-export type {
-  VendorProfile,
-  VendorType,
-  VendorStatus
-} from '../types/vendor';
+// Domain-specific types
+export type { VendorProfile, VendorType, VendorStatus } from "@/types/vendor";
 
-export type {
-  DashboardStat,
-  NavigationItem
-} from '../types/dashboard';
+export type { DashboardStat, NavigationItem } from "@/types/dashboard";
 
 export type {
   ProfessionalProfile,
-  ProfessionalStatus
-} from '../types/professional';
+  ProfessionalStatus,
+} from "@/types/professional";
 
 export type {
   LogisticsVendorProfile,
-  LogisticsSpecialization
-} from '../types/logistics';
+  LogisticsSpecialization,
+} from "@/types/logistics";
 
 export type {
   IndustryProfile,
   IndustryType,
   Requirement,
-  Priority
-} from '../types/industry';
+  Priority,
+} from "@/types/industry";

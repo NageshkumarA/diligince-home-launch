@@ -476,7 +476,7 @@ const IndustryProjectWorkflow = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <IndustryHeader />
+      
       
       <main className="flex-1 container max-w-7xl mx-auto px-4 py-8 pt-20">
         {/* Header Section */}

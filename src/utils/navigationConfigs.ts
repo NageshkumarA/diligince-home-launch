@@ -58,27 +58,28 @@ export const industryHeaderConfig: HeaderConfig = {
       label: "Stakeholders",
       href: "/industry-stakeholders",
       icon: React.createElement(Users, { size: 18 })
-    },
-    {
-      label: "Profile",
-      href: "/industry-profile",
-      icon: React.createElement(User, { size: 18 })
     }
+    // ,
+    // {
+    //   label: "Profile",
+    //   href: "/industry-profile",
+    //   icon: React.createElement(User, { size: 18 })
+    // }
   ],
-  avatarInitials: "IN",
-  theme: {
-    bgColor: "bg-white",
-    textColor: "text-gray-900",
-    hoverColor: "text-gray-600 hover:text-primary",
-    buttonHoverColor: "hover:bg-gray-100",
-    avatarBgColor: "bg-primary/10",
-    avatarBorderColor: "border-primary/20"
+   avatarInitials: "IN",
+ theme: {
+  bgColor: "bg-[#1890ff]",
+  textColor: "text-white",
+  hoverColor: "hover:text-white hover:bg-blue-600",
+  buttonHoverColor: "hover:bg-blue-600",
+  avatarBgColor: "bg-blue-600",
+  avatarBorderColor: "border-blue-200"
   }
 };
 
 // Service Vendor Dashboard Navigation
 export const serviceVendorHeaderConfig: HeaderConfig = {
-  brandName: "Diligence.ai",
+  brandName: "Diligince.ai",
   brandHref: "/service-vendor-dashboard",
   navItems: [
     {
@@ -106,25 +107,26 @@ export const serviceVendorHeaderConfig: HeaderConfig = {
       href: "/service-vendor-messages",
       icon: React.createElement(MessageSquare, { size: 18 })
     },
-    {
-      label: "Profile",
-      href: "/service-vendor-profile",
-      icon: React.createElement(User, { size: 18 })
-    }
+    // {
+    //   label: "Profile",
+    //   href: "/service-vendor-profile",
+    //   icon: React.createElement(User, { size: 18 })
+    // }
   ],
   avatarInitials: "SV",
   theme: {
-    bgColor: "bg-gray-900",
-    textColor: "text-gray-50",
-    hoverColor: "text-gray-400 hover:text-primary/80",
-    buttonHoverColor: "hover:bg-gray-800",
-    avatarBgColor: "bg-gray-700",
+    bgColor: "bg-[#EA5400]",
+  textColor: "text-white",
+  hoverColor: "hover:text-white hover:bg-blue-600",
+  buttonHoverColor: "hover:bg-blue-600",
+  avatarBgColor: "bg-blue-600",
+  avatarBorderColor: "border-blue-200"
   }
 };
 
 // Product Vendor Dashboard Navigation (NEW - Fixed for product vendors)
 export const productVendorHeaderConfig: HeaderConfig = {
-  brandName: "Diligence.ai",
+  brandName: "Diligince.ai",
   brandHref: "/product-vendor-dashboard",
   navItems: [
     {
@@ -152,17 +154,17 @@ export const productVendorHeaderConfig: HeaderConfig = {
       href: "/product-vendor-messages",
       icon: React.createElement(MessageSquare, { size: 18 })
     },
-    {
-      label: "Profile",
-      href: "/product-vendor-profile",
-      icon: React.createElement(User, { size: 18 })
-    }
+    // {
+    //   label: "Profile",
+    //   href: "/product-vendor-profile",
+    //   icon: React.createElement(User, { size: 18 })
+    // }
   ],
   avatarInitials: "PV",
   theme: {
-    bgColor: "bg-white",
-    textColor: "text-gray-900",
-    hoverColor: "text-gray-600 hover:text-primary",
+    bgColor: "bg-[#CC8800]",
+    textColor: "text-white",
+    hoverColor: "text-gray-600 hover:text-blue-600",
     buttonHoverColor: "hover:bg-gray-100",
     avatarBgColor: "bg-orange-100",
     avatarBorderColor: "border-orange-200"
@@ -170,49 +172,49 @@ export const productVendorHeaderConfig: HeaderConfig = {
 };
 
 // Vendor Dashboard Navigation (Generic)
-export const vendorHeaderConfig: HeaderConfig = {
-  brandName: "Diligence.ai",
-  brandHref: "/vendor-dashboard",
-  navItems: [
-    {
-      label: "Dashboard",
-      href: "/vendor-dashboard",
-      icon: React.createElement(Home, { size: 18 })
-    },
-    {
-      label: "Requirements",
-      href: "/vendor-requirements",
-      icon: React.createElement(FileText, { size: 18 })
-    },
-    {
-      label: "Projects",
-      href: "/vendor-projects",
-      icon: React.createElement(Workflow, { size: 18 })
-    },
-    {
-      label: "Messages",
-      href: "/vendor-messages",
-      icon: React.createElement(MessageSquare, { size: 18 })
-    },
-    {
-      label: "Profile",
-      href: "/vendor-profile",
-      icon: React.createElement(User, { size: 18 })
-    }
-  ],
-  avatarInitials: "VE",
-  theme: {
-    bgColor: "bg-gray-900",
-    textColor: "text-gray-50",
-    hoverColor: "text-gray-400 hover:text-primary/80",
-    buttonHoverColor: "hover:bg-gray-800",
-    avatarBgColor: "bg-gray-700",
-  }
-};
+// export const vendorHeaderConfig: HeaderConfig = {
+//   brandName: "Diligence.ai",
+//   brandHref: "/vendor-dashboard",
+//   navItems: [
+//     {
+//       label: "Dashboard",
+//       href: "/vendor-dashboard",
+//       icon: React.createElement(Home, { size: 18 })
+//     },
+//     {
+//       label: "Requirements",
+//       href: "/vendor-requirements",
+//       icon: React.createElement(FileText, { size: 18 })
+//     },
+//     {
+//       label: "Projects",
+//       href: "/vendor-projects",
+//       icon: React.createElement(Workflow, { size: 18 })
+//     },
+//     {
+//       label: "Messages",
+//       href: "/vendor-messages",
+//       icon: React.createElement(MessageSquare, { size: 18 })
+//     },
+//     {
+//       label: "Profile",
+//       href: "/vendor-profile",
+//       icon: React.createElement(User, { size: 18 })
+//     }
+//   ],
+//   avatarInitials: "VE",
+//   theme: {
+//     bgColor: "bg-gray-900",
+//     textColor: "text-gray-50",
+//     hoverColor: "text-gray-400 hover:text-blue-300",
+//     buttonHoverColor: "hover:bg-gray-800",
+//     avatarBgColor: "bg-gray-700",
+//   }
+// };
 
 // Logistics Vendor Dashboard Navigation (NEW - Fixed for logistics vendors)
 export const logisticsVendorHeaderConfig: HeaderConfig = {
-  brandName: "Diligence.ai",
+  brandName: "Diligince.ai",
   brandHref: "/logistics-vendor-dashboard",
   navItems: [
     {
@@ -240,71 +242,71 @@ export const logisticsVendorHeaderConfig: HeaderConfig = {
       href: "/logistics-vendor-messages",
       icon: React.createElement(MessageSquare, { size: 18 })
     },
-    {
-      label: "Profile",
-      href: "/logistics-vendor-profile",
-      icon: React.createElement(User, { size: 18 })
-    }
+    // {
+    //   label: "Profile",
+    //   href: "/logistics-vendor-profile",
+    //   icon: React.createElement(User, { size: 18 })
+    // }
   ],
-  avatarInitials: "LV",
+  avatarInitials: "TL",
   theme: {
-    bgColor: "bg-white",
-    textColor: "text-gray-900",
-    hoverColor: "text-gray-600 hover:text-primary",
+    bgColor: "bg-[#eb2f96]",
+    textColor: "text-white",
+    hoverColor: "text-gray-600 hover:text-blue-600",
     buttonHoverColor: "hover:bg-gray-100",
-    avatarBgColor: "bg-primary/10",
-    avatarBorderColor: "border-primary/20"
+    avatarBgColor: "bg-blue-100",
+    avatarBorderColor: "border-blue-200"
   }
 };
 
 // Logistics Dashboard Navigation (Alias for compatibility)
-export const logisticsHeaderConfig: HeaderConfig = logisticsVendorHeaderConfig;
+// export const logisticsHeaderConfig: HeaderConfig = logisticsVendorHeaderConfig;
 
 // Expert Dashboard Navigation
-export const expertHeaderConfig: HeaderConfig = {
-  brandName: "Diligence.ai",
-  brandHref: "/expert-dashboard",
-  navItems: [
-    {
-      label: "Dashboard",
-      href: "/expert-dashboard",
-      icon: React.createElement(Home, { size: 18 })
-    },
-    {
-      label: "Projects",
-      href: "/expert-projects",
-      icon: React.createElement(Briefcase, { size: 18 })
-    },
-    {
-      label: "Calendar",
-      href: "/expert-calendar",
-      icon: React.createElement(Calendar, { size: 18 })
-    },
-    {
-      label: "Messages",
-      href: "/expert-messages",
-      icon: React.createElement(MessageSquare, { size: 18 })
-    },
-    {
-      label: "Profile",
-      href: "/expert-profile",
-      icon: React.createElement(User, { size: 18 })
-    }
-  ],
-  avatarInitials: "EX",
-  theme: {
-    bgColor: "bg-white",
-    textColor: "text-gray-900",
-    hoverColor: "text-gray-600 hover:text-primary",
-    buttonHoverColor: "hover:bg-gray-100",
-    avatarBgColor: "bg-primary/10",
-    avatarBorderColor: "border-primary/20"
-  }
-};
+// export const expertHeaderConfig: HeaderConfig = {
+//   brandName: "Diligence.ai",
+//   brandHref: "/expert-dashboard",
+//   navItems: [
+//     {
+//       label: "Dashboard",
+//       href: "/expert-dashboard",
+//       icon: React.createElement(Home, { size: 18 })
+//     },
+//     {
+//       label: "Projects",
+//       href: "/expert-projects",
+//       icon: React.createElement(Briefcase, { size: 18 })
+//     },
+//     {
+//       label: "Calendar",
+//       href: "/expert-calendar",
+//       icon: React.createElement(Calendar, { size: 18 })
+//     },
+//     {
+//       label: "Messages",
+//       href: "/expert-messages",
+//       icon: React.createElement(MessageSquare, { size: 18 })
+//     },
+//     {
+//       label: "Profile",
+//       href: "/expert-profile",
+//       icon: React.createElement(User, { size: 18 })
+//     }
+//   ],
+//   avatarInitials: "EX",
+//   theme: {
+//     bgColor: "bg-white",
+//     textColor: "text-gray-900",
+//     hoverColor: "text-gray-600 hover:text-blue-600",
+//     buttonHoverColor: "hover:bg-gray-100",
+//     avatarBgColor: "bg-blue-100",
+//     avatarBorderColor: "border-blue-200"
+//   }
+// };
 
 // Professional Dashboard Navigation (missing export)
 export const professionalHeaderConfig: HeaderConfig = {
-  brandName: "Diligence.ai",
+  brandName: "Diligince.ai",
   brandHref: "/professional-dashboard",
   navItems: [
     {
@@ -327,20 +329,20 @@ export const professionalHeaderConfig: HeaderConfig = {
       href: "/professional-messages",
       icon: React.createElement(MessageSquare, { size: 18 })
     },
-    {
-      label: "Profile",
-      href: "/professional-profile",
-      icon: React.createElement(User, { size: 18 })
-    }
+    // {
+    //   label: "Profile",
+    //   href: "/professional-profile",
+    //   icon: React.createElement(User, { size: 18 })
+    // }
   ],
   avatarInitials: "PR",
   theme: {
-    bgColor: "bg-white",
-    textColor: "text-gray-900",
-    hoverColor: "text-gray-600 hover:text-primary",
+    bgColor: "bg-[#6A0DAD]",
+    textColor: "text-white",
+    hoverColor: "text-gray-600 hover:text-blue-600",
     buttonHoverColor: "hover:bg-gray-100",
-    avatarBgColor: "bg-primary/10",
-    avatarBorderColor: "border-primary/20"
+    avatarBgColor: "bg-blue-100",
+    avatarBorderColor: "border-blue-200"
   }
 };
 
@@ -350,9 +352,9 @@ export const getHeaderConfigByPath = (path: string): HeaderConfig => {
   if (path.startsWith('/service-vendor')) return serviceVendorHeaderConfig;
   if (path.startsWith('/product-vendor')) return productVendorHeaderConfig;
   if (path.startsWith('/logistics-vendor') || path.startsWith('/logistics')) return logisticsVendorHeaderConfig;
-  if (path.startsWith('/expert')) return expertHeaderConfig;
+  // if (path.startsWith('/expert')) return expertHeaderConfig;
   if (path.startsWith('/professional')) return professionalHeaderConfig;
-  if (path.startsWith('/vendor')) return vendorHeaderConfig;
+  // if (path.startsWith('/vendor')) return vendorHeaderConfig;
   
   // Default fallback
   return industryHeaderConfig;

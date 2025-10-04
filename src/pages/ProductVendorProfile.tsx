@@ -14,47 +14,58 @@ import { useNavigate } from "react-router-dom";
 import { calculateProfileCompleteness } from "@/utils/profileCompleteness";
 
 // Types for content sections
-export type ContentType = 
-  | "company-info" 
-  | "product-catalog" 
-  | "brands-partners" 
-  | "certifications" 
-  | "shipping-returns" 
-  | "payment-settings" 
+export type ContentType =
+  | "company-info"
+  | "product-catalog"
+  | "brands-partners"
+  | "certifications"
+  | "shipping-returns"
+  | "payment-settings"
   | "account-settings";
 
 const ProductVendorProfile = () => {
   const { user, isAuthenticated } = useUser();
   const navigate = useNavigate();
-  
-  const [activeContent, setActiveContent] = useState<ContentType>("company-info");
-  
+
+  const [activeContent, setActiveContent] =
+    useState<ContentType>("company-info");
+
+  // ✅ menuConfig paths for vendor
+  const headerNavItems = [
+    { label: "Dashboard", href: "/dashboard/vendor" },
+    { label: "RFQs", href: "/dashboard/vendor-rfqs" },
+    { label: "Orders", href: "/dashboard/vendor-orders" },
+    { label: "Profile", href: "/dashboard/vendor-profile", active: true },
+  ];
+
   // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/signin');
+      navigate("/signin");
     }
   }, [isAuthenticated, navigate]);
-  
+
   // Calculate actual profile completion based on current user data
-  const profileCompletion = user ? calculateProfileCompleteness(user) : {
-    percentage: 0,
-    isComplete: false,
-    missingFields: [],
-    completedFields: []
-  };
-  
+  const profileCompletion = user
+    ? calculateProfileCompleteness(user)
+    : {
+        percentage: 0,
+        isComplete: false,
+        missingFields: [],
+        completedFields: [],
+      };
+
   // Vendor data from user context
   const vendorData = {
     companyName: user?.profile?.businessName || "TechPro Supplies",
     specialization: user?.profile?.specialization || "Industrial Components",
     initials: user?.initials || "TS",
-    isVerified: true
+    isVerified: true,
   };
 
   // Handle profile completion action
   const handleCompleteProfile = () => {
-    navigate('/profile-completion');
+    navigate("/dashboard/vendor-profile/completion");
   };
 
   const handleMenuItemClick = (contentType: ContentType) => {
@@ -88,8 +99,9 @@ const ProductVendorProfile = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <ProductVendorHeader />
-      
+      {/* ✅ with navItems */}
+      <ProductVendorHeader navItems={headerNavItems} />
+
       <div className="flex flex-grow pt-16">
         <ProductVendorSidebar
           activeSection={activeContent}
@@ -97,7 +109,7 @@ const ProductVendorProfile = () => {
           vendorData={vendorData}
           profileCompletion={profileCompletion.percentage}
         />
-        
+
         <main className="flex-1 p-6 lg:p-8 overflow-y-auto bg-gray-50">
           <div className="w-full max-w-4xl mx-auto">
             {/* Profile Completion Widget */}
@@ -106,7 +118,7 @@ const ProductVendorProfile = () => {
               onCompleteProfile={handleCompleteProfile}
               showCompleteButton={!profileCompletion.isComplete}
             />
-            
+
             {renderContent()}
           </div>
         </main>

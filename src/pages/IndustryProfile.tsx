@@ -760,7 +760,7 @@ const IndustryProfile = () => {
     return null;
   }
   return <div className="min-h-screen flex flex-col bg-gray-50">
-      <IndustryHeader />
+      
 
       {/* Main content area with sidebar and main panel */}
       <div className="flex flex-grow pt-16">

@@ -242,7 +242,7 @@ const ProductVendorMessages = () => {
         <title>Messages | Product Vendor Dashboard</title>
       </Helmet>
       
-      <VendorHeader />
+      {/* <VendorHeader /> */}
       
       <div className="pt-16 flex-1 flex">
         {/* Conversations Sidebar */}

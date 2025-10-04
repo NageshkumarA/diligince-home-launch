@@ -195,7 +195,7 @@ const IndustryMessages = () => {
         <title>Messages | Industry Dashboard</title>
       </Helmet>
       
-      <IndustryHeader />
+      
       
       <div className="pt-16 flex-1 flex">
         {/* Conversations Sidebar */}

@@ -1,5 +1,16 @@
-
-import { FileText, Send, ShoppingCart, Package, Briefcase, Calendar, Star, TrendingUp, Users, Truck, Wrench } from "lucide-react";
+import {
+  FileText,
+  Send,
+  ShoppingCart,
+  Package,
+  Briefcase,
+  Calendar,
+  Star,
+  TrendingUp,
+  Users,
+  Truck,
+  Wrench,
+} from "lucide-react";
 import { StatItem } from "@/components/shared/dashboard/GenericDashboardStats";
 
 export const productVendorStats: StatItem[] = [
@@ -9,7 +20,7 @@ export const productVendorStats: StatItem[] = [
     subtitle: "open requests",
     icon: FileText,
     color: "text-[#faad14]",
-    bgColor: "bg-[#faad14]/10"
+    bgColor: "bg-[#faad14]/10",
   },
   {
     title: "Quotations Sent",
@@ -17,7 +28,7 @@ export const productVendorStats: StatItem[] = [
     subtitle: "awaiting response",
     icon: Send,
     color: "text-primary",
-    bgColor: "bg-primary/10"
+    bgColor: "bg-primary/10",
   },
   {
     title: "Active Orders",
@@ -25,7 +36,7 @@ export const productVendorStats: StatItem[] = [
     subtitle: "in progress",
     icon: ShoppingCart,
     color: "text-green-600",
-    bgColor: "bg-green-100"
+    bgColor: "bg-green-100",
   },
   {
     title: "Total Products",
@@ -33,8 +44,8 @@ export const productVendorStats: StatItem[] = [
     subtitle: "in catalog",
     icon: Package,
     color: "text-[#722ed1]",
-    bgColor: "bg-[#722ed1]/10"
-  }
+    bgColor: "bg-[#722ed1]/10",
+  },
 ];
 
 export const serviceVendorStats: StatItem[] = [
@@ -44,7 +55,7 @@ export const serviceVendorStats: StatItem[] = [
     subtitle: "open requests",
     icon: FileText,
     color: "text-[#fa8c16]",
-    bgColor: "bg-[#fa8c16]/10"
+    bgColor: "bg-[#fa8c16]/10",
   },
   {
     title: "Proposals Sent",
@@ -52,7 +63,7 @@ export const serviceVendorStats: StatItem[] = [
     subtitle: "awaiting response",
     icon: Send,
     color: "text-primary",
-    bgColor: "bg-primary/10"
+    bgColor: "bg-primary/10",
   },
   {
     title: "Active Projects",
@@ -60,7 +71,7 @@ export const serviceVendorStats: StatItem[] = [
     subtitle: "in progress",
     icon: Briefcase,
     color: "text-green-600",
-    bgColor: "bg-green-100"
+    bgColor: "bg-green-100",
   },
   {
     title: "Team Availability",
@@ -68,8 +79,8 @@ export const serviceVendorStats: StatItem[] = [
     subtitle: "engineers available",
     icon: Users,
     color: "text-[#722ed1]",
-    bgColor: "bg-[#722ed1]/10"
-  }
+    bgColor: "bg-[#722ed1]/10",
+  },
 ];
 
 export const professionalStats: StatItem[] = [
@@ -79,7 +90,7 @@ export const professionalStats: StatItem[] = [
     subtitle: "matched to skills",
     icon: Briefcase,
     color: "text-[#722ed1]",
-    bgColor: "bg-[#722ed1]/10"
+    bgColor: "bg-[#722ed1]/10",
   },
   {
     title: "Applied Jobs",
@@ -87,7 +98,7 @@ export const professionalStats: StatItem[] = [
     subtitle: "awaiting response",
     icon: Calendar,
     color: "text-primary",
-    bgColor: "bg-primary/10"
+    bgColor: "bg-primary/10",
   },
   {
     title: "Ongoing Projects",
@@ -95,7 +106,7 @@ export const professionalStats: StatItem[] = [
     subtitle: "in progress",
     icon: TrendingUp,
     color: "text-green-600",
-    bgColor: "bg-green-100"
+    bgColor: "bg-green-100",
   },
   {
     title: "Average Rating",
@@ -103,8 +114,8 @@ export const professionalStats: StatItem[] = [
     subtitle: "★★★★★",
     icon: Star,
     color: "text-orange-600",
-    bgColor: "bg-orange-100"
-  }
+    bgColor: "bg-orange-100",
+  },
 ];
 
 export const logisticsVendorStats: StatItem[] = [
@@ -114,7 +125,7 @@ export const logisticsVendorStats: StatItem[] = [
     subtitle: "available jobs",
     icon: FileText,
     color: "text-[#eb2f96]",
-    bgColor: "bg-[#eb2f96]/10"
+    bgColor: "bg-[#eb2f96]/10",
   },
   {
     title: "Quotes Submitted",
@@ -122,7 +133,7 @@ export const logisticsVendorStats: StatItem[] = [
     subtitle: "awaiting approval",
     icon: Package,
     color: "text-primary",
-    bgColor: "bg-primary/10"
+    bgColor: "bg-primary/10",
   },
   {
     title: "Active Deliveries",
@@ -130,7 +141,7 @@ export const logisticsVendorStats: StatItem[] = [
     subtitle: "in transit",
     icon: Truck,
     color: "text-green-600",
-    bgColor: "bg-green-100"
+    bgColor: "bg-green-100",
   },
   {
     title: "Equipment Status",
@@ -138,6 +149,6 @@ export const logisticsVendorStats: StatItem[] = [
     subtitle: "vehicles available",
     icon: Wrench,
     color: "text-orange-600",
-    bgColor: "bg-orange-100"
-  }
+    bgColor: "bg-orange-100",
+  },
 ];

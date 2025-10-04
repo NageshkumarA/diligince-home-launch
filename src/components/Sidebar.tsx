@@ -54,7 +54,7 @@ const Sidebar: React.FC = () => {
       } bg-primary border-r border-sidebar-border flex flex-col h-screen transition-all duration-300 relative z-40`}>
         {/* Header with Logo */}
         <div className="p-4 border-b border-sidebar-border">
-          <div className={`${isCollapsed ? 'justify-center' : 'justify-between'} flex items-center`}>
+          <div className={`${isCollapsed ? 'justify-center position-relative' : 'justify-between'} flex items-center`}>
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary-foreground rounded-md flex items-center justify-center font-bold">
                 <img src='./logo-main-no-bg.svg' alt="Logo" className="w-full h-full object-contain" />
@@ -68,7 +68,7 @@ const Sidebar: React.FC = () => {
                 setIsCollapsed(!isCollapsed);
                 setActiveSubmenu(null);
               }}
-              className="p-2 text-primary-foreground hover:bg-primary-foreground hover:text-primary rounded transition-colors"
+              className={`p-2 text-primary-foreground hover:bg-primary-foreground hover:text-primary rounded transition-colors ${isCollapsed ? 'justify-center absolute p-2 rounded transition-all' : 'justify-between'}`}
             >
               {isCollapsed ? (
                 <ChevronRight className="w-4 h-4" />
@@ -80,7 +80,7 @@ const Sidebar: React.FC = () => {
         </div>
 
         {/* Navigation Menu */}
-        <div className="flex-1 overflow-y-auto p-4 relative">
+        <div className="flex-1 overflow-y-auto p-2 relative">
           <nav className="space-y-2 flex-1 overflow-y-auto">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -102,8 +102,8 @@ const Sidebar: React.FC = () => {
                       }
                     }}
                     className={`flex items-center ${
-                      isCollapsed ? 'justify-center h-12 w-12 mx-auto' : 'space-x-3 px-3 py-3'
-                    } rounded-lg transition-colors relative ${
+                      isCollapsed ? 'justify-center h-10 w-10 mx-auto' : 'space-x-3 px-3 py-3'
+                    } rounded-md transition-colors relative ${
                       isActive || isSubmenuActive
                         ? 'bg-primary-foreground text-primary'
                         : 'text-primary-foreground hover:bg-primary-foreground hover:text-primary'
@@ -158,7 +158,7 @@ const Sidebar: React.FC = () => {
         </div>
 
         {/* Profile Section */}
-        <div className="p-4 border-t border-sidebar-border">
+        <div className="p-2 border-t border-sidebar-border">
           {userProfileItems.map((item) => {
             const hasSubmenu = Array.isArray(item.submenu) && item.submenu.length > 0;
             const Icon = item.icon;
@@ -169,8 +169,8 @@ const Sidebar: React.FC = () => {
               <div key={item.path} className="relative">
                 <div
                   className={`flex items-center ${
-                    isCollapsed ? 'justify-center h-12 w-12 mx-auto' : 'space-x-3 px-3 py-3'
-                  } rounded-lg text-primary-foreground hover:bg-primary-foreground hover:text-primary transition-colors cursor-pointer ${
+                    isCollapsed ? 'justify-center h-10 w-10 mx-auto' : 'space-x-3 px-3 py-3'
+                  } rounded-md text-primary-foreground hover:bg-primary-foreground hover:text-primary transition-colors cursor-pointer ${
                     isSubmenuActive ? 'bg-primary-foreground text-primary' : ''
                   }`}
                   title={isCollapsed ? item.label : ''}
@@ -198,7 +198,7 @@ const Sidebar: React.FC = () => {
                     <Icon className="w-6 h-6" />
                   ) : (
                     <Link to={item.path} className={`flex items-center w-full ${isCollapsed ? 'justify-center' : ''}`}>
-                      <Icon className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
+                      <Icon className={`${isCollapsed ? 'w-5 h-5' : 'w-5 h-5'} flex-shrink-0`} />
                       {!isCollapsed && (
                         <span className="font-medium ml-3">{item.label}</span>
                       )}

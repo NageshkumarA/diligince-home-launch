@@ -1,5 +1,15 @@
 import { useState, useEffect } from "react";
-import { User, Home, Calendar, Award, Briefcase, Wallet, Settings, LayoutGrid, MessageSquare } from "lucide-react";
+import {
+  User,
+  Home,
+  Calendar,
+  Award,
+  Briefcase,
+  Wallet,
+  Settings,
+  LayoutGrid,
+  MessageSquare,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import ProfessionalHeader from "@/components/professional/ProfessionalHeader";
@@ -23,26 +33,27 @@ export type SidebarMenuItem = {
 };
 
 // Content type for the main area
-export type ContentType = 
-  | "personal-info" 
-  | "skills" 
-  | "certifications" 
-  | "experience" 
-  | "availability" 
-  | "payment" 
+export type ContentType =
+  | "personal-info"
+  | "skills"
+  | "certifications"
+  | "experience"
+  | "availability"
+  | "payment"
   | "account";
 
 const ProfessionalProfile = () => {
   const { user, profileCompletion, isAuthenticated } = useUser();
   const navigate = useNavigate();
-  
+
   // State to track active content
-  const [activeContent, setActiveContent] = useState<ContentType>("personal-info");
-  
+  const [activeContent, setActiveContent] =
+    useState<ContentType>("personal-info");
+
   // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/signin');
+      navigate("/signin");
     }
   }, [isAuthenticated, navigate]);
 
@@ -50,7 +61,7 @@ const ProfessionalProfile = () => {
     // Notify the user that the professional profile is loaded
     toast.success("Professional profile loaded successfully");
   }, []);
-  
+
   // Professional data from user context
   const professionalData = {
     name: user?.profile?.fullName || user?.name || "Rahul Sharma",
@@ -60,27 +71,60 @@ const ProfessionalProfile = () => {
 
   // Handle profile completion action
   const handleCompleteProfile = () => {
-    navigate('/profile-completion');
+    navigate("/profile-completion");
   };
 
-  // Navigation menu items
+  // Navigation menu items for sidebar (local only, not in menuConfig)
   const menuItems: SidebarMenuItem[] = [
     { id: "personal-info", label: "Personal Info", icon: <User size={18} /> },
-    { id: "skills", label: "Skills & Expertise", icon: <LayoutGrid size={18} /> },
-    { id: "certifications", label: "Certifications", icon: <Award size={18} /> },
+    {
+      id: "skills",
+      label: "Skills & Expertise",
+      icon: <LayoutGrid size={18} />,
+    },
+    {
+      id: "certifications",
+      label: "Certifications",
+      icon: <Award size={18} />,
+    },
     { id: "experience", label: "Experience", icon: <Briefcase size={18} /> },
-    { id: "availability", label: "Availability Calendar", icon: <Calendar size={18} /> },
+    {
+      id: "availability",
+      label: "Availability Calendar",
+      icon: <Calendar size={18} />,
+    },
     { id: "payment", label: "Payment Settings", icon: <Wallet size={18} /> },
     { id: "account", label: "Account Settings", icon: <Settings size={18} /> },
   ];
 
-  // Header navigation items
+  // Header navigation items (now corrected with /dashboard/ prefix)
   const headerNavItems = [
-    { label: "Dashboard", icon: <Home size={18} />, href: "/professional-dashboard" },
-    { label: "Opportunities", icon: <Briefcase size={18} />, href: "/professional-opportunities" },
-    { label: "Calendar", icon: <Calendar size={18} />, href: "/professional-calendar" },
-    { label: "Messages", icon: <MessageSquare size={18} />, href: "/professional-messages" },
-    { label: "Profile", icon: <User size={18} />, href: "/professional-profile", active: true },
+    {
+      label: "Dashboard",
+      icon: <Home size={18} />,
+      href: "/dashboard/professional",
+    },
+    {
+      label: "Opportunities",
+      icon: <Briefcase size={18} />,
+      href: "/dashboard/professional-opportunities",
+    },
+    {
+      label: "Calendar",
+      icon: <Calendar size={18} />,
+      href: "/dashboard/professional-calendar",
+    },
+    {
+      label: "Messages",
+      icon: <MessageSquare size={18} />,
+      href: "/dashboard/professional-messages",
+    },
+    {
+      label: "Profile",
+      icon: <User size={18} />,
+      href: "/dashboard/professional-profile",
+      active: true,
+    },
   ];
 
   // Function to handle menu item click
@@ -116,17 +160,17 @@ const ProfessionalProfile = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <ProfessionalHeader navItems={headerNavItems} />
-      
+      {/* // <ProfessionalHeader navItems={headerNavItems} /> */}
+
       <div className="flex flex-grow pt-16">
-        <ProfessionalSidebar 
+        <ProfessionalSidebar
           professionalData={professionalData}
           menuItems={menuItems}
           activeMenuItem={activeContent}
           onMenuItemClick={handleMenuItemClick}
           profileCompletion={profileCompletion.percentage}
         />
-        
+
         <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
           <div className="w-full max-w-4xl mx-auto">
             {/* Profile Completion Widget */}
@@ -135,10 +179,8 @@ const ProfessionalProfile = () => {
               onCompleteProfile={handleCompleteProfile}
               showCompleteButton={!profileCompletion.isComplete}
             />
-            
-            <Card className="w-full shadow-sm">
-              {renderContent()}
-            </Card>
+
+            <Card className="w-full shadow-sm">{renderContent()}</Card>
           </div>
         </main>
       </div>

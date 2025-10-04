@@ -1,122 +1,128 @@
-import React, { useState } from 'react';
-import CustomTable from '@/components/CustomTable';
-import { ColumnConfig, FilterConfig } from '@/types/table';
+import React, { useState } from "react";
+import CustomTable from "@/components/CustomTable";
+import { ColumnConfig, FilterConfig } from "@/types/table";
 
 const RequirementsArchived = () => {
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  // ✅ Explicit type for rows instead of any[]
+  const [selectedRows, setSelectedRows] = useState<Record<string, unknown>[]>(
+    []
+  );
 
   const mockData = [
     {
-      id: 'REQ-009',
-      title: 'Legacy System Migration',
-      category: 'IT Infrastructure',
-      priority: 'High',
-      estimatedValue: '$200,000',
-      archivedDate: '2024-01-15',
-      reason: 'Project Completed',
-      finalValue: '$185,000',
-      status: 'Completed'
+      id: "REQ-009",
+      title: "Legacy System Migration",
+      category: "IT Infrastructure",
+      priority: "High",
+      estimatedValue: "$200,000",
+      archivedDate: "2024-01-15",
+      reason: "Project Completed",
+      finalValue: "$185,000",
+      status: "Completed",
     },
     {
-      id: 'REQ-010',
-      title: 'Office Equipment Purchase',
-      category: 'Procurement',
-      priority: 'Low',
-      estimatedValue: '$15,000',
-      archivedDate: '2024-01-10',
-      reason: 'Cancelled',
-      finalValue: '$0',
-      status: 'Cancelled'
-    }
+      id: "REQ-010",
+      title: "Office Equipment Purchase",
+      category: "Procurement",
+      priority: "Low",
+      estimatedValue: "$15,000",
+      archivedDate: "2024-01-10",
+      reason: "Cancelled",
+      finalValue: "$0",
+      status: "Cancelled",
+    },
   ];
 
   const columns: ColumnConfig[] = [
     {
-      name: 'id',
-      label: 'Requirement ID',
+      name: "id",
+      label: "Requirement ID",
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log('View requirement:', row.id),
-      width: '150px'
+      action: (row) => console.log("View requirement:", row.id),
+      width: "150px",
     },
     {
-      name: 'title',
-      label: 'Title',
+      name: "title",
+      label: "Title",
       isSortable: true,
-      isSearchable: true
+      isSearchable: true,
     },
     {
-      name: 'category',
-      label: 'Category',
-      isSortable: true,
-      isFilterable: true,
-      filterOptions: [
-        { key: 'IT Infrastructure', value: 'IT Infrastructure' },
-        { key: 'Procurement', value: 'Procurement' },
-        { key: 'Construction', value: 'Construction' },
-        { key: 'Services', value: 'Services' }
-      ]
-    },
-    {
-      name: 'status',
-      label: 'Status',
+      name: "category",
+      label: "Category",
       isSortable: true,
       isFilterable: true,
       filterOptions: [
-        { key: 'Completed', value: 'Completed', color: '#dcfce7' },
-        { key: 'Cancelled', value: 'Cancelled', color: '#fee2e2' },
-        { key: 'Expired', value: 'Expired', color: '#f3f4f6' }
-      ]
+        { key: "IT Infrastructure", value: "IT Infrastructure" },
+        { key: "Procurement", value: "Procurement" },
+        { key: "Construction", value: "Construction" },
+        { key: "Services", value: "Services" },
+      ],
     },
     {
-      name: 'estimatedValue',
-      label: 'Est. Value',
+      name: "status",
+      label: "Status",
       isSortable: true,
-      align: 'right'
+      isFilterable: true,
+      filterOptions: [
+        { key: "Completed", value: "Completed", color: "#dcfce7" },
+        { key: "Cancelled", value: "Cancelled", color: "#fee2e2" },
+        { key: "Expired", value: "Expired", color: "#f3f4f6" },
+      ],
     },
     {
-      name: 'finalValue',
-      label: 'Final Value',
+      name: "estimatedValue",
+      label: "Est. Value",
       isSortable: true,
-      align: 'right'
+      align: "right",
     },
     {
-      name: 'reason',
-      label: 'Archive Reason',
+      name: "finalValue",
+      label: "Final Value",
       isSortable: true,
-      isSearchable: true
+      align: "right",
     },
     {
-      name: 'archivedDate',
-      label: 'Archived Date',
-      isSortable: true
-    }
+      name: "reason",
+      label: "Archive Reason",
+      isSortable: true,
+      isSearchable: true,
+    },
+    {
+      name: "archivedDate",
+      label: "Archived Date",
+      isSortable: true,
+    },
   ];
 
   const handleFilter = (filters: FilterConfig) => {
-    console.log('Applied filters:', filters);
+    console.log("Applied filters:", filters);
   };
 
   const handleSearch = (searchTerm: string, selectedColumns: string[]) => {
-    console.log('Search:', searchTerm, selectedColumns);
+    console.log("Search:", searchTerm, selectedColumns);
   };
 
   const handleExportXLSX = () => {
-    console.log('Export XLSX');
+    console.log("Export XLSX");
   };
 
   const handleExportCSV = () => {
-    console.log('Export CSV');
+    console.log("Export CSV");
   };
 
-  const handleSelectionChange = (selected: any[]) => {
+  // ✅ Fix: use explicit type for selected rows
+  const handleSelectionChange = (selected: Record<string, unknown>[]) => {
     setSelectedRows(selected);
   };
 
   return (
     <div className="p-6 bg-background min-h-screen">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Archived Requirements</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          Archived Requirements
+        </h1>
         <p className="text-muted-foreground">
           Completed, cancelled, or expired requirements for historical reference
         </p>
@@ -129,7 +135,7 @@ const RequirementsArchived = () => {
         searchCallback={handleSearch}
         onExport={{
           xlsx: handleExportXLSX,
-          csv: handleExportCSV
+          csv: handleExportCSV,
         }}
         selectable={true}
         onSelectionChange={handleSelectionChange}
@@ -137,7 +143,7 @@ const RequirementsArchived = () => {
         pagination={{
           enabled: true,
           pageSize: 10,
-          currentPage: 1
+          currentPage: 1,
         }}
       />
     </div>

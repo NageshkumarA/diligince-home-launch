@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect, Suspense, memo } from "react";
-import { Home, Briefcase, Calendar, MessageSquare, User, Bell } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Home, Briefcase, Calendar, MessageSquare, User } from "lucide-react";
 import { toast } from "sonner";
 import ProfessionalHeader from "@/components/professional/ProfessionalHeader";
 import { FastLoadingState } from "@/components/shared/loading/FastLoadingState";
@@ -10,49 +8,104 @@ import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { perfUtils } from "@/utils/performance";
 import { useAsyncOperation } from "@/hooks/useAsyncOperation";
 
-// Lazy load dashboard components for better performance
-const DashboardStats = React.lazy(() => 
-  import("@/components/professional/dashboard/DashboardStats").then(module => ({
-    default: module.DashboardStats
+// Lazy load dashboard components
+const DashboardStats = React.lazy(() =>
+  import("@/components/professional/dashboard/DashboardStats").then((m) => ({
+    default: m.DashboardStats,
   }))
 );
 
-const AvailabilityCalendar = React.lazy(() => 
-  import("@/components/professional/dashboard/AvailabilityCalendar").then(module => ({
-    default: module.AvailabilityCalendar
+const AvailabilityCalendar = React.lazy(() =>
+  import("@/components/professional/dashboard/AvailabilityCalendar").then(
+    (m) => ({
+      default: m.AvailabilityCalendar,
+    })
+  )
+);
+
+const JobOpportunities = React.lazy(() =>
+  import("@/components/professional/dashboard/JobOpportunities").then((m) => ({
+    default: m.JobOpportunities,
   }))
 );
 
-const JobOpportunities = React.lazy(() => 
-  import("@/components/professional/dashboard/JobOpportunities").then(module => ({
-    default: module.JobOpportunities
+const OngoingProjects = React.lazy(() =>
+  import("@/components/professional/dashboard/OngoingProjects").then((m) => ({
+    default: m.OngoingProjects,
   }))
 );
 
-const OngoingProjects = React.lazy(() => 
-  import("@/components/professional/dashboard/OngoingProjects").then(module => ({
-    default: module.OngoingProjects
+const MessageCenter = React.lazy(() =>
+  import("@/components/professional/dashboard/MessageCenter").then((m) => ({
+    default: m.MessageCenter,
   }))
 );
 
-const MessageCenter = React.lazy(() => 
-  import("@/components/professional/dashboard/MessageCenter").then(module => ({
-    default: module.MessageCenter
-  }))
-);
+// ---------------- Types ----------------
+interface ApplicationData {
+  coverLetter: string;
+  resumeUrl?: string;
+}
 
-// Mock data - moved to module level for better performance
-const mockMessages = [
+interface ProjectUpdate {
+  status?: string;
+  progress?: number;
+  nextMilestone?: string;
+}
+
+interface Message {
+  id: number;
+  sender: string;
+  initials: string;
+  message: string;
+  timestamp: string;
+  priority: "high" | "medium" | "low";
+  color: string;
+  unread: boolean;
+  type: string;
+}
+
+interface Project {
+  id: number;
+  title: string;
+  client: string;
+  timeline: string;
+  status: string;
+  progress: number;
+  priority: "high" | "medium" | "low";
+  nextMilestone: string;
+  totalValue: string;
+  remainingDays: number;
+}
+
+interface Job {
+  id: number;
+  title: string;
+  company: string;
+  budget: string;
+  duration: string;
+  location: string;
+  skillsMatch: number;
+  postedDate: string;
+  deadline: string;
+  status: string;
+  description: string;
+  requirements: string[];
+}
+
+// ---------------- Mock Data ----------------
+const mockMessages: Message[] = [
   {
     id: 1,
     sender: "Chem Industries",
     initials: "CI",
-    message: "The valve inspection is scheduled for tomorrow. Please confirm...",
+    message:
+      "The valve inspection is scheduled for tomorrow. Please confirm...",
     timestamp: "10:42 AM",
     priority: "high",
     color: "green",
     unread: true,
-    type: "project-update"
+    type: "project-update",
   },
   {
     id: 2,
@@ -60,47 +113,50 @@ const mockMessages = [
     initials: "PG",
     message: "We've prepared all documentation for your audit next week...",
     timestamp: "Yesterday",
-    priority: "medium", 
+    priority: "medium",
     color: "blue",
     unread: true,
-    type: "project-preparation"
+    type: "project-preparation",
   },
   {
     id: 3,
     sender: "Steel Plant Ltd.",
     initials: "SP",
-    message: "Thank you for your application. We'd like to schedule an interview...",
+    message:
+      "Thank you for your application. We'd like to schedule an interview...",
     timestamp: "2d ago",
     priority: "high",
-    color: "orange", 
+    color: "orange",
     unread: false,
-    type: "job-response"
+    type: "job-response",
   },
   {
     id: 4,
     sender: "AutoParts Ltd.",
     initials: "AP",
-    message: "We're interested in your profile for our PLC programming project...",
+    message:
+      "We're interested in your profile for our PLC programming project...",
     timestamp: "3d ago",
     priority: "medium",
     color: "pink",
     unread: false,
-    type: "job-inquiry"
+    type: "job-inquiry",
   },
   {
     id: 5,
     sender: "Diligince.ai",
     initials: "DL",
-    message: "We've found 3 new job opportunities matching your skills profile...",
+    message:
+      "We've found 3 new job opportunities matching your skills profile...",
     timestamp: "5d ago",
     priority: "low",
     color: "purple",
     unread: false,
-    type: "system-notification"
-  }
+    type: "system-notification",
+  },
 ];
 
-const mockProjects = [
+const mockProjects: Project[] = [
   {
     id: 1,
     title: "Valve System Inspection",
@@ -111,11 +167,11 @@ const mockProjects = [
     priority: "high",
     nextMilestone: "Complete initial assessment",
     totalValue: "₹85,000",
-    remainingDays: 2
+    remainingDays: 2,
   },
   {
     id: 2,
-    title: "Electrical System Audit", 
+    title: "Electrical System Audit",
     client: "Power Gen Co.",
     timeline: "May 12-13, 2025",
     status: "scheduled",
@@ -123,11 +179,11 @@ const mockProjects = [
     priority: "medium",
     nextMilestone: "Project kickoff meeting",
     totalValue: "₹120,000",
-    remainingDays: 5
-  }
+    remainingDays: 5,
+  },
 ];
 
-const mockJobs = [
+const mockJobs: Job[] = [
   {
     id: 1,
     title: "Control System Upgrade",
@@ -140,12 +196,16 @@ const mockJobs = [
     deadline: "2024-05-15",
     status: "open",
     description: "Upgrade existing control systems with latest PLC technology",
-    requirements: ["PLC Programming", "Control Systems", "Industrial Automation"]
+    requirements: [
+      "PLC Programming",
+      "Control Systems",
+      "Industrial Automation",
+    ],
   },
   {
     id: 2,
     title: "PLC Programming for New Line",
-    company: "AutoParts Ltd.", 
+    company: "AutoParts Ltd.",
     budget: "₹280,000",
     duration: "3 weeks",
     location: "Pune",
@@ -154,56 +214,76 @@ const mockJobs = [
     deadline: "2024-05-12",
     status: "open",
     description: "Program PLC for new automotive parts production line",
-    requirements: ["PLC Programming", "Manufacturing", "Quality Control"]
-  }
+    requirements: ["PLC Programming", "Manufacturing", "Quality Control"],
+  },
 ];
 
-// Header navigation items - moved to module level
+// ---------------- Header Navigation ----------------
 const headerNavItems = [
-  { label: "Dashboard", icon: <Home size={18} />, href: "/professional-dashboard", active: true },
-  { label: "Opportunities", icon: <Briefcase size={18} />, href: "/professional-opportunities" },
-  { label: "Calendar", icon: <Calendar size={18} />, href: "/professional-calendar" },
-  { label: "Messages", icon: <MessageSquare size={18} />, href: "/professional-messages" },
+  {
+    label: "Dashboard",
+    icon: <Home size={18} />,
+    href: "/professional-dashboard",
+    active: true,
+  },
+  {
+    label: "Opportunities",
+    icon: <Briefcase size={18} />,
+    href: "/professional-opportunities",
+  },
+  {
+    label: "Calendar",
+    icon: <Calendar size={18} />,
+    href: "/professional-calendar",
+  },
+  {
+    label: "Messages",
+    icon: <MessageSquare size={18} />,
+    href: "/professional-messages",
+  },
   { label: "Profile", icon: <User size={18} />, href: "/professional-profile" },
 ];
 
-// Memoized dashboard container
+// ---------------- Dashboard Container ----------------
 const DashboardContainer = memo(() => {
-  const [messages, setMessages] = useState(mockMessages);
-  const [projects, setProjects] = useState(mockProjects);
-  const [jobs, setJobs] = useState(mockJobs);
+  const [messages, setMessages] = useState<Message[]>(mockMessages);
+  const [projects, setProjects] = useState<Project[]>(mockProjects);
+  const [jobs, setJobs] = useState<Job[]>(mockJobs);
 
-  const { loading: dashboardLoading, execute: loadDashboardData } = useAsyncOperation({
-    successMessage: "Dashboard data loaded successfully"
+  const { execute: loadDashboardData } = useAsyncOperation({
+    successMessage: "Dashboard data loaded successfully",
   });
 
   const handleMessageReply = async (messageId: number, reply: string) => {
     await loadDashboardData(async () => {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       console.log(`Reply to message ${messageId}: ${reply}`);
       return { success: true };
     });
   };
 
-  const handleJobApplication = async (jobId: number, applicationData: any) => {
+  const handleJobApplication = async (
+    jobId: number,
+    applicationData: ApplicationData
+  ) => {
     await loadDashboardData(async () => {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise((resolve) => setTimeout(resolve, 800));
       console.log(`Application for job ${jobId}:`, applicationData);
       return { success: true };
     });
   };
 
-  const handleProjectUpdate = async (projectId: number, updates: any) => {
+  const handleProjectUpdate = async (
+    projectId: number,
+    updates: ProjectUpdate
+  ) => {
     await loadDashboardData(async () => {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 400));
-      setProjects(prev => prev.map(project => 
-        project.id === projectId 
-          ? { ...project, ...updates }
-          : project
-      ));
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      setProjects((prev) =>
+        prev.map((project) =>
+          project.id === projectId ? { ...project, ...updates } : project
+        )
+      );
       return { success: true };
     });
   };
@@ -212,66 +292,81 @@ const DashboardContainer = memo(() => {
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Welcome Section */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Professional Dashboard</h1>
-        <p className="text-gray-600">Welcome back, Rahul! Here's your professional activity overview.</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          Professional Dashboard
+        </h1>
+        <p className="text-gray-600">
+          Welcome back, Rahul! Here's your professional activity overview.
+        </p>
       </div>
 
-      {/* Stats Cards - Load first for immediate feedback */}
-      <Suspense fallback={
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-white p-6 rounded-lg border border-gray-100">
-              <SkeletonLoader lines={2} height="20px" />
-            </div>
-          ))}
-        </div>
-      }>
+      {/* Stats */}
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-white p-6 rounded-lg border border-gray-100"
+              >
+                <SkeletonLoader lines={2} height="20px" />
+              </div>
+            ))}
+          </div>
+        }
+      >
         <DashboardStats />
       </Suspense>
 
-      {/* Main Content Grid - Progressive loading */}
+      {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Suspense fallback={
-          <div className="bg-white p-6 rounded-lg border border-gray-100">
-            <SkeletonLoader lines={6} />
-          </div>
-        }>
+        <Suspense
+          fallback={
+            <div className="bg-white p-6 rounded-lg border border-gray-100">
+              <SkeletonLoader lines={6} />
+            </div>
+          }
+        >
           <AvailabilityCalendar />
         </Suspense>
-        
-        <Suspense fallback={
-          <div className="bg-white p-6 rounded-lg border border-gray-100">
-            <SkeletonLoader lines={6} />
-          </div>
-        }>
-          <JobOpportunities 
+
+        <Suspense
+          fallback={
+            <div className="bg-white p-6 rounded-lg border border-gray-100">
+              <SkeletonLoader lines={6} />
+            </div>
+          }
+        >
+          <JobOpportunities
             jobs={jobs}
             onApplicationSubmit={handleJobApplication}
           />
         </Suspense>
       </div>
 
-      {/* Secondary Content - Load after main content */}
-      <Suspense fallback={
-        <div className="bg-white p-6 rounded-lg border border-gray-100">
-          <SkeletonLoader lines={8} />
-        </div>
-      }>
-        <OngoingProjects 
+      {/* Projects */}
+      <Suspense
+        fallback={
+          <div className="bg-white p-6 rounded-lg border border-gray-100">
+            <SkeletonLoader lines={8} />
+          </div>
+        }
+      >
+        <OngoingProjects
           projects={projects}
           onProjectUpdate={handleProjectUpdate}
         />
       </Suspense>
 
-      <Suspense fallback={
-        <div className="bg-white p-6 rounded-lg border border-gray-100">
-          <SkeletonLoader lines={5} />
-        </div>
-      }>
-        <MessageCenter 
-          messages={messages}
-          onReply={handleMessageReply}
-        />
+      {/* Messages */}
+      <Suspense
+        fallback={
+          <div className="bg-white p-6 rounded-lg border border-gray-100">
+            <SkeletonLoader lines={5} />
+          </div>
+        }
+      >
+        <MessageCenter messages={messages} onReply={handleMessageReply} />
       </Suspense>
     </div>
   );
@@ -279,21 +374,19 @@ const DashboardContainer = memo(() => {
 
 DashboardContainer.displayName = "DashboardContainer";
 
+// ---------------- Main Component ----------------
 const ProfessionalDashboard = () => {
   console.log("ProfessionalDashboard rendering - optimized version");
   usePerformanceMonitor("ProfessionalDashboard");
   const [initialLoading, setInitialLoading] = useState(true);
 
-  // Initialize performance monitoring
   useEffect(() => {
     perfUtils.measureCoreWebVitals();
   }, []);
 
-  // Simulate initial data loading - optimized for faster load
   useEffect(() => {
     const loadInitialData = async () => {
-      // Reduced loading time for better UX
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 300));
       setInitialLoading(false);
       toast.success("Welcome to your Professional Dashboard");
     };
@@ -304,21 +397,23 @@ const ProfessionalDashboard = () => {
   if (initialLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
-        <ProfessionalHeader navItems={headerNavItems} />
-        
+        {/* // <ProfessionalHeader navItems={headerNavItems} /> */} 
+
         <main className="pt-16 p-6 lg:p-8">
           <div className="max-w-7xl mx-auto space-y-6">
             <FastLoadingState message="Loading your dashboard..." size="lg" />
-            
-            {/* Loading skeleton for main content */}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="bg-white p-6 rounded-lg border border-gray-100">
+                <div
+                  key={i}
+                  className="bg-white p-6 rounded-lg border border-gray-100"
+                >
                   <SkeletonLoader lines={2} height="20px" />
                 </div>
               ))}
             </div>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white p-6 rounded-lg border border-gray-100">
                 <SkeletonLoader lines={4} />
@@ -335,8 +430,8 @@ const ProfessionalDashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <ProfessionalHeader navItems={headerNavItems} />
-      
+      {/* // <ProfessionalHeader navItems={headerNavItems} /> */}
+
       <main className="pt-16 p-6 lg:p-8">
         <DashboardContainer />
       </main>
