@@ -41,7 +41,7 @@ import WorkCompletionPayment from "@/pages/WorkCompletionPayment";
 
 // Industry pages
 import IndustryDashboard from "@/pages/IndustryDashboard";
-import IndustryProfile from "@/pages/IndustryProfile";
+import IndustryProfile from "@/pages/IndustryProfile/IndustryProfile";
 import IndustryRequirements from "@/pages/IndustryRequirements";
 import IndustryApprovals from "@/pages/IndustryApprovals";
 import IndustryPurchaseOrders from "@/pages/IndustryPurchaseOrders";
