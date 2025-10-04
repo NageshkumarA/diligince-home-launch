@@ -188,11 +188,48 @@ export const apiRoutes = {
             // Delete requirement
             delete: (requirementId: string) => `${basePath}/industry/requirements/${requirementId}`,
             
-            // Publish requirement
-            publish: (requirementId: string) => `${basePath}/industry/requirements/${requirementId}/publish`,
+            // Publish requirement (final step)
+            publish: `${basePath}/industry/requirements/publish`,
             
             // Archive requirement
             archive: (requirementId: string) => `${basePath}/industry/requirements/${requirementId}/archive`,
+            
+            // Draft Management (Create Requirement Workflow)
+            draft: {
+                // Create new draft
+                create: `${basePath}/industry/requirements/draft`,
+                
+                // Update draft (auto-save)
+                update: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}`,
+                
+                // Get draft by ID
+                getById: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}`,
+                
+                // Get all user drafts
+                getAll: (queryParams?: {
+                    page?: number;
+                    limit?: number;
+                    sortBy?: string;
+                    order?: string;
+                }) =>
+                    `${basePath}/industry/requirements/drafts${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
+                
+                // Delete draft
+                delete: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}`,
+                
+                // Validate specific step
+                validate: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}/validate`,
+                
+                // Upload documents
+                uploadDocuments: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}/documents`,
+                
+                // Delete document
+                deleteDocument: (draftId: string, documentId: string) => 
+                    `${basePath}/industry/requirements/draft/${draftId}/documents/${documentId}`,
+                
+                // Configure approval workflow
+                approvalWorkflow: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}/approval-workflow`,
+            },
         },
 
         // Purchase Orders Management

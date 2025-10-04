@@ -1,0 +1,726 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Create Requirement API Schemas",
+  "description": "JSON Schema definitions for Create Requirement API requests and responses",
+  "definitions": {
+    "RequirementFormData": {
+      "type": "object",
+      "description": "Complete requirement form data schema",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique requirement identifier"
+        },
+        "createdDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 200,
+          "description": "Requirement title"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["product", "service", "expert", "logistics"],
+          "description": "Requirement category"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Priority level"
+        },
+        "businessJustification": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 1000,
+          "description": "Business justification for the requirement"
+        },
+        "department": {
+          "type": "string",
+          "minLength": 2,
+          "description": "Requesting department"
+        },
+        "costCenter": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}-[0-9]{3}$",
+          "description": "Cost center code (format: XXX-NNN)"
+        },
+        "requestedBy": {
+          "type": "string",
+          "minLength": 2,
+          "description": "Name of requester"
+        },
+        "estimatedBudget": {
+          "type": "number",
+          "minimum": 1,
+          "description": "Estimated budget amount"
+        },
+        "budgetApproved": {
+          "type": "boolean",
+          "description": "Whether budget is pre-approved"
+        },
+        "urgency": {
+          "type": "boolean",
+          "description": "Urgency flag"
+        },
+        "isUrgent": {
+          "type": "boolean",
+          "description": "Urgent flag for approval workflow"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "General description"
+        },
+        "complianceRequired": {
+          "type": "boolean",
+          "description": "Whether compliance documentation is required"
+        },
+        "riskLevel": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Risk assessment level"
+        },
+        "specialization": {
+          "type": "string",
+          "description": "Expert specialization (for expert category)"
+        },
+        "certifications": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Required certifications (for expert category)"
+        },
+        "duration": {
+          "type": "number",
+          "minimum": 1,
+          "description": "Duration in months (for expert category)"
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Start date (for expert/service category)"
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "End date (for expert/service category)"
+        },
+        "productSpecifications": {
+          "type": "string",
+          "minLength": 50,
+          "description": "Product specifications (for product category)"
+        },
+        "quantity": {
+          "type": "number",
+          "minimum": 1,
+          "description": "Quantity required (for product category)"
+        },
+        "technicalStandards": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Technical standards (for product category)"
+        },
+        "productDeliveryDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Expected delivery date (for product category)"
+        },
+        "qualityRequirements": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Quality requirements (for product category)"
+        },
+        "serviceDescription": {
+          "type": "string",
+          "minLength": 50,
+          "description": "Service description (for service category)"
+        },
+        "scopeOfWork": {
+          "type": "string",
+          "minLength": 100,
+          "description": "Scope of work (for service category)"
+        },
+        "performanceMetrics": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Performance metrics (for service category)"
+        },
+        "serviceStartDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Service start date (for service category)"
+        },
+        "serviceEndDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Service end date (for service category)"
+        },
+        "serviceBudget": {
+          "type": "number",
+          "minimum": 1,
+          "description": "Service budget (for service category)"
+        },
+        "location": {
+          "type": "string",
+          "minLength": 5,
+          "description": "Service location (for service category)"
+        },
+        "equipmentType": {
+          "type": "string",
+          "minLength": 3,
+          "description": "Equipment type (for logistics category)"
+        },
+        "pickupLocation": {
+          "type": "string",
+          "minLength": 10,
+          "description": "Pickup location (for logistics category)"
+        },
+        "deliveryLocation": {
+          "type": "string",
+          "minLength": 10,
+          "description": "Delivery location (for logistics category)"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Weight in kg (for logistics category)"
+        },
+        "dimensions": {
+          "type": "string",
+          "pattern": "^[0-9]+(\\.[0-9]+)?m? ?x ?[0-9]+(\\.[0-9]+)?m? ?x ?[0-9]+(\\.[0-9]+)?m?$",
+          "description": "Dimensions LxWxH (for logistics category)"
+        },
+        "pickupDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Pickup date (for logistics category)"
+        },
+        "deliveryDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Delivery date (for logistics category)"
+        },
+        "specialHandling": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Special handling instructions (for logistics category)"
+        },
+        "documents": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/definitions/Document"
+          },
+          "description": "Supporting documents"
+        },
+        "approvalWorkflowId": {
+          "type": "string",
+          "description": "Selected approval workflow ID"
+        },
+        "approvalStatus": {
+          "type": "string",
+          "enum": ["not_required", "pending", "approved", "rejected"],
+          "description": "Current approval status"
+        },
+        "emergencyPublished": {
+          "type": "boolean",
+          "description": "Whether published via emergency bypass"
+        },
+        "approvalDeadline": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Approval deadline"
+        },
+        "submissionDeadline": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Vendor submission deadline"
+        },
+        "evaluationCriteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": ["Price", "Quality", "Delivery Time", "Technical Capability", "Past Performance", "Warranty", "Compliance", "Innovation"]
+          },
+          "description": "Evaluation criteria for vendor selection"
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["all", "selected"],
+          "description": "Requirement visibility"
+        },
+        "notifyByEmail": {
+          "type": "boolean",
+          "description": "Send email notifications"
+        },
+        "notifyByApp": {
+          "type": "boolean",
+          "description": "Send app notifications"
+        },
+        "termsAccepted": {
+          "type": "boolean",
+          "description": "Terms and conditions acceptance"
+        }
+      },
+      "required": ["title", "category", "priority", "businessJustification", "department", "costCenter", "requestedBy", "estimatedBudget", "budgetApproved"]
+    },
+    "Document": {
+      "type": "object",
+      "description": "Document metadata",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Document unique identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Document file name"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Document URL"
+        },
+        "type": {
+          "type": "string",
+          "description": "MIME type"
+        },
+        "size": {
+          "type": "number",
+          "maximum": 10485760,
+          "description": "File size in bytes (max 10MB)"
+        },
+        "documentType": {
+          "type": "string",
+          "enum": ["specification", "drawing", "reference", "compliance", "other"],
+          "description": "Document type"
+        },
+        "version": {
+          "type": "number",
+          "minimum": 1,
+          "description": "Document version"
+        },
+        "uploadedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Upload timestamp"
+        },
+        "uploadedBy": {
+          "type": "string",
+          "description": "User ID who uploaded"
+        }
+      },
+      "required": ["id", "name", "url", "type", "size", "documentType", "version", "uploadedAt", "uploadedBy"]
+    },
+    "CreateDraftRequest": {
+      "type": "object",
+      "description": "Request to create a new draft",
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": ["product", "service", "expert", "logistics"]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 200
+        }
+      }
+    },
+    "CreateDraftResponse": {
+      "type": "object",
+      "description": "Response after creating a draft",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "draftId": {
+              "type": "string"
+            },
+            "currentStep": {
+              "type": "number"
+            },
+            "lastSaved": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "completedSteps": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "expiresAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": ["success", "data", "message"]
+    },
+    "UpdateDraftRequest": {
+      "type": "object",
+      "description": "Request to update a draft",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/RequirementFormData"
+        },
+        "currentStep": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 6
+        }
+      }
+    },
+    "UpdateDraftResponse": {
+      "type": "object",
+      "description": "Response after updating a draft",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "draftId": {
+              "type": "string"
+            },
+            "currentStep": {
+              "type": "number"
+            },
+            "lastSaved": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "completedSteps": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "isValid": {
+              "type": "boolean"
+            }
+          }
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": ["success", "data", "message"]
+    },
+    "ValidateStepRequest": {
+      "type": "object",
+      "description": "Request to validate a specific step",
+      "properties": {
+        "step": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "data": {
+          "$ref": "#/definitions/RequirementFormData"
+        }
+      },
+      "required": ["step", "data"]
+    },
+    "ValidateStepResponse": {
+      "type": "object",
+      "description": "Response after validation",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "isValid": {
+              "type": "boolean"
+            },
+            "step": {
+              "type": "number"
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ValidationError"
+              }
+            }
+          }
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": ["success", "data", "message"]
+    },
+    "ValidationError": {
+      "type": "object",
+      "description": "Validation error details",
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "Field name with error"
+        },
+        "message": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "code": {
+          "type": "string",
+          "enum": ["REQUIRED_FIELD", "MIN_LENGTH", "MAX_LENGTH", "INVALID_FORMAT", "INVALID_VALUE", "OUT_OF_RANGE"],
+          "description": "Error code"
+        }
+      },
+      "required": ["field", "message", "code"]
+    },
+    "UploadDocumentsResponse": {
+      "type": "object",
+      "description": "Response after uploading documents",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "documents": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Document"
+              }
+            },
+            "totalSize": {
+              "type": "number"
+            },
+            "uploadedCount": {
+              "type": "number"
+            }
+          }
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": ["success", "data", "message"]
+    },
+    "ApprovalWorkflowRequest": {
+      "type": "object",
+      "description": "Request to configure approval workflow",
+      "properties": {
+        "approvalWorkflowId": {
+          "type": "string"
+        },
+        "isUrgent": {
+          "type": "boolean"
+        },
+        "approvalDeadline": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "emergencyPublish": {
+          "type": "boolean"
+        }
+      },
+      "required": ["approvalWorkflowId"]
+    },
+    "ApprovalWorkflowResponse": {
+      "type": "object",
+      "description": "Response after configuring approval workflow",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "approvalWorkflowId": {
+              "type": "string"
+            },
+            "approvalStatus": {
+              "type": "string",
+              "enum": ["pending", "bypassed"]
+            },
+            "workflowName": {
+              "type": "string"
+            },
+            "approvers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Approver"
+              }
+            },
+            "currentLevel": {
+              "type": "number"
+            },
+            "estimatedApprovalDate": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": ["success", "data", "message"]
+    },
+    "Approver": {
+      "type": "object",
+      "description": "Approver information",
+      "properties": {
+        "level": {
+          "type": "number"
+        },
+        "role": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "deadline": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "approved", "rejected"]
+        }
+      },
+      "required": ["level", "role", "userId", "name", "status"]
+    },
+    "PublishRequirementRequest": {
+      "type": "object",
+      "description": "Request to publish requirement",
+      "properties": {
+        "draftId": {
+          "type": "string"
+        },
+        "submissionDeadline": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evaluationCriteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["all", "selected"]
+        },
+        "notifyByEmail": {
+          "type": "boolean"
+        },
+        "notifyByApp": {
+          "type": "boolean"
+        },
+        "termsAccepted": {
+          "type": "boolean"
+        }
+      },
+      "required": ["draftId", "submissionDeadline", "evaluationCriteria", "termsAccepted"]
+    },
+    "PublishRequirementResponse": {
+      "type": "object",
+      "description": "Response after publishing requirement",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "requirementId": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["published", "pending_approval"]
+            },
+            "publishedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "submissionDeadline": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "notificationsInfo": {
+              "type": "object",
+              "properties": {
+                "emailsSent": {
+                  "type": "number"
+                },
+                "appNotificationsSent": {
+                  "type": "number"
+                },
+                "totalReach": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": ["success", "data", "message"]
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "description": "Standard error response",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "enum": [false]
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": ["VALIDATION_ERROR", "UNAUTHORIZED", "FORBIDDEN", "NOT_FOUND", "FILE_TOO_LARGE", "RATE_LIMIT_EXCEEDED", "INTERNAL_ERROR"]
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ValidationError"
+              }
+            }
+          },
+          "required": ["code", "message"]
+        }
+      },
+      "required": ["success", "error"]
+    }
+  }
+}
