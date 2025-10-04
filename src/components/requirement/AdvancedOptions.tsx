@@ -33,7 +33,7 @@ export function AdvancedOptions({
   onComplianceRequiredChange,
 }: AdvancedOptionsProps) {
   return (
-    <Accordion type="single" collapsible className="border rounded-lg bg-muted/30">
+    <Accordion type="single" collapsible className="border border-gray-200 rounded-lg bg-gray-50 shadow-sm">
       <AccordionItem value="advanced" className="border-0">
         <AccordionTrigger className="px-6 hover:no-underline hover:bg-accent/50">
           <span className="text-sm font-medium text-foreground">Advanced Options</span>

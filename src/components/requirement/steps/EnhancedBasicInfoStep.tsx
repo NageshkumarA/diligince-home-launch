@@ -45,7 +45,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in pb-6">
       {/* Section 1: Essential Information */}
-      <section className="space-y-6 bg-background rounded-lg border p-6">
+      <section className="space-y-6 bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
         <div className="flex items-center gap-2 pb-2 border-b">
           <Briefcase className="w-5 h-5 text-muted-foreground" />
           <h2 className="text-lg font-semibold text-foreground">Essential Information</h2>
@@ -91,7 +91,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
       </section>
 
       {/* Section 2: Business Context */}
-      <section className="space-y-6 bg-background rounded-lg border p-6">
+      <section className="space-y-6 bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
         <div className="flex items-center gap-2 pb-2 border-b">
           <Briefcase className="w-5 h-5 text-muted-foreground" />
           <h2 className="text-lg font-semibold text-foreground">Business Context</h2>
@@ -173,7 +173,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
       </section>
 
       {/* Section 3: Budget (Collapsible) */}
-      <Accordion type="single" collapsible className="border rounded-lg bg-background">
+      <Accordion type="single" collapsible className="border border-gray-200 rounded-lg bg-white shadow-sm">
         <AccordionItem value="budget" className="border-0">
           <AccordionTrigger className="px-6 hover:no-underline hover:bg-accent/50">
             <div className="flex items-center gap-2">

@@ -222,7 +222,7 @@ const CreateRequirement = () => {
       <ApprovalProvider>
         <StakeholderProvider>
           <RequirementProvider>
-            <div className="flex min-h-screen flex-col bg-background">
+            <div className="flex min-h-screen flex-col bg-gray-50">
               {/* Mobile Step Header */}
               <MobileStepHeader
                 currentStep={currentStep}
@@ -266,7 +266,7 @@ const CreateRequirement = () => {
                 {/* Step Content with Swipe Support */}
                 <div 
                   {...swipeHandlers}
-                  className="mt-6 md:mt-8 rounded-xl bg-card shadow-sm border border-border touch-pan-y"
+                  className="mt-6 md:mt-8 rounded-xl bg-white shadow-sm border border-gray-200 touch-pan-y"
                 >
                   <div className="p-4 md:p-8">
                     <StepRenderer

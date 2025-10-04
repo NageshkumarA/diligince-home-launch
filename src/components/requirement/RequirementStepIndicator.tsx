@@ -145,9 +145,9 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
                       disabled={!isAccessible}
                       className={cn(
                         "w-12 h-12 rounded-full border-2 flex items-center justify-center transition-colors duration-200",
-                        status === "completed" && "bg-green-500 border-green-500 text-white",
-                        status === "current" && "bg-primary border-primary text-primary-foreground",
-                        status === "upcoming" && isAccessible && "bg-white border-gray-300 text-gray-600 hover:border-primary",
+                        status === "completed" && "bg-primary border-primary text-primary-foreground",
+                        status === "current" && "bg-primary border-primary text-primary-foreground ring-4 ring-primary/20",
+                        status === "upcoming" && isAccessible && "bg-white border-gray-300 text-gray-600 hover:border-gray-400",
                         status === "upcoming" && !isAccessible && "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
                       )}
                     >
@@ -161,7 +161,7 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
                     <div className="mt-3 text-center">
                       <h3 className={cn(
                         "text-sm font-medium",
-                        status === "completed" && "text-green-600",
+                        status === "completed" && "text-primary",
                         status === "current" && "text-primary",
                         status === "upcoming" && "text-gray-500"
                       )}>
@@ -190,7 +190,7 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
 
       {/* Mobile version */}
       <div className="lg:hidden">
-        <div className="bg-card rounded-lg shadow-sm border p-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-lg font-semibold text-foreground">
@@ -209,7 +209,7 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
           </div>
           
           {/* Mobile progress bar */}
-          <div className="w-full bg-muted rounded-full h-2.5 mb-4 overflow-hidden">
+          <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
             <div 
               className="bg-primary h-full rounded-full transition-all duration-500 ease-out"
               style={{ width: `${getOverallProgress()}%` }}
@@ -229,7 +229,7 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
                     "w-3 h-3 rounded-full transition-all duration-200",
                     status === "completed" && "bg-primary",
                     status === "current" && "bg-primary ring-2 ring-primary/30",
-                    status === "upcoming" && "bg-muted",
+                    status === "upcoming" && "bg-gray-300",
                     !isStepAccessible(step.id) && "opacity-50 cursor-not-allowed"
                   )}
                   aria-label={`Go to ${step.name}`}

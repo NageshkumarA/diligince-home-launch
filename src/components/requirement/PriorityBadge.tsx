@@ -19,19 +19,19 @@ const priorities: Priority[] = [
   {
     value: "high",
     label: "High",
-    color: "text-orange-600",
+    color: "text-amber-600",
     description: "High priority, urgent",
   },
   {
     value: "medium",
     label: "Medium",
-    color: "text-yellow-600",
+    color: "text-blue-600",
     description: "Standard priority",
   },
   {
     value: "low",
     label: "Low",
-    color: "text-green-600",
+    color: "text-gray-600",
     description: "Low priority, flexible timing",
   },
 ];
@@ -45,6 +45,21 @@ interface PriorityBadgeProps {
 export function PriorityBadge({ value, onChange, error }: PriorityBadgeProps) {
   const selectedPriority = priorities.find((p) => p.value === value);
 
+  const getPriorityBadgeColor = (priorityValue: string) => {
+    switch (priorityValue) {
+      case "critical":
+        return "bg-red-100 text-red-800 border border-red-200";
+      case "high":
+        return "bg-amber-100 text-amber-800 border border-amber-200";
+      case "medium":
+        return "bg-blue-100 text-blue-800 border border-blue-200";
+      case "low":
+        return "bg-gray-100 text-gray-800 border border-gray-200";
+      default:
+        return "bg-gray-100 text-gray-800 border border-gray-200";
+    }
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-3">
@@ -55,7 +70,7 @@ export function PriorityBadge({ value, onChange, error }: PriorityBadgeProps) {
           <span
             className={cn(
               "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-              selectedPriority.color
+              getPriorityBadgeColor(selectedPriority.value)
             )}
           >
             {selectedPriority.label}
