@@ -81,8 +81,9 @@
     };
 
     const noItems = filteredAndSortedMessages.length === 0;
-    const formatDate = (timestamp: string) => {
-  return new Date(timestamp).toLocaleDateString('en-GB', {
+    const formatDate = (timestamp: Date | string) => {
+  const dateObj = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
+  return dateObj.toLocaleDateString('en-GB', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',

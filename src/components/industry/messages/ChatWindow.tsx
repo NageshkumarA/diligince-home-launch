@@ -9,11 +9,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // --- START: MODIFIED CODE ---
 // Helper to format date label to mm/dd/yyyy
-const getDateLabel = (dateStr: string): string => {
-    const date = new Date(dateStr);
+const getDateLabel = (date: Date | string): string => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
     // Using 'en-US' locale gives us the desired mm/dd/yyyy format.
     // This is a cleaner and more standard approach.
-    return date.toLocaleDateString('en-GB', {
+    return dateObj.toLocaleDateString('en-GB', {
         day: '2-digit',   // e.g., '23'
        
          month: '2-digit', // e.g., '07'

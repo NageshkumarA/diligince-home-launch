@@ -21,12 +21,12 @@ interface MessagesContextType {
   // FIX: Signature updated to remove 'name'
   handleCreateConversation: (email: string, subject: string, body: string) => void;
   handleSendMessage: (content: string, attachment?: any) => void;
-  handleEditMessage: (messageId: number, newContent: string) => void;
-  handleDeleteMessage: (messageId: number) => void;
-  handleAddReaction: (messageId: number, emoji: string) => void;
+  handleEditMessage: (messageId: string, newContent: string) => void;
+  handleDeleteMessage: (messageId: string) => void;
+  handleAddReaction: (messageId: string, emoji: string) => void;
   replyTo: Message | null;
   setReplyTo: React.Dispatch<React.SetStateAction<Message | null>>;
-  findMessageById: (id: number) => Message | undefined;
+  findMessageById: (id: string) => Message | undefined;
 }
 
 const MessagesContext = createContext<MessagesContextType | undefined>(undefined);
@@ -73,6 +73,7 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
     // 3. Create the new conversation thread using the looked-up or fallback name.
     const newThread: ConversationThread = {
       id: newThreadId,
+      name: recipientName, // Add name property
       sender: recipientName, // Use the determined name
       email: email,
       subject: subject,
@@ -88,10 +89,12 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const newMessage: Message = {
-      id: Date.now() + 1,
+      id: (Date.now() + 1).toString(),
       sender: 'You',
+      text: body,
       content: body,
-      timestamp: newTimestamp,
+      timestamp: new Date(),
+      read: true,
       isFromContact: false,
     };
 
@@ -104,18 +107,20 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
   };
   
 
-  const findMessageById = (id: number) => conversationMessages.find(m => m.id === id);
+  const findMessageById = (id: string) => conversationMessages.find(m => m.id === id);
   
   const handleSendMessage = (content: string, attachment?: any) => {
     if (!selectedConversation) return;
 
     const newMessage: Message = {
-      id: Date.now(),
+      id: Date.now().toString(),
       sender: 'You',
+      text: content,
       content,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(),
+      read: true,
       isFromContact: false,
-      ...(replyTo && { replyTo: replyTo.id }),
+      ...(replyTo && { replyTo }),
       ...(attachment && { attachment }),
     };
     
@@ -128,18 +133,18 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
     setReplyTo(null);
   };
   
-  const handleEditMessage = (messageId: number, newContent: string) => {
+  const handleEditMessage = (messageId: string, newContent: string) => {
     if (!selectedConversation) return;
     setMessages(prev => ({
         ...prev,
         [selectedConversation.id]: prev[selectedConversation.id].map(msg => 
-            msg.id === messageId ? { ...msg, content: newContent, isEdited: true } : msg
+            msg.id === messageId ? { ...msg, text: newContent, content: newContent, isEdited: true } : msg
         )
     }));
     toast.info("Message Edited");
   };
 
-  const handleDeleteMessage = (messageId: number) => {
+  const handleDeleteMessage = (messageId: string) => {
     if (!selectedConversation) return;
     setMessages(prev => ({
         ...prev,
@@ -148,17 +153,22 @@ export const MessagesProvider = ({ children }: { children: ReactNode }) => {
     toast.error("Message Deleted");
   };
 
-  const handleAddReaction = (messageId: number, emoji: string) => {
+  const handleAddReaction = (messageId: string, emoji: string) => {
     if (!selectedConversation) return;
     setMessages(prev => ({
         ...prev,
         [selectedConversation.id]: prev[selectedConversation.id].map(msg => {
             if (msg.id === messageId) {
-                const newReactions = { ...(msg.reactions || {}) };
-                if (newReactions[emoji]) {
-                  delete newReactions[emoji];
+                const reactions = msg.reactions || [];
+                const existingReaction = reactions.find(r => r.emoji === emoji);
+                
+                let newReactions: Array<{ emoji: string; count: number }>;
+                if (existingReaction) {
+                  // Remove reaction if it exists
+                  newReactions = reactions.filter(r => r.emoji !== emoji);
                 } else {
-                  newReactions[emoji] = 1;
+                  // Add new reaction
+                  newReactions = [...reactions, { emoji, count: 1 }];
                 }
                 return { ...msg, reactions: newReactions };
             }

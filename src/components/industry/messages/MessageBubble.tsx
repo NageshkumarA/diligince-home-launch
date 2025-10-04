@@ -5,6 +5,7 @@ import { useMessages } from './MessagesContext';
 import { Message } from '@/data/MockMessages';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import EmojiPicker from 'emoji-picker-react';
 import {
   Check, CheckCheck, MoreHorizontal, CornerUpLeft, Trash2,
   Pencil, Smile, FileText, Image, Users, User,
@@ -18,6 +19,7 @@ import {
 import {
   AlertDialog,
   AlertDialogAction,
+  AlertDialogTrigger,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -77,7 +79,7 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
   const [editText, setEditText] = useState(message.content);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
-  const repliedToMessage = message.replyTo ? findMessageById(message.replyTo) : null;
+  const repliedToMessage = message.replyTo || null;
   const isFromYou = message.sender === 'You';
 
   const readReceipt = isFromYou
@@ -110,7 +112,7 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0 border-0">
-              <Picker onEmojiClick={onEmojiClick} />
+              <EmojiPicker onEmojiClick={onEmojiClick} />
             </PopoverContent>
           </Popover>
 
@@ -182,16 +184,16 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
             </div>
           </div>
 
-          {message.reactions && Object.keys(message.reactions).length > 0 && (
+          {message.reactions && message.reactions.length > 0 && (
             <div className="absolute right-2 -bottom-2 translate-y-1/2 flex gap-1 z-10">
-              {Object.entries(message.reactions).map(([emoji, count]) => (
+              {message.reactions.map((reaction) => (
                 <div
-                  key={emoji}
-                  title={`React with ${emoji}`}
+                  key={reaction.emoji}
+                  title={`React with ${reaction.emoji}`}
                   className="bg-white/30 dark:bg-gray-800/80 text-xs px-2 py-0.5 rounded-full cursor-pointer shadow hover:bg-white/50 dark:hover:bg-gray-700"
-                  onClick={() => handleAddReaction(message.id, emoji)}
+                  onClick={() => handleAddReaction(message.id, reaction.emoji)}
                 >
-                  {emoji} {count}
+                  {reaction.emoji} {reaction.count}
                 </div>
               ))}
             </div>
