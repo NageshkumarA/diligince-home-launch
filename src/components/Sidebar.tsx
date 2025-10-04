@@ -13,7 +13,15 @@ const Sidebar: React.FC = () => {
 
   if (!user) return null;
 
-  const menuItems = menuConfig[user.role as keyof typeof menuConfig] || [];
+  // Helper function to get the correct menu config key
+  const getMenuKey = (): keyof typeof menuConfig => {
+    if (user.role === 'vendor' && user.profile?.vendorCategory) {
+      return `${user.profile.vendorCategory}-vendor` as keyof typeof menuConfig;
+    }
+    return user.role as keyof typeof menuConfig;
+  };
+
+  const menuItems = menuConfig[getMenuKey()] || [];
 
   const handleLogout = () => {
     logout();
