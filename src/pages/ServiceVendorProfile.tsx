@@ -1,21 +1,18 @@
 import { useState, useEffect } from "react";
-import { ServiceVendorHeader } from "@/components/vendor/ServiceVendorHeader";
-import { ServiceVendorSidebar } from "@/components/vendor/service/ServiceVendorSidebar";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CompanyInfoForm from "@/components/vendor/forms/CompanyInfoForm";
-import TeamMembersSection from "@/components/vendor/forms/TeamMembersSection";
 import ServicesSkillsForm from "@/components/vendor/forms/ServicesSkillsForm";
 import CertificationsSection from "@/components/vendor/forms/CertificationsSection";
 import ProjectsPortfolioSection from "@/components/vendor/forms/ProjectsPortfolioSection";
 import PaymentSettingsForm from "@/components/vendor/forms/PaymentSettingsForm";
 import AccountSettingsForm from "@/components/vendor/forms/AccountSettingsForm";
-import { ProfileCompletionWidget } from "@/components/shared/ProfileCompletionWidget";
+import { ProfileHeader } from "@/components/shared/ProfileHeader";
 import { useUser } from "@/contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 
-// ✅ Define allowed content types
 export type ContentType =
   | "company-info"
-  | "team-members"
   | "services-skills"
   | "certifications"
   | "projects-portfolio"
@@ -25,15 +22,8 @@ export type ContentType =
 const ServiceVendorProfile: React.FC = () => {
   const { user, isAuthenticated, profileCompletion } = useUser();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<ContentType>("company-info");
 
-  const [activeContent, setActiveContent] =
-    useState<ContentType>("company-info");
-
-  // Debug logs
-  console.log("ServiceVendorProfile - user:", user);
-  console.log("ServiceVendorProfile - profileCompletion:", profileCompletion);
-
-  // ✅ Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/signin");
@@ -44,75 +34,68 @@ const ServiceVendorProfile: React.FC = () => {
     return null;
   }
 
-  // ✅ Vendor data for sidebar
-  const vendorData = {
-    companyName: user?.profile?.businessName || "TechServe Solutions",
-    specialization: user?.profile?.specialization || "Industrial Automation",
-    initials: user?.initials || "TS",
-    isVerified: true,
-  };
-
-  // ✅ Profile completion handler
-  const handleCompleteProfile = () => {
-    navigate("/profile-completion");
-  };
-
-  const handleMenuItemClick = (contentType: ContentType) => {
-    setActiveContent(contentType);
-  };
-
-  // ✅ Dynamic content rendering
-  const renderContent = () => {
-    switch (activeContent) {
-      case "company-info":
-        return <CompanyInfoForm />;
-      case "team-members":
-        return <TeamMembersSection />;
-      case "services-skills":
-        return <ServicesSkillsForm />;
-      case "certifications":
-        return <CertificationsSection />;
-      case "projects-portfolio":
-        return <ProjectsPortfolioSection />;
-      case "payment-settings":
-        return <PaymentSettingsForm />;
-      case "account-settings":
-        return <AccountSettingsForm />;
-      default:
-        return <CompanyInfoForm />;
-    }
-  };
+  const companyName = user?.profile?.businessName || user?.name || "TechServe Solutions";
+  const specialization = user?.profile?.specialization || "Industrial Automation";
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      {/* <ServiceVendorHeader /> */}
-
-      <div className="flex flex-grow pt-16">
-        {/* Sidebar */}
-        <ServiceVendorSidebar
-          activeSection={activeContent}
-          onSectionChange={handleMenuItemClick}
-          vendorData={vendorData}
+    <div className="min-h-screen bg-background pt-16">
+      <div className="max-w-7xl mx-auto p-6 lg:p-8">
+        <ProfileHeader
+          name={companyName}
+          type="Service Vendor"
+          specialization={specialization}
+          initials={user?.initials || "TS"}
+          isVerified={true}
           profileCompletion={profileCompletion.percentage}
+          missingFields={profileCompletion.missingFields}
         />
 
-        {/* Main Content */}
-        <main className="flex-1 p-6 lg:p-8 overflow-y-auto bg-gray-50">
-          <div className="w-full max-w-4xl mx-auto">
-            {/* Profile Completion Widget */}
-            <ProfileCompletionWidget
-              completion={profileCompletion}
-              onCompleteProfile={handleCompleteProfile}
-              showCompleteButton={!profileCompletion.isComplete}
-            />
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ContentType)} className="w-full">
+          <TabsList className="w-full justify-start mb-6 bg-muted flex-wrap h-auto">
+            <TabsTrigger value="company-info">Company Info</TabsTrigger>
+            <TabsTrigger value="services-skills">Services & Skills</TabsTrigger>
+            <TabsTrigger value="certifications">Certifications</TabsTrigger>
+            <TabsTrigger value="projects-portfolio">Projects & Portfolio</TabsTrigger>
+            <TabsTrigger value="payment-settings">Payment Settings</TabsTrigger>
+            <TabsTrigger value="account-settings">Account Settings</TabsTrigger>
+          </TabsList>
 
-            {/* Content Section */}
-            <div className="bg-white border border-gray-100 shadow-sm rounded-lg">
-              {renderContent()}
-            </div>
-          </div>
-        </main>
+          <TabsContent value="company-info">
+            <Card className="p-6">
+              <CompanyInfoForm />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="services-skills">
+            <Card className="p-6">
+              <ServicesSkillsForm />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="certifications">
+            <Card className="p-6">
+              <CertificationsSection />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="projects-portfolio">
+            <Card className="p-6">
+              <ProjectsPortfolioSection />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="payment-settings">
+            <Card className="p-6">
+              <PaymentSettingsForm />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="account-settings">
+            <Card className="p-6">
+              <AccountSettingsForm />
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

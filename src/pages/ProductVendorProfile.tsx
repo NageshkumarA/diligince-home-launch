@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { ProductVendorHeader } from "@/components/vendor/ProductVendorHeader";
-import { ProductVendorSidebar } from "@/components/vendor/product/ProductVendorSidebar";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CompanyInfoForm from "@/components/vendor/forms/ProductVendor/CompanyInfoForm";
 import ProductCatalogSection from "@/components/vendor/forms/ProductVendor/ProductCatalogSection";
 import BrandsPartnersSection from "@/components/vendor/forms/ProductVendor/BrandsPartnersSection";
@@ -8,10 +8,9 @@ import CertificationsSection from "@/components/vendor/forms/ProductVendor/Certi
 import ShippingReturnsSection from "@/components/vendor/forms/ProductVendor/ShippingReturnsSection";
 import PaymentSettingsForm from "@/components/vendor/forms/PaymentSettingsForm";
 import AccountSettingsForm from "@/components/vendor/forms/AccountSettingsForm";
-import { ProfileCompletionWidget } from "@/components/shared/ProfileCompletionWidget";
+import { ProfileHeader } from "@/components/shared/ProfileHeader";
 import { useUser } from "@/contexts/UserContext";
 import { useNavigate } from "react-router-dom";
-import { calculateProfileCompleteness } from "@/utils/profileCompleteness";
 
 // Types for content sections
 export type ContentType =
@@ -24,104 +23,89 @@ export type ContentType =
   | "account-settings";
 
 const ProductVendorProfile = () => {
-  const { user, isAuthenticated } = useUser();
+  const { user, isAuthenticated, profileCompletion } = useUser();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<ContentType>("company-info");
 
-  const [activeContent, setActiveContent] =
-    useState<ContentType>("company-info");
-
-  // ✅ menuConfig paths for vendor
-  const headerNavItems = [
-    { label: "Dashboard", href: "/dashboard/vendor" },
-    { label: "RFQs", href: "/dashboard/vendor-rfqs" },
-    { label: "Orders", href: "/dashboard/vendor-orders" },
-    { label: "Profile", href: "/dashboard/vendor-profile", active: true },
-  ];
-
-  // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/signin");
     }
   }, [isAuthenticated, navigate]);
 
-  // Calculate actual profile completion based on current user data
-  const profileCompletion = user
-    ? calculateProfileCompleteness(user)
-    : {
-        percentage: 0,
-        isComplete: false,
-        missingFields: [],
-        completedFields: [],
-      };
-
-  // Vendor data from user context
-  const vendorData = {
-    companyName: user?.profile?.businessName || "TechPro Supplies",
-    specialization: user?.profile?.specialization || "Industrial Components",
-    initials: user?.initials || "TS",
-    isVerified: true,
-  };
-
-  // Handle profile completion action
-  const handleCompleteProfile = () => {
-    navigate("/dashboard/vendor-profile/completion");
-  };
-
-  const handleMenuItemClick = (contentType: ContentType) => {
-    setActiveContent(contentType);
-  };
-
-  const renderContent = () => {
-    switch (activeContent) {
-      case "company-info":
-        return <CompanyInfoForm />;
-      case "product-catalog":
-        return <ProductCatalogSection />;
-      case "brands-partners":
-        return <BrandsPartnersSection />;
-      case "certifications":
-        return <CertificationsSection />;
-      case "shipping-returns":
-        return <ShippingReturnsSection />;
-      case "payment-settings":
-        return <PaymentSettingsForm />;
-      case "account-settings":
-        return <AccountSettingsForm />;
-      default:
-        return <CompanyInfoForm />;
-    }
-  };
-
   if (!user) {
     return null;
   }
 
-  return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* ✅ with navItems */}
-      {/* <ProductVendorHeader navItems={headerNavItems} /> */}
+  const companyName = user?.profile?.businessName || user?.name || "TechPro Supplies";
+  const specialization = user?.profile?.specialization || "Industrial Components";
 
-      <div className="flex flex-grow pt-16">
-        <ProductVendorSidebar
-          activeSection={activeContent}
-          onSectionChange={handleMenuItemClick}
-          vendorData={vendorData}
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      <div className="max-w-7xl mx-auto p-6 lg:p-8">
+        <ProfileHeader
+          name={companyName}
+          type="Product Vendor"
+          specialization={specialization}
+          initials={user?.initials || "TS"}
+          isVerified={true}
           profileCompletion={profileCompletion.percentage}
+          missingFields={profileCompletion.missingFields}
         />
 
-        <main className="flex-1 p-6 lg:p-8 overflow-y-auto bg-gray-50">
-          <div className="w-full max-w-4xl mx-auto">
-            {/* Profile Completion Widget */}
-            <ProfileCompletionWidget
-              completion={profileCompletion}
-              onCompleteProfile={handleCompleteProfile}
-              showCompleteButton={!profileCompletion.isComplete}
-            />
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ContentType)} className="w-full">
+          <TabsList className="w-full justify-start mb-6 bg-muted flex-wrap h-auto">
+            <TabsTrigger value="company-info">Company Info</TabsTrigger>
+            <TabsTrigger value="product-catalog">Product Catalog</TabsTrigger>
+            <TabsTrigger value="brands-partners">Brands & Partners</TabsTrigger>
+            <TabsTrigger value="certifications">Certifications</TabsTrigger>
+            <TabsTrigger value="shipping-returns">Shipping & Returns</TabsTrigger>
+            <TabsTrigger value="payment-settings">Payment Settings</TabsTrigger>
+            <TabsTrigger value="account-settings">Account Settings</TabsTrigger>
+          </TabsList>
 
-            {renderContent()}
-          </div>
-        </main>
+          <TabsContent value="company-info">
+            <Card className="p-6">
+              <CompanyInfoForm />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="product-catalog">
+            <Card className="p-6">
+              <ProductCatalogSection />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="brands-partners">
+            <Card className="p-6">
+              <BrandsPartnersSection />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="certifications">
+            <Card className="p-6">
+              <CertificationsSection />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="shipping-returns">
+            <Card className="p-6">
+              <ShippingReturnsSection />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="payment-settings">
+            <Card className="p-6">
+              <PaymentSettingsForm />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="account-settings">
+            <Card className="p-6">
+              <AccountSettingsForm />
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
