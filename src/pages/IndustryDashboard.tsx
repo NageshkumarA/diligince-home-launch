@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import {
   Table,
@@ -20,48 +19,20 @@ import {
   FileText,
   MessageSquare,
   ShoppingCart,
-  CheckCircle,
-  Clock,
-  AlertTriangle,
-  Plus,
   Workflow,
-  Eye,
 } from "lucide-react";
-import { SkeletonLoader } from "@/components/shared/loading/SkeletonLoader";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { perfUtils } from "@/utils/performance";
 import { useApproval } from "@/contexts/ApprovalContext";
 import { ApprovalModal } from "@/components/approval/ApprovalModal";
 import { useModal } from "@/hooks/useModal";
 import { toast } from "sonner";
+import { DashboardStats } from "@/components/industry/dashboard/DashboardStats";
+import { ProcurementAnalytics } from "@/components/industry/dashboard/ProcurementAnalytics";
+import { BudgetUtilization } from "@/components/industry/dashboard/BudgetUtilization";
+import { VendorPerformance } from "@/components/industry/dashboard/VendorPerformance";
 
 // ---------------- Mock Data ----------------
-const metrics = [
-  {
-    title: "Active Requirements",
-    count: 12,
-    subtitle: "ongoing projects",
-    icon: FileText,
-  },
-  {
-    title: "Pending Reviews",
-    count: 8,
-    subtitle: "awaiting approval",
-    icon: Clock,
-  },
-  {
-    title: "Active Purchase Orders",
-    count: 5,
-    subtitle: "in progress",
-    icon: ShoppingCart,
-  },
-  {
-    title: "Completed Projects",
-    count: 27,
-    subtitle: "this year",
-    icon: CheckCircle,
-  },
-];
 
 const requirementData = [
   {
@@ -146,32 +117,6 @@ const stakeholderData = [
   },
 ];
 
-const messageData = [
-  {
-    id: 1,
-    sender: "John Smith",
-    initials: "JS",
-    preview: "Updated proposal for the valve procurement project...",
-    time: "10 min ago",
-    requirementId: "REQ-001",
-  },
-  {
-    id: 2,
-    sender: "TechValve Solutions",
-    initials: "TV",
-    preview: "Thank you for your order. Shipment tracking details...",
-    time: "2 hours ago",
-    requirementId: "REQ-002",
-  },
-  {
-    id: 3,
-    sender: "EngiConsult Group",
-    initials: "EG",
-    preview: "Our engineer is available for consultation on...",
-    time: "Yesterday",
-    requirementId: "REQ-003",
-  },
-];
 
 const orderData = [
   {
@@ -316,12 +261,12 @@ const DashboardContainer = memo(() => {
   );
 
   return (
-    <main className="p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Industry Dashboard</h1>
+    <main className="p-4 md:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto space-y-6 md:space-y-8">
+        <h1 className="text-3xl font-bold">Industry Dashboard</h1>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Button asChild>
             <Link to="/dashboard/create-requirement">
               <FileText /> Create Requirement
@@ -346,7 +291,7 @@ const DashboardContainer = memo(() => {
 
         {/* Pending Approvals */}
         {userPendingApprovals.length > 0 && (
-          <Card className="mb-8">
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
             <CardContent>
               <Table>
                 <TableHeader>
@@ -384,21 +329,31 @@ const DashboardContainer = memo(() => {
           </Card>
         )}
 
-        {/* Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          {metrics.map((m, i) => (
-            <Card key={i}>
-              <CardContent className="p-6">
-                <p>{m.title}</p>
-                <h2>{m.count}</h2>
-                <p>{m.subtitle}</p>
-              </CardContent>
-            </Card>
-          ))}
+        {/* Enhanced Metrics */}
+        <DashboardStats />
+
+        {/* Procurement Analytics */}
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Procurement Analytics</h2>
+          <ProcurementAnalytics />
         </div>
 
-        {/* Requirements */}
-        <Card className="mb-8">
+        {/* Budget Utilization */}
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Budget Overview</h2>
+          <BudgetUtilization />
+        </div>
+
+        {/* Vendor Performance */}
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Top Performing Vendors</h2>
+          <VendorPerformance />
+        </div>
+
+        {/* Active Requirements */}
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Active Requirements</h2>
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardContent>
             <Table>
               <TableHeader>
@@ -430,37 +385,52 @@ const DashboardContainer = memo(() => {
             </Table>
           </CardContent>
         </Card>
+        </div>
 
-        {/* Messages */}
-        <Card className="mb-8">
-          <CardContent>
-            {messageData.map((m) => (
-              <div
-                key={m.id}
-                onClick={() =>
-                  navigate(`/dashboard/industry-messages?message=${m.id}`)
-                }
-              >
-                {m.sender}: {m.preview}
-              </div>
+        {/* Active Orders */}
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Active Purchase Orders</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {orderData.map((o) => (
+              <Card key={o.id} className="shadow-sm hover:shadow-md transition-all">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <Badge variant="outline" className="font-mono text-xs">
+                      {o.id}
+                    </Badge>
+                    <Badge className={getStatusColor(o.status)}>
+                      {o.status}
+                    </Badge>
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{o.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-1">Vendor: {o.vendor}</p>
+                  <p className="text-sm text-muted-foreground mb-4">{o.summary}</p>
+                  
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">Progress</span>
+                      <span className="text-sm font-bold">{o.progress}%</span>
+                    </div>
+                    <Progress value={o.progress} className="h-2" />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-bold text-primary">
+                      ${o.amount.toLocaleString()}
+                    </span>
+                    <Button 
+                      size="sm"
+                      onClick={() => handleManageMilestones(o.id)}
+                      className="gap-2"
+                    >
+                      <Workflow className="h-4 w-4" />
+                      Manage
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
-          </CardContent>
-        </Card>
-
-        {/* Orders */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {orderData.map((o) => (
-            <Card key={o.id}>
-              <CardContent>
-                <h3>{o.id}</h3>
-                <p>{o.title}</p>
-                <Progress value={o.progress} />
-                <Button onClick={() => handleManageMilestones(o.id)}>
-                  Manage
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+          </div>
         </div>
 
         {/* Approval Modal */}

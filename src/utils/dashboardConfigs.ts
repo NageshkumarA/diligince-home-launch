@@ -10,6 +10,8 @@ import {
   Users,
   Truck,
   Wrench,
+  DollarSign,
+  PiggyBank,
 } from "lucide-react";
 import { StatItem } from "@/components/shared/dashboard/GenericDashboardStats";
 
@@ -150,5 +152,40 @@ export const logisticsVendorStats: StatItem[] = [
     icon: Wrench,
     color: "text-orange-600",
     bgColor: "bg-orange-100",
+  },
+];
+
+export const industryStats: StatItem[] = [
+  {
+    title: "Total Procurement Spend",
+    value: "$1.25M",
+    subtitle: "this quarter",
+    icon: DollarSign,
+    color: "text-blue-600",
+    bgColor: "bg-blue-50",
+  },
+  {
+    title: "Active Purchase Orders",
+    value: "24",
+    subtitle: "in progress",
+    icon: ShoppingCart,
+    color: "text-green-600",
+    bgColor: "bg-green-50",
+  },
+  {
+    title: "Budget Utilization",
+    value: "68%",
+    subtitle: "of allocated budget",
+    icon: TrendingUp,
+    color: "text-purple-600",
+    bgColor: "bg-purple-50",
+  },
+  {
+    title: "Cost Savings",
+    value: "$180K",
+    subtitle: "through competitive bidding",
+    icon: PiggyBank,
+    color: "text-orange-600",
+    bgColor: "bg-orange-50",
   },
 ];
