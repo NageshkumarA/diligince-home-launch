@@ -64,43 +64,63 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
   const { formData } = useRequirement();
 
   const isStepCompleted = (stepId: number) => {
-    if (stepId === 1) {
-      return !!formData.title && !!formData.category;
-    } else if (stepId === 2) {
-      if (formData.category === "expert") {
-        return !!formData.specialization && !!formData.description;
-      } else if (formData.category === "product") {
-        return !!formData.productSpecifications && !!formData.quantity;
-      } else if (formData.category === "service") {
-        return !!formData.serviceDescription && !!formData.scopeOfWork;
-      } else if (formData.category === "logistics") {
-        return !!formData.equipmentType && !!formData.pickupLocation && !!formData.deliveryLocation;
-      }
-      return false;
-    } else if (stepId === 3) {
-      return true; // Documents are optional
-    } else if (stepId === 4) {
-      return true; // Workflow setup is optional for some requirements
-    } else if (stepId === 5) {
-      return true; // Preview is just viewing
-    } else if (stepId === 6) {
-      return formData.termsAccepted;
+    if (!formData) return false;
+    
+    // A step is only completed if we've moved past it
+    if (stepId >= currentStep) return false;
+    
+    switch (stepId) {
+      case 1:
+        return !!(formData.title && formData.category && formData.priority && 
+                 formData.businessJustification && formData.department && 
+                 formData.costCenter && formData.estimatedBudget);
+      case 2:
+        if (formData.category === "expert") {
+          return !!(formData.specialization && formData.description);
+        } else if (formData.category === "product") {
+          return !!(formData.productSpecifications && formData.quantity);
+        } else if (formData.category === "service") {
+          return !!(formData.serviceDescription && formData.scopeOfWork);
+        } else if (formData.category === "logistics") {
+          return !!(formData.equipmentType && formData.pickupLocation && formData.deliveryLocation);
+        }
+        return false;
+      case 3:
+        return true; // Documents are optional
+      case 4:
+        return true; // Approval workflow is optional
+      case 5:
+        return true; // Preview is always accessible if we got here
+      case 6:
+        return !!(formData.submissionDeadline && formData.evaluationCriteria && formData.termsAccepted);
+      default:
+        return false;
     }
-    return false;
   };
 
   const isStepAccessible = (stepId: number) => {
+    // Step 1 is always accessible
     if (stepId === 1) return true;
-    if (stepId >= 2 && !isStepCompleted(1)) return false;
-    if (stepId >= 3 && !isStepCompleted(2)) return false;
-    if (stepId <= currentStep) return true;
-    return stepId === currentStep + 1;
+    
+    // Current step is always accessible
+    if (stepId === currentStep) return true;
+    
+    // Can go back to any previous step
+    if (stepId < currentStep) return true;
+    
+    // Future steps are not accessible
+    return false;
   };
 
   const getStepStatus = (stepId: number) => {
-    if (stepId < currentStep || isStepCompleted(stepId)) return "completed";
+    if (stepId < currentStep && isStepCompleted(stepId)) return "completed";
     if (stepId === currentStep) return "current";
     return "upcoming";
+  };
+
+  const getOverallProgress = () => {
+    const completedSteps = steps.filter(step => isStepCompleted(step.id)).length;
+    return Math.round((completedSteps / steps.length) * 100);
   };
 
   return (
@@ -152,13 +172,11 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
 
                   {/* Connecting line */}
                   {!isLastStep && (
-                    <div className="flex-1 mx-4 h-0.5 bg-gray-200 relative">
+                    <div className="flex-1 mx-4 h-0.5 bg-muted relative overflow-hidden">
                       <div 
                         className={cn(
-                          "h-full transition-colors duration-300",
-                          status === "completed" || (status === "current" && index < currentStep - 1) 
-                            ? "bg-green-500" 
-                            : "bg-gray-200"
+                          "h-full transition-all duration-500 ease-out bg-primary",
+                          isStepCompleted(step.id) && step.id < currentStep ? "w-full" : "w-0"
                         )}
                       />
                     </div>
@@ -172,29 +190,29 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
 
       {/* Mobile version */}
       <div className="lg:hidden">
-        <div className="bg-white rounded-lg shadow-sm border p-4">
+        <div className="bg-card rounded-lg shadow-sm border p-4">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-foreground">
                 Step {currentStep} of {steps.length}
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 {steps.find(step => step.id === currentStep)?.name}
               </p>
             </div>
             <div className="text-right">
               <div className="text-2xl font-bold text-primary">
-                {Math.round(((currentStep - 1) / (steps.length - 1)) * 100)}%
+                {getOverallProgress()}%
               </div>
-              <div className="text-xs text-gray-500">Complete</div>
+              <div className="text-xs text-muted-foreground">Complete</div>
             </div>
           </div>
           
           {/* Mobile progress bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+          <div className="w-full bg-muted rounded-full h-2.5 mb-4 overflow-hidden">
             <div 
-              className="bg-primary h-2 rounded-full transition-all duration-300"
-              style={{ width: `${Math.max(8, ((currentStep - 1) / (steps.length - 1)) * 100)}%` }}
+              className="bg-primary h-full rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${getOverallProgress()}%` }}
             />
           </div>
 
@@ -208,11 +226,13 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
                   onClick={() => isStepAccessible(step.id) && onStepClick(step.id as StepType)}
                   disabled={!isStepAccessible(step.id)}
                   className={cn(
-                    "w-3 h-3 rounded-full transition-colors duration-200",
-                    status === "completed" && "bg-green-500",
-                    status === "current" && "bg-primary",
-                    status === "upcoming" && "bg-gray-300"
+                    "w-3 h-3 rounded-full transition-all duration-200",
+                    status === "completed" && "bg-primary",
+                    status === "current" && "bg-primary ring-2 ring-primary/30",
+                    status === "upcoming" && "bg-muted",
+                    !isStepAccessible(step.id) && "opacity-50 cursor-not-allowed"
                   )}
+                  aria-label={`Go to ${step.name}`}
                 />
               );
             })}
