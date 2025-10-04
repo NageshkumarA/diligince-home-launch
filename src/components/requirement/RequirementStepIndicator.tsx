@@ -145,10 +145,10 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
                       disabled={!isAccessible}
                       className={cn(
                         "w-12 h-12 rounded-full border-2 flex items-center justify-center transition-colors duration-200",
-                        status === "completed" && "bg-primary border-primary text-primary-foreground",
-                        status === "current" && "bg-primary border-primary text-primary-foreground ring-4 ring-primary/20",
-                        status === "upcoming" && isAccessible && "bg-white border-gray-300 text-gray-600 hover:border-gray-400",
-                        status === "upcoming" && !isAccessible && "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
+                        status === "completed" && "bg-corporate-navy-500 border-corporate-navy-500 text-white",
+                        status === "current" && "bg-corporate-navy-500 border-corporate-navy-500 text-white ring-4 ring-corporate-navy-500/20",
+                        status === "upcoming" && isAccessible && "bg-white border-corporate-gray-300 text-corporate-gray-600 hover:border-corporate-gray-400",
+                        status === "upcoming" && !isAccessible && "bg-corporate-gray-100 border-corporate-gray-200 text-corporate-gray-400 cursor-not-allowed"
                       )}
                     >
                       {status === "completed" ? (
@@ -161,9 +161,9 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
                     <div className="mt-3 text-center">
                       <h3 className={cn(
                         "text-sm font-medium",
-                        status === "completed" && "text-primary",
-                        status === "current" && "text-primary",
-                        status === "upcoming" && "text-gray-500"
+                        status === "completed" && "text-corporate-navy-600",
+                        status === "current" && "text-corporate-navy-600",
+                        status === "upcoming" && "text-corporate-gray-500"
                       )}>
                         {step.name}
                       </h3>
@@ -172,10 +172,10 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
 
                   {/* Connecting line */}
                   {!isLastStep && (
-                    <div className="flex-1 mx-4 h-0.5 bg-muted relative overflow-hidden">
+                    <div className="flex-1 mx-4 h-0.5 bg-corporate-gray-200 relative overflow-hidden">
                       <div 
                         className={cn(
-                          "h-full transition-all duration-500 ease-out bg-primary",
+                          "h-full transition-all duration-500 ease-out bg-corporate-navy-500",
                           isStepCompleted(step.id) && step.id < currentStep ? "w-full" : "w-0"
                         )}
                       />
@@ -190,28 +190,28 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
 
       {/* Mobile version */}
       <div className="lg:hidden">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="bg-white rounded-lg shadow-sm border border-corporate-gray-200 p-4">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-lg font-semibold text-foreground">
+              <h3 className="text-lg font-semibold text-corporate-gray-900">
                 Step {currentStep} of {steps.length}
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-corporate-gray-600">
                 {steps.find(step => step.id === currentStep)?.name}
               </p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-primary">
+              <div className="text-2xl font-bold text-corporate-navy-600">
                 {getOverallProgress()}%
               </div>
-              <div className="text-xs text-muted-foreground">Complete</div>
+              <div className="text-xs text-corporate-gray-600">Complete</div>
             </div>
           </div>
           
           {/* Mobile progress bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
+          <div className="w-full bg-corporate-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
             <div 
-              className="bg-primary h-full rounded-full transition-all duration-500 ease-out"
+              className="bg-corporate-navy-500 h-full rounded-full transition-all duration-500 ease-out"
               style={{ width: `${getOverallProgress()}%` }}
             />
           </div>
@@ -227,9 +227,9 @@ const RequirementStepIndicator: React.FC<StepIndicatorProps> = ({
                   disabled={!isStepAccessible(step.id)}
                   className={cn(
                     "w-3 h-3 rounded-full transition-all duration-200",
-                    status === "completed" && "bg-primary",
-                    status === "current" && "bg-primary ring-2 ring-primary/30",
-                    status === "upcoming" && "bg-gray-300",
+                    status === "completed" && "bg-corporate-navy-500",
+                    status === "current" && "bg-corporate-navy-500 ring-2 ring-corporate-navy-500/30",
+                    status === "upcoming" && "bg-corporate-gray-300",
                     !isStepAccessible(step.id) && "opacity-50 cursor-not-allowed"
                   )}
                   aria-label={`Go to ${step.name}`}

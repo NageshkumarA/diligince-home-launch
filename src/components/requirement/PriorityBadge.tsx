@@ -13,25 +13,25 @@ const priorities: Priority[] = [
   {
     value: "critical",
     label: "Critical",
-    color: "text-red-600",
+    color: "text-corporate-danger-600",
     description: "Immediate action required",
   },
   {
     value: "high",
     label: "High",
-    color: "text-amber-600",
+    color: "text-corporate-warning-600",
     description: "High priority, urgent",
   },
   {
     value: "medium",
     label: "Medium",
-    color: "text-blue-600",
+    color: "text-corporate-info-600",
     description: "Standard priority",
   },
   {
     value: "low",
     label: "Low",
-    color: "text-gray-600",
+    color: "text-corporate-gray-600",
     description: "Low priority, flexible timing",
   },
 ];
@@ -48,15 +48,15 @@ export function PriorityBadge({ value, onChange, error }: PriorityBadgeProps) {
   const getPriorityBadgeColor = (priorityValue: string) => {
     switch (priorityValue) {
       case "critical":
-        return "bg-red-100 text-red-800 border border-red-200";
+        return "bg-corporate-danger-100 text-corporate-danger-700 border border-corporate-danger-100";
       case "high":
-        return "bg-amber-100 text-amber-800 border border-amber-200";
+        return "bg-corporate-warning-100 text-corporate-warning-700 border border-corporate-warning-100";
       case "medium":
-        return "bg-blue-100 text-blue-800 border border-blue-200";
+        return "bg-corporate-info-100 text-corporate-info-700 border border-corporate-info-100";
       case "low":
-        return "bg-gray-100 text-gray-800 border border-gray-200";
+        return "bg-corporate-gray-100 text-corporate-gray-700 border border-corporate-gray-200";
       default:
-        return "bg-gray-100 text-gray-800 border border-gray-200";
+        return "bg-corporate-gray-100 text-corporate-gray-700 border border-corporate-gray-200";
     }
   };
 

@@ -43,19 +43,19 @@ interface CategorySelectorProps {
 
 export function CategorySelector({ value, onChange, error }: CategorySelectorProps) {
   const getCategoryColor = (categoryId: string, isSelected: boolean) => {
-    if (!isSelected) return "border-2 border-gray-300 bg-white hover:border-gray-400 text-gray-700";
+    if (!isSelected) return "border-2 border-corporate-gray-200 bg-white hover:border-corporate-gray-300 text-corporate-gray-700";
     
     switch (categoryId) {
       case "product":
-        return "border-2 border-purple-500 bg-purple-500 text-white";
+        return "border-2 border-[#722ed1] bg-[#722ed1] text-white";
       case "service":
-        return "border-2 border-blue-500 bg-blue-500 text-white";
+        return "border-2 border-corporate-info-500 bg-corporate-info-500 text-white";
       case "expert":
-        return "border-2 border-green-500 bg-green-500 text-white";
+        return "border-2 border-corporate-success-500 bg-corporate-success-500 text-white";
       case "logistics":
-        return "border-2 border-amber-500 bg-amber-500 text-white";
+        return "border-2 border-corporate-warning-500 bg-corporate-warning-500 text-corporate-gray-900";
       default:
-        return "border-2 border-primary bg-primary text-primary-foreground";
+        return "border-2 border-corporate-navy-500 bg-corporate-navy-500 text-white";
     }
   };
 
