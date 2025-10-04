@@ -1,12 +1,29 @@
-
 import React from "react";
 import { Helmet } from "react-helmet";
 import { GenericHeader } from "@/components/shared/layout/GenericHeader";
-import { expertHeaderConfig } from "@/utils/navigationConfigs";
+import { HeaderConfig } from "@/utils/navigationConfigs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, Calendar, MessageSquare, DollarSign, Star, Clock } from "lucide-react";
+
+const expertHeaderConfig: HeaderConfig = {
+  brandName: "Diligence.ai",
+  brandHref: "/dashboard/expert",
+  navItems: [
+    { label: "Dashboard", href: "/dashboard/expert", icon: <Briefcase size={18} /> },
+    { label: "Projects", href: "/expert/projects", icon: <Briefcase size={18} /> },
+    { label: "Messages", href: "/expert/messages", icon: <MessageSquare size={18} /> },
+  ],
+  avatarInitials: "EX",
+  theme: {
+    bgColor: "bg-blue-600",
+    textColor: "text-white",
+    hoverColor: "hover:bg-blue-700",
+    buttonHoverColor: "hover:bg-blue-500",
+    avatarBgColor: "bg-blue-500",
+  },
+};
 
 const ExpertDashboard = () => {
   return (

@@ -24,14 +24,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import Picker from 'emoji-picker-react';
+// Emoji picker temporarily disabled - needs emoji-picker-react package
+// import Picker from 'emoji-picker-react';
 
 
 interface MessageBubbleProps {

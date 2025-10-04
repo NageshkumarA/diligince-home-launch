@@ -119,7 +119,7 @@ const ProfessionalCertifications = () => {
   };
 
   // ✅ Table columns
-  const columns: ColumnConfig<Certification>[] = [
+  const columns: ColumnConfig[] = [
     {
       name: "name",
       label: "Certification",

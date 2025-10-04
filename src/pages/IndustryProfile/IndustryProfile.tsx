@@ -366,10 +366,8 @@ interface SidebarMenuItem {
 }
 
 const IndustryProfile = () => {
-  const {  updateProfile, profileCompletion, isAuthenticated } = useUser();
-  const user={
-    "Name":"Lokesh"
-  }
+  const { user, updateProfile, profileCompletion, isAuthenticated } = useUser();
+  
   const [companyName, setCompanyName] = useState(user?.profile?.companyName || "Steel Plant Ltd.");
   const [industryType, setIndustryType] = useState(user?.profile?.industryType || "Manufacturing - Steel Processing");
   const navigate = useNavigate();

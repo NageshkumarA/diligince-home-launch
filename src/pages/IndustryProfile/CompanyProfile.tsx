@@ -390,7 +390,6 @@ const CompanyInfoForm = () => {
                           <SelectContent
                             side="bottom"
                             className="w-full max-h-60 overflow-y-auto overflow-x-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
-                            disablePortal
                           >
                             <div className="max-h-60 overflow-y-auto">
                               {industryOptions.map((industry) => (

@@ -1,5 +1,3 @@
-// src/components/ChatHeader.tsx
-
 import React from 'react';
 import { useMessages } from './MessagesContext';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -19,16 +17,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-// --- 1. Import Tooltip components ---
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-
-import { MdArchive, MdUnarchive } from "react-icons/md";
 
 const callProviders = [
     {
@@ -180,9 +174,9 @@ export const ChatHeader = () => {
                         <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" className="border-gray-200 text-gray-600" onClick={toggleArchive}>
                                 {isArchived ? (
-                                    <MdUnarchive className="h-6 w-6" />
+                                    <ArchiveX className="h-6 w-6" />
                                 ) : (
-                                    <MdArchive className="h-6 w-6" />
+                                    <Archive className="h-6 w-6" />
                                 )}
                             </Button>
                         </TooltipTrigger>

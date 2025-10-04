@@ -47,6 +47,7 @@ interface CountryCodeSelectFieldProps {
   onValueChange?: (value: string) => void; // External handler, will receive country.name
   className?: string;
   triggerPlaceholder?: string;
+  disabled?: boolean;
 }
 
 export function CountryCodeSelectField({
