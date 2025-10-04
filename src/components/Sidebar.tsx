@@ -65,7 +65,7 @@ const Sidebar: React.FC = () => {
           <div className={`${isCollapsed ? 'justify-center position-relative' : 'justify-between'} flex items-center`}>
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary-foreground rounded-md flex items-center justify-center font-bold">
-                <img src='./logo-main-no-bg.svg' alt="Logo" className="w-full h-full object-contain" />
+                <img src='/logo-main-no-bg.svg' alt="Logo" className="w-full h-full object-contain" />
               </div>
               {!isCollapsed && (
                 <span className="text-xl font-bold text-primary-foreground">Deligence.ai</span>
