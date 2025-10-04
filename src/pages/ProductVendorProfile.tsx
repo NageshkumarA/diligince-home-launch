@@ -100,7 +100,7 @@ const ProductVendorProfile = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* ✅ with navItems */}
-      <ProductVendorHeader navItems={headerNavItems} />
+      {/* <ProductVendorHeader navItems={headerNavItems} /> */}
 
       <div className="flex flex-grow pt-16">
         <ProductVendorSidebar

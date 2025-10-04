@@ -220,7 +220,7 @@ const LogisticsVendorMessages = () => {
         <title>Messages | Logistics Vendor Dashboard</title>
       </Helmet>
       
-      <LogisticsVendorHeader />
+      {/* <LogisticsVendorHeader /> */}
       
       <div className="pt-16 flex-1 flex">
         {/* Conversations Sidebar */}

@@ -129,7 +129,7 @@ const ServiceVendorDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ServiceVendorHeader />
+      {/* <ServiceVendorHeader /> */}
 
       <main className="pt-32 p-6 lg:p-8">
         <DashboardContainer />

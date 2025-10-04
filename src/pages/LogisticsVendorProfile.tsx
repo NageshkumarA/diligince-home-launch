@@ -31,7 +31,7 @@ const LogisticsVendorProfile = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
-      <LogisticsVendorHeader />
+      {/* <LogisticsVendorHeader /> */}
       <div className="flex-1 pt-16">
         <div className="flex">
           <LogisticsVendorSidebar />
