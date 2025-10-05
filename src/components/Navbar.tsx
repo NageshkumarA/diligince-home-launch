@@ -59,12 +59,12 @@ const Navbar = () => {
           <Link to="/contact" className={`text-white hover:text-primary-foreground/80 transition-colors ${location.pathname === '/contact' ? 'text-primary-foreground/80 font-medium border-b border-primary-foreground/20' : ''}`}>
             Contact
           </Link>
-          <Button variant="outline" className="mr-2 bg-transparent border-white text-white hover:bg-white hover:text-primary transition-all duration-200" asChild>
+          {/* <Button variant="outline" className="mr-2 bg-transparent border-white text-white hover:bg-white hover:text-primary transition-all duration-200" asChild>
             <Link to="/signin">Log In</Link>
           </Button>
           <Button className="bg-white text-primary hover:bg-primary/5 hover:text-primary transition-all duration-200" asChild>
             <Link to="/signup">Start Free Trial</Link>
-          </Button>
+          </Button> */}
         </div>
         
         {/* Mobile menu button */}

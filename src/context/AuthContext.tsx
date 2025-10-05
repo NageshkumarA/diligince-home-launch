@@ -57,10 +57,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       const response = await api.post(apiRoutes.auth.login, { email, password });
-      const { token, user } = response.data;
+      console.log(response.data?.meta)
+      const {access_token} = response.data?.meta;
+      const {user} = response.data?.data;
+      debugger
+      if (access_token && user) {
+        localStorage.setItem('authToken', access_token);
+        localStorage.setItem('user', JSON.stringify(user));
 
-      if (token && user) {
-        localStorage.setItem('authToken', token);
         setUser(user);
         return true;
       }

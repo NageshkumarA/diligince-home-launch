@@ -50,7 +50,7 @@ export const SignInForm = () => {
   return (
     <div className="space-y-6">
       {/* Demo Accounts Info */}
-      <DemoAccountsInfo onCredentialClick={handleCredentialClick} />
+      {/* <DemoAccountsInfo onCredentialClick={handleCredentialClick} /> */}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -130,7 +130,7 @@ export const SignInForm = () => {
         </Button>
       </form>
 
-      <div className="mt-6">
+      {/* <div className="mt-6">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <Separator className="w-full" />
@@ -177,7 +177,7 @@ export const SignInForm = () => {
             Facebook
           </Button>
         </div>
-      </div>
+      </div> */}
 
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
