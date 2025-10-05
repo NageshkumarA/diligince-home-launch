@@ -33,17 +33,17 @@ export function AdvancedOptions({
   onComplianceRequiredChange,
 }: AdvancedOptionsProps) {
   return (
-    <Accordion type="single" collapsible className="border rounded-lg bg-muted/30">
+    <Accordion type="single" collapsible className="border border-corporate-gray-200 rounded-lg bg-corporate-gray-50 shadow-sm">
       <AccordionItem value="advanced" className="border-0">
-        <AccordionTrigger className="px-6 hover:no-underline hover:bg-accent/50">
-          <span className="text-sm font-medium text-foreground">Advanced Options</span>
+        <AccordionTrigger className="px-6 hover:no-underline hover:bg-corporate-gray-100">
+          <span className="text-sm font-medium text-corporate-gray-900">Advanced Options</span>
         </AccordionTrigger>
         <AccordionContent className="px-6 pb-6 space-y-6">
           {/* Risk Level */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-muted-foreground" />
-              <Label htmlFor="risk-level" className="text-sm font-medium">
+              <AlertTriangle className="w-4 h-4 text-corporate-gray-500" />
+              <Label htmlFor="risk-level" className="text-sm font-medium text-corporate-gray-900">
                 Risk Assessment
               </Label>
             </div>
@@ -66,8 +66,8 @@ export function AdvancedOptions({
             {/* Urgent Requirement */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-muted-foreground" />
-                <Label htmlFor="urgent" className="text-sm font-medium cursor-pointer">
+                <Clock className="w-4 h-4 text-corporate-gray-500" />
+                <Label htmlFor="urgent" className="text-sm font-medium cursor-pointer text-corporate-gray-900">
                   Urgent Requirement
                 </Label>
               </div>
@@ -77,8 +77,8 @@ export function AdvancedOptions({
             {/* Budget Pre-approved */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-muted-foreground" />
-                <Label htmlFor="budget-approved" className="text-sm font-medium cursor-pointer">
+                <DollarSign className="w-4 h-4 text-corporate-gray-500" />
+                <Label htmlFor="budget-approved" className="text-sm font-medium cursor-pointer text-corporate-gray-900">
                   Budget Pre-approved
                 </Label>
               </div>
@@ -92,8 +92,8 @@ export function AdvancedOptions({
             {/* Compliance Required */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-muted-foreground" />
-                <Label htmlFor="compliance" className="text-sm font-medium cursor-pointer">
+                <Shield className="w-4 h-4 text-corporate-gray-500" />
+                <Label htmlFor="compliance" className="text-sm font-medium cursor-pointer text-corporate-gray-900">
                   Compliance Required
                 </Label>
               </div>

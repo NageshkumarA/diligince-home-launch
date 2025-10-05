@@ -42,6 +42,23 @@ interface CategorySelectorProps {
 }
 
 export function CategorySelector({ value, onChange, error }: CategorySelectorProps) {
+  const getCategoryColor = (categoryId: string, isSelected: boolean) => {
+    if (!isSelected) return "border-2 border-corporate-gray-200 bg-white hover:border-corporate-gray-300 text-corporate-gray-700";
+    
+    switch (categoryId) {
+      case "product":
+        return "border-2 border-[#722ed1] bg-[#722ed1] text-white";
+      case "service":
+        return "border-2 border-corporate-info-500 bg-corporate-info-500 text-white";
+      case "expert":
+        return "border-2 border-corporate-success-500 bg-corporate-success-500 text-white";
+      case "logistics":
+        return "border-2 border-corporate-warning-500 bg-corporate-warning-500 text-corporate-gray-900";
+      default:
+        return "border-2 border-corporate-navy-500 bg-corporate-navy-500 text-white";
+    }
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex overflow-x-auto pb-2 -mx-1 px-1 gap-2 scrollbar-hide">
@@ -51,10 +68,8 @@ export function CategorySelector({ value, onChange, error }: CategorySelectorPro
             type="button"
             onClick={() => onChange(category.id)}
             className={cn(
-              "flex items-center gap-2 px-4 h-12 rounded-lg border-2 transition-all whitespace-nowrap touch-manipulation min-w-[140px]",
-              value === category.id
-                ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                : "bg-background text-foreground border-border hover:border-primary/50 hover:bg-accent"
+              "flex items-center gap-2 px-4 h-12 rounded-lg transition-all whitespace-nowrap touch-manipulation min-w-[140px]",
+              getCategoryColor(category.id, value === category.id)
             )}
           >
             {category.icon}

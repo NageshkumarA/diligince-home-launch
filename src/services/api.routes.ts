@@ -1,5 +1,7 @@
 // API Routes - Complete Industry Dashboard API Configuration
-// Documentation: See docs/api/industry/industry-dashboard-api.md
+// Documentation: 
+//   - Industry Dashboard: See docs/api/industry/industry-dashboard-api.md
+//   - Create Requirement: See docs/api/industry/create-requirement-api.md
 
 /**
  * Generates URL query parameters from an object
@@ -225,11 +227,72 @@ export const apiRoutes = {
             // Delete requirement
             delete: (requirementId: string) => `${basePath}/industry/requirements/${requirementId}`,
             
-            // Publish requirement
-            publish: (requirementId: string) => `${basePath}/industry/requirements/${requirementId}/publish`,
+            // Publish requirement (final step)
+            publish: `${basePath}/industry/requirements/publish`,
             
             // Archive requirement
             archive: (requirementId: string) => `${basePath}/industry/requirements/${requirementId}/archive`,
+            
+            /**
+             * Create Requirement Workflow - Draft Management
+             * 
+             * 6-step process for creating procurement requirements:
+             * 1. Basic Information (title, category, priority, budget)
+             * 2. Details (category-specific fields: Expert/Product/Service/Logistics)
+             * 3. Documents (optional file uploads - max 5 files, 10MB each)
+             * 4. Approval Workflow (conditional based on budget thresholds)
+             * 5. Preview (read-only review of all information)
+             * 6. Publish (set deadline, evaluation criteria, and publish)
+             * 
+             * Features:
+             * - Auto-save drafts after each step
+             * - Step validation before proceeding
+             * - Emergency publish for critical requirements (requires permission)
+             * - Multi-level approval workflows based on budget thresholds:
+             *   * < $5,000: No approval required
+             *   * $5,000 - $25,000: Department Head
+             *   * $25,000 - $100,000: Department Head + Finance Manager
+             *   * > $100,000: Department Head + Finance Manager + CFO
+             * 
+             * Documentation: See docs/api/industry/create-requirement-api.md
+             * 
+             * @see {@link https://docs/api/industry/create-requirement-api.md}
+             */
+            draft: {
+                // Create new draft
+                create: `${basePath}/industry/requirements/draft`,
+                
+                // Update draft (auto-save)
+                update: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}`,
+                
+                // Get draft by ID
+                getById: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}`,
+                
+                // Get all user drafts
+                getAll: (queryParams?: {
+                    page?: number;
+                    limit?: number;
+                    sortBy?: string;
+                    order?: string;
+                }) =>
+                    `${basePath}/industry/requirements/drafts${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
+                
+                // Delete draft
+                delete: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}`,
+                
+                // Validate specific step
+                validate: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}/validate`,
+                
+                // Upload documents
+                uploadDocuments: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}/documents`,
+                
+                // Delete document
+                deleteDocument: (draftId: string, documentId: string) => 
+                    `${basePath}/industry/requirements/draft/${draftId}/documents/${documentId}`,
+                
+                // Configure approval workflow
+                approvalWorkflow: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}/approval-workflow`,
+            },
         },
 
         // Purchase Orders Management

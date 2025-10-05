@@ -27,11 +27,76 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					hover: 'hsl(var(--primary-hover))',
+					active: 'hsl(var(--primary-active))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					foreground: 'hsl(var(--secondary-foreground))',
+					hover: 'hsl(var(--secondary-hover))',
+					light: 'hsl(var(--secondary-light))'
+				},
+				// Corporate color palette
+				corporate: {
+					navy: {
+						DEFAULT: 'hsl(210, 64%, 23%)',
+						50: 'hsl(210, 100%, 97%)',
+						100: 'hsl(210, 95%, 94%)',
+						200: 'hsl(210, 90%, 88%)',
+						300: 'hsl(210, 85%, 75%)',
+						400: 'hsl(210, 75%, 50%)',
+						500: 'hsl(210, 64%, 23%)',
+						600: 'hsl(210, 59%, 30%)',
+						700: 'hsl(210, 64%, 17%)',
+						800: 'hsl(210, 70%, 12%)',
+						900: 'hsl(210, 75%, 8%)'
+					},
+					gray: {
+						DEFAULT: 'hsl(210, 7%, 46%)',
+						50: 'hsl(210, 17%, 98%)',
+						100: 'hsl(210, 17%, 95%)',
+						200: 'hsl(210, 11%, 88%)',
+						300: 'hsl(210, 7%, 73%)',
+						400: 'hsl(210, 7%, 56%)',
+						500: 'hsl(210, 7%, 46%)',
+						600: 'hsl(210, 9%, 36%)',
+						700: 'hsl(210, 11%, 31%)',
+						800: 'hsl(210, 11%, 15%)',
+						900: 'hsl(210, 11%, 10%)'
+					},
+					success: {
+						DEFAULT: 'hsl(134, 61%, 41%)',
+						50: 'hsl(134, 61%, 95%)',
+						100: 'hsl(134, 61%, 85%)',
+						500: 'hsl(134, 61%, 41%)',
+						600: 'hsl(134, 61%, 35%)',
+						700: 'hsl(134, 61%, 28%)'
+					},
+					info: {
+						DEFAULT: 'hsl(211, 100%, 50%)',
+						50: 'hsl(211, 100%, 95%)',
+						100: 'hsl(211, 100%, 85%)',
+						500: 'hsl(211, 100%, 50%)',
+						600: 'hsl(211, 100%, 40%)',
+						700: 'hsl(211, 100%, 30%)'
+					},
+					danger: {
+						DEFAULT: 'hsl(354, 70%, 54%)',
+						50: 'hsl(354, 70%, 95%)',
+						100: 'hsl(354, 70%, 85%)',
+						500: 'hsl(354, 70%, 54%)',
+						600: 'hsl(354, 70%, 45%)',
+						700: 'hsl(354, 70%, 35%)'
+					},
+					warning: {
+						DEFAULT: 'hsl(45, 100%, 51%)',
+						50: 'hsl(45, 100%, 95%)',
+						100: 'hsl(45, 100%, 85%)',
+						500: 'hsl(45, 100%, 51%)',
+						600: 'hsl(45, 100%, 40%)',
+						700: 'hsl(45, 100%, 30%)'
+					}
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',

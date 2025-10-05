@@ -11,15 +11,15 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, color }) => {
     
     const statusLower = status.toLowerCase();
     
-    if (statusLower.includes('awaiting') || statusLower.includes('pending')) return 'bg-primary/10 text-primary';
+    if (statusLower.includes('awaiting') || statusLower.includes('pending')) return 'bg-corporate-navy-100 text-corporate-navy-700';
     if (statusLower.includes('todo')) return 'bg-purple-100 text-purple-800';
-    if (statusLower.includes('condemn')) return 'bg-green-100 text-green-800';
-    if (statusLower.includes('inspection')) return 'bg-orange-100 text-orange-800';
-    if (statusLower.includes('request')) return 'bg-yellow-100 text-yellow-800';
-    if (statusLower.includes('completed')) return 'bg-green-100 text-green-800';
-    if (statusLower.includes('failed')) return 'bg-red-100 text-red-800';
+    if (statusLower.includes('condemn')) return 'bg-corporate-success-100 text-corporate-success-700';
+    if (statusLower.includes('inspection')) return 'bg-corporate-warning-100 text-corporate-warning-700';
+    if (statusLower.includes('request')) return 'bg-corporate-warning-100 text-corporate-warning-700';
+    if (statusLower.includes('completed')) return 'bg-corporate-success-100 text-corporate-success-700';
+    if (statusLower.includes('failed')) return 'bg-corporate-danger-100 text-corporate-danger-700';
     
-    return 'bg-gray-100 text-gray-800';
+    return 'bg-corporate-gray-100 text-corporate-gray-700';
   };
 
   return (

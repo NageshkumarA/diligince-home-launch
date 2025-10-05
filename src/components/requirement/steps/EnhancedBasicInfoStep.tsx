@@ -45,10 +45,10 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in pb-6">
       {/* Section 1: Essential Information */}
-      <section className="space-y-6 bg-background rounded-lg border p-6">
-        <div className="flex items-center gap-2 pb-2 border-b">
-          <Briefcase className="w-5 h-5 text-muted-foreground" />
-          <h2 className="text-lg font-semibold text-foreground">Essential Information</h2>
+      <section className="space-y-6 bg-white rounded-lg border border-corporate-gray-200 p-6 shadow-sm">
+        <div className="flex items-center gap-2 pb-2 border-b border-corporate-gray-200">
+          <Briefcase className="w-5 h-5 text-corporate-gray-500" />
+          <h2 className="text-lg font-semibold text-corporate-gray-900">Essential Information</h2>
         </div>
 
         {/* Requirement Title */}
@@ -91,10 +91,10 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
       </section>
 
       {/* Section 2: Business Context */}
-      <section className="space-y-6 bg-background rounded-lg border p-6">
-        <div className="flex items-center gap-2 pb-2 border-b">
-          <Briefcase className="w-5 h-5 text-muted-foreground" />
-          <h2 className="text-lg font-semibold text-foreground">Business Context</h2>
+      <section className="space-y-6 bg-white rounded-lg border border-corporate-gray-200 p-6 shadow-sm">
+        <div className="flex items-center gap-2 pb-2 border-b border-corporate-gray-200">
+          <Briefcase className="w-5 h-5 text-corporate-gray-500" />
+          <h2 className="text-lg font-semibold text-corporate-gray-900">Business Context</h2>
         </div>
 
         {/* Business Justification */}
@@ -173,12 +173,12 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
       </section>
 
       {/* Section 3: Budget (Collapsible) */}
-      <Accordion type="single" collapsible className="border rounded-lg bg-background">
+      <Accordion type="single" collapsible className="border border-corporate-gray-200 rounded-lg bg-white shadow-sm">
         <AccordionItem value="budget" className="border-0">
-          <AccordionTrigger className="px-6 hover:no-underline hover:bg-accent/50">
+          <AccordionTrigger className="px-6 hover:no-underline hover:bg-corporate-gray-50">
             <div className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-muted-foreground" />
-              <span className="text-sm font-medium text-foreground">
+              <DollarSign className="w-5 h-5 text-corporate-gray-500" />
+              <span className="text-sm font-medium text-corporate-gray-900">
                 Budget Information
                 {formData.estimatedBudget && (
                   <span className="ml-2 text-muted-foreground">
@@ -234,7 +234,7 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
       />
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-between pt-6 border-t">
+      <div className="flex items-center justify-between pt-6 border-t border-corporate-gray-200">
         <Button type="button" variant="outline" onClick={handleSaveDraft} className="h-11">
           Save as Draft
         </Button>

@@ -12,13 +12,13 @@ export interface ThemeColors {
 }
 
 export const themeColors: ThemeColors = {
-  primary: 'bg-primary text-primary-foreground',
-  secondary: 'bg-secondary text-secondary-foreground',
-  success: 'bg-green-600 text-white',
-  warning: 'bg-yellow-600 text-white',
-  error: 'bg-red-600 text-white',
-  info: 'bg-primary text-white',
-  neutral: 'bg-gray-600 text-white',
+  primary: 'bg-corporate-navy-500 text-white',
+  secondary: 'bg-corporate-gray-500 text-white',
+  success: 'bg-corporate-success-500 text-white',
+  warning: 'bg-corporate-warning-500 text-corporate-gray-900',
+  error: 'bg-corporate-danger-500 text-white',
+  info: 'bg-corporate-info-500 text-white',
+  neutral: 'bg-corporate-gray-500 text-white',
 };
 
 // User type color utilities
@@ -46,13 +46,13 @@ export const getUserTypeBadgeColors = (userType: 'industry' | 'professional' | '
 
 export const getBadgeColors = (variant: keyof ThemeColors): string => {
   const colorMap: Record<keyof ThemeColors, string> = {
-    primary: 'bg-primary/10 text-primary border-primary/20',
-    secondary: 'bg-secondary/10 text-secondary border-secondary/20',
-    success: 'bg-green-100 text-green-800 border-green-200',
-    warning: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    error: 'bg-red-100 text-red-800 border-red-200',
-    info: 'bg-primary/10 text-primary border-primary/20',
-    neutral: 'bg-gray-100 text-gray-800 border-gray-200',
+    primary: 'bg-corporate-navy-100 text-corporate-navy-700 border-corporate-navy-200',
+    secondary: 'bg-corporate-gray-100 text-corporate-gray-700 border-corporate-gray-200',
+    success: 'bg-corporate-success-100 text-corporate-success-700 border-corporate-success-100',
+    warning: 'bg-corporate-warning-100 text-corporate-warning-700 border-corporate-warning-100',
+    error: 'bg-corporate-danger-100 text-corporate-danger-700 border-corporate-danger-100',
+    info: 'bg-corporate-info-100 text-corporate-info-700 border-corporate-info-100',
+    neutral: 'bg-corporate-gray-100 text-corporate-gray-700 border-corporate-gray-200',
   };
   
   return colorMap[variant] || colorMap.neutral;
@@ -60,13 +60,13 @@ export const getBadgeColors = (variant: keyof ThemeColors): string => {
 
 export const getButtonColors = (variant: keyof ThemeColors): string => {
   const colorMap: Record<keyof ThemeColors, string> = {
-    primary: 'bg-primary hover:bg-primary/90 text-primary-foreground',
-    secondary: 'bg-secondary hover:bg-secondary/90 text-secondary-foreground',
-    success: 'bg-green-600 hover:bg-green-700 text-white',
-    warning: 'bg-yellow-600 hover:bg-yellow-700 text-white',
-    error: 'bg-red-600 hover:bg-red-700 text-white',
-    info: 'bg-primary hover:bg-primary/90 text-white',
-    neutral: 'bg-gray-600 hover:bg-gray-700 text-white',
+    primary: 'bg-corporate-navy-500 hover:bg-corporate-navy-600 text-white',
+    secondary: 'bg-corporate-gray-500 hover:bg-corporate-gray-600 text-white',
+    success: 'bg-corporate-success-500 hover:bg-corporate-success-600 text-white',
+    warning: 'bg-corporate-warning-500 hover:bg-corporate-warning-600 text-corporate-gray-900',
+    error: 'bg-corporate-danger-500 hover:bg-corporate-danger-600 text-white',
+    info: 'bg-corporate-info-500 hover:bg-corporate-info-600 text-white',
+    neutral: 'bg-corporate-gray-500 hover:bg-corporate-gray-600 text-white',
   };
   
   return colorMap[variant] || colorMap.neutral;

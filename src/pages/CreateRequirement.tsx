@@ -222,7 +222,7 @@ const CreateRequirement = () => {
       <ApprovalProvider>
         <StakeholderProvider>
           <RequirementProvider>
-            <div className="flex min-h-screen flex-col bg-background">
+            <div className="flex min-h-screen flex-col bg-corporate-gray-50">
               {/* Mobile Step Header */}
               <MobileStepHeader
                 currentStep={currentStep}
@@ -238,10 +238,10 @@ const CreateRequirement = () => {
                 <div className="hidden md:block mb-8">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h1 className="text-3xl font-bold text-foreground md:text-4xl">
+                      <h1 className="text-3xl font-bold text-corporate-gray-900 md:text-4xl">
                         Create Procurement Requirement
                       </h1>
-                      <p className="mt-2 text-lg text-muted-foreground">
+                      <p className="mt-2 text-lg text-corporate-gray-600">
                         Enterprise-grade requirement management system
                       </p>
                     </div>
@@ -266,7 +266,7 @@ const CreateRequirement = () => {
                 {/* Step Content with Swipe Support */}
                 <div 
                   {...swipeHandlers}
-                  className="mt-6 md:mt-8 rounded-xl bg-card shadow-sm border border-border touch-pan-y"
+                  className="mt-6 md:mt-8 rounded-xl bg-white shadow-sm border border-corporate-gray-200 touch-pan-y"
                 >
                   <div className="p-4 md:p-8">
                     <StepRenderer
