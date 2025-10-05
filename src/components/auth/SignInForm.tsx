@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { useAuth } from "./hooks/useAuth";
+import { useAuth } from "@/context/AuthContext";
 import { DemoAccountsInfo } from "./DemoAccountsInfo";
 
 export const SignInForm = () => {
@@ -15,7 +15,8 @@ export const SignInForm = () => {
     password: ""
   });
   
-  const { signIn, isLoading } = useAuth();
+  const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,11 +36,14 @@ export const SignInForm = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
-      const result = await signIn(formData.email, formData.password);
+      const result = await login(formData.email, formData.password);
       console.log("Sign in result:", result);
     } catch (error) {
       console.error("Sign in error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

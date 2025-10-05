@@ -71,6 +71,27 @@ export const apiRoutes = {
         // Dashboard Statistics
         dashboard: {
             // Get dashboard statistics (procurement spend, active POs, budget utilization, cost savings)
+            stats: `${basePath}/industry/dashboard/stats`,
+            
+            // Get procurement analytics
+            analytics: `${basePath}/industry/dashboard/analytics`,
+            
+            // Get budget overview
+            budget: `${basePath}/industry/dashboard/budget`,
+            
+            // Get vendor performance rankings
+            vendorPerformance: `${basePath}/industry/dashboard/vendors/performance`,
+            
+            // Get pending approvals for current user
+            pendingApprovals: `${basePath}/industry/approvals/pending`,
+            
+            // Get active requirements
+            activeRequirements: `${basePath}/industry/requirements?status=active`,
+            
+            // Get active purchase orders
+            activePurchaseOrders: `${basePath}/industry/purchase-orders?status=active,in_progress`,
+            
+            // Legacy endpoint function
             getStats: (queryParams?: { period?: string; startDate?: string; endDate?: string }) =>
                 `${basePath}/industry/dashboard/stats${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
             

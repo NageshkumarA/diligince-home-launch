@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import ChatList from '../components/ChatList';
 import { MessageCircle, Send, Paperclip, Smile } from 'lucide-react';
+import { isIndustryRole } from '@/utils/roleUtils';
 
 const Chats: React.FC = () => {
   const { user } = useAuth();
@@ -9,30 +10,31 @@ const Chats: React.FC = () => {
   const [messageText, setMessageText] = useState('');
 
   // Mock chat data
+  const isIndustry = isIndustryRole(user?.role);
   const mockChats = [
     {
       id: '1',
-      name: user?.role === 'industry' ? 'John Smith (Professional)' : 'Tech Solutions Inc.',
-      role: user?.role === 'industry' ? 'professional' as const : 'industry' as const,
-      lastMessage: user?.role === 'industry' ? "I'm interested in your mobile app project" : "Looking forward to working with you",
+      name: isIndustry ? 'John Smith (Professional)' : 'Tech Solutions Inc.',
+      role: isIndustry ? 'professional' as const : 'industry' as const,
+      lastMessage: isIndustry ? "I'm interested in your mobile app project" : "Looking forward to working with you",
       timestamp: '2 min ago',
       unreadCount: 2,
       status: 'interested' as const
     },
     {
       id: '2',
-      name: user?.role === 'industry' ? 'Global Services Ltd. (Vendor)' : 'Innovation Corp.',
-      role: user?.role === 'industry' ? 'vendor' as const : 'industry' as const,
-      lastMessage: user?.role === 'industry' ? "Quotation sent for cloud infrastructure" : "When can we start the project?",
+      name: isIndustry ? 'Global Services Ltd. (Vendor)' : 'Innovation Corp.',
+      role: isIndustry ? 'vendor' as const : 'industry' as const,
+      lastMessage: isIndustry ? "Quotation sent for cloud infrastructure" : "When can we start the project?",
       timestamp: '1 hour ago',
       unreadCount: 0,
       status: 'quotation_sent' as const
     },
     {
       id: '3',
-      name: user?.role === 'industry' ? 'Sarah Johnson (Professional)' : 'StartupHub Inc.',
-      role: user?.role === 'industry' ? 'professional' as const : 'industry' as const,
-      lastMessage: user?.role === 'industry' ? "Can we schedule a call to discuss?" : "Project completed successfully",
+      name: isIndustry ? 'Sarah Johnson (Professional)' : 'StartupHub Inc.',
+      role: isIndustry ? 'professional' as const : 'industry' as const,
+      lastMessage: isIndustry ? "Can we schedule a call to discuss?" : "Project completed successfully",
       timestamp: '1 day ago',
       unreadCount: 1,
       status: 'negotiating' as const
@@ -45,21 +47,21 @@ const Chats: React.FC = () => {
     {
       id: '1',
       sender: selectedChat?.name.split(' ')[0] || 'User',
-      message: user?.role === 'industry' ? "I'm interested in your mobile app development project. I have 5+ years of experience in React Native." : "Thank you for your interest! Could you share your portfolio?",
+      message: isIndustry ? "I'm interested in your mobile app development project. I have 5+ years of experience in React Native." : "Thank you for your interest! Could you share your portfolio?",
       timestamp: '10:30 AM',
       isOwn: false
     },
     {
       id: '2',
       sender: 'You',
-      message: user?.role === 'industry' ? "Great! Could you share your portfolio and previous work examples?" : "Sure! Here's my portfolio link and some recent projects I've completed.",
+      message: isIndustry ? "Great! Could you share your portfolio and previous work examples?" : "Sure! Here's my portfolio link and some recent projects I've completed.",
       timestamp: '10:35 AM',
       isOwn: true
     },
     {
       id: '3',
       sender: selectedChat?.name.split(' ')[0] || 'User',
-      message: user?.role === 'industry' ? "Here's my portfolio: portfolio.example.com. I've worked on similar e-commerce apps." : "I'm available to start immediately. What's the timeline?",
+      message: isIndustry ? "Here's my portfolio: portfolio.example.com. I've worked on similar e-commerce apps." : "I'm available to start immediately. What's the timeline?",
       timestamp: '10:40 AM',
       isOwn: false
     }
@@ -77,7 +79,7 @@ const Chats: React.FC = () => {
     <div className="p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[#333333] mb-2">Messages</h1>
-        <p className="text-[#828282]">Communicate with {user?.role === 'industry' ? 'professionals and vendors' : 'industries'} about your projects.</p>
+        <p className="text-[#828282]">Communicate with {isIndustry ? 'professionals and vendors' : 'industries'} about your projects.</p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6 h-[calc(100vh-200px)]">
@@ -86,7 +88,7 @@ const Chats: React.FC = () => {
           <ChatList
             chats={mockChats}
             onChatSelect={setSelectedChatId}
-            currentUserRole={user?.role || 'professional'}
+            currentUserRole={isIndustry ? 'industry' : 'professional'}
           />
         </div>
 

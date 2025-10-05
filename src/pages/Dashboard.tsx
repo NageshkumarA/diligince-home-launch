@@ -3,47 +3,47 @@ import { useAuth } from '../context/AuthContext';
 import DashboardCard from '../components/DashboardCard';
 import { FileText, Quote, Workflow, Users, TrendingUp, Clock } from 'lucide-react';
 import { SteppedForm } from '../components/form/stepped-form';
+import { isIndustryRole, isProfessionalRole, isVendorRole } from '@/utils/roleUtils';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
 
   const getDashboardData = () => {
-    switch (user?.role) {
-      case 'industry':
-        return {
-          title: 'Industry Dashboard',
-          cards: [
-            { title: 'Posted Requirements', value: 24, icon: FileText, color: 'blue' as const, trend: { value: '+12%', isPositive: true } },
-            { title: 'Active Chats', value: 18, icon: Users, color: 'green' as const, trend: { value: '+25%', isPositive: true } },
-            { title: 'Received Proposals', value: 47, icon: TrendingUp, color: 'orange' as const, trend: { value: '+8%', isPositive: true } },
-            { title: 'Completed Projects', value: 12, icon: Clock, color: 'purple' as const }
-          ]
-        };
-      case 'professional':
-        return {
-          title: 'Professional Dashboard',
-          cards: [
-            { title: 'Available Opportunities', value: 156, icon: FileText, color: 'blue' as const, trend: { value: '+15%', isPositive: true } },
-            { title: 'Submitted Proposals', value: 23, icon: TrendingUp, color: 'green' as const },
-            { title: 'Active Chats', value: 8, icon: Users, color: 'orange' as const, trend: { value: '+12%', isPositive: true } },
-            { title: 'Completed Projects', value: 15, icon: Clock, color: 'purple' as const }
-          ]
-        };
-      case 'vendor':
-        return {
-          title: 'Vendor Dashboard',
-          cards: [
-            { title: 'Available Requirements', value: 89, icon: FileText, color: 'blue' as const, trend: { value: '+18%', isPositive: true } },
-            { title: 'Sent Quotations', value: 34, icon: Quote, color: 'green' as const },
-            { title: 'Active Negotiations', value: 12, icon: Users, color: 'orange' as const },
-            { title: 'Won Projects', value: 28, icon: TrendingUp, color: 'purple' as const, trend: { value: '+22%', isPositive: true } }
-          ]
-        };
-      default:
-        return {
-          title: 'Dashboard',
-          cards: []
-        };
+    if (isIndustryRole(user?.role)) {
+      return {
+        title: 'Industry Dashboard',
+        cards: [
+          { title: 'Posted Requirements', value: 24, icon: FileText, color: 'blue' as const, trend: { value: '+12%', isPositive: true } },
+          { title: 'Active Chats', value: 18, icon: Users, color: 'green' as const, trend: { value: '+25%', isPositive: true } },
+          { title: 'Received Proposals', value: 47, icon: TrendingUp, color: 'orange' as const, trend: { value: '+8%', isPositive: true } },
+          { title: 'Completed Projects', value: 12, icon: Clock, color: 'purple' as const }
+        ]
+      };
+    } else if (isProfessionalRole(user?.role)) {
+      return {
+        title: 'Professional Dashboard',
+        cards: [
+          { title: 'Available Opportunities', value: 156, icon: FileText, color: 'blue' as const, trend: { value: '+15%', isPositive: true } },
+          { title: 'Submitted Proposals', value: 23, icon: TrendingUp, color: 'green' as const },
+          { title: 'Active Chats', value: 8, icon: Users, color: 'orange' as const, trend: { value: '+12%', isPositive: true } },
+          { title: 'Completed Projects', value: 15, icon: Clock, color: 'purple' as const }
+        ]
+      };
+    } else if (isVendorRole(user?.role)) {
+      return {
+        title: 'Vendor Dashboard',
+        cards: [
+          { title: 'Available Requirements', value: 89, icon: FileText, color: 'blue' as const, trend: { value: '+18%', isPositive: true } },
+          { title: 'Sent Quotations', value: 34, icon: Quote, color: 'green' as const },
+          { title: 'Active Negotiations', value: 12, icon: Users, color: 'orange' as const },
+          { title: 'Won Projects', value: 28, icon: TrendingUp, color: 'purple' as const, trend: { value: '+22%', isPositive: true } }
+        ]
+      };
+    } else {
+      return {
+        title: 'Dashboard',
+        cards: []
+      };
     }
   };
 

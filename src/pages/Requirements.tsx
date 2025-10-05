@@ -4,6 +4,7 @@ import RequirementCard from '../components/RequirementCard';
 import { Plus, Filter, Search } from 'lucide-react';
 import CustomTable, { ColumnConfig, FilterConfig } from '../components/CustomTable';
 import { SteppedForm } from '../components/form';
+import { isIndustryRole, isProfessionalRole, isVendorRole } from '@/utils/roleUtils';
 
 const Requirements: React.FC = () => {
   const { user } = useAuth();
@@ -128,21 +129,17 @@ const Requirements: React.FC = () => {
   };
 
   const getPageTitle = () => {
-    switch (user?.role) {
-      case 'industry': return 'My Requirements';
-      case 'professional': return 'Available Opportunities';
-      case 'vendor': return 'Business Requirements';
-      default: return 'Requirements';
-    }
+    if (isIndustryRole(user?.role)) return 'My Requirements';
+    if (isProfessionalRole(user?.role)) return 'Available Opportunities';
+    if (isVendorRole(user?.role)) return 'Business Requirements';
+    return 'Requirements';
   };
 
   const getPageDescription = () => {
-    switch (user?.role) {
-      case 'industry': return 'Manage your posted requirements and view proposals from professionals and vendors.';
-      case 'professional': return 'Browse available opportunities and show interest to connect with industries.';
-      case 'vendor': return 'Find business requirements and submit quotations to potential clients.';
-      default: return 'Browse requirements and opportunities.';
-    }
+    if (isIndustryRole(user?.role)) return 'Manage your posted requirements and view proposals from professionals and vendors.';
+    if (isProfessionalRole(user?.role)) return 'Browse available opportunities and show interest to connect with industries.';
+    if (isVendorRole(user?.role)) return 'Find business requirements and submit quotations to potential clients.';
+    return 'Browse requirements and opportunities.';
   };
 
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
