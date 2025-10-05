@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,33 +18,22 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/components/auth/hooks/useAuth";
-import { useVendorSpecialization } from "@/contexts/VendorSpecializationContext";
-import { mapSignupToSpecialization } from "@/utils/vendorSpecializationMapping";
-import { VendorCategory } from "@/types/shared";
-import { WelcomeModal } from "@/components/shared/WelcomeModal";
 
 const formSchema = z.object({
-  businessName: z.string().min(1, {
-    message: "Business name is required",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address",
-  }),
-  phone: z.string().min(10, {
-    message: "Phone number must be at least 10 digits",
-  }),
-  vendorCategory: z.string().min(1, {
-    message: "Vendor category is required",
-  }),
-  specialization: z.string().min(1, {
-    message: "Specialization is required",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters",
-  }),
+  firstName: z.string().min(1, { message: "First name is required" }),
+  lastName: z.string().min(1, { message: "Last name is required" }),
+  businessName: z.string().min(1, { message: "Business name is required" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  phone: z.string().min(10, { message: "Phone number must be at least 10 digits" }),
+  vendorCategory: z.string().min(1, { message: "Vendor category is required" }),
+  specialization: z.string().min(1, { message: "Specialization is required" }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters" }),
   confirmPassword: z.string(),
-  acceptTerms: z.boolean().refine((value) => value === true, {
+  termsAccepted: z.boolean().refine((value) => value === true, {
     message: "You must accept the terms and conditions",
+  }),
+  privacyAccepted: z.boolean().refine((value) => value === true, {
+    message: "You must accept the privacy policy",
   }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -60,40 +48,19 @@ const vendorCategories = [
 
 const specializations = {
   "Service Vendor": [
-    "Equipment Maintenance",
-    "Plant Installation",
-    "Process Optimization",
-    "Industrial Cleaning",
-    "Quality Inspection",
-    "Safety Compliance",
-    "Environmental Services",
-    "Automation Services",
-    "Electrical Services",
-    "Mechanical Services"
+    "Equipment Maintenance", "Plant Installation", "Process Optimization", "Industrial Cleaning",
+    "Quality Inspection", "Safety Compliance", "Environmental Services", "Automation Services",
+    "Electrical Services", "Mechanical Services"
   ],
   "Product Vendor": [
-    "Industrial Equipment",
-    "Spare Parts",
-    "Raw Materials",
-    "Safety Equipment",
-    "Tools & Hardware",
-    "Industrial Chemicals",
-    "Industrial Electronics",
-    "Process Control Equipment",
-    "Packaging Materials",
+    "Industrial Equipment", "Spare Parts", "Raw Materials", "Safety Equipment", "Tools & Hardware",
+    "Industrial Chemicals", "Industrial Electronics", "Process Control Equipment", "Packaging Materials",
     "Laboratory Equipment"
   ],
   "Logistics Vendor": [
-    "Transportation Services",
-    "Warehouse Management",
-    "Heavy Equipment Rental",
-    "Crane Services",
-    "Forklift Rental",
-    "Inventory Management",
-    "Supply Chain Solutions",
-    "Cold Chain Logistics",
-    "Bulk Material Transport",
-    "Hazardous Material Transport"
+    "Transportation Services", "Warehouse Management", "Heavy Equipment Rental", "Crane Services",
+    "Forklift Rental", "Inventory Management", "Supply Chain Solutions", "Cold Chain Logistics",
+    "Bulk Material Transport", "Hazardous Material Transport"
   ]
 };
 
@@ -101,15 +68,13 @@ export function VendorFormEnhanced() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
-  const [newUser, setNewUser] = useState<any>(null);
-  const navigate = useNavigate();
   const { signUp, isLoading } = useAuth();
-  const { setSpecialization } = useVendorSpecialization();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      firstName: "",
+      lastName: "",
       businessName: "",
       email: "",
       phone: "",
@@ -117,69 +82,25 @@ export function VendorFormEnhanced() {
       specialization: "",
       password: "",
       confirmPassword: "",
-      acceptTerms: false,
+      termsAccepted: false,
+      privacyAccepted: false,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Generate initials from business name
-    const initials = values.businessName
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .substring(0, 2)
-      .toUpperCase();
-    
-    // Map vendor category to our internal format
-    const vendorCategoryMap: Record<string, VendorCategory> = {
-      "Service Vendor": "service",
-      "Product Vendor": "product",
-      "Logistics Vendor": "logistics"
-    };
-    
-    const vendorCategory = vendorCategoryMap[values.vendorCategory];
-    
-    // Create user profile
-    const userProfile = {
-      id: Math.random().toString(36).substr(2, 9),
+    const registrationData = {
       email: values.email,
-      name: values.businessName,
-      role: 'vendor' as const,
-      initials: initials,
-      status: 'active' as const,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      preferences: {
-        theme: 'system' as const,
-        notifications: {
-          email: true,
-          push: true,
-          sms: false,
-          marketing: false,
-        },
-        language: 'en',
-        timezone: 'UTC',
-      },
-      profile: {
-        businessName: values.businessName,
-        phone: values.phone,
-        vendorCategory: vendorCategory,
-        specialization: values.specialization
-      }
+      password: values.password,
+      phone: values.phone,
+      role: 'Vendor',
+      firstName: values.firstName,
+      lastName: values.lastName,
+      companyName: values.businessName,
+      termsAccepted: values.termsAccepted,
+      privacyAccepted: values.privacyAccepted,
     };
 
-    const result = await signUp({ ...userProfile, password: values.password });
-    
-    if (result.success) {
-      // Set vendor specialization if it's a logistics vendor
-      if (values.vendorCategory === "Logistics Vendor") {
-        const mappedSpecialization = mapSignupToSpecialization(values.specialization);
-        setSpecialization(mappedSpecialization);
-      }
-      
-      setNewUser(userProfile);
-      setShowWelcomeModal(true);
-    }
+    await signUp(registrationData);
   }
 
   const handleCategoryChange = (value: string) => {
@@ -187,37 +108,38 @@ export function VendorFormEnhanced() {
     form.setValue("specialization", "");
   };
 
-  const handleCompleteProfile = () => {
-    setShowWelcomeModal(false);
-    setTimeout(() => {
-      navigate("/profile-completion");
-    }, 300);
-  };
-
-  const handleGoToDashboard = () => {
-    setShowWelcomeModal(false);
-    setTimeout(() => {
-      const vendorCategory = newUser?.profile?.vendorCategory;
-      switch (vendorCategory) {
-        case "service":
-          navigate("/service-vendor-dashboard");
-          break;
-        case "product":
-          navigate("/product-vendor-dashboard");
-          break;
-        case "logistics":
-          navigate("/logistics-vendor-dashboard");
-          break;
-        default:
-          navigate("/vendor-profile");
-      }
-    }, 300);
-  };
-
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-fade-in">
+        <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="firstName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">First Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="John" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Last Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Doe" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name="businessName"
@@ -405,7 +327,7 @@ export function VendorFormEnhanced() {
           
           <FormField
             control={form.control}
-            name="acceptTerms"
+            name="termsAccepted"
             render={({ field }) => (
               <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
                 <FormControl>
@@ -424,6 +346,28 @@ export function VendorFormEnhanced() {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="privacyAccepted"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel className="text-gray-700">
+                    I accept the 
+                    <a href="/privacy" className="text-blue-600 hover:underline ml-1">privacy policy</a>
+                  </FormLabel>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
+          />
           
           <Button 
             type="submit" 
@@ -434,18 +378,6 @@ export function VendorFormEnhanced() {
           </Button>
         </form>
       </Form>
-
-      {showWelcomeModal && newUser && (
-        <WelcomeModal
-          isOpen={showWelcomeModal}
-          onClose={() => setShowWelcomeModal(false)}
-          userRole={newUser.role}
-          userName={newUser.name}
-          onCompleteProfile={handleCompleteProfile}
-          onGoToDashboard={handleGoToDashboard}
-          profileCompletion={75} // Vendor form collects essential data
-        />
-      )}
     </>
   );
 }

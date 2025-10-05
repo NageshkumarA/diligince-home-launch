@@ -1,16 +1,22 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import {api} from '../services/api.service';
+import { apiRoutes } from '../services/api.routes';
 
 interface User {
-  username: string;
-  name: string;
-  role: 'industry' | 'professional' | 'vendor';
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: 'IndustryAdmin' | 'IndustryMember' | 'Professional' | 'Vendor' | 'SuperAdmin' | 'Support';
+  companyName?: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (username: string, password: string) => boolean;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,27 +35,44 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = (username: string, password: string): boolean => {
-    // Industry login
-    if (username === 'industry@deligence.ai' && password === 'Industry@123') {
-      setUser({ username, name: 'Tech Solutions Inc.', role: 'industry' });
-      return true;
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        try {
+          const response = await api.get(apiRoutes.auth.me);
+          setUser(response.data);
+        } catch (error) {
+          console.error("Failed to fetch user", error);
+          localStorage.removeItem('authToken');
+        }
+      }
+      setLoading(false);
+    };
+    checkLoggedIn();
+  }, []);
+
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      const response = await api.post(apiRoutes.auth.login, { email, password });
+      const { token, user } = response.data;
+
+      if (token && user) {
+        localStorage.setItem('authToken', token);
+        setUser(user);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error(error);
+      return false;
     }
-    // Professional login
-    if (username === 'professional@deligence.ai' && password === 'Professional@123') {
-      setUser({ username, name: 'John Smith', role: 'professional' });
-      return true;
-    }
-    // Vendor login
-    if (username === 'vendor@deligence.ai' && password === 'Vendor@123') {
-      setUser({ username, name: 'Global Services Ltd.', role: 'vendor' });
-      return true;
-    }
-    return false;
   };
 
   const logout = () => {
+    localStorage.removeItem('authToken');
     setUser(null);
   };
 
@@ -59,12 +82,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     login,
     logout,
-    isAuthenticated
+    isAuthenticated,
+    loading
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

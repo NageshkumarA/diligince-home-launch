@@ -4,10 +4,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Lock, Mail, AlertCircle, Building2, Users, Package } from 'lucide-react';
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -20,13 +21,13 @@ const Login: React.FC = () => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!username.trim()) newErrors.username = 'Email is required';
+    if (!email.trim()) newErrors.email = 'Email is required';
     if (!password) newErrors.password = 'Password is required';
     if (!userType) newErrors.userType = 'Please select your user type';
 
     // Email validation
-    if (username && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username)) {
-      newErrors.username = 'Please enter a valid email address';
+    if (email && !/^\S+@\S+\.\S+$/.test(email)) {
+      newErrors.email = 'Please enter a valid email address';
     }
 
     setErrors(newErrors);
@@ -34,7 +35,7 @@ const Login: React.FC = () => {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    if (field === 'username') setUsername(value);
+    if (field === 'email') setEmail(value);
     if (field === 'password') setPassword(value);
     if (field === 'userType') setUserType(value);
     
@@ -44,14 +45,18 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) {
       return;
     }
     
-    if (login(username, password)) {
+    setLoading(true);
+    const success = await login(email, password);
+    setLoading(false);
+
+    if (success) {
       navigate('/dashboard');
     } else {
       setErrors({ general: 'Invalid credentials. Please try again.' });
@@ -98,14 +103,14 @@ const Login: React.FC = () => {
                     <div
                       key={type.value}
                       onClick={() => handleInputChange('userType', type.value)}
-                      className={`p-3 border-2 rounded-lg cursor-pointer transition-all hover:shadow-sm ${
+                      className={`p-3 border-2 rounded-lg cursor-pointer transition-all hover:shadow-sm ${ 
                         userType === type.value
                           ? 'border-[#2F80ED] bg-[#2F80ED]/5'
                           : 'border-[#E0E0E0] hover:border-[#2F80ED]/50'
                       }`}
                     >
                       <div className="text-center flex flex-row">
-                        <Icon className={`w-6 h-6 mx-auto ${
+                        <Icon className={`w-6 h-6 mx-auto ${ 
                           userType === type.value ? 'text-[#2F80ED]' : 'text-[#828282]'
                         }`} />
                         <h3 className="font-medium text-[#333333] text-sm mt-1">{type.label}</h3>
@@ -124,26 +129,26 @@ const Login: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-[#333333] mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-[#333333] mb-2">
                 Email Address
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#828282] w-4 h-4" />
                 <input
                   type="email"
-                  id="username"
-                  value={username}
-                  onChange={(e) => handleInputChange('username', e.target.value)}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED] focus:border-transparent ${
-                    errors.username ? 'border-red-500' : 'border-[#E0E0E0]'
+                  id="email"
+                  value={email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED] focus:border-transparent ${ 
+                    errors.email ? 'border-red-500' : 'border-[#E0E0E0]'
                   }`}
                   placeholder="Enter your email"
                 />
               </div>
-              {errors.username && (
+              {errors.email && (
                 <div className="flex items-center space-x-1 mt-1">
                   <AlertCircle className="w-4 h-4 text-red-500" />
-                  <span className="text-red-500 text-sm">{errors.username}</span>
+                  <span className="text-red-500 text-sm">{errors.email}</span>
                 </div>
               )}
             </div>
@@ -159,7 +164,7 @@ const Login: React.FC = () => {
                   id="password"
                   value={password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED] focus:border-transparent ${
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED] focus:border-transparent ${ 
                     errors.password ? 'border-red-500' : 'border-[#E0E0E0]'
                   }`}
                   placeholder="Enter your password"
@@ -185,9 +190,10 @@ const Login: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full bg-[#2F80ED] text-white py-3 rounded-lg hover:bg-[#1A2A4F] transition-colors font-medium"
+              disabled={loading}
+              className="w-full bg-[#2F80ED] text-white py-3 rounded-lg hover:bg-[#1A2A4F] transition-colors font-medium disabled:bg-gray-400"
             >
-              Sign In
+              {loading ? 'Signing In...' : 'Sign In'}
             </button>
           </form>
 

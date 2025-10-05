@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,27 +18,20 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/components/auth/hooks/useAuth";
-import { WelcomeModal } from "@/components/shared/WelcomeModal";
 
 const formSchema = z.object({
-  fullName: z.string().min(1, {
-    message: "Full name is required",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address",
-  }),
-  phone: z.string().min(10, {
-    message: "Phone number must be at least 10 digits",
-  }),
-  expertise: z.string().min(1, {
-    message: "Area of expertise is required",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters",
-  }),
+  firstName: z.string().min(1, { message: "First name is required" }),
+  lastName: z.string().min(1, { message: "Last name is required" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  phone: z.string().min(10, { message: "Phone number must be at least 10 digits" }),
+  expertise: z.string().min(1, { message: "Area of expertise is required" }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters" }),
   confirmPassword: z.string(),
-  acceptTerms: z.boolean().refine((value) => value === true, {
+  termsAccepted: z.boolean().refine((value) => value === true, {
     message: "You must accept the terms and conditions",
+  }),
+  privacyAccepted: z.boolean().refine((value) => value === true, {
+    message: "You must accept the privacy policy",
   }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -47,130 +39,80 @@ const formSchema = z.object({
 });
 
 const expertiseAreas = [
-  "Mechanical Engineering",
-  "Electrical Engineering",
-  "Process Engineering",
-  "Chemical Engineering",
-  "Civil Engineering",
-  "Industrial Safety",
-  "Quality Control",
-  "Maintenance",
-  "Plant Operations",
-  "Automation",
-  "Robotics",
-  "Welding",
-  "Heavy Equipment Operation",
-  "HVAC Systems",
-  "Instrumentation",
-  "Logistics Management",
-  "Supply Chain Management",
-  "Production Management",
-  "Project Management",
+  "Mechanical Engineering", "Electrical Engineering", "Process Engineering", "Chemical Engineering",
+  "Civil Engineering", "Industrial Safety", "Quality Control", "Maintenance", "Plant Operations",
+  "Automation", "Robotics", "Welding", "Heavy Equipment Operation", "HVAC Systems", "Instrumentation",
+  "Logistics Management", "Supply Chain Management", "Production Management", "Project Management",
   "Environmental Compliance"
 ];
 
 export function ProfessionalForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
-  const [newUser, setNewUser] = useState<any>(null);
-  const navigate = useNavigate();
   const { signUp, isLoading } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fullName: "",
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
       expertise: "",
       password: "",
       confirmPassword: "",
-      acceptTerms: false,
+      termsAccepted: false,
+      privacyAccepted: false,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Generate initials from full name
-    const initials = values.fullName
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .substring(0, 2)
-      .toUpperCase();
-    
-    // Create user profile
-    const userProfile = {
-      id: Math.random().toString(36).substr(2, 9),
+    const registrationData = {
       email: values.email,
-      name: values.fullName,
-      role: 'professional' as const,
-      initials: initials,
-      status: 'active' as const,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      preferences: {
-        theme: 'system' as const,
-        notifications: {
-          email: true,
-          push: true,
-          sms: false,
-          marketing: false,
-        },
-        language: 'en',
-        timezone: 'UTC',
-      },
-      profile: {
-        fullName: values.fullName,
-        phone: values.phone,
-        expertise: values.expertise
-      }
+      password: values.password,
+      phone: values.phone,
+      role: 'Professional',
+      firstName: values.firstName,
+      lastName: values.lastName,
+      termsAccepted: values.termsAccepted,
+      privacyAccepted: values.privacyAccepted,
     };
 
-    const result = await signUp({ ...userProfile, password: values.password });
-    
-    if (result.success) {
-      setNewUser(userProfile);
-      setShowWelcomeModal(true);
-    }
+    await signUp(registrationData);
   }
-
-  const handleCompleteProfile = () => {
-    setShowWelcomeModal(false);
-    setTimeout(() => {
-      navigate("/profile-completion");
-    }, 300);
-  };
-
-  const handleGoToDashboard = () => {
-    setShowWelcomeModal(false);
-    setTimeout(() => {
-      navigate("/professional-dashboard");
-    }, 300);
-  };
 
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-fade-in">
+        <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="fullName"
+            name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700">Full Name</FormLabel>
+                <FormLabel className="text-gray-700">First Name</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="e.g. Rahul Sharma" 
-                    className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
-                    {...field} 
-                  />
+                  <Input placeholder="John" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700">Last Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Doe" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          </div>
           <FormField
             control={form.control}
             name="email"
@@ -304,7 +246,7 @@ export function ProfessionalForm() {
           
           <FormField
             control={form.control}
-            name="acceptTerms"
+            name="termsAccepted"
             render={({ field }) => (
               <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
                 <FormControl>
@@ -323,6 +265,28 @@ export function ProfessionalForm() {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="privacyAccepted"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel className="text-gray-700">
+                    I accept the 
+                    <a href="/privacy" className="text-blue-600 hover:underline ml-1">privacy policy</a>
+                  </FormLabel>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
+          />
           
           <Button 
             type="submit" 
@@ -333,18 +297,6 @@ export function ProfessionalForm() {
           </Button>
         </form>
       </Form>
-
-      {showWelcomeModal && newUser && (
-        <WelcomeModal
-          isOpen={showWelcomeModal}
-          onClose={() => setShowWelcomeModal(false)}
-          userRole={newUser.role}
-          userName={newUser.name}
-          onCompleteProfile={handleCompleteProfile}
-          onGoToDashboard={handleGoToDashboard}
-          profileCompletion={80} // Professional form collects most required data
-        />
-      )}
     </>
   );
 }

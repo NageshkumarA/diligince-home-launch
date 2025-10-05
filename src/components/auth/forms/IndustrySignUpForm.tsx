@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { WelcomeModal } from "@/components/shared/WelcomeModal";
+// import { WelcomeModal } from "@/components/shared/WelcomeModal";
 import { useAuth } from "../hooks/useAuth";
 
 // Keep the same industries array
@@ -46,6 +46,8 @@ export const industries = [
 ];
 
 const formSchema = z.object({
+  firstName: z.string().min(1, { message: "First name is required" }),
+  lastName: z.string().min(1, { message: "Last name is required" }),
   companyName: z.string().min(1, {
     message: "Company name is required",
   }),
@@ -63,8 +65,11 @@ const formSchema = z.object({
     message: "Password must be at least 8 characters",
   }),
   confirmPassword: z.string(),
-  acceptTerms: z.boolean().refine((value) => value === true, {
+  termsAccepted: z.boolean().refine((value) => value === true, {
     message: "You must accept the terms and conditions",
+  }),
+  privacyAccepted: z.boolean().refine((value) => value === true, {
+    message: "You must accept the privacy policy",
   }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -80,14 +85,16 @@ const formSchema = z.object({
 export function IndustrySignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
-  const [newUser, setNewUser] = useState<any>(null);
+  // const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  // const [newUser, setNewUser] = useState<any>(null);
   const navigate = useNavigate();
   const { signUp, isLoading } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      firstName: "",
+      lastName: "",
       companyName: "",
       email: "",
       phone: "",
@@ -95,7 +102,8 @@ export function IndustrySignUpForm() {
       customIndustryType: "",
       password: "",
       confirmPassword: "",
-      acceptTerms: false,
+      termsAccepted: false,
+      privacyAccepted: false,
     },
   });
 
@@ -104,69 +112,107 @@ export function IndustrySignUpForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Generate initials from company name
-    const initials = values.companyName
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .substring(0, 2)
-      .toUpperCase();
-    
+    // const initials = values.companyName
+    //   .split(' ')
+    //   .map(word => word.charAt(0))
+    //   .join('')
+    //   .substring(0, 2)
+    //   .toUpperCase();
+
     // Create user profile
-    const userProfile = {
-      id: Math.random().toString(36).substr(2, 9),
+    const registrationData = {
+      // const userProfile = {
+      //   id: Math.random().toString(36).substr(2, 9),
       email: values.email,
-      name: values.companyName,
-      role: 'industry' as const,
-      avatar: '',
-      initials: initials,
-      status: 'active' as const,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      preferences: {
-        theme: 'system' as const,
-        notifications: {
-          email: true,
-          push: true,
-          sms: false,
-          marketing: false,
-        },
-        language: 'en',
-        timezone: 'UTC',
-      },
-      profile: {
-        companyName: values.companyName,
-        industryType: values.industryType === "Others" ? values.customIndustryType : values.industryType,
-        phone: values.phone
-      },
-      password: values.password
+      // name: values.companyName,
+      // role: 'industry' as const,
+      // avatar: '',
+      // initials: initials,
+      // status: 'active' as const,
+      // createdAt: new Date().toISOString(),
+      // updatedAt: new Date().toISOString(),
+      // preferences: {
+      //   theme: 'system' as const,
+      //   notifications: {
+      //     email: true,
+      //     push: true,
+      //     sms: false,
+      //     marketing: false,
+      //   },
+      //   language: 'en',
+      //   timezone: 'UTC',
+      // },
+      // profile: {
+      //   companyName: values.companyName,
+      //   industryType: values.industryType === "Others" ? values.customIndustryType : values.industryType,
+      //   phone: values.phone
+      // },
+      // password: values.password
+      //       password: values.password,
+      phone: values.phone,
+      role: 'IndustryAdmin',
+      firstName: values.firstName,
+      lastName: values.lastName,
+      companyName: values.companyName,
+      termsAccepted: values.termsAccepted,
+      privacyAccepted: values.privacyAccepted,
     };
 
-    const result = await signUp(userProfile);
-    
-    if (result.success) {
-      setNewUser(result.user);
-      setShowWelcomeModal(true);
-    }
+    // const result = await signUp(userProfile);
+
+    // if (result.success) {
+    //   setNewUser(result.user);
+    //   setShowWelcomeModal(true);
+    // }
+    await signUp(registrationData);
   }
 
-  const handleCompleteProfile = () => {
-    setShowWelcomeModal(false);
-    setTimeout(() => {
-      navigate("/profile-completion");
-    }, 300);
-  };
+  // const handleCompleteProfile = () => {
+  //   setShowWelcomeModal(false);
+  //   setTimeout(() => {
+  //     navigate("/profile-completion");
+  //   }, 300);
+  // };
 
-  const handleGoToDashboard = () => {
-    setShowWelcomeModal(false);
-    setTimeout(() => {
-      navigate("/industry-dashboard");
-    }, 300);
-  };
+  // const handleGoToDashboard = () => {
+  //   setShowWelcomeModal(false);
+  //   setTimeout(() => {
+  //     navigate("/industry-dashboard");
+  //   }, 300);
+  // };
 
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-fade-in">
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="firstName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">First Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="John" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Last Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Doe" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name="companyName"
@@ -174,17 +220,17 @@ export function IndustrySignUpForm() {
               <FormItem>
                 <FormLabel className="text-gray-700">Company Name</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="e.g. Steel Industries Ltd." 
-                    className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
-                    {...field} 
+                  <Input
+                    placeholder="e.g. Steel Industries Ltd."
+                    className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="email"
@@ -194,10 +240,10 @@ export function IndustrySignUpForm() {
                 <FormControl>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input 
-                      placeholder="you@example.com" 
-                      className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
-                      {...field} 
+                    <Input
+                      placeholder="you@example.com"
+                      className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
+                      {...field}
                     />
                   </div>
                 </FormControl>
@@ -205,7 +251,7 @@ export function IndustrySignUpForm() {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="phone"
@@ -213,18 +259,18 @@ export function IndustrySignUpForm() {
               <FormItem>
                 <FormLabel className="text-gray-700">Phone Number</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="e.g. 9876543210" 
+                  <Input
+                    placeholder="e.g. 9876543210"
                     type="tel"
                     className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="industryType"
@@ -258,10 +304,10 @@ export function IndustrySignUpForm() {
                 <FormItem>
                   <FormLabel className="text-gray-700">Specify Industry Type</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Please specify your industry type" 
+                    <Input
+                      placeholder="Please specify your industry type"
                       className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -279,13 +325,13 @@ export function IndustrySignUpForm() {
                 <FormControl>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input 
-                      type={showPassword ? "text" : "password"} 
-                      placeholder="••••••••" 
-                      className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
-                      {...field} 
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
+                      {...field}
                     />
-                    <button 
+                    <button
                       type="button"
                       className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                       onClick={() => setShowPassword(!showPassword)}
@@ -312,13 +358,13 @@ export function IndustrySignUpForm() {
                 <FormControl>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input 
-                      type={showConfirmPassword ? "text" : "password"} 
-                      placeholder="••••••••" 
-                      className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200" 
-                      {...field} 
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className="pl-10 bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
+                      {...field}
                     />
-                    <button 
+                    <button
                       type="button"
                       className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -335,10 +381,10 @@ export function IndustrySignUpForm() {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
-            name="acceptTerms"
+            name="termsAccepted"
             render={({ field }) => (
               <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
                 <FormControl>
@@ -349,7 +395,7 @@ export function IndustrySignUpForm() {
                 </FormControl>
                 <div className="space-y-1 leading-none">
                   <FormLabel className="text-gray-700">
-                    I accept the 
+                    I accept the
                     <a href="/terms" className="text-blue-600 hover:underline ml-1">terms and conditions</a>
                   </FormLabel>
                   <FormMessage />
@@ -357,9 +403,29 @@ export function IndustrySignUpForm() {
               </FormItem>
             )}
           />
-          
-          <Button 
-            type="submit" 
+          <FormField
+            control={form.control}
+            name="privacyAccepted"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel className="text-gray-700">
+                    I accept the
+                    <a href="/privacy" className="text-blue-600 hover:underline ml-1">privacy policy</a>
+                  </FormLabel>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
+          />
+          <Button
+            type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 transition-transform duration-200"
             disabled={isLoading}
           >
@@ -368,7 +434,7 @@ export function IndustrySignUpForm() {
         </form>
       </Form>
 
-      {showWelcomeModal && newUser && (
+      {/* {showWelcomeModal && newUser && (
         <WelcomeModal
           isOpen={showWelcomeModal}
           onClose={() => setShowWelcomeModal(false)}
@@ -378,7 +444,7 @@ export function IndustrySignUpForm() {
           onGoToDashboard={handleGoToDashboard}
           profileCompletion={85}
         />
-      )}
+      )} */}
     </>
   );
 }
