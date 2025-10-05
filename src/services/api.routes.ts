@@ -1,5 +1,7 @@
 // API Routes - Complete Industry Dashboard API Configuration
-// Documentation: See docs/api/industry/industry-dashboard-api.md
+// Documentation: 
+//   - Industry Dashboard: See docs/api/industry/industry-dashboard-api.md
+//   - Create Requirement: See docs/api/industry/create-requirement-api.md
 
 /**
  * Generates URL query parameters from an object
@@ -194,7 +196,31 @@ export const apiRoutes = {
             // Archive requirement
             archive: (requirementId: string) => `${basePath}/industry/requirements/${requirementId}/archive`,
             
-            // Draft Management (Create Requirement Workflow)
+            /**
+             * Create Requirement Workflow - Draft Management
+             * 
+             * 6-step process for creating procurement requirements:
+             * 1. Basic Information (title, category, priority, budget)
+             * 2. Details (category-specific fields: Expert/Product/Service/Logistics)
+             * 3. Documents (optional file uploads - max 5 files, 10MB each)
+             * 4. Approval Workflow (conditional based on budget thresholds)
+             * 5. Preview (read-only review of all information)
+             * 6. Publish (set deadline, evaluation criteria, and publish)
+             * 
+             * Features:
+             * - Auto-save drafts after each step
+             * - Step validation before proceeding
+             * - Emergency publish for critical requirements (requires permission)
+             * - Multi-level approval workflows based on budget thresholds:
+             *   * < $5,000: No approval required
+             *   * $5,000 - $25,000: Department Head
+             *   * $25,000 - $100,000: Department Head + Finance Manager
+             *   * > $100,000: Department Head + Finance Manager + CFO
+             * 
+             * Documentation: See docs/api/industry/create-requirement-api.md
+             * 
+             * @see {@link https://docs/api/industry/create-requirement-api.md}
+             */
             draft: {
                 // Create new draft
                 create: `${basePath}/industry/requirements/draft`,
