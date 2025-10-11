@@ -79,28 +79,29 @@ StepRenderer.displayName = "StepRenderer";
 
 const CreateRequirement = () => {
   const [currentStep, setCurrentStep] = useState<StepType>(1);
-  const [lastSaved, setLastSaved] = useState<Date>(new Date());
   const navigate = useNavigate();
+  const { isSaving, lastSaved } = useRequirement();
 
-  // Save to localStorage on form data change (debounced)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const formDataStr = localStorage.getItem('requirement-draft');
-      if (formDataStr) {
-        setLastSaved(new Date());
-      }
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [currentStep]);
-
-  // Restore progress on mount
+  // Restore progress on mount and resume draft
   useEffect(() => {
     const savedStep = localStorage.getItem('requirement-current-step');
+    const savedDraftId = localStorage.getItem('requirement-draft-id');
+    
     if (savedStep) {
       const step = parseInt(savedStep, 10);
       if (step >= 1 && step <= 7) {
         setCurrentStep(step as StepType);
+      }
+    }
+    
+    // Show resume dialog if draft exists
+    if (savedDraftId) {
+      const shouldResume = window.confirm(
+        "You have an unsaved draft. Would you like to resume where you left off?"
+      );
+      if (!shouldResume) {
+        localStorage.removeItem('requirement-draft-id');
+        localStorage.removeItem('requirement-draft');
       }
     }
   }, []);
@@ -161,14 +162,6 @@ const CreateRequirement = () => {
           handlePrevious();
         }
       }
-      
-      // Ctrl/Cmd + S for manual save
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        localStorage.setItem('requirement-draft', JSON.stringify({}));
-        setLastSaved(new Date());
-        toast.success("Draft saved successfully");
-      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -181,6 +174,9 @@ const CreateRequirement = () => {
   }, [navigate]);
 
   const formatLastSaved = () => {
+    if (isSaving) return "Saving...";
+    if (!lastSaved) return "Not saved yet";
+    
     const now = new Date();
     const diff = Math.floor((now.getTime() - lastSaved.getTime()) / 1000);
     

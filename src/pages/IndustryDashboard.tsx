@@ -340,7 +340,7 @@ const DashboardContainer = memo(() => {
         </div>
 
         {/* Pending Approvals */}
-        {pendingApprovals && pendingApprovals.length > 0 && (
+        {(pendingApprovals ?? []).length > 0 && (
           <Card className="shadow-sm hover:shadow-md transition-shadow">
             <CardContent>
               <Table>
@@ -355,7 +355,7 @@ const DashboardContainer = memo(() => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pendingApprovals.map((a) => (
+                  {(pendingApprovals ?? []).map((a) => (
                     <TableRow key={a.id}>
                       <TableCell>{a.requirementTitle}</TableCell>
                       <TableCell>
@@ -399,7 +399,7 @@ const DashboardContainer = memo(() => {
         )}
 
         {/* Vendor Performance */}
-        {vendors && vendors.length > 0 && (
+        {(vendors ?? []).length > 0 && (
           <div>
             <h2 className="text-2xl font-bold mb-4">Top Performing Vendors</h2>
             <VendorPerformance data={vendors} />
@@ -407,7 +407,7 @@ const DashboardContainer = memo(() => {
         )}
 
         {/* Active Requirements */}
-        {requirements && requirements.length > 0 && (
+        {(requirements ?? []).length > 0 && (
           <div>
             <h2 className="text-2xl font-bold mb-4">Active Requirements</h2>
             <Card className="shadow-sm hover:shadow-md transition-shadow">
@@ -424,7 +424,7 @@ const DashboardContainer = memo(() => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {requirements.map((r) => (
+                    {(requirements ?? []).map((r) => (
                       <TableRow key={r.id}>
                         <TableCell>{r.title}</TableCell>
                         <TableCell>
@@ -456,11 +456,11 @@ const DashboardContainer = memo(() => {
         )}
 
         {/* Active Purchase Orders */}
-        {purchaseOrders && purchaseOrders.length > 0 && (
+        {(purchaseOrders ?? []).length > 0 && (
           <div>
             <h2 className="text-2xl font-bold mb-4">Active Purchase Orders</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {purchaseOrders.map((o) => (
+              {(purchaseOrders ?? []).map((o) => (
                 <Card key={o.id} className="shadow-sm hover:shadow-md transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">

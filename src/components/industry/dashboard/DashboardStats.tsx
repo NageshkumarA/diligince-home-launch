@@ -11,15 +11,15 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({ data }) => {
   const stats = [
     {
       title: "Total Procurement Spend",
-      value: `$${(data.totalProcurementSpend / 1000000).toFixed(2)}M`,
-      subtitle: data.period,
+      value: `$${((data?.totalProcurementSpend ?? 0) / 1000000).toFixed(2)}M`,
+      subtitle: data?.period ?? "N/A",
       icon: DollarSign,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
       title: "Active Purchase Orders",
-      value: data.activePurchaseOrders.toString(),
+      value: (data?.activePurchaseOrders ?? 0).toString(),
       subtitle: "in progress",
       icon: ShoppingCart,
       color: "text-green-600",
@@ -27,7 +27,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({ data }) => {
     },
     {
       title: "Budget Utilization",
-      value: `${data.budgetUtilization}%`,
+      value: `${data?.budgetUtilization ?? 0}%`,
       subtitle: "of allocated budget",
       icon: TrendingUp,
       color: "text-purple-600",
@@ -35,7 +35,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({ data }) => {
     },
     {
       title: "Cost Savings",
-      value: `$${(data.costSavings / 1000).toFixed(0)}K`,
+      value: `$${((data?.costSavings ?? 0) / 1000).toFixed(0)}K`,
       subtitle: "through competitive bidding",
       icon: PiggyBank,
       color: "text-orange-600",
