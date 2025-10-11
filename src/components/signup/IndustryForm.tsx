@@ -86,7 +86,7 @@ export function IndustryForm() {
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [newUser, setNewUser] = useState<any>(null);
   const navigate = useNavigate();
-  const { login } = useUser();
+  const { setUser, setFirstTimeUser } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -147,7 +147,8 @@ export function IndustryForm() {
       };
 
       // Set user in context
-      login(userProfile);
+      setUser(userProfile);
+      setFirstTimeUser(true);
       setNewUser(userProfile);
       
       setIsSubmitting(false);

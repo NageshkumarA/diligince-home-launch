@@ -1,12 +1,13 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import { useUser } from "@/contexts/UserContext";
 import { DemoAccountsInfo } from "./DemoAccountsInfo";
+import { toast } from "sonner";
 
 export const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,7 +16,8 @@ export const SignInForm = () => {
     password: ""
   });
   
-  const { login } = useAuth();
+  const { login, getDashboardUrl } = useUser();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,19 +31,29 @@ export const SignInForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted with:", formData);
     
     if (!formData.email || !formData.password) {
-      console.log("Missing email or password");
+      toast.error("Please enter email and password");
       return;
     }
 
     setIsLoading(true);
     try {
       const result = await login(formData.email, formData.password);
-      console.log("Sign in result:", result);
+      
+      if (result.success) {
+        toast.success("Login successful! Redirecting...");
+        
+        // Redirect to dashboard after short delay for toast to show
+        setTimeout(() => {
+          const dashboardUrl = getDashboardUrl();
+          navigate(dashboardUrl);
+        }, 500);
+      } else {
+        toast.error(result.error || "Invalid email or password");
+      }
     } catch (error) {
-      console.error("Sign in error:", error);
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }

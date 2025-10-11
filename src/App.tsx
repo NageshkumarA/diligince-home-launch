@@ -16,6 +16,7 @@ import { VendorSpecializationProvider } from "@/contexts/VendorSpecializationCon
 import { Toaster } from "@/components/ui/sonner";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Layout from "@/components/Layout";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 // Public pages
 import Index from "@/pages/Index";
@@ -186,7 +187,11 @@ function App() {
                             />
 
                             {/* Dashboard Routes */}
-                            <Route path="/dashboard/*" element={<Layout />}>
+                            <Route path="/dashboard/*" element={
+                              <ProtectedRoute>
+                                <Layout />
+                              </ProtectedRoute>
+                            }>
                               {/* Industry */}
                               <Route
                                 path="industry"

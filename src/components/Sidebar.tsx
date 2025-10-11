@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { menuConfig } from '@/config/menuConfig';
+import { getMenuConfigKey } from '@/utils/roleMapper';
 import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, User, LogOut, Settings as SettingsIcon } from 'lucide-react';
 
 const Sidebar: React.FC = () => {
@@ -13,15 +14,8 @@ const Sidebar: React.FC = () => {
 
   if (!user) return null;
 
-  // Helper function to get the correct menu config key
-  const getMenuKey = (): keyof typeof menuConfig => {
-    if (user.role === 'vendor' && user.profile?.vendorCategory) {
-      return `${user.profile.vendorCategory}-vendor` as keyof typeof menuConfig;
-    }
-    return user.role as keyof typeof menuConfig;
-  };
-
-  const menuItems = menuConfig[getMenuKey()] || [];
+  const menuKey = getMenuConfigKey(user) as keyof typeof menuConfig;
+  const menuItems = menuConfig[menuKey] || [];
 
   const handleLogout = () => {
     logout();
