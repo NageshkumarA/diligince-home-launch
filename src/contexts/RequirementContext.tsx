@@ -1,5 +1,5 @@
-
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { useRequirementDraft } from '@/hooks/useRequirementDraft';
 
 export interface RequirementFormData {
   id?: string;
@@ -29,6 +29,7 @@ export interface RequirementFormData {
   submissionDeadline?: Date;
   evaluationCriteria?: string[];
   visibility?: "all" | "selected";
+  selectedVendors?: string[];
   notifyByEmail?: boolean;
   notifyByApp?: boolean;
   termsAccepted?: boolean;
@@ -88,7 +89,10 @@ interface RequirementContextType {
   validateStep: (step: number) => boolean;
   stepErrors: Record<string, string> | null;
   isFormValid: () => boolean;
-  saveAsDraft: () => void;
+  saveAsDraft: () => Promise<void>;
+  draftId: string | null;
+  isSaving: boolean;
+  lastSaved: Date | null;
 }
 
 const RequirementContext = createContext<RequirementContextType | undefined>(undefined);
@@ -130,6 +134,14 @@ const getDefaultFormData = (): RequirementFormData => ({
 export const RequirementProvider = ({ children }: { children: React.ReactNode }) => {
   const [formData, setFormData] = useState<RequirementFormData>(getDefaultFormData());
   const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
+  const { draftId, isSaving, lastSaved, initializeDraft, saveDraft, forceSave } = useRequirementDraft();
+
+  // Auto-save on form data changes
+  useEffect(() => {
+    if (draftId) {
+      saveDraft(formData);
+    }
+  }, [formData, draftId, saveDraft]);
 
   const updateFormData = useCallback((data: Partial<RequirementFormData>) => {
     console.log("Updating form data:", data);
@@ -142,10 +154,24 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
     setStepErrors({});
   }, []);
 
-  const saveAsDraft = useCallback(() => {
+  const saveAsDraft = useCallback(async () => {
     console.log("Saving draft:", formData);
-    localStorage.setItem('requirement-draft', JSON.stringify(formData));
-  }, [formData]);
+    try {
+      if (!draftId) {
+        // Create new draft if none exists
+        await initializeDraft(formData);
+      } else {
+        // Force save existing draft
+        await forceSave(formData);
+      }
+      // Keep localStorage as backup
+      localStorage.setItem('requirement-draft', JSON.stringify(formData));
+    } catch (error) {
+      console.error("Failed to save draft:", error);
+      // Fallback to localStorage only
+      localStorage.setItem('requirement-draft', JSON.stringify(formData));
+    }
+  }, [formData, draftId, initializeDraft, forceSave]);
 
   const validateStep = useCallback((step: number) => {
     console.log("Validating step:", step, "with formData:", formData);
@@ -269,7 +295,10 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
       validateStep,
       stepErrors,
       isFormValid,
-      saveAsDraft
+      saveAsDraft,
+      draftId,
+      isSaving,
+      lastSaved
     }}>
       {children}
     </RequirementContext.Provider>

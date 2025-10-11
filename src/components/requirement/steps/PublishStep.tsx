@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { useStakeholder } from "@/contexts/StakeholderContext";
 import { useApproval } from "@/contexts/ApprovalContext";
+import { useRequirementDraft } from "@/hooks/useRequirementDraft";
 import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -27,7 +28,8 @@ interface PublishStepProps {
 const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
   console.log("PublishStep rendering...");
   
-  const { formData, updateFormData, validateStep, stepErrors } = useRequirement();
+  const { formData, updateFormData, validateStep, stepErrors, draftId } = useRequirement();
+  const { publish } = useRequirementDraft();
   const stakeholderContext = useStakeholder();
   const { canPublishRequirement, getApprovalWorkflow, emergencyPublish } = useApproval();
   const [isPublishing, setIsPublishing] = useState(false);
@@ -101,36 +103,57 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
       console.log("Starting publish process...");
       setIsPublishing(true);
       
-      if (validateStep(6)) {
-        // Check approval status
-        if (!approvalCheck.canPublish) {
-          toast.error(approvalCheck.reason || "Approval required before publishing");
-          return;
-        }
-        
-        console.log("Validation and approval checks passed, proceeding with publish...");
-        
-        // Simulate API call with timeout
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Safely notify relevant stakeholders about the new requirement
-        try {
-          notifyStakeholders(formData);
-        } catch (error) {
-          console.warn("Failed to notify stakeholders:", error);
-          // Don't block the publish process for notification failures
-        }
-        
-        toast.success("Requirement published successfully! Relevant stakeholders have been notified.");
-        console.log("Publish successful, calling onNext...");
-        onNext();
-      } else {
+      if (!validateStep(6)) {
         console.log("Validation failed:", stepErrors);
         toast.error("Please fill in all required fields");
+        return;
       }
-    } catch (error) {
+
+      // Check approval status
+      if (!approvalCheck.canPublish) {
+        toast.error(approvalCheck.reason || "Approval required before publishing");
+        return;
+      }
+
+      if (!draftId) {
+        toast.error("No draft ID available. Please save the requirement first.");
+        return;
+      }
+      
+      console.log("Validation and approval checks passed, proceeding with publish...");
+      
+      // Call API to publish requirement
+      const response = await publish({
+        draftId,
+        submissionDeadline: formData.submissionDeadline!,
+        evaluationCriteria: formData.evaluationCriteria!,
+        visibility: formData.visibility!,
+        selectedVendors: formData.visibility === "selected" ? formData.selectedVendors : undefined,
+        notifyByEmail: formData.notifyByEmail!,
+        notifyByApp: formData.notifyByApp!,
+        termsAccepted: formData.termsAccepted!,
+      });
+
+      // Display success message based on status
+      if (response.status === "published") {
+        toast.success(`Requirement published! ${response.vendorsNotified} vendors notified.`);
+      } else if (response.status === "pending_approval") {
+        toast.success("Requirement submitted for approval");
+      }
+      
+      // Safely notify relevant stakeholders about the new requirement
+      try {
+        notifyStakeholders(formData);
+      } catch (error) {
+        console.warn("Failed to notify stakeholders:", error);
+        // Don't block the publish process for notification failures
+      }
+      
+      console.log("Publish successful, calling onNext...");
+      onNext();
+    } catch (error: any) {
       console.error("Error during publish:", error);
-      toast.error("Failed to publish requirement. Please try again.");
+      toast.error(error?.message || "Failed to publish requirement. Please try again.");
     } finally {
       setIsPublishing(false);
     }
