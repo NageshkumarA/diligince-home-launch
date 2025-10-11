@@ -1,26 +1,13 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { ProcurementAnalytics as ProcurementAnalyticsType } from "@/types/industry-dashboard";
 
-const procurementData = {
-  totalSpend: 1250000,
-  categories: [
-    { name: "Products", amount: 450000, percentage: 36, color: "#8b5cf6" },
-    { name: "Services", amount: 350000, percentage: 28, color: "#3b82f6" },
-    { name: "Logistics", amount: 250000, percentage: 20, color: "#f59e0b" },
-    { name: "Expert Consultation", amount: 200000, percentage: 16, color: "#10b981" }
-  ],
-  monthlyTrend: [
-    { month: "Oct", spend: 180000 },
-    { month: "Nov", spend: 220000 },
-    { month: "Dec", spend: 195000 },
-    { month: "Jan", spend: 240000 },
-    { month: "Feb", spend: 210000 },
-    { month: "Mar", spend: 205000 }
-  ]
-};
+interface ProcurementAnalyticsProps {
+  data: ProcurementAnalyticsType;
+}
 
-export const ProcurementAnalytics = () => {
+export const ProcurementAnalytics: React.FC<ProcurementAnalyticsProps> = ({ data }) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Spend by Category */}
@@ -30,7 +17,7 @@ export const ProcurementAnalytics = () => {
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={procurementData.categories}>
+            <BarChart data={data.categories}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
               <XAxis dataKey="name" className="text-xs" />
               <YAxis 
@@ -47,7 +34,7 @@ export const ProcurementAnalytics = () => {
           
           {/* Category Summary */}
           <div className="mt-4 grid grid-cols-2 gap-3">
-            {procurementData.categories.map((cat) => (
+            {data.categories.map((cat) => (
               <div key={cat.name} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                 <div className="flex items-center gap-2">
                   <div 
@@ -70,7 +57,7 @@ export const ProcurementAnalytics = () => {
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={procurementData.monthlyTrend}>
+            <LineChart data={data.monthlyTrend}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
               <XAxis dataKey="month" className="text-xs" />
               <YAxis 
@@ -98,19 +85,19 @@ export const ProcurementAnalytics = () => {
             <div className="p-3 bg-blue-50 rounded-lg text-center">
               <p className="text-xs text-muted-foreground mb-1">Total Spend</p>
               <p className="text-lg font-bold text-blue-600">
-                ${(procurementData.totalSpend / 1000).toFixed(0)}K
+                ${(data.totalSpend / 1000).toFixed(0)}K
               </p>
             </div>
             <div className="p-3 bg-green-50 rounded-lg text-center">
               <p className="text-xs text-muted-foreground mb-1">Avg Monthly</p>
               <p className="text-lg font-bold text-green-600">
-                ${(procurementData.monthlyTrend.reduce((sum, m) => sum + m.spend, 0) / procurementData.monthlyTrend.length / 1000).toFixed(0)}K
+                ${(data.monthlyTrend.reduce((sum, m) => sum + m.spend, 0) / data.monthlyTrend.length / 1000).toFixed(0)}K
               </p>
             </div>
             <div className="p-3 bg-purple-50 rounded-lg text-center">
               <p className="text-xs text-muted-foreground mb-1">Peak Month</p>
               <p className="text-lg font-bold text-purple-600">
-                ${Math.max(...procurementData.monthlyTrend.map(m => m.spend)) / 1000}K
+                ${Math.max(...data.monthlyTrend.map(m => m.spend)) / 1000}K
               </p>
             </div>
           </div>

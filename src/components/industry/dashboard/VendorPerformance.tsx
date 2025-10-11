@@ -3,59 +3,26 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Star, TrendingUp, Award } from "lucide-react";
+import { VendorPerformance as VendorPerformanceType } from "@/types/industry-dashboard";
 
-const vendorPerformanceData = [
-  { 
-    rank: 1, 
-    name: "TechValve Solutions", 
-    initials: "TV",
-    category: "Product", 
-    rating: 4.9, 
-    orders: 28, 
-    onTimeDelivery: 96,
-    color: "bg-purple-100 text-purple-800"
-  },
-  { 
-    rank: 2, 
-    name: "EngiConsult Group", 
-    initials: "EG",
-    category: "Expert", 
-    rating: 4.9, 
-    orders: 45, 
-    onTimeDelivery: 98,
-    color: "bg-green-100 text-green-800"
-  },
-  { 
-    rank: 3, 
-    name: "FastTrack Logistics", 
-    initials: "FL",
-    category: "Logistics", 
-    rating: 4.6, 
-    orders: 67, 
-    onTimeDelivery: 92,
-    color: "bg-amber-100 text-amber-800"
-  },
-  { 
-    rank: 4, 
-    name: "Service Pro Maintenance", 
-    initials: "SP",
-    category: "Service", 
-    rating: 4.7, 
-    orders: 32, 
-    onTimeDelivery: 94,
-    color: "bg-blue-100 text-blue-800"
-  },
-  { 
-    rank: 5, 
-    name: "Industrial Supplies Co.", 
-    initials: "IS",
-    category: "Product", 
-    rating: 4.5, 
-    orders: 23, 
-    onTimeDelivery: 90,
-    color: "bg-purple-100 text-purple-800"
+interface VendorPerformanceProps {
+  data: VendorPerformanceType[];
+}
+
+const getCategoryColor = (category: string) => {
+  switch (category) {
+    case "Product":
+      return "bg-purple-100 text-purple-800";
+    case "Service":
+      return "bg-blue-100 text-blue-800";
+    case "Expert":
+      return "bg-green-100 text-green-800";
+    case "Logistics":
+      return "bg-amber-100 text-amber-800";
+    default:
+      return "bg-gray-100 text-gray-800";
   }
-];
+};
 
 const getRankBadge = (rank: number) => {
   if (rank === 1) return <Award className="h-5 w-5 text-yellow-500 fill-yellow-500" />;
@@ -64,7 +31,7 @@ const getRankBadge = (rank: number) => {
   return <span className="text-sm font-semibold text-muted-foreground">#{rank}</span>;
 };
 
-export const VendorPerformance = () => {
+export const VendorPerformance: React.FC<VendorPerformanceProps> = ({ data }) => {
   return (
     <Card className="shadow-sm hover:shadow-md transition-shadow">
       <CardContent className="p-6">
@@ -82,7 +49,7 @@ export const VendorPerformance = () => {
               </tr>
             </thead>
             <tbody>
-              {vendorPerformanceData.map((vendor) => (
+              {data.map((vendor) => (
                 <tr 
                   key={vendor.rank} 
                   className="border-b last:border-b-0 hover:bg-muted/30 transition-colors cursor-pointer"
@@ -103,7 +70,7 @@ export const VendorPerformance = () => {
                     </div>
                   </td>
                   <td className="py-4 px-4">
-                    <Badge className={vendor.color}>
+                    <Badge className={getCategoryColor(vendor.category)}>
                       {vendor.category}
                     </Badge>
                   </td>
@@ -134,7 +101,7 @@ export const VendorPerformance = () => {
 
         {/* Mobile Card View */}
         <div className="md:hidden space-y-4">
-          {vendorPerformanceData.map((vendor) => (
+          {data.map((vendor) => (
             <div 
               key={vendor.rank} 
               className="p-4 bg-muted/30 rounded-lg hover:shadow-md transition-shadow"
@@ -151,7 +118,7 @@ export const VendorPerformance = () => {
                   </Avatar>
                   <div>
                     <p className="font-semibold">{vendor.name}</p>
-                    <Badge className={`${vendor.color} text-xs mt-1`}>
+                    <Badge className={`${getCategoryColor(vendor.category)} text-xs mt-1`}>
                       {vendor.category}
                     </Badge>
                   </div>

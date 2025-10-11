@@ -1,7 +1,47 @@
 import React from "react";
 import { GenericDashboardStats } from "@/components/shared/dashboard/GenericDashboardStats";
-import { industryStats } from "@/utils/dashboardConfigs";
+import { DashboardStats as DashboardStatsType } from "@/types/industry-dashboard";
+import { DollarSign, ShoppingCart, TrendingUp, PiggyBank } from "lucide-react";
 
-export const DashboardStats = () => {
-  return <GenericDashboardStats stats={industryStats} />;
+interface DashboardStatsProps {
+  data: DashboardStatsType;
+}
+
+export const DashboardStats: React.FC<DashboardStatsProps> = ({ data }) => {
+  const stats = [
+    {
+      title: "Total Procurement Spend",
+      value: `$${(data.totalProcurementSpend / 1000000).toFixed(2)}M`,
+      subtitle: data.period,
+      icon: DollarSign,
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+    },
+    {
+      title: "Active Purchase Orders",
+      value: data.activePurchaseOrders.toString(),
+      subtitle: "in progress",
+      icon: ShoppingCart,
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+    },
+    {
+      title: "Budget Utilization",
+      value: `${data.budgetUtilization}%`,
+      subtitle: "of allocated budget",
+      icon: TrendingUp,
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+    },
+    {
+      title: "Cost Savings",
+      value: `$${(data.costSavings / 1000).toFixed(0)}K`,
+      subtitle: "through competitive bidding",
+      icon: PiggyBank,
+      color: "text-orange-600",
+      bgColor: "bg-orange-50",
+    },
+  ];
+
+  return <GenericDashboardStats stats={stats} />;
 };
