@@ -32,6 +32,8 @@ const getRankBadge = (rank: number) => {
 };
 
 export const VendorPerformance: React.FC<VendorPerformanceProps> = ({ data }) => {
+  const vendors = data ?? [];
+
   return (
     <Card className="shadow-sm hover:shadow-md transition-shadow">
       <CardContent className="p-6">
@@ -49,7 +51,7 @@ export const VendorPerformance: React.FC<VendorPerformanceProps> = ({ data }) =>
               </tr>
             </thead>
             <tbody>
-              {data.map((vendor) => (
+              {vendors.map((vendor) => (
                 <tr 
                   key={vendor.rank} 
                   className="border-b last:border-b-0 hover:bg-muted/30 transition-colors cursor-pointer"
@@ -101,7 +103,7 @@ export const VendorPerformance: React.FC<VendorPerformanceProps> = ({ data }) =>
 
         {/* Mobile Card View */}
         <div className="md:hidden space-y-4">
-          {data.map((vendor) => (
+          {vendors.map((vendor) => (
             <div 
               key={vendor.rank} 
               className="p-4 bg-muted/30 rounded-lg hover:shadow-md transition-shadow"

@@ -8,6 +8,10 @@ interface ProcurementAnalyticsProps {
 }
 
 export const ProcurementAnalytics: React.FC<ProcurementAnalyticsProps> = ({ data }) => {
+  const categories = data?.categories ?? [];
+  const monthlyTrend = data?.monthlyTrend ?? [];
+  const totalSpend = data?.totalSpend ?? 0;
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Spend by Category */}
@@ -17,7 +21,7 @@ export const ProcurementAnalytics: React.FC<ProcurementAnalyticsProps> = ({ data
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data.categories}>
+            <BarChart data={categories}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
               <XAxis dataKey="name" className="text-xs" />
               <YAxis 
@@ -34,7 +38,7 @@ export const ProcurementAnalytics: React.FC<ProcurementAnalyticsProps> = ({ data
           
           {/* Category Summary */}
           <div className="mt-4 grid grid-cols-2 gap-3">
-            {data.categories.map((cat) => (
+            {categories.map((cat) => (
               <div key={cat.name} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                 <div className="flex items-center gap-2">
                   <div 
@@ -57,7 +61,7 @@ export const ProcurementAnalytics: React.FC<ProcurementAnalyticsProps> = ({ data
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data.monthlyTrend}>
+            <LineChart data={monthlyTrend}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
               <XAxis dataKey="month" className="text-xs" />
               <YAxis 
@@ -85,19 +89,19 @@ export const ProcurementAnalytics: React.FC<ProcurementAnalyticsProps> = ({ data
             <div className="p-3 bg-blue-50 rounded-lg text-center">
               <p className="text-xs text-muted-foreground mb-1">Total Spend</p>
               <p className="text-lg font-bold text-blue-600">
-                ${(data.totalSpend / 1000).toFixed(0)}K
+                ${(totalSpend / 1000).toFixed(0)}K
               </p>
             </div>
             <div className="p-3 bg-green-50 rounded-lg text-center">
               <p className="text-xs text-muted-foreground mb-1">Avg Monthly</p>
               <p className="text-lg font-bold text-green-600">
-                ${(data.monthlyTrend.reduce((sum, m) => sum + m.spend, 0) / data.monthlyTrend.length / 1000).toFixed(0)}K
+                ${monthlyTrend.length > 0 ? (monthlyTrend.reduce((sum, m) => sum + m.spend, 0) / monthlyTrend.length / 1000).toFixed(0) : 0}K
               </p>
             </div>
             <div className="p-3 bg-purple-50 rounded-lg text-center">
               <p className="text-xs text-muted-foreground mb-1">Peak Month</p>
               <p className="text-lg font-bold text-purple-600">
-                ${Math.max(...data.monthlyTrend.map(m => m.spend)) / 1000}K
+                ${monthlyTrend.length > 0 ? Math.max(...monthlyTrend.map(m => m.spend)) / 1000 : 0}K
               </p>
             </div>
           </div>
