@@ -1,37 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CustomTable from "@/components/CustomTable";
 import { ColumnConfig, FilterConfig } from "@/types/table";
+import requirementListService from "@/services/requirement-list.service";
+import { RequirementListItem } from "@/types/requirement-list";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const RequirementsArchived = () => {
-  // ✅ Explicit type for rows instead of any[]
-  const [selectedRows, setSelectedRows] = useState<Record<string, unknown>[]>(
-    []
-  );
+  const [data, setData] = useState<RequirementListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedRows, setSelectedRows] = useState<RequirementListItem[]>([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalItems: 0,
+    totalPages: 0,
+  });
+  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [sortBy, setSortBy] = useState<string>("archivedDate");
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const mockData = [
-    {
-      id: "REQ-009",
-      title: "Legacy System Migration",
-      category: "IT Infrastructure",
-      priority: "High",
-      estimatedValue: "$200,000",
-      archivedDate: "2024-01-15",
-      reason: "Project Completed",
-      finalValue: "$185,000",
-      status: "Completed",
-    },
-    {
-      id: "REQ-010",
-      title: "Office Equipment Purchase",
-      category: "Procurement",
-      priority: "Low",
-      estimatedValue: "$15,000",
-      archivedDate: "2024-01-10",
-      reason: "Cancelled",
-      finalValue: "$0",
-      status: "Cancelled",
-    },
-  ];
+  const fetchArchived = async () => {
+    try {
+      setLoading(true);
+      const response = await requirementListService.getArchived({
+        page: pagination.currentPage,
+        limit: pagination.pageSize,
+        sortBy,
+        order: sortOrder,
+        search: searchTerm,
+        filters,
+      });
+      
+      setData(response.data.requirements);
+      setPagination(response.data.pagination);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to load archived requirements");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchArchived();
+  }, [pagination.currentPage, pagination.pageSize, sortBy, sortOrder, searchTerm, filters]);
 
   const columns: ColumnConfig[] = [
     {
@@ -96,26 +109,57 @@ const RequirementsArchived = () => {
     },
   ];
 
-  const handleFilter = (filters: FilterConfig) => {
-    console.log("Applied filters:", filters);
+  const handleFilter = (newFilters: FilterConfig) => {
+    setFilters(newFilters);
+    setPagination(prev => ({ ...prev, currentPage: 1 }));
   };
 
-  const handleSearch = (searchTerm: string, selectedColumns: string[]) => {
-    console.log("Search:", searchTerm, selectedColumns);
+  const handleSearch = (term: string, selectedColumns: string[]) => {
+    setSearchTerm(term);
+    setPagination(prev => ({ ...prev, currentPage: 1 }));
   };
 
-  const handleExportXLSX = () => {
-    console.log("Export XLSX");
+  const handleExportXLSX = async () => {
+    try {
+      const blob = await requirementListService.exportToXLSX('archived', { filters, sortBy, order: sortOrder, search: searchTerm });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `archived-${new Date().toISOString()}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      toast.success("Archived requirements exported to XLSX");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to export");
+    }
   };
 
-  const handleExportCSV = () => {
-    console.log("Export CSV");
+  const handleExportCSV = async () => {
+    try {
+      const blob = await requirementListService.exportToCSV('archived', { filters, sortBy, order: sortOrder, search: searchTerm });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `archived-${new Date().toISOString()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      toast.success("Archived requirements exported to CSV");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to export");
+    }
   };
 
-  // ✅ Fix: use explicit type for selected rows
-  const handleSelectionChange = (selected: Record<string, unknown>[]) => {
-    setSelectedRows(selected);
-  };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-background min-h-screen">
@@ -130,7 +174,7 @@ const RequirementsArchived = () => {
 
       <CustomTable
         columns={columns}
-        data={mockData}
+        data={data}
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{
@@ -138,12 +182,13 @@ const RequirementsArchived = () => {
           csv: handleExportCSV,
         }}
         selectable={true}
-        onSelectionChange={handleSelectionChange}
+        onSelectionChange={setSelectedRows}
         globalSearchPlaceholder="Search archived requirements..."
         pagination={{
           enabled: true,
-          pageSize: 10,
-          currentPage: 1,
+          pageSize: pagination.pageSize,
+          currentPage: pagination.currentPage,
+          onPageChange: (page) => setPagination(prev => ({ ...prev, currentPage: page })),
         }}
       />
     </div>

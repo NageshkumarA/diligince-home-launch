@@ -1,44 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import CustomTable from "@/components/CustomTable";
 import { ColumnConfig, FilterConfig } from "@/types/table";
-
-// Define a type for a draft requirement row
-type DraftRequirementRow = {
-  id: string;
-  title: string;
-  category: string;
-  priority: string;
-  estimatedValue: string;
-  createdDate: string;
-  lastModified: string;
-  status: string;
-};
+import requirementListService from "@/services/requirement-list.service";
+import { RequirementListItem } from "@/types/requirement-list";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const RequirementsDrafts = () => {
-  const [selectedRows, setSelectedRows] = useState<DraftRequirementRow[]>([]);
+  const navigate = useNavigate();
+  const [data, setData] = useState<RequirementListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedRows, setSelectedRows] = useState<RequirementListItem[]>([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalItems: 0,
+    totalPages: 0,
+  });
+  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [sortBy, setSortBy] = useState<string>("lastModified");
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const mockData: DraftRequirementRow[] = [
-    {
-      id: "REQ-001",
-      title: "Software Development Services",
-      category: "IT Services",
-      priority: "High",
-      estimatedValue: "$50,000",
-      createdDate: "2024-01-15",
-      lastModified: "2024-01-20",
-      status: "Draft",
-    },
-    {
-      id: "REQ-002",
-      title: "Marketing Campaign Management",
-      category: "Marketing",
-      priority: "Medium",
-      estimatedValue: "$25,000",
-      createdDate: "2024-01-10",
-      lastModified: "2024-01-18",
-      status: "Draft",
-    },
-  ];
+  const fetchDrafts = async () => {
+    try {
+      setLoading(true);
+      const response = await requirementListService.getDrafts({
+        page: pagination.currentPage,
+        limit: pagination.pageSize,
+        sortBy,
+        order: sortOrder,
+        search: searchTerm,
+        filters,
+      });
+      
+      setData(response.data.requirements);
+      setPagination(response.data.pagination);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to load drafts");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDrafts();
+  }, [pagination.currentPage, pagination.pageSize, sortBy, sortOrder, searchTerm, filters]);
 
   const columns: ColumnConfig[] = [
     {
@@ -91,29 +100,99 @@ const RequirementsDrafts = () => {
     },
   ];
 
-  const handleFilter = (filters: FilterConfig) => {
-    console.log("Applied filters:", filters);
+  const handleFilter = (newFilters: FilterConfig) => {
+    setFilters(newFilters);
+    setPagination(prev => ({ ...prev, currentPage: 1 }));
   };
 
-  const handleSearch = (searchTerm: string, selectedColumns: string[]) => {
-    console.log("Search:", searchTerm, selectedColumns);
+  const handleSearch = (term: string, selectedColumns: string[]) => {
+    setSearchTerm(term);
+    setPagination(prev => ({ ...prev, currentPage: 1 }));
   };
 
-  const handleExportXLSX = () => {
-    console.log("Export XLSX");
+  const handleExportXLSX = async () => {
+    try {
+      const blob = await requirementListService.exportToXLSX('drafts', {
+        filters,
+        sortBy,
+        order: sortOrder,
+        search: searchTerm,
+      });
+      
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `drafts-${new Date().toISOString()}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.success("Drafts exported to XLSX");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to export drafts");
+    }
   };
 
-  const handleExportCSV = () => {
-    console.log("Export CSV");
+  const handleExportCSV = async () => {
+    try {
+      const blob = await requirementListService.exportToCSV('drafts', {
+        filters,
+        sortBy,
+        order: sortOrder,
+        search: searchTerm,
+      });
+      
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `drafts-${new Date().toISOString()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.success("Drafts exported to CSV");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to export drafts");
+    }
   };
 
   const handleAdd = () => {
-    console.log("Create new requirement");
+    navigate('/create-requirement');
   };
 
-  const handleSelectionChange = (selected: DraftRequirementRow[]) => {
-    setSelectedRows(selected);
+  const handleBulkDelete = async () => {
+    if (selectedRows.length === 0) {
+      toast.error("Please select drafts to delete");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${selectedRows.length} draft(s)?`
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      const draftIds = selectedRows.map(row => row.id);
+      await requirementListService.deleteDrafts(draftIds);
+      
+      toast.success(`${selectedRows.length} draft(s) deleted`);
+      setSelectedRows([]);
+      fetchDrafts();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete drafts");
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-background min-h-screen">
@@ -126,9 +205,17 @@ const RequirementsDrafts = () => {
         </p>
       </div>
 
+      {selectedRows.length > 0 && (
+        <div className="mb-4">
+          <Button variant="destructive" onClick={handleBulkDelete}>
+            Delete {selectedRows.length} selected
+          </Button>
+        </div>
+      )}
+
       <CustomTable
         columns={columns}
-        data={mockData}
+        data={data}
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{
@@ -137,12 +224,13 @@ const RequirementsDrafts = () => {
         }}
         onAdd={handleAdd}
         selectable={true}
-        onSelectionChange={handleSelectionChange}
+        onSelectionChange={setSelectedRows}
         globalSearchPlaceholder="Search draft requirements..."
         pagination={{
           enabled: true,
-          pageSize: 10,
-          currentPage: 1,
+          pageSize: pagination.pageSize,
+          currentPage: pagination.currentPage,
+          onPageChange: (page) => setPagination(prev => ({ ...prev, currentPage: page })),
         }}
       />
     </div>

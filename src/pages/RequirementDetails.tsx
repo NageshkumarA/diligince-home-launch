@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import requirementListService from "@/services/requirement-list.service";
+import { RequirementDetail } from "@/types/requirement-list";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 import IndustryHeader from "@/components/industry/IndustryHeader";
 import {
   Card,
@@ -28,10 +32,46 @@ import {
 } from "lucide-react";
 
 const RequirementDetails = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+  const [requirement, setRequirement] = useState<RequirementDetail | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - replace with API call in real implementation
-  const requirement = {
+  useEffect(() => {
+    const fetchRequirement = async () => {
+      if (!id) return;
+      
+      try {
+        setLoading(true);
+        const data = await requirementListService.getRequirementById(id);
+        setRequirement(data);
+      } catch (error: any) {
+        toast.error(error.message || "Failed to load requirement details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRequirement();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!requirement) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Requirement not found</p>
+      </div>
+    );
+  }
+
+  // Mock data preserved as fallback structure
+  const mockRequirement = {
     id: id || "REQ-001",
     title: "Industrial Valve Procurement",
     category: "Product",
@@ -217,7 +257,7 @@ const RequirementDetails = () => {
             ← Back to Requirements
           </Link>
           <div className="flex gap-2">
-            {requirement.status === "Draft" && (
+            {requirement.status === "draft" && (
               <Button variant="outline" asChild>
                 <Link to={`/create-requirement?edit=${requirement.id}`}>
                   <Edit className="h-4 w-4 mr-2" />
@@ -263,7 +303,7 @@ const RequirementDetails = () => {
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold text-gray-900">
-              ${requirement.estimatedBudget.toLocaleString()}
+              ${requirement.estimatedValue?.toLocaleString() || '0'}
             </div>
             <div className="text-sm text-gray-500">Estimated Budget</div>
             <div className="text-sm text-gray-500 mt-2">
