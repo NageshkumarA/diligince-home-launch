@@ -505,6 +505,27 @@ export const apiRoutes = {
         },
 
         // Messages
+        // ==========================================
+        // QUOTATIONS MODULE
+        // ==========================================
+        quotations: {
+            pending: (queryParams?: any) => `${basePath}/industry/quotations/pending${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
+            approved: (queryParams?: any) => `${basePath}/industry/quotations/approved${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
+            all: (queryParams?: any) => `${basePath}/industry/quotations/all${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
+            getById: (id: string) => `${basePath}/industry/quotations/${id}`,
+            approve: (id: string) => `${basePath}/industry/quotations/${id}/approve`,
+            reject: (id: string) => `${basePath}/industry/quotations/${id}/reject`,
+            clarification: (id: string) => `${basePath}/industry/quotations/${id}/request-clarification`,
+            compare: `${basePath}/industry/quotations/compare`,
+            analyze: `${basePath}/industry/quotations/analyze`,
+            bulkApprove: `${basePath}/industry/quotations/bulk-approve`,
+            bulkReject: `${basePath}/industry/quotations/bulk-reject`,
+            export: {
+                xlsx: (queryParams?: any) => `${basePath}/industry/quotations/export/xlsx${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
+                csv: (queryParams?: any) => `${basePath}/industry/quotations/export/csv${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
+            },
+        },
+
         messages: {
             // Get all conversations
             getConversations: (queryParams?: { page?: number; limit?: number }) =>
