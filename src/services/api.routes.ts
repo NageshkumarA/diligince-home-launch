@@ -128,6 +128,12 @@ export const apiRoutes = {
             
             // Get approval details
             getById: (approvalId: string) => `${basePath}/industry/approvals/${approvalId}`,
+            
+            // Delegate approval
+            delegate: (approvalId: string) => `${basePath}/industry/approvals/${approvalId}/delegate`,
+            
+            // Escalate approval
+            escalate: (approvalId: string) => `${basePath}/industry/approvals/${approvalId}/escalate`,
         },
 
         // Analytics & Reporting
@@ -279,7 +285,7 @@ export const apiRoutes = {
              * 
              * @see {@link https://docs/api/industry/create-requirement-api.md}
              */
-            draft: {
+             draft: {
                 // Create new draft
                 create: `${basePath}/industry/requirements/draft`,
                 
@@ -301,8 +307,18 @@ export const apiRoutes = {
                 // Delete draft
                 delete: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}`,
                 
+                // Resume draft with conflict detection
+                resume: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}/resume`,
+                
+                // Validate all steps
+                validateAll: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}/validate/all`,
+                
                 // Validate specific step
                 validate: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}/validate`,
+                
+                // Step-specific validation
+                validateStep: (draftId: string, stepNumber: number) => 
+                    `${basePath}/industry/requirements/draft/${draftId}/validate/step/${stepNumber}`,
                 
                 // Upload documents
                 uploadDocuments: (draftId: string) => `${basePath}/industry/requirements/draft/${draftId}/documents`,

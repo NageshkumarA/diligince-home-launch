@@ -1,7 +1,10 @@
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { UserProfile, UserRole, UserPreferences, getDashboardRoute } from '@/types/shared';
 import { calculateProfileCompleteness, ProfileCompletion } from '@/utils/profileCompleteness';
+import { api } from '@/services/api.service';
+import { apiRoutes } from '@/services/api.routes';
+import { mapApiRoleToUserRole } from '@/utils/roleMapper';
 
 interface UserContextType {
   user: UserProfile | null;
@@ -10,7 +13,7 @@ interface UserContextType {
   isLoading: boolean;
   updateProfile: (updates: Partial<UserProfile>) => void;
   updatePreferences: (preferences: Partial<UserPreferences>) => void;
-  login: (user: UserProfile) => void;
+  login: (email: string, password: string) => Promise<{success: boolean, error?: string}>;
   logout: () => void;
   getDashboardUrl: () => string;
   isUserType: (role: UserRole) => boolean;
@@ -136,27 +139,60 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     });
   };
 
-  const login = (userData: UserProfile) => {
-    console.log("Logging in user:", userData);
-    const userWithDefaults: UserProfile = {
-      ...userData,
-      preferences: {
-        ...defaultPreferences,
-        ...userData.preferences,
-      },
-    };
-    setUser(userWithDefaults);
-    setIsFirstTimeUser(true);
-  };
+  const login = useCallback(async (email: string, password: string) => {
+    try {
+      const response: any = await api.post(apiRoutes.auth.login, { email, password });
+      
+      // Extract from new API structure: { data: { user }, meta: { access_token, refresh_token } }
+      const { data, meta } = response;
 
-  const logout = () => {
+      if (meta?.access_token && data?.user) {
+        // Store both tokens
+        localStorage.setItem('authToken', meta.access_token);
+        localStorage.setItem('refreshToken', meta.refresh_token);
+        
+        // Transform API user format to UserContext format
+        const apiUser = data.user;
+        const userProfile: UserProfile = {
+          id: apiUser.id,
+          name: apiUser.profile ? `${apiUser.profile.firstName} ${apiUser.profile.lastName}` : apiUser.email,
+          email: apiUser.email,
+          role: mapApiRoleToUserRole(apiUser.role),
+          profile: {
+            vendorCategory: apiUser.profile?.vendorCategory,
+            companyName: apiUser.profile?.companyName,
+            firstName: apiUser.profile?.firstName,
+            lastName: apiUser.profile?.lastName,
+          },
+          preferences: defaultPreferences,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        
+        setUser(userProfile);
+        setIsFirstTimeUser(!apiUser.profile?.isProfileComplete);
+        return { success: true };
+      }
+      return { success: false, error: 'Invalid credentials' };
+    } catch (error: any) {
+      console.error('Login error:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Login failed. Please try again.' 
+      };
+    }
+  }, []);
+
+  const logout = useCallback(() => {
     console.log("Logging out user");
     setUser(null);
     setIsFirstTimeUser(false);
     setHasCompletedOnboarding(false);
     localStorage.removeItem('user');
     localStorage.removeItem('hasCompletedOnboarding');
-  };
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
+  }, []);
 
   const getDashboardUrl = (): string => {
     if (!user) return '/';

@@ -17,6 +17,29 @@ import {
 import { apiRoutes } from "./api.routes";
 
 class RequirementDraftService {
+  // ============= Helper Methods =============
+  
+  /**
+   * Retry request with exponential backoff
+   */
+  private async retryRequest<T>(
+    requestFn: () => Promise<T>,
+    maxRetries = 3
+  ): Promise<T> {
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        return await requestFn();
+      } catch (error) {
+        if (i === maxRetries - 1) throw error;
+        
+        // Exponential backoff: 1s, 2s, 4s
+        const delay = Math.pow(2, i) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    throw new Error("Max retries exceeded");
+  }
+
   // ============= Draft Management =============
 
   /**
@@ -37,23 +60,25 @@ class RequirementDraftService {
   }
 
   /**
-   * Update an existing draft with partial data
+   * Update an existing draft with partial data (with retry logic)
    */
   async updateDraft(
     draftId: string,
     data: Partial<RequirementFormData>
   ): Promise<DraftResponse> {
-    try {
-      const response = await apiService.put<DraftResponse, Partial<RequirementFormData>>(
-        apiRoutes.industry.requirements.draft.update(draftId),
-        data
-      );
-      console.log("Draft updated:", response);
-      return response;
-    } catch (error) {
-      console.error("Failed to update draft:", error);
-      throw error;
-    }
+    return this.retryRequest(async () => {
+      try {
+        const response = await apiService.put<DraftResponse, Partial<RequirementFormData>>(
+          apiRoutes.industry.requirements.draft.update(draftId),
+          data
+        );
+        console.log("Draft updated:", response);
+        return response;
+      } catch (error) {
+        console.error("Failed to update draft:", error);
+        throw error;
+      }
+    });
   }
 
   /**

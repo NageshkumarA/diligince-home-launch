@@ -74,7 +74,34 @@ POST /api/v1/industry/requirements/publish
 
 ### Auto-Save Draft Feature
 
-The form automatically saves as a draft after each step. Drafts expire after 7 days of inactivity and can be resumed at any time.
+The form automatically saves as a draft with **debounced auto-save** (2-second delay). Key features:
+
+- **Debounce Delay:** 2 seconds after user stops typing
+- **Retry Logic:** 3 attempts with exponential backoff (1s, 2s, 4s)
+- **Deduplication:** Uses `X-Debounce-Token` header to prevent duplicate saves
+- **Offline Support:** Falls back to localStorage after 3 failed API attempts
+- **Expiration:** Drafts expire after 7 days of inactivity
+- **Resume:** Drafts can be resumed with conflict detection for concurrent edits
+
+**Auto-Save Headers:**
+```http
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+X-Debounce-Token: <unique_token_per_save>
+```
+
+**Auto-Save Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "draftId": "draft-REQ-001",
+    "lastSaved": "2024-01-16T10:32:15Z",
+    "retryCount": 0,
+    "savedToCloud": true
+  }
+}
+```
 
 ---
 
@@ -191,6 +218,40 @@ interface DraftMetadata {
   completedSteps: number[];         // Array of completed step numbers
   isValid: boolean;
   expiresAt: string;                // ISO 8601 timestamp
+  retryCount?: number;              // Auto-save retry attempts
+  savedToCloud: boolean;            // Whether saved to server or localStorage
+  lastModifiedBy?: string;          // User ID for concurrent edit detection
+}
+```
+
+### UploadSession Interface
+
+```typescript
+interface UploadSession {
+  sessionId: string;
+  draftId: string;
+  fileName: string;
+  fileSize: number;
+  chunkSize: number;                // Default: 5MB
+  totalChunks: number;
+  uploadedChunks: number[];
+  status: "initiated" | "uploading" | "completed" | "failed";
+  createdAt: string;
+  expiresAt: string;                // Session expires after 24 hours
+}
+```
+
+### ApprovalDelegation Interface
+
+```typescript
+interface ApprovalDelegation {
+  approvalId: string;
+  delegatedFrom: string;            // User ID
+  delegatedTo: string;              // User ID
+  reason: string;
+  delegatedAt: string;
+  expiresAt?: string;
+  status: "active" | "expired" | "completed";
 }
 ```
 
@@ -416,13 +477,11 @@ curl -X DELETE "https://your-api-domain.com/api/v1/industry/requirements/draft/d
 
 ---
 
-### 3.2 Step Operations
+#### Resume Draft
 
-#### Validate Step
+Resume an existing draft and detect concurrent edits.
 
-Validate a specific step before proceeding.
-
-**Endpoint:** `POST /api/v1/industry/requirements/draft/:draftId/validate`
+**Endpoint:** `POST /api/v1/industry/requirements/draft/:draftId/resume`
 
 **Path Parameters:**
 - `draftId`: The draft ID
@@ -430,7 +489,90 @@ Validate a specific step before proceeding.
 **Request Body:**
 ```typescript
 {
-  step: number;                     // 1-6
+  lastKnownStep: number;
+  clientTimestamp: string;          // ISO 8601 timestamp for conflict detection
+  localData?: Partial<RequirementFormData>; // Optional localStorage backup
+}
+```
+
+**Example Request:**
+```bash
+curl -X POST "https://your-api-domain.com/api/v1/industry/requirements/draft/draft-REQ-20240116-001/resume" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "lastKnownStep": 2,
+    "clientTimestamp": "2024-01-16T10:30:00Z"
+  }'
+```
+
+**Response (200 OK - No Conflicts):**
+```json
+{
+  "success": true,
+  "data": {
+    "draftId": "draft-REQ-20240116-001",
+    "formData": {
+      "title": "Industrial Valves Procurement",
+      // ... all saved fields
+    },
+    "metadata": {
+      "currentStep": 2,
+      "lastSaved": "2024-01-16T10:35:20Z",
+      "completedSteps": [1, 2],
+      "expiresAt": "2024-01-23T10:35:20Z"
+    },
+    "conflicts": []
+  },
+  "message": "Draft resumed successfully"
+}
+```
+
+**Response (409 Conflict - Concurrent Edit):**
+```json
+{
+  "success": false,
+  "error": {
+    "code": "CONCURRENT_EDIT_CONFLICT",
+    "message": "Draft was modified by another user or session",
+    "details": {
+      "draftId": "draft-REQ-20240116-001",
+      "lastModifiedBy": "user-456",
+      "lastModifiedAt": "2024-01-16T10:45:00Z",
+      "conflicts": [
+        {
+          "field": "title",
+          "serverValue": "Updated Valves Procurement",
+          "clientValue": "Industrial Valves Procurement"
+        },
+        {
+          "field": "estimatedBudget",
+          "serverValue": 30000,
+          "clientValue": 25000
+        }
+      ]
+    }
+  }
+}
+```
+
+---
+
+### 3.2 Step Operations
+
+#### Validate Step
+
+Validate a specific step before proceeding.
+
+**Endpoint:** `POST /api/v1/industry/requirements/draft/:draftId/validate/step/:stepNumber`
+
+**Path Parameters:**
+- `draftId`: The draft ID
+- `stepNumber`: The step number (1-6)
+
+**Request Body:**
+```typescript
+{
   data: Partial<RequirementFormData>;
 }
 ```
@@ -491,24 +633,221 @@ curl -X POST "https://your-api-domain.com/api/v1/industry/requirements/draft/dra
 
 ---
 
+#### Validate All Steps
+
+Perform final validation of all steps before publishing.
+
+**Endpoint:** `GET /api/v1/industry/requirements/draft/:draftId/validate/all`
+
+**Path Parameters:**
+- `draftId`: The draft ID
+
+**Example Request:**
+```bash
+curl -X GET "https://your-api-domain.com/api/v1/industry/requirements/draft/draft-REQ-20240116-001/validate/all" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response (200 OK - All Valid):**
+```json
+{
+  "success": true,
+  "data": {
+    "isValid": true,
+    "completedSteps": [1, 2, 3, 4, 5, 6],
+    "invalidSteps": [],
+    "warnings": []
+  },
+  "message": "All steps validated successfully"
+}
+```
+
+**Response (400 Bad Request - Has Invalid Steps):**
+```json
+{
+  "success": false,
+  "data": {
+    "isValid": false,
+    "completedSteps": [1, 2, 3],
+    "invalidSteps": [
+      {
+        "step": 6,
+        "errors": [
+          {
+            "field": "submissionDeadline",
+            "message": "Submission deadline is required",
+            "code": "REQUIRED_FIELD"
+          },
+          {
+            "field": "evaluationCriteria",
+            "message": "At least one evaluation criterion must be selected",
+            "code": "REQUIRED_FIELD"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      {
+        "step": 3,
+        "message": "No documents uploaded. Consider adding supporting documents."
+      }
+    ]
+  },
+  "message": "Validation failed for some steps"
+}
+```
+
+---
+
 #### Upload Documents
 
-Upload supporting documents for the requirement.
+Upload supporting documents for the requirement. Supports both standard upload (files < 5MB) and chunked upload (files > 5MB).
 
 **Endpoint:** `POST /api/v1/industry/requirements/draft/:draftId/documents`
 
 **Path Parameters:**
 - `draftId`: The draft ID
 
-**Headers:**
+**Headers (Standard Upload):**
 ```http
 Authorization: Bearer <token>
 Content-Type: multipart/form-data
 ```
 
+**Headers (Chunked Upload):**
+```http
+Authorization: Bearer <token>
+Content-Type: multipart/form-data
+Content-Range: bytes 0-5242879/15728640
+X-Upload-Session-Id: session-abc123
+```
+
 **Form Data:**
-- `files`: File array (max 5 files)
+- `files`: File array (max 5 files per request)
 - `documentType`: Document type for each file
+
+**File Size Limits:**
+- Single file: Max 20MB
+- Total batch: Max 50MB
+- Files > 5MB automatically trigger chunked upload
+
+**Chunked Upload Flow (for files > 5MB):**
+
+1. **Initialize Upload Session:**
+```bash
+curl -X POST "https://your-api-domain.com/api/v1/industry/requirements/draft/draft-REQ-001/documents/init" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fileName": "large-drawing.dwg",
+    "fileSize": 15728640,
+    "mimeType": "application/acad",
+    "documentType": "drawing"
+  }'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "sessionId": "session-abc123",
+    "chunkSize": 5242880,
+    "totalChunks": 3,
+    "expiresAt": "2024-01-17T10:30:00Z"
+  }
+}
+```
+
+2. **Upload Chunks:**
+```bash
+# Upload chunk 1 of 3
+curl -X POST "https://your-api-domain.com/api/v1/industry/requirements/draft/draft-REQ-001/documents/upload" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Range: bytes 0-5242879/15728640" \
+  -H "X-Upload-Session-Id: session-abc123" \
+  -F "chunk=@chunk1.bin"
+
+# Upload chunk 2 of 3
+curl -X POST "https://your-api-domain.com/api/v1/industry/requirements/draft/draft-REQ-001/documents/upload" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Range: bytes 5242880-10485759/15728640" \
+  -H "X-Upload-Session-Id: session-abc123" \
+  -F "chunk=@chunk2.bin"
+
+# Upload chunk 3 of 3 (final chunk)
+curl -X POST "https://your-api-domain.com/api/v1/industry/requirements/draft/draft-REQ-001/documents/upload" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Range: bytes 10485760-15728639/15728640" \
+  -H "X-Upload-Session-Id: session-abc123" \
+  -F "chunk=@chunk3.bin"
+```
+
+**Chunk Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "sessionId": "session-abc123",
+    "uploadedChunks": [0, 1, 2],
+    "remainingChunks": [],
+    "progress": 100
+  }
+}
+```
+
+3. **Finalize Upload:**
+```bash
+curl -X POST "https://your-api-domain.com/api/v1/industry/requirements/draft/draft-REQ-001/documents/finalize" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sessionId": "session-abc123"
+  }'
+```
+
+**Finalize Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "document": {
+      "id": "doc-003",
+      "name": "large-drawing.dwg",
+      "url": "https://storage.example.com/documents/doc-003.dwg",
+      "type": "application/acad",
+      "size": 15728640,
+      "documentType": "drawing",
+      "version": 1,
+      "uploadedAt": "2024-01-16T10:40:00Z",
+      "uploadedBy": "user-123"
+    }
+  },
+  "message": "Document uploaded successfully"
+}
+```
+
+**Resume Interrupted Upload:**
+```bash
+curl -X GET "https://your-api-domain.com/api/v1/industry/requirements/draft/draft-REQ-001/documents/upload-status/session-abc123" \
+  -H "Authorization: Bearer TOKEN"
+```
+
+**Resume Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "sessionId": "session-abc123",
+    "fileName": "large-drawing.dwg",
+    "fileSize": 15728640,
+    "uploadedChunks": [0, 1],
+    "remainingChunks": [2],
+    "status": "uploading",
+    "expiresAt": "2024-01-17T10:30:00Z"
+  }
+}
+```
 
 **Example Request:**
 ```bash
@@ -685,6 +1024,118 @@ curl -X POST "https://your-api-domain.com/api/v1/industry/requirements/draft/dra
 
 ---
 
+#### Delegate Approval
+
+Delegate an approval task to another user.
+
+**Endpoint:** `POST /api/v1/industry/approvals/:approvalId/delegate`
+
+**Path Parameters:**
+- `approvalId`: The approval workflow ID
+
+**Request Body:**
+```typescript
+{
+  delegateTo: string;               // User ID of the delegate
+  reason: string;                   // Reason for delegation
+  expiresAt?: string;               // Optional expiration (ISO 8601)
+}
+```
+
+**Example Request:**
+```bash
+curl -X POST "https://your-api-domain.com/api/v1/industry/approvals/approval-001/delegate" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "delegateTo": "user-deputy-01",
+    "reason": "Out of office - traveling for business",
+    "expiresAt": "2024-01-25T23:59:59Z"
+  }'
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "approvalId": "approval-001",
+    "delegatedTo": {
+      "userId": "user-deputy-01",
+      "name": "Jane Doe",
+      "email": "jdoe@company.com"
+    },
+    "originalApprover": {
+      "userId": "user-789",
+      "name": "Michael Brown"
+    },
+    "reason": "Out of office - traveling for business",
+    "delegatedAt": "2024-01-16T10:50:00Z",
+    "expiresAt": "2024-01-25T23:59:59Z",
+    "notificationSent": true
+  },
+  "message": "Approval delegated successfully"
+}
+```
+
+---
+
+#### Escalate Approval
+
+Manually escalate an approval to the next level or specific user.
+
+**Endpoint:** `POST /api/v1/industry/approvals/:approvalId/escalate`
+
+**Path Parameters:**
+- `approvalId`: The approval workflow ID
+
+**Request Body:**
+```typescript
+{
+  reason: string;                   // Reason for escalation
+  escalateTo?: string;              // Optional: specific user ID (defaults to next level)
+}
+```
+
+**Example Request:**
+```bash
+curl -X POST "https://your-api-domain.com/api/v1/industry/approvals/approval-001/escalate" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "reason": "Deadline approaching - need urgent decision"
+  }'
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "approvalId": "approval-001",
+    "escalatedTo": {
+      "level": 2,
+      "userId": "user-456",
+      "name": "Sarah Johnson",
+      "role": "Finance Manager"
+    },
+    "escalatedFrom": {
+      "level": 1,
+      "userId": "user-789",
+      "name": "Michael Brown",
+      "role": "Department Head"
+    },
+    "reason": "Deadline approaching - need urgent decision",
+    "escalatedAt": "2024-01-16T10:55:00Z",
+    "newDeadline": "2024-01-19T23:59:59Z",
+    "notificationSent": true
+  },
+  "message": "Approval escalated successfully"
+}
+```
+
+---
+
 ### 3.3 Final Submission
 
 #### Publish Requirement
@@ -733,7 +1184,13 @@ curl -X POST "https://your-api-domain.com/api/v1/industry/requirements/publish" 
     "publishedAt": "2024-01-16T10:45:00Z",
     "submissionDeadline": "2024-02-15T23:59:59Z",
     "vendorsNotified": 45,
-    "viewUrl": "https://platform.example.com/requirements/REQ-20240116-001"
+    "notifications": {
+      "email": 45,
+      "app": 45,
+      "sms": 0
+    },
+    "viewUrl": "https://platform.example.com/requirements/REQ-20240116-001",
+    "notificationsSent": true
   },
   "message": "Requirement published successfully"
 }
@@ -763,7 +1220,8 @@ curl -X POST "https://your-api-domain.com/api/v1/industry/requirements/publish" 
           "deadline": "2024-01-20T23:59:59Z"
         }
       ],
-      "estimatedPublishDate": "2024-01-20T23:59:59Z"
+      "estimatedPublishDate": "2024-01-20T23:59:59Z",
+      "estimatedApprovalTime": "4 days"
     },
     "notificationsSent": true
   },
@@ -1546,6 +2004,8 @@ All error responses follow this structure:
 | 401 | Unauthorized | Missing or invalid authentication token |
 | 403 | Forbidden | User lacks permission for operation |
 | 404 | Not Found | Resource doesn't exist |
+| 409 | Conflict | Concurrent edit conflict, resource state conflict |
+| 410 | Gone | Resource permanently deleted or expired |
 | 413 | Payload Too Large | File size exceeds limit |
 | 422 | Unprocessable Entity | Business logic validation failed |
 | 429 | Too Many Requests | Rate limit exceeded |
@@ -1562,11 +2022,18 @@ All error responses follow this structure:
 | `MIN_LENGTH` | 400 | Value below minimum length |
 | `MAX_LENGTH` | 400 | Value exceeds maximum length |
 | `INVALID_FORMAT` | 400 | Value format incorrect |
+| `CHUNK_MISSING` | 400 | Required upload chunk missing |
 | `UNAUTHORIZED` | 401 | Authentication required |
 | `TOKEN_EXPIRED` | 401 | JWT token expired |
+| `WEBSOCKET_AUTH_FAILED` | 401 | WebSocket authentication failed |
 | `FORBIDDEN` | 403 | Permission denied |
+| `ESCALATION_NOT_ALLOWED` | 403 | Escalation permission denied |
 | `DRAFT_NOT_FOUND` | 404 | Draft ID not found |
-| `FILE_TOO_LARGE` | 413 | File exceeds 10MB limit |
+| `APPROVAL_ALREADY_DELEGATED` | 409 | Approval already delegated to another user |
+| `CONCURRENT_EDIT_CONFLICT` | 409 | Draft modified by another user or session |
+| `DRAFT_EXPIRED` | 410 | Draft expired after 7 days of inactivity |
+| `UPLOAD_SESSION_EXPIRED` | 410 | Upload session expired (24 hour limit) |
+| `FILE_TOO_LARGE` | 413 | File exceeds 20MB limit |
 | `TOO_MANY_FILES` | 413 | More than 5 files uploaded |
 | `UNSUPPORTED_FILE_TYPE` | 422 | File type not allowed |
 | `BUDGET_THRESHOLD_EXCEEDED` | 422 | Approval required for budget |
@@ -1933,7 +2400,242 @@ A complete Postman collection with all endpoints and test scenarios is available
 
 ## Appendix
 
-### Rate Limiting
+### A. WebSocket Real-time Updates
+
+The API supports real-time updates for draft synchronization and approval status changes via WebSocket connections.
+
+**Connection Endpoint:**
+```
+wss://your-api-domain.com/ws/drafts/:draftId?token=<JWT_TOKEN>
+```
+
+**Connection Example:**
+```javascript
+const ws = new WebSocket('wss://api.example.com/ws/drafts/draft-REQ-001?token=YOUR_JWT');
+
+ws.onopen = () => {
+  // Subscribe to events
+  ws.send(JSON.stringify({
+    action: 'subscribe',
+    events: ['draft.updated', 'approval.statusChanged', 'document.uploaded']
+  }));
+};
+
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  console.log('Received event:', data);
+};
+```
+
+**Event Types:**
+
+1. **draft.updated** - Draft data changed by another user/session
+```json
+{
+  "event": "draft.updated",
+  "draftId": "draft-REQ-123",
+  "updatedBy": "user-456",
+  "updatedFields": ["title", "estimatedBudget"],
+  "timestamp": "2024-01-16T10:45:00Z",
+  "data": {
+    "title": "Updated Valves Procurement",
+    "estimatedBudget": 30000
+  }
+}
+```
+
+2. **approval.statusChanged** - Approval status updated
+```json
+{
+  "event": "approval.statusChanged",
+  "approvalId": "approval-001",
+  "status": "approved",
+  "approvedBy": "user-789",
+  "level": 1,
+  "timestamp": "2024-01-16T11:00:00Z"
+}
+```
+
+3. **draft.conflict** - Concurrent edit detected
+```json
+{
+  "event": "draft.conflict",
+  "draftId": "draft-REQ-123",
+  "conflicts": [
+    {
+      "field": "title",
+      "serverValue": "Updated Title",
+      "yourValue": "My Title"
+    }
+  ],
+  "lastModifiedBy": "user-456",
+  "timestamp": "2024-01-16T10:46:00Z"
+}
+```
+
+**Heartbeat & Reconnection:**
+- Server sends heartbeat every 30 seconds
+- Client should respond with pong
+- Auto-reconnect on connection loss with exponential backoff
+- Max reconnection attempts: 5
+
+---
+
+### B. Chunked Upload Implementation Guide
+
+For files larger than 5MB, use chunked upload to improve reliability and enable resume capability.
+
+**Complete Flow:**
+
+```typescript
+// 1. Initialize upload session
+const initResponse = await fetch('/draft/:id/documents/init', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer TOKEN',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    fileName: 'large-file.dwg',
+    fileSize: 15728640,
+    mimeType: 'application/acad',
+    documentType: 'drawing'
+  })
+});
+
+const { sessionId, chunkSize, totalChunks } = await initResponse.json();
+
+// 2. Split file into chunks (5MB each)
+const chunks = splitFileIntoChunks(file, chunkSize);
+
+// 3. Upload each chunk
+for (let i = 0; i < chunks.length; i++) {
+  const start = i * chunkSize;
+  const end = Math.min(start + chunkSize, file.size);
+  
+  await fetch('/draft/:id/documents/upload', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer TOKEN',
+      'Content-Range': `bytes ${start}-${end-1}/${file.size}`,
+      'X-Upload-Session-Id': sessionId
+    },
+    body: chunks[i]
+  });
+  
+  // Update progress
+  onProgress((i + 1) / chunks.length * 100);
+}
+
+// 4. Finalize upload
+await fetch('/draft/:id/documents/finalize', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer TOKEN',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ sessionId })
+});
+```
+
+**Resume Interrupted Upload:**
+```typescript
+// Check upload status
+const statusResponse = await fetch(`/draft/:id/documents/upload-status/${sessionId}`, {
+  headers: { 'Authorization': 'Bearer TOKEN' }
+});
+
+const { uploadedChunks, remainingChunks } = await statusResponse.json();
+
+// Resume from remaining chunks
+for (const chunkIndex of remainingChunks) {
+  // Upload only missing chunks
+  await uploadChunk(chunkIndex);
+}
+```
+
+**Best Practices:**
+- Chunk size: 5MB (optimal for most networks)
+- Timeout per chunk: 30 seconds
+- Retry failed chunks: 3 attempts with exponential backoff
+- Session expiration: 24 hours
+- Progress tracking: Update UI every 100ms
+
+---
+
+### C. Offline Support & Recovery Strategy
+
+The system supports offline drafting with automatic sync when connection is restored.
+
+**Offline Capabilities:**
+1. **localStorage Backup** - All form data automatically saved to localStorage
+2. **Offline Indicator** - UI shows offline status
+3. **Queue Operations** - API calls queued for retry when online
+4. **Conflict Resolution** - Merge changes when back online
+
+**Implementation:**
+
+```typescript
+// Auto-save to localStorage
+const saveToLocalStorage = (draftId: string, data: RequirementFormData) => {
+  localStorage.setItem(`draft-${draftId}`, JSON.stringify(data));
+  localStorage.setItem(`draft-${draftId}-timestamp`, new Date().toISOString());
+};
+
+// Detect online/offline
+window.addEventListener('online', async () => {
+  console.log('Connection restored');
+  await syncLocalDrafts();
+});
+
+window.addEventListener('offline', () => {
+  console.log('Connection lost - working offline');
+  showOfflineIndicator();
+});
+
+// Sync when back online
+const syncLocalDrafts = async () => {
+  const draftKeys = Object.keys(localStorage).filter(k => k.startsWith('draft-'));
+  
+  for (const key of draftKeys) {
+    const draftId = key.replace('draft-', '');
+    const data = JSON.parse(localStorage.getItem(key)!);
+    
+    try {
+      // Attempt to sync with server
+      await api.patch(`/draft/${draftId}`, data);
+      
+      // Remove from localStorage on success
+      localStorage.removeItem(key);
+      
+      toast.success('Draft synced successfully');
+    } catch (error) {
+      if (error.code === 'CONCURRENT_EDIT_CONFLICT') {
+        // Show conflict resolution UI
+        showConflictResolution(draftId, data, error.serverData);
+      } else {
+        // Keep in localStorage for retry
+        console.error('Sync failed, will retry', error);
+      }
+    }
+  }
+};
+```
+
+**Conflict Resolution UI:**
+- Show side-by-side diff of local vs server data
+- Allow user to choose: "Keep Mine", "Use Server", or "Merge"
+- Highlight conflicting fields
+- Save resolution choice
+
+**Data Retention:**
+- localStorage drafts expire after 7 days
+- Clear localStorage on successful publish
+- Warn user before clearing old drafts
+
+---
+
+### D. Rate Limiting
 
 **Policy:** 100 requests per minute per user
 
@@ -1960,30 +2662,43 @@ X-RateLimit-Reset: 1705401600
 }
 ```
 
-### File Upload Constraints
+### E. File Upload Constraints
 
 | Constraint | Value |
 |------------|-------|
-| Max file size | 10MB per file |
+| Max file size (standard upload) | 5MB per file |
+| Max file size (chunked upload) | 20MB per file |
 | Max files per requirement | 5 files |
-| Allowed formats | PDF, DOC, DOCX, XLS, XLSX, DWG, PNG, JPG |
+| Max total batch size | 50MB |
+| Allowed formats | PDF, DOC, DOCX, XLS, XLSX, DWG, PNG, JPG, JPEG |
 | Total storage per user | 100MB |
-| Upload timeout | 60 seconds |
+| Upload timeout (standard) | 60 seconds |
+| Upload timeout (per chunk) | 30 seconds |
+| Chunk size | 5MB (5,242,880 bytes) |
+| Upload session expiration | 24 hours |
 
-### Auto-Save Strategy
+### F. Auto-Save Strategy
 
 **Debounce:** 2 seconds after user stops typing
 
-**Throttle:** Maximum 1 save per 3 seconds
+**Retry Logic:**
+- Max retry attempts: 3
+- Retry backoff: 1s, 2s, 4s (exponential)
+- Fallback: localStorage after 3 failures
+
+**Deduplication:**
+- Use `X-Debounce-Token` header (unique per save attempt)
+- Server ignores duplicate tokens within 5-second window
 
 **Behavior:**
 - Non-blocking background operation
 - Automatic retry on failure (max 3 attempts)
-- Toast notification on save success
-- Error notification on save failure
-- Local state preserved on network failure
+- Toast notification: "Saving...", "Saved", "Failed to save"
+- Error notification on persistent failures
+- localStorage backup on network failure
+- Sync to server when connection restored
 
-### Performance Considerations
+### G. Performance Considerations
 
 **File Upload Optimization:**
 - Chunked uploads for files > 5MB
@@ -2002,7 +2717,14 @@ X-RateLimit-Reset: 1705401600
 - Vendor lists cached for 15 minutes
 - Workflow configurations cached for 1 day
 
-### Security Considerations
+**Rate Limiting per Endpoint:**
+- `POST /draft`: 10 requests/minute
+- `PATCH /draft/:id`: 60 requests/minute (for auto-save)
+- `POST /documents`: 20 requests/minute
+- `POST /publish`: 5 requests/minute
+- All other endpoints: 100 requests/minute
+
+### H. Security Considerations
 
 **Authentication:**
 - JWT token with 24-hour expiration
@@ -2022,12 +2744,14 @@ X-RateLimit-Reset: 1705401600
 - File content scanning for malware
 
 **Data Protection:**
-- HTTPS required for all endpoints
-- Sensitive data encrypted at rest
+- HTTPS required for all endpoints (TLS 1.2+)
+- Sensitive data encrypted at rest (AES-256)
 - PII data handling compliance
 - GDPR/CCPA compliance for user data
+- WebSocket connections use WSS (secure WebSocket)
+- File uploads scanned for malware before storage
 
-### Support & Resources
+### I. Support & Resources
 
 **API Documentation:** `https://api.example.com/docs`
 

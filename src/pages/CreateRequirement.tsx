@@ -79,31 +79,46 @@ StepRenderer.displayName = "StepRenderer";
 
 const CreateRequirement = () => {
   const [currentStep, setCurrentStep] = useState<StepType>(1);
+  const [isInitializing, setIsInitializing] = useState(true);
   const navigate = useNavigate();
-  const { isSaving, lastSaved } = useRequirement();
+  const { isSaving, lastSaved, draftId } = useRequirement();
 
-  // Restore progress on mount and resume draft
+  // Initialize or resume draft on mount
   useEffect(() => {
-    const savedStep = localStorage.getItem('requirement-current-step');
-    const savedDraftId = localStorage.getItem('requirement-draft-id');
-    
-    if (savedStep) {
-      const step = parseInt(savedStep, 10);
-      if (step >= 1 && step <= 7) {
-        setCurrentStep(step as StepType);
+    const initializeOrResumeDraft = async () => {
+      try {
+        setIsInitializing(true);
+        const savedDraftId = localStorage.getItem('requirement-draft-id');
+        const savedStep = localStorage.getItem('requirement-current-step');
+        
+        if (savedDraftId) {
+          const shouldResume = window.confirm(
+            "You have an unsaved draft. Would you like to resume where you left off?"
+          );
+          
+          if (shouldResume) {
+            if (savedStep) {
+              const step = parseInt(savedStep, 10);
+              if (step >= 1 && step <= 7) {
+                setCurrentStep(step as StepType);
+              }
+            }
+            toast.success("Draft resumed successfully");
+          } else {
+            localStorage.removeItem('requirement-draft-id');
+            localStorage.removeItem('requirement-draft');
+            localStorage.removeItem('requirement-current-step');
+          }
+        }
+      } catch (error) {
+        console.error("Draft initialization failed:", error);
+        toast.error("Failed to initialize draft");
+      } finally {
+        setIsInitializing(false);
       }
-    }
-    
-    // Show resume dialog if draft exists
-    if (savedDraftId) {
-      const shouldResume = window.confirm(
-        "You have an unsaved draft. Would you like to resume where you left off?"
-      );
-      if (!shouldResume) {
-        localStorage.removeItem('requirement-draft-id');
-        localStorage.removeItem('requirement-draft');
-      }
-    }
+    };
+
+    initializeOrResumeDraft();
   }, []);
 
   // Save current step to localStorage
@@ -187,6 +202,18 @@ const CreateRequirement = () => {
   };
 
   const currentStepConfig = steps.find(s => s.id === currentStep);
+
+  // Show loading while initializing
+  if (isInitializing) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Initializing requirement form...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Success screen (Step 7)
   if (currentStep === 7) {

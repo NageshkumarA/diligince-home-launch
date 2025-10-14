@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Briefcase, DollarSign } from "lucide-react";
+import { Briefcase, DollarSign, Loader2 } from "lucide-react";
 import { CategorySelector } from "@/components/requirement/CategorySelector";
 import { PriorityBadge } from "@/components/requirement/PriorityBadge";
 import { AdvancedOptions } from "@/components/requirement/AdvancedOptions";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
+import requirementDraftService from "@/services/requirement-draft.service";
 
 interface EnhancedBasicInfoStepProps {
   onNext: () => void;
@@ -24,14 +25,44 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
     updateFormData,
     validateStep,
     stepErrors,
-    saveAsDraft
+    saveAsDraft,
+    draftId
   } = useRequirement();
+  const [isValidating, setIsValidating] = useState(false);
 
-  const handleNext = () => {
-    if (validateStep(1)) {
-      onNext();
-    } else {
+  const handleNext = async () => {
+    // Client-side validation first
+    if (!validateStep(1)) {
       toast.error("Please fill in all required fields");
+      return;
+    }
+
+    // Server-side validation if draft exists
+    if (draftId) {
+      try {
+        setIsValidating(true);
+        const response = await requirementDraftService.validateStep(
+          draftId,
+          1,
+          formData
+        );
+
+        if (response.data.isValid) {
+          onNext();
+        } else {
+          response.data.errors?.forEach(error => {
+            toast.error(`${error.field}: ${error.message}`);
+          });
+        }
+      } catch (error: any) {
+        console.error("Validation failed:", error);
+        toast.error(error.message || "Validation failed");
+      } finally {
+        setIsValidating(false);
+      }
+    } else {
+      // No draft yet, proceed with client-side validation
+      onNext();
     }
   };
 
@@ -238,8 +269,9 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
         <Button type="button" variant="outline" onClick={handleSaveDraft} className="h-11">
           Save as Draft
         </Button>
-        <Button type="button" onClick={handleNext} className="h-11">
-          Continue to Details
+        <Button type="button" onClick={handleNext} className="h-11" disabled={isValidating}>
+          {isValidating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {isValidating ? "Validating..." : "Continue to Details"}
         </Button>
       </div>
     </div>

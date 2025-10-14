@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import requirementDraftService from "@/services/requirement-draft.service";
 
 interface DetailsStepProps {
   onNext: () => void;
@@ -31,13 +32,41 @@ interface DetailsStepProps {
 }
 
 const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
-  const { formData, updateFormData, validateStep, stepErrors } = useRequirement();
+  const { formData, updateFormData, validateStep, stepErrors, draftId } = useRequirement();
+  const [isValidating, setIsValidating] = useState(false);
 
-  const handleNext = () => {
-    if (validateStep(2)) {
-      onNext();
-    } else {
+  const handleNext = async () => {
+    // Client-side validation first
+    if (!validateStep(2)) {
       toast.error("Please fill in all required fields");
+      return;
+    }
+
+    // Server-side validation if draft exists
+    if (draftId) {
+      try {
+        setIsValidating(true);
+        const response = await requirementDraftService.validateStep(
+          draftId,
+          2,
+          formData
+        );
+
+        if (response.data.isValid) {
+          onNext();
+        } else {
+          response.data.errors?.forEach(error => {
+            toast.error(`${error.field}: ${error.message}`);
+          });
+        }
+      } catch (error: any) {
+        console.error("Validation failed:", error);
+        toast.error(error.message || "Validation failed");
+      } finally {
+        setIsValidating(false);
+      }
+    } else {
+      onNext();
     }
   };
 
