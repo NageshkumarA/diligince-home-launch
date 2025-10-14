@@ -21,72 +21,72 @@ class QuotationService {
    * Get pending quotations
    */
   async getPending(params?: ListQueryParams): Promise<QuotationListResponse> {
-    const response = await apiService.get(
+    const response = await apiService.get<QuotationListResponse>(
       apiRoutes.industry.quotations.pending(params)
     );
-    return response.data;
+    return response;
   }
 
   /**
    * Get approved quotations
    */
   async getApproved(params?: ListQueryParams): Promise<QuotationListResponse> {
-    const response = await apiService.get(apiRoutes.industry.quotations.approved(params));
-    return response.data;
+    const response = await apiService.get<QuotationListResponse>(apiRoutes.industry.quotations.approved(params));
+    return response;
   }
 
   async getAll(params?: ListQueryParams): Promise<QuotationListResponse> {
-    const response = await apiService.get(apiRoutes.industry.quotations.all(params));
-    return response.data;
+    const response = await apiService.get<QuotationListResponse>(apiRoutes.industry.quotations.all(params));
+    return response;
   }
 
   async getById(quotationId: string): Promise<Quotation> {
-    const response = await apiService.get(apiRoutes.industry.quotations.getById(quotationId));
-    return response.data.data;
+    const response = await apiService.get<{ success: boolean; data: Quotation }>(apiRoutes.industry.quotations.getById(quotationId));
+    return response.data;
   }
 
   async approve(quotationId: string, data: ApproveQuotationRequest): Promise<Quotation> {
-    const response = await apiService.post(apiRoutes.industry.quotations.approve(quotationId), data);
-    return response.data.data;
+    const response = await apiService.post<{ success: boolean; data: Quotation }, ApproveQuotationRequest>(apiRoutes.industry.quotations.approve(quotationId), data);
+    return response.data;
   }
 
   async reject(quotationId: string, data: RejectQuotationRequest): Promise<Quotation> {
-    const response = await apiService.post(apiRoutes.industry.quotations.reject(quotationId), data);
-    return response.data.data;
+    const response = await apiService.post<{ success: boolean; data: Quotation }, RejectQuotationRequest>(apiRoutes.industry.quotations.reject(quotationId), data);
+    return response.data;
   }
 
   async requestClarification(quotationId: string, data: ClarificationRequest): Promise<void> {
-    await apiService.post(apiRoutes.industry.quotations.clarification(quotationId), data);
+    await apiService.post<{ success: boolean; message: string }, ClarificationRequest>(apiRoutes.industry.quotations.clarification(quotationId), data);
   }
 
   async compare(data: CompareQuotationsRequest): Promise<QuotationComparison> {
-    const response = await apiService.post(apiRoutes.industry.quotations.compare, data);
-    return response.data.data;
+    const response = await apiService.post<{ success: boolean; data: QuotationComparison }, CompareQuotationsRequest>(apiRoutes.industry.quotations.compare, data);
+    return response.data;
   }
 
   async analyze(data: AnalyzeQuotationsRequest): Promise<AnalyzeQuotationsResponse> {
-    const response = await apiService.post(apiRoutes.industry.quotations.analyze, data);
-    return response.data;
+    const response = await apiService.post<AnalyzeQuotationsResponse, AnalyzeQuotationsRequest>(apiRoutes.industry.quotations.analyze, data);
+    return response;
   }
 
   async bulkApprove(data: BulkApproveRequest): Promise<BulkOperationResponse> {
-    const response = await apiService.post(apiRoutes.industry.quotations.bulkApprove, data);
-    return response.data;
+    const response = await apiService.post<BulkOperationResponse, BulkApproveRequest>(apiRoutes.industry.quotations.bulkApprove, data);
+    return response;
   }
 
   async bulkReject(data: BulkRejectRequest): Promise<BulkOperationResponse> {
-    const response = await apiService.post(apiRoutes.industry.quotations.bulkReject, data);
-    return response.data;
+    const response = await apiService.post<BulkOperationResponse, BulkRejectRequest>(apiRoutes.industry.quotations.bulkReject, data);
+    return response;
   }
 
   async exportToXLSX(params?: ListQueryParams): Promise<Blob> {
-    const response = await apiService.get(apiRoutes.industry.quotations.export.xlsx(params), { responseType: 'blob' });
-    return response.data;
+    const response = await apiService.get<Blob>(apiRoutes.industry.quotations.export.xlsx(params), { responseType: 'blob' });
+    return response;
   }
 
   async exportToCSV(params?: ListQueryParams): Promise<Blob> {
-    const response = await apiService.get(apiRoutes.industry.quotations.export.csv(params), { responseType: 'blob' });
-    return response.data;
+    const response = await apiService.get<Blob>(apiRoutes.industry.quotations.export.csv(params), { responseType: 'blob' });
+    return response;
   }
 
   /**
