@@ -73,6 +73,7 @@ import RequirementsArchived from "@/pages/RequirementsArchived";
 import QuotationsPending from "@/pages/QuotationsPending";
 import QuotationsApproved from "@/pages/QuotationsApproved";
 import QuotationsComparison from "@/pages/QuotationsComparison";
+import QuotationDetails from "@/pages/QuotationDetails";
 
 // Purchase Orders sub-pages
 import PurchaseOrdersPending from "@/pages/PurchaseOrdersPending";
@@ -308,6 +309,10 @@ function App() {
                               <Route
                                 path="quotations/comparison"
                                 element={<QuotationsComparison />}
+                              />
+                              <Route
+                                path="quotations/:id"
+                                element={<QuotationDetails />}
                               />
 
                               {/* Purchase Orders Sub-routes */}

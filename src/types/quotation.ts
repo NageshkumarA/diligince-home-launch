@@ -223,3 +223,116 @@ export interface BulkRejectRequest {
   reason: 'pricing_too_high' | 'timeline_unacceptable' | 'requirements_not_met' | 'other';
   comments?: string;
 }
+
+// Activity Timeline
+export interface QuotationActivity {
+  id: string;
+  quotationId: string;
+  activityType: 'status_change' | 'clarification_requested' | 'document_uploaded' | 'comment_added' | 'approval' | 'rejection';
+  description: string;
+  performedBy: string;
+  performedByName: string;
+  performedByRole: string;
+  timestamp: string;
+  metadata?: Record<string, any>;
+}
+
+export interface ActivityResponse {
+  success: boolean;
+  data: {
+    activities: QuotationActivity[];
+  };
+}
+
+// Quotations by requirement
+export interface QuotationsByRequirementResponse {
+  success: boolean;
+  data: {
+    requirementId: string;
+    requirementTitle: string;
+    quotations: Quotation[];
+    summary: {
+      totalQuotations: number;
+      pendingReview: number;
+      approved: number;
+      rejected: number;
+      lowestQuote: number;
+      highestQuote: number;
+      averageQuote: number;
+    };
+  };
+}
+
+// Action validation
+export interface ActionValidationResponse {
+  success: boolean;
+  data: {
+    canPerformAction: boolean;
+    quotationStatus: QuotationStatus;
+    validationMessages: string[];
+    userPermissions: {
+      canApprove: boolean;
+      canReject: boolean;
+      canRequestClarification: boolean;
+    };
+  };
+}
+
+// Enhanced quotation with additional fields
+export interface QuotationDetail extends Quotation {
+  vendorContact?: {
+    email: string;
+    phone: string;
+    primaryContact: string;
+    contactRole: string;
+  };
+  requirement?: {
+    id: string;
+    title: string;
+    description: string;
+    deadline: string;
+    budget: number;
+  };
+  approvalWorkflow?: {
+    requiredApprovers: string[];
+    currentApprover: string;
+    approvalHistory: Array<{
+      level: string;
+      approvedBy: string;
+      approvedByName: string;
+      status: string;
+      timestamp: string;
+      comments?: string;
+    }>;
+  };
+  comparisonMetrics?: {
+    totalQuotationsForRequirement: number;
+    rankByPrice: number;
+    rankByDelivery: number;
+    rankByRating: number;
+    pricePercentileVsAverage: number;
+    deliveryPercentileVsBest: number;
+  };
+}
+
+// Enhanced request types
+export interface EnhancedApproveQuotationRequest extends ApproveQuotationRequest {
+  notifyVendor?: boolean;
+  createPurchaseOrder?: boolean;
+}
+
+export interface EnhancedClarificationRequest extends ClarificationRequest {
+  category?: 'pricing' | 'technical' | 'timeline' | 'terms' | 'other';
+  urgency?: 'low' | 'medium' | 'high';
+  ccEmails?: string[];
+}
+
+export interface CompareQuotationsEnhancedRequest extends CompareQuotationsRequest {
+  highlightQuotationId?: string;
+  comparisonCriteria?: {
+    priceWeight?: number;
+    deliveryWeight?: number;
+    qualityWeight?: number;
+    ratingWeight?: number;
+  };
+}

@@ -520,6 +520,16 @@ export const apiRoutes = {
             analyze: `${basePath}/industry/quotations/analyze`,
             bulkApprove: `${basePath}/industry/quotations/bulk-approve`,
             bulkReject: `${basePath}/industry/quotations/bulk-reject`,
+            
+            // NEW ROUTES
+            activity: (id: string) => `${basePath}/industry/quotations/${id}/activity`,
+            byRequirement: (requirementId: string, params?: any) => 
+                `${basePath}/industry/quotations/by-requirement/${requirementId}${params ? '?' + generateQueryParams(params) : ''}`,
+            downloadDocument: (quotationId: string, documentId: string) => 
+                `${basePath}/industry/quotations/${quotationId}/documents/${documentId}/download`,
+            validateAction: (id: string, action: string) => 
+                `${basePath}/industry/quotations/${id}/validate-action?action=${action}`,
+            
             export: {
                 xlsx: (queryParams?: any) => `${basePath}/industry/quotations/export/xlsx${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
                 csv: (queryParams?: any) => `${basePath}/industry/quotations/export/csv${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,

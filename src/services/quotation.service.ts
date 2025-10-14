@@ -14,6 +14,13 @@ import type {
   BulkApproveRequest,
   BulkRejectRequest,
   BulkOperationResponse,
+  QuotationActivity,
+  ActivityResponse,
+  QuotationsByRequirementResponse,
+  ActionValidationResponse,
+  QuotationDetail,
+  EnhancedApproveQuotationRequest,
+  EnhancedClarificationRequest,
 } from '@/types/quotation';
 
 class QuotationService {
@@ -40,8 +47,8 @@ class QuotationService {
     return response;
   }
 
-  async getById(quotationId: string): Promise<Quotation> {
-    const response = await apiService.get<{ success: boolean; data: Quotation }>(apiRoutes.industry.quotations.getById(quotationId));
+  async getById(quotationId: string): Promise<QuotationDetail> {
+    const response = await apiService.get<{ success: boolean; data: QuotationDetail }>(apiRoutes.industry.quotations.getById(quotationId));
     return response.data;
   }
 
@@ -86,6 +93,47 @@ class QuotationService {
 
   async exportToCSV(params?: ListQueryParams): Promise<Blob> {
     const response = await apiService.get<Blob>(apiRoutes.industry.quotations.export.csv(params), { responseType: 'blob' });
+    return response;
+  }
+
+  /**
+   * Get activity timeline for a quotation
+   */
+  async getActivity(quotationId: string): Promise<QuotationActivity[]> {
+    const response = await apiService.get<ActivityResponse>(
+      apiRoutes.industry.quotations.activity(quotationId)
+    );
+    return response.data.activities;
+  }
+
+  /**
+   * Get quotations by requirement ID
+   */
+  async getByRequirement(requirementId: string, params?: ListQueryParams): Promise<QuotationsByRequirementResponse> {
+    const response = await apiService.get<QuotationsByRequirementResponse>(
+      apiRoutes.industry.quotations.byRequirement(requirementId, params)
+    );
+    return response;
+  }
+
+  /**
+   * Download a specific document
+   */
+  async downloadDocument(quotationId: string, documentId: string): Promise<Blob> {
+    const response = await apiService.get<Blob>(
+      apiRoutes.industry.quotations.downloadDocument(quotationId, documentId),
+      { responseType: 'blob' }
+    );
+    return response;
+  }
+
+  /**
+   * Validate if user can perform an action
+   */
+  async validateAction(quotationId: string, action: 'approve' | 'reject' | 'request_clarification'): Promise<ActionValidationResponse> {
+    const response = await apiService.get<ActionValidationResponse>(
+      apiRoutes.industry.quotations.validateAction(quotationId, action)
+    );
     return response;
   }
 
