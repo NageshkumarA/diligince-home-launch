@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useRequirementDraft } from '@/hooks/useRequirementDraft';
+import { toast } from 'sonner';
 
 export interface RequirementFormData {
   id?: string;
@@ -166,9 +167,17 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
       }
       // Keep localStorage as backup
       localStorage.setItem('requirement-draft', JSON.stringify(formData));
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to save draft:", error);
-      // Fallback to localStorage only
+      
+      // Check if network error
+      if (!navigator.onLine) {
+        toast.error("You're offline. Changes saved locally.");
+      } else {
+        toast.error("Failed to save to server. Retrying...");
+      }
+      
+      // Always fallback to localStorage
       localStorage.setItem('requirement-draft', JSON.stringify(formData));
     }
   }, [formData, draftId, initializeDraft, forceSave]);

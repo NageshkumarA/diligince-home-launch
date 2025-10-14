@@ -1,17 +1,20 @@
 
 import React, { useRef, useState } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
+import { useRequirementDraft } from "@/hooks/useRequirementDraft";
 import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { 
   File, 
   X, 
   Upload, 
   FileText, 
   Image as ImageIcon, 
-  FileArchive 
+  FileArchive,
+  Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import { 
@@ -28,9 +31,12 @@ interface DocumentsStepProps {
 }
 
 const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => {
-  const { formData, updateFormData } = useRequirement();
+  const { formData, updateFormData, draftId } = useRequirement();
+  const { uploadDocs, deleteDoc } = useRequirementDraft();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [newDocumentType, setNewDocumentType] = useState<"specification" | "drawing" | "reference" | "compliance" | "other">("specification");
 
   const handleNext = () => {
@@ -65,36 +71,57 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
     }
   };
 
-  const handleFiles = (files: FileList) => {
-    const newFiles = Array.from(files).map(file => {
-      // In a real app, you would upload to server here and get URL back
-      // For now we'll create object URLs for preview
-      const url = URL.createObjectURL(file);
-      return {
-        id: Math.random().toString(36).substring(2, 9),
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        url,
-        documentType: newDocumentType,
-        version: 1,
-        uploadedAt: new Date(),
-        uploadedBy: "Current User" // Would be replaced with actual user context
-      };
-    });
+  const handleFiles = async (files: FileList) => {
+    if (!draftId) {
+      toast.error("No draft available. Please start from Step 1.");
+      return;
+    }
 
-    updateFormData({
-      documents: [...formData.documents, ...newFiles]
-    });
+    try {
+      setIsUploading(true);
+      setUploadProgress(20);
+      
+      const fileArray = Array.from(files);
+      const types = fileArray.map(() => newDocumentType);
 
-    toast.success(`${newFiles.length} document${newFiles.length === 1 ? "" : "s"} uploaded`);
+      setUploadProgress(50);
+      
+      // Upload to backend
+      const uploadedDocs = await uploadDocs(fileArray, types);
+      
+      setUploadProgress(100);
+      
+      // Update form data with server response (convert uploadedAt string to Date)
+      const docsWithDateObjects = uploadedDocs.map(doc => ({
+        ...doc,
+        uploadedAt: new Date(doc.uploadedAt)
+      }));
+      
+      updateFormData({
+        documents: [...formData.documents, ...docsWithDateObjects]
+      });
+
+      toast.success(`${uploadedDocs.length} document(s) uploaded`);
+    } catch (error: any) {
+      console.error("Upload failed:", error);
+      toast.error(error.message || "Failed to upload documents");
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
   };
 
-  const handleDeleteDocument = (id: string) => {
-    updateFormData({
-      documents: formData.documents.filter(doc => doc.id !== id)
-    });
-    toast.success("Document removed");
+  const handleDeleteDocument = async (documentId: string) => {
+    try {
+      await deleteDoc(documentId);
+      updateFormData({
+        documents: formData.documents.filter(doc => doc.id !== documentId)
+      });
+      toast.success("Document deleted");
+    } catch (error: any) {
+      console.error("Delete failed:", error);
+      toast.error(error.message || "Failed to delete document");
+    }
   };
 
   const getFileIcon = (type: string) => {
@@ -193,6 +220,17 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
           </div>
         </div>
 
+        {/* Upload Progress */}
+        {isUploading && (
+          <div className="mt-4">
+            <Progress value={uploadProgress} className="h-2" />
+            <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Uploading documents...
+            </p>
+          </div>
+        )}
+
         {formData.documents.length > 0 && (
           <div className="space-y-3">
             <h3 className="font-medium text-gray-900">Uploaded Documents</h3>
@@ -237,10 +275,11 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
         <Button 
           variant="outline" 
           onClick={onPrevious}
+          disabled={isUploading}
         >
           Previous
         </Button>
-        <Button onClick={handleNext}>
+        <Button onClick={handleNext} disabled={isUploading}>
           Next
         </Button>
       </div>

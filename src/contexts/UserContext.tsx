@@ -141,21 +141,28 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const login = useCallback(async (email: string, password: string) => {
     try {
-      const response = await api.post(apiRoutes.auth.login, { email, password });
-      const { token, user: apiUser } = response.data;
+      const response: any = await api.post(apiRoutes.auth.login, { email, password });
+      
+      // Extract from new API structure: { data: { user }, meta: { access_token, refresh_token } }
+      const { data, meta } = response;
 
-      if (token && apiUser) {
-        localStorage.setItem('authToken', token);
+      if (meta?.access_token && data?.user) {
+        // Store both tokens
+        localStorage.setItem('authToken', meta.access_token);
+        localStorage.setItem('refreshToken', meta.refresh_token);
         
         // Transform API user format to UserContext format
+        const apiUser = data.user;
         const userProfile: UserProfile = {
           id: apiUser.id,
-          name: `${apiUser.firstName} ${apiUser.lastName}`,
+          name: apiUser.profile ? `${apiUser.profile.firstName} ${apiUser.profile.lastName}` : apiUser.email,
           email: apiUser.email,
           role: mapApiRoleToUserRole(apiUser.role),
           profile: {
-            vendorCategory: apiUser.vendorCategory,
-            companyName: apiUser.companyName
+            vendorCategory: apiUser.profile?.vendorCategory,
+            companyName: apiUser.profile?.companyName,
+            firstName: apiUser.profile?.firstName,
+            lastName: apiUser.profile?.lastName,
           },
           preferences: defaultPreferences,
           createdAt: new Date().toISOString(),
@@ -163,7 +170,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         };
         
         setUser(userProfile);
-        setIsFirstTimeUser(true);
+        setIsFirstTimeUser(!apiUser.profile?.isProfileComplete);
         return { success: true };
       }
       return { success: false, error: 'Invalid credentials' };
@@ -184,6 +191,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     localStorage.removeItem('user');
     localStorage.removeItem('hasCompletedOnboarding');
     localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
   }, []);
 
   const getDashboardUrl = (): string => {
