@@ -15,7 +15,7 @@ export const SignInForm = () => {
     password: ""
   });
   
-  const { login } = useAuth();
+  const { login,user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -12,7 +12,7 @@ export const api: AxiosInstance = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = "getAccessToken from localstorage / redux";
+    const token = localStorage.getItem('authToken');
     if (token && config.headers) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
