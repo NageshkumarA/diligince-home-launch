@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import requirementListService from "@/services/requirement-list.service";
+import { quotationsService } from "@/services/modules/quotations";
 import { RequirementDetail } from "@/types/requirement-list";
+import { QuotationsByRequirementResponse } from "@/types/quotation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import IndustryHeader from "@/components/industry/IndustryHeader";
@@ -30,11 +32,15 @@ import {
   MessageSquare,
   Download,
 } from "lucide-react";
+import { QuotationsTab } from "@/components/requirement/QuotationsTab";
 
 const RequirementDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [requirement, setRequirement] = useState<RequirementDetail | null>(null);
+  const [quotations, setQuotations] = useState<QuotationsByRequirementResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [quotationsLoading, setQuotationsLoading] = useState(false);
 
   useEffect(() => {
     const fetchRequirement = async () => {
@@ -44,6 +50,11 @@ const RequirementDetails = () => {
         setLoading(true);
         const data = await requirementListService.getRequirementById(id);
         setRequirement(data);
+        
+        // Fetch quotations if published
+        if (data.status === 'published') {
+          fetchQuotations();
+        }
       } catch (error: any) {
         toast.error(error.message || "Failed to load requirement details");
       } finally {
@@ -53,6 +64,20 @@ const RequirementDetails = () => {
 
     fetchRequirement();
   }, [id]);
+
+  const fetchQuotations = async () => {
+    if (!id) return;
+    
+    try {
+      setQuotationsLoading(true);
+      const data = await quotationsService.getByRequirement(id);
+      setQuotations(data);
+    } catch (error: any) {
+      console.error("Failed to load quotations:", error);
+    } finally {
+      setQuotationsLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -251,7 +276,7 @@ const RequirementDetails = () => {
         {/* Back and Actions */}
         <div className="flex items-center justify-between mb-4">
           <Link
-            to="/industry-requirements"
+            to={`/dashboard/requirements/${requirement.status === 'draft' ? 'drafts' : requirement.status === 'pending_approval' ? 'pending' : requirement.status === 'approved' ? 'approved' : requirement.status === 'published' ? 'published' : 'archived'}`}
             className="text-blue-600 hover:text-blue-700 text-sm"
           >
             ← Back to Requirements
@@ -306,20 +331,40 @@ const RequirementDetails = () => {
               ${requirement.estimatedValue?.toLocaleString() || '0'}
             </div>
             <div className="text-sm text-gray-500">Estimated Budget</div>
-            <div className="text-sm text-gray-500 mt-2">
-              {requirement.applicants} vendor applicants
-            </div>
+            {requirement.status === 'published' && quotations && (
+              <div className="text-sm text-gray-500 mt-2">
+                {quotations.data.summary.totalQuotations} quotation{quotations.data.summary.totalQuotations !== 1 ? 's' : ''} received
+                {quotations.data.summary.pendingReview > 0 && (
+                  <Badge className="ml-2 bg-yellow-100 text-yellow-800">
+                    {quotations.data.summary.pendingReview} pending
+                  </Badge>
+                )}
+              </div>
+            )}
+            {requirement.status !== 'published' && (
+              <div className="text-sm text-gray-500 mt-2">
+                {requirement.applicants} vendor applicants
+              </div>
+            )}
           </div>
         </div>
 
         {/* Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="specifications">Specifications</TabsTrigger>
             <TabsTrigger value="compliance">Compliance</TabsTrigger>
             <TabsTrigger value="workflow">Workflow</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
+            <TabsTrigger value="quotations">
+              Quotations
+              {quotations && quotations.data.summary.totalQuotations > 0 && (
+                <Badge className="ml-2 bg-blue-600 text-white">
+                  {quotations.data.summary.totalQuotations}
+                </Badge>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="audit">Audit Trail</TabsTrigger>
           </TabsList>
 
@@ -531,6 +576,11 @@ const RequirementDetails = () => {
                 ))}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Quotations */}
+          <TabsContent value="quotations">
+            <QuotationsTab quotations={quotations} loading={quotationsLoading} />
           </TabsContent>
 
           {/* Audit Trail */}

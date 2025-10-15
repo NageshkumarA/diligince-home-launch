@@ -68,6 +68,7 @@ import RequirementsPending from "@/pages/RequirementsPending";
 import RequirementsApproved from "@/pages/RequirementsApproved";
 import RequirementsPublished from "@/pages/RequirementsPublished";
 import RequirementsArchived from "@/pages/RequirementsArchived";
+import RequirementDetails from "@/pages/RequirementDetails";
 
 // Quotations sub-pages
 import QuotationsPending from "@/pages/QuotationsPending";
@@ -292,9 +293,14 @@ function App() {
                                 path="requirements/published"
                                 element={<RequirementsPublished />}
                               />
-                              <Route
+                            <Route
                                 path="requirements/archived"
                                 element={<RequirementsArchived />}
+                              />
+                              {/* Requirement Details */}
+                              <Route
+                                path="requirements/:id"
+                                element={<RequirementDetails />}
                               />
 
                               {/* Quotations Sub-routes */}
