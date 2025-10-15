@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
-import industryDashboardService from '@/services/industry-dashboard.service';
+import industryDashboardService from '@/services/modules/dashboard/dashboard.service';
 import {
   DashboardStats,
   ProcurementAnalytics,

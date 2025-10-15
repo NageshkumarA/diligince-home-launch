@@ -1,0 +1,38 @@
+import { API_BASE_PATH } from '../../core/api.config';
+
+const BASE_PATH = `${API_BASE_PATH}/auth`;
+
+export const authRoutes = {
+  register: `${BASE_PATH}/register`,
+  login: `${BASE_PATH}/login`,
+  refreshToken: `${BASE_PATH}/refresh-token`,
+  forgotPassword: `${BASE_PATH}/forgot-password`,
+  resetPassword: `${BASE_PATH}/reset-password`,
+  verifyEmail: `${BASE_PATH}/verify-email`,
+  resendVerification: `${BASE_PATH}/resend-verification`,
+  mfaVerify: `${BASE_PATH}/mfa/verify`,
+  getRoles: `${BASE_PATH}/roles`,
+  googleLogin: `${BASE_PATH}/google`,
+  linkedinLogin: `${BASE_PATH}/linkedin`,
+  microsoftLogin: `${BASE_PATH}/microsoft`,
+  socialCallback: `${BASE_PATH}/social/callback`,
+  logout: `${BASE_PATH}/logout`,
+  changePassword: `${BASE_PATH}/change-password`,
+  me: `${BASE_PATH}/me`,
+  updateProfile: `${BASE_PATH}/profile`,
+  enableMfa: `${BASE_PATH}/mfa/enable`,
+  disableMfa: `${BASE_PATH}/mfa/disable`,
+  generateBackupCodes: `${BASE_PATH}/mfa/backup-codes`,
+  updateRole: `${BASE_PATH}/role`,
+  requestRole: `${BASE_PATH}/role-request`,
+  getPermissions: `${BASE_PATH}/permissions`,
+  getCompanyMembers: `${BASE_PATH}/company/members`,
+  addCompanyMember: `${BASE_PATH}/company/members`,
+  removeCompanyMember: (memberId: string) => `${BASE_PATH}/company/members/${memberId}`,
+  updateMemberRole: (memberId: string) => `${BASE_PATH}/company/members/${memberId}/role`,
+  getPendingApprovals: `${BASE_PATH}/approvals/pending`,
+  approveUser: (userId: string) => `${BASE_PATH}/approvals/${userId}/approve`,
+  rejectUser: (userId: string) => `${BASE_PATH}/approvals/${userId}/reject`,
+  getApprovalStatus: `${BASE_PATH}/approval-status`,
+  uploadApprovalDocument: `${BASE_PATH}/documents/upload`,
+};
