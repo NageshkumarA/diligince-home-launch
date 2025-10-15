@@ -260,6 +260,40 @@ export const apiRoutes = {
             // Archive requirement
             archive: (requirementId: string) => `${basePath}/industry/requirements/${requirementId}/archive`,
             
+            // Requirements List Endpoints
+            drafts: {
+                list: (params?: any) => `${basePath}/industry/requirements/drafts${params ? '?' + generateQueryParams(params) : ''}`,
+                bulkDelete: `${basePath}/industry/requirements/drafts/bulk-delete`,
+                export: (format: 'xlsx' | 'csv', params?: any) => 
+                    `${basePath}/industry/requirements/drafts/export/${format}${params ? '?' + generateQueryParams(params) : ''}`,
+            },
+            
+            pending: {
+                list: (params?: any) => `${basePath}/industry/requirements/pending${params ? '?' + generateQueryParams(params) : ''}`,
+                export: (format: 'xlsx' | 'csv', params?: any) => 
+                    `${basePath}/industry/requirements/pending/export/${format}${params ? '?' + generateQueryParams(params) : ''}`,
+            },
+            
+            approved: {
+                list: (params?: any) => `${basePath}/industry/requirements/approved${params ? '?' + generateQueryParams(params) : ''}`,
+                bulkPublish: `${basePath}/industry/requirements/approved/bulk-publish`,
+                export: (format: 'xlsx' | 'csv', params?: any) => 
+                    `${basePath}/industry/requirements/approved/export/${format}${params ? '?' + generateQueryParams(params) : ''}`,
+            },
+            
+            published: {
+                list: (params?: any) => `${basePath}/industry/requirements/published${params ? '?' + generateQueryParams(params) : ''}`,
+                export: (format: 'xlsx' | 'csv', params?: any) => 
+                    `${basePath}/industry/requirements/published/export/${format}${params ? '?' + generateQueryParams(params) : ''}`,
+            },
+            
+            archived: {
+                list: (params?: any) => `${basePath}/industry/requirements/archived${params ? '?' + generateQueryParams(params) : ''}`,
+                bulkArchive: `${basePath}/industry/requirements/archived/bulk-archive`,
+                export: (format: 'xlsx' | 'csv', params?: any) => 
+                    `${basePath}/industry/requirements/archived/export/${format}${params ? '?' + generateQueryParams(params) : ''}`,
+            },
+
             /**
              * Create Requirement Workflow - Draft Management
              * 
@@ -471,6 +505,37 @@ export const apiRoutes = {
         },
 
         // Messages
+        // ==========================================
+        // QUOTATIONS MODULE
+        // ==========================================
+        quotations: {
+            pending: (queryParams?: any) => `${basePath}/industry/quotations/pending${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
+            approved: (queryParams?: any) => `${basePath}/industry/quotations/approved${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
+            all: (queryParams?: any) => `${basePath}/industry/quotations/all${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
+            getById: (id: string) => `${basePath}/industry/quotations/${id}`,
+            approve: (id: string) => `${basePath}/industry/quotations/${id}/approve`,
+            reject: (id: string) => `${basePath}/industry/quotations/${id}/reject`,
+            clarification: (id: string) => `${basePath}/industry/quotations/${id}/request-clarification`,
+            compare: `${basePath}/industry/quotations/compare`,
+            analyze: `${basePath}/industry/quotations/analyze`,
+            bulkApprove: `${basePath}/industry/quotations/bulk-approve`,
+            bulkReject: `${basePath}/industry/quotations/bulk-reject`,
+            
+            // NEW ROUTES
+            activity: (id: string) => `${basePath}/industry/quotations/${id}/activity`,
+            byRequirement: (requirementId: string, params?: any) => 
+                `${basePath}/industry/quotations/by-requirement/${requirementId}${params ? '?' + generateQueryParams(params) : ''}`,
+            downloadDocument: (quotationId: string, documentId: string) => 
+                `${basePath}/industry/quotations/${quotationId}/documents/${documentId}/download`,
+            validateAction: (id: string, action: string) => 
+                `${basePath}/industry/quotations/${id}/validate-action?action=${action}`,
+            
+            export: {
+                xlsx: (queryParams?: any) => `${basePath}/industry/quotations/export/xlsx${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
+                csv: (queryParams?: any) => `${basePath}/industry/quotations/export/csv${queryParams ? '?' + generateQueryParams(queryParams) : ''}`,
+            },
+        },
+
         messages: {
             // Get all conversations
             getConversations: (queryParams?: { page?: number; limit?: number }) =>

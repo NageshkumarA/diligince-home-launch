@@ -1,47 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CustomTable from "@/components/CustomTable";
 import { ColumnConfig, FilterConfig } from "@/types/table";
-
-// Define the row type for pending requirements
-type RequirementRow = {
-  id: string;
-  title: string;
-  category: string;
-  priority: string;
-  estimatedValue: string;
-  submittedDate: string;
-  submittedBy: string;
-  approver: string;
-  status: string;
-};
+import requirementListService from "@/services/requirement-list.service";
+import { RequirementListItem } from "@/types/requirement-list";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const RequirementsPending = () => {
-  const [selectedRows, setSelectedRows] = useState<RequirementRow[]>([]);
+  const [data, setData] = useState<RequirementListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedRows, setSelectedRows] = useState<RequirementListItem[]>([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalItems: 0,
+    totalPages: 0,
+  });
+  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [sortBy, setSortBy] = useState<string>("submittedDate");
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const mockData: RequirementRow[] = [
-    {
-      id: "REQ-003",
-      title: "Cloud Infrastructure Setup",
-      category: "IT Infrastructure",
-      priority: "High",
-      estimatedValue: "$75,000",
-      submittedDate: "2024-01-22",
-      submittedBy: "John Smith",
-      approver: "Sarah Johnson",
-      status: "Pending Approval",
-    },
-    {
-      id: "REQ-004",
-      title: "Office Renovation Project",
-      category: "Construction",
-      priority: "Medium",
-      estimatedValue: "$120,000",
-      submittedDate: "2024-01-20",
-      submittedBy: "Mike Davis",
-      approver: "Robert Wilson",
-      status: "Under Review",
-    },
-  ];
+  const fetchPending = async () => {
+    try {
+      setLoading(true);
+      const response = await requirementListService.getPending({
+        page: pagination.currentPage,
+        limit: pagination.pageSize,
+        sortBy,
+        order: sortOrder,
+        search: searchTerm,
+        filters,
+      });
+      
+      setData(response.data.requirements);
+      setPagination(response.data.pagination);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to load pending requirements");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPending();
+  }, [pagination.currentPage, pagination.pageSize, sortBy, sortOrder, searchTerm, filters]);
 
   const columns: ColumnConfig[] = [
     {
@@ -106,25 +109,57 @@ const RequirementsPending = () => {
     },
   ];
 
-  const handleFilter = (filters: FilterConfig) => {
-    console.log("Applied filters:", filters);
+  const handleFilter = (newFilters: FilterConfig) => {
+    setFilters(newFilters);
+    setPagination(prev => ({ ...prev, currentPage: 1 }));
   };
 
-  const handleSearch = (searchTerm: string, selectedColumns: string[]) => {
-    console.log("Search:", searchTerm, selectedColumns);
+  const handleSearch = (term: string, selectedColumns: string[]) => {
+    setSearchTerm(term);
+    setPagination(prev => ({ ...prev, currentPage: 1 }));
   };
 
-  const handleExportXLSX = () => {
-    console.log("Export XLSX");
+  const handleExportXLSX = async () => {
+    try {
+      const blob = await requirementListService.exportToXLSX('pending', { filters, sortBy, order: sortOrder, search: searchTerm });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pending-${new Date().toISOString()}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      toast.success("Pending requirements exported to XLSX");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to export");
+    }
   };
 
-  const handleExportCSV = () => {
-    console.log("Export CSV");
+  const handleExportCSV = async () => {
+    try {
+      const blob = await requirementListService.exportToCSV('pending', { filters, sortBy, order: sortOrder, search: searchTerm });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pending-${new Date().toISOString()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      toast.success("Pending requirements exported to CSV");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to export");
+    }
   };
 
-  const handleSelectionChange = (selected: RequirementRow[]) => {
-    setSelectedRows(selected);
-  };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-background min-h-screen">
@@ -139,7 +174,7 @@ const RequirementsPending = () => {
 
       <CustomTable
         columns={columns}
-        data={mockData}
+        data={data}
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{
@@ -147,12 +182,13 @@ const RequirementsPending = () => {
           csv: handleExportCSV,
         }}
         selectable={true}
-        onSelectionChange={handleSelectionChange}
+        onSelectionChange={setSelectedRows}
         globalSearchPlaceholder="Search pending requirements..."
         pagination={{
           enabled: true,
-          pageSize: 10,
-          currentPage: 1,
+          pageSize: pagination.pageSize,
+          currentPage: pagination.currentPage,
+          onPageChange: (page) => setPagination(prev => ({ ...prev, currentPage: page })),
         }}
       />
     </div>
