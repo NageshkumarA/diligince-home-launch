@@ -80,6 +80,7 @@ import QuotationDetails from "@/pages/QuotationDetails";
 import PurchaseOrdersPending from "@/pages/PurchaseOrdersPending";
 import PurchaseOrdersInProgress from "@/pages/PurchaseOrdersInProgress";
 import PurchaseOrdersCompleted from "@/pages/PurchaseOrdersCompleted";
+import PurchaseOrderDetails from "@/pages/PurchaseOrderDetails";
 
 // Workflow sub-pages
 import WorkflowsActive from "@/pages/WorkflowsActive";
@@ -333,6 +334,10 @@ function App() {
                               <Route
                                 path="purchase-orders/completed"
                                 element={<PurchaseOrdersCompleted />}
+                              />
+                              <Route
+                                path="purchase-orders/:id"
+                                element={<PurchaseOrderDetails />}
                               />
 
                               {/* Workflow Sub-routes */}
