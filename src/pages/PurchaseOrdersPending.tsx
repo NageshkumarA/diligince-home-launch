@@ -1,60 +1,74 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import CustomTable from "@/components/CustomTable";
-import { ColumnConfig, FilterConfig } from "@/types/table";
-
-interface PurchaseOrderRow {
-  id: string;
-  requirementId: string;
-  vendorName: string;
-  orderValue: string;
-  createdDate: string;
-  expectedDelivery: string;
-  approver: string;
-  status: string;
-}
+import { ColumnConfig } from "@/types/table";
+import { purchaseOrdersService } from "@/services/modules/purchase-orders";
+import { POStatusBadge } from "@/components/purchase-order/POStatusBadge";
+import { POQuickActions } from "@/components/purchase-order/POQuickActions";
+import { POFilters } from "@/components/purchase-order/POFilters";
+import { format } from "date-fns";
+import { Card } from "@/components/ui/card";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
 
 const PurchaseOrdersPending = () => {
-  const [selectedRows, setSelectedRows] = useState<PurchaseOrderRow[]>([]);
+  const navigate = useNavigate();
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
-  const mockData: PurchaseOrderRow[] = [
-    {
-      id: "PO-001",
-      requirementId: "REQ-005",
-      vendorName: "DigitalPro Agency",
-      orderValue: "$78,000",
-      createdDate: "2024-01-28",
-      expectedDelivery: "2024-03-15",
-      approver: "Sarah Johnson",
-      status: "Awaiting Approval",
-    },
-    {
-      id: "PO-002",
-      requirementId: "REQ-006",
-      vendorName: "SystemWorks Ltd.",
-      orderValue: "$90,000",
-      createdDate: "2024-01-27",
-      expectedDelivery: "2024-04-20",
-      approver: "Robert Wilson",
-      status: "Under Review",
-    },
-  ];
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["purchase-orders-pending", page, searchTerm],
+    queryFn: () =>
+      purchaseOrdersService.getPending({
+        page,
+        limit: pageSize,
+      }),
+  });
+
+  const { execute: executeApprove } = useAsyncOperation({
+    showSuccessToast: true,
+    successMessage: "Purchase order approved successfully",
+    onSuccess: () => refetch(),
+  });
+
+  const { execute: executeReject } = useAsyncOperation({
+    showSuccessToast: true,
+    successMessage: "Purchase order rejected",
+    onSuccess: () => refetch(),
+  });
+
+  const handleApprove = async (orderId: string) => {
+    await executeApprove(() => purchaseOrdersService.approve(orderId, "Approved"));
+  };
+
+  const handleReject = async (orderId: string) => {
+    await executeReject(() => purchaseOrdersService.reject(orderId, "Rejected"));
+  };
+
+  const handleExport = async (orderId: string) => {
+    await purchaseOrdersService.exportToPDF(orderId);
+  };
+
+  const handleRowClick = (row: any) => {
+    navigate(`/dashboard/purchase-orders/${row.id}`);
+  };
 
   const columns: ColumnConfig[] = [
     {
-      name: "id",
+      name: "orderNumber",
       label: "PO Number",
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log("View PO:", row.id),
+      action: handleRowClick,
       width: "120px",
     },
     {
-      name: "requirementId",
-      label: "Requirement",
+      name: "projectTitle",
+      label: "Project",
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log("View requirement:", row.requirementId),
-      width: "120px",
     },
     {
       name: "vendorName",
@@ -63,67 +77,71 @@ const PurchaseOrdersPending = () => {
       isSearchable: true,
     },
     {
-      name: "orderValue",
-      label: "Order Value",
+      name: "totalValue",
+      label: "Total Value",
       isSortable: true,
       align: "right",
+      render: (row) => `${row.currency} ${row.totalValue.toLocaleString()}`,
     },
     {
-      name: "createdDate",
+      name: "createdAt",
       label: "Created Date",
       isSortable: true,
+      render: (row) => format(new Date(row.createdAt), "PP"),
     },
     {
-      name: "expectedDelivery",
-      label: "Expected Delivery",
+      name: "startDate",
+      label: "Start Date",
       isSortable: true,
-    },
-    {
-      name: "approver",
-      label: "Approver",
-      isSortable: true,
-      isSearchable: true,
+      render: (row) => format(new Date(row.startDate), "PP"),
     },
     {
       name: "status",
       label: "Status",
       isSortable: true,
-      isFilterable: true,
-      filterOptions: [
-        {
-          key: "Awaiting Approval",
-          value: "Awaiting Approval",
-          color: "#fef3c7",
-        },
-        { key: "Under Review", value: "Under Review", color: "#ddd6fe" },
-        {
-          key: "Pending Signature",
-          value: "Pending Signature",
-          color: "#fed7aa",
-        },
-      ],
+      render: (row) => <POStatusBadge status={row.status} />,
+    },
+    {
+      name: "actions",
+      label: "Actions",
+      align: "right",
+      render: (row) => (
+        <POQuickActions
+          orderId={row.id}
+          status={row.status}
+          onApprove={() => handleApprove(row.id)}
+          onReject={() => handleReject(row.id)}
+          onExport={() => handleExport(row.id)}
+        />
+      ),
     },
   ];
 
-  const handleFilter = (filters: FilterConfig) => {
-    console.log("Applied filters:", filters);
-  };
+  if (isLoading) {
+    return (
+      <div className="p-6 bg-background min-h-screen">
+        <Card className="p-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-muted rounded w-1/4"></div>
+            <div className="h-64 bg-muted rounded"></div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
-  const handleSearch = (searchTerm: string, selectedColumns: string[]) => {
-    console.log("Search:", searchTerm, selectedColumns);
-  };
+  if (error) {
+    return (
+      <div className="p-6 bg-background min-h-screen">
+        <Card className="p-8 text-center">
+          <p className="text-destructive">Failed to load purchase orders</p>
+        </Card>
+      </div>
+    );
+  }
 
-  const handleExportXLSX = () => {
-    console.log("Export XLSX");
-  };
-
-  const handleExportCSV = () => {
-    console.log("Export CSV");
-  };
-
-  const handleSelectionChange = (selected: PurchaseOrderRow[]) => {
-    setSelectedRows(selected);
-  };
+  const purchaseOrders = data?.data || [];
+  const totalPages = data?.pagination?.totalPages || 1;
 
   return (
     <div className="p-6 bg-background min-h-screen">
@@ -136,22 +154,27 @@ const PurchaseOrdersPending = () => {
         </p>
       </div>
 
+      <POFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        statusFilter="pending_approval"
+        onStatusChange={() => {}}
+        onClearFilters={() => setSearchTerm("")}
+        showStatusFilter={false}
+      />
+
       <CustomTable
         columns={columns}
-        data={mockData}
-        filterCallback={handleFilter}
-        searchCallback={handleSearch}
-        onExport={{
-          xlsx: handleExportXLSX,
-          csv: handleExportCSV,
-        }}
+        data={purchaseOrders}
+        onRowClick={handleRowClick}
         selectable={true}
-        onSelectionChange={handleSelectionChange}
+        onSelectionChange={setSelectedRows}
         globalSearchPlaceholder="Search pending purchase orders..."
         pagination={{
           enabled: true,
-          pageSize: 10,
-          currentPage: 1,
+          pageSize,
+          currentPage: page,
+          onPageChange: setPage,
         }}
       />
     </div>

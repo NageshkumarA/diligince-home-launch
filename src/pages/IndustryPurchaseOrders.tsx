@@ -1,194 +1,239 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import CustomTable, { ColumnConfig } from '@/components/CustomTable';
+import { purchaseOrdersService, POStatus } from '@/services/modules/purchase-orders';
+import { POStatusBadge } from '@/components/purchase-order/POStatusBadge';
+import { POQuickActions } from '@/components/purchase-order/POQuickActions';
+import { POFilters } from '@/components/purchase-order/POFilters';
+import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import CustomTable, { ColumnConfig, FilterConfig } from '@/components/CustomTable';
+import { Package, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { useAsyncOperation } from '@/hooks/useAsyncOperation';
 
 const IndustryPurchaseOrders = () => {
+  const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<POStatus | 'all'>('all');
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
-  const mockData = [
-    {
-      id: 'PO001',
-      vendor: 'Industrial Supply Co.',
-      orderDate: '2024-01-15',
-      deliveryDate: '2024-02-15',
-      amount: '$25,450',
-      status: 'Pending',
-      items: '25 items',
-      department: 'Manufacturing',
-      approvedBy: 'John Manager',
-      priority: 'High'
-    },
-    {
-      id: 'PO002',
-      vendor: 'Equipment Solutions Ltd.',
-      orderDate: '2024-01-14',
-      deliveryDate: '2024-02-10',
-      amount: '$18,900',
-      status: 'Approved',
-      items: '12 items',
-      department: 'Maintenance',
-      approvedBy: 'Sarah Director',
-      priority: 'Medium'
-    },
-    {
-      id: 'PO003',
-      vendor: 'Safety First Corp.',
-      orderDate: '2024-01-12',
-      deliveryDate: '2024-01-25',
-      amount: '$8,750',
-      status: 'Delivered',
-      items: '45 items',
-      department: 'Safety',
-      approvedBy: 'Mike Supervisor',
-      priority: 'Low'
-    },
-    {
-      id: 'PO004',
-      vendor: 'Tech Components Inc.',
-      orderDate: '2024-01-10',
-      deliveryDate: '2024-02-20',
-      amount: '$42,300',
-      status: 'In Transit',
-      items: '8 items',
-      department: 'IT',
-      approvedBy: 'Lisa Head',
-      priority: 'High'
-    }
-  ];
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['purchase-orders-all', page, searchTerm, statusFilter],
+    queryFn: () =>
+      purchaseOrdersService.getAll({
+        page,
+        limit: pageSize,
+        status: statusFilter !== 'all' ? statusFilter : undefined,
+      }),
+  });
+
+  const { execute: executeApprove } = useAsyncOperation({
+    showSuccessToast: true,
+    successMessage: 'Purchase order approved successfully',
+    onSuccess: () => refetch(),
+  });
+
+  const { execute: executeReject } = useAsyncOperation({
+    showSuccessToast: true,
+    successMessage: 'Purchase order rejected',
+    onSuccess: () => refetch(),
+  });
+
+  const handleApprove = async (orderId: string) => {
+    await executeApprove(() => purchaseOrdersService.approve(orderId, 'Approved'));
+  };
+
+  const handleReject = async (orderId: string) => {
+    await executeReject(() => purchaseOrdersService.reject(orderId, 'Rejected'));
+  };
+
+  const handleExport = async (orderId: string) => {
+    await purchaseOrdersService.exportToPDF(orderId);
+  };
+
+  const handleRowClick = (row: any) => {
+    navigate(`/dashboard/purchase-orders/${row.id}`);
+  };
+
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('all');
+  };
 
   const columns: ColumnConfig[] = [
     {
-      name: 'id',
+      name: 'orderNumber',
       label: 'PO Number',
       isSortable: true,
       isSearchable: true,
-      action: (row) => {
-        alert(`View PO details for ${row.id}`);
-      },
+      action: handleRowClick,
       width: '32',
     },
     {
-      name: 'vendor',
+      name: 'projectTitle',
+      label: 'Project',
+      isSortable: true,
+      isSearchable: true,
+    },
+    {
+      name: 'vendorName',
       label: 'Vendor',
       isSortable: true,
       isSearchable: true,
     },
     {
-      name: 'orderDate',
-      label: 'Order Date',
-      isSortable: true,
-    },
-    {
-      name: 'deliveryDate',
-      label: 'Delivery Date',
-      isSortable: true,
-    },
-    {
-      name: 'amount',
-      label: 'Amount',
+      name: 'totalValue',
+      label: 'Total Value',
       isSortable: true,
       align: 'right',
+      render: (row) => `${row.currency} ${row.totalValue.toLocaleString()}`,
+    },
+    {
+      name: 'startDate',
+      label: 'Start Date',
+      isSortable: true,
+      render: (row) => format(new Date(row.startDate), 'PP'),
+    },
+    {
+      name: 'endDate',
+      label: 'End Date',
+      isSortable: true,
+      render: (row) => format(new Date(row.endDate), 'PP'),
     },
     {
       name: 'status',
       label: 'Status',
       isSortable: true,
-      isFilterable: true,
-      filterOptions: [
-        { key: 'Pending', value: 'Pending', color: '#fef3c7' },
-        { key: 'Approved', value: 'Approved', color: '#ddd6fe' },
-        { key: 'Delivered', value: 'Delivered', color: '#dcfce7' },
-        { key: 'In Transit', value: 'In Transit', color: '#fed7aa' }
-      ],
+      render: (row) => <POStatusBadge status={row.status} />,
     },
     {
-      name: 'items',
-      label: 'Items',
-      isSortable: true,
-      align: 'center',
+      name: 'actions',
+      label: 'Actions',
+      align: 'right',
+      render: (row) => (
+        <POQuickActions
+          orderId={row.id}
+          status={row.status}
+          onApprove={() => handleApprove(row.id)}
+          onReject={() => handleReject(row.id)}
+          onExport={() => handleExport(row.id)}
+        />
+      ),
     },
-    {
-      name: 'department',
-      label: 'Department',
-      isSortable: true,
-      isSearchable: true,
-      isFilterable: true,
-      filterOptions: [
-        { key: 'Manufacturing', value: 'Manufacturing' },
-        { key: 'Maintenance', value: 'Maintenance' },
-        { key: 'Safety', value: 'Safety' },
-        { key: 'IT', value: 'IT' }
-      ],
-    },
-    {
-      name: 'priority',
-      label: 'Priority',
-      isSortable: true,
-      isFilterable: true,
-      filterOptions: [
-        { key: 'High', value: 'High', color: '#fecaca' },
-        { key: 'Medium', value: 'Medium', color: '#fef3c7' },
-        { key: 'Low', value: 'Low', color: '#dcfce7' }
-      ],
-    }
   ];
 
-  const handleFilterCallback = (filters: FilterConfig) => {
-    console.log('Applied filters:', filters);
-  };
+  if (isLoading) {
+    return (
+      <div className="p-6 space-y-6">
+        <Card className="p-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-muted rounded w-1/4"></div>
+            <div className="h-64 bg-muted rounded"></div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
-  const handleSearchCallback = (searchTerm: string, selectedColumns: string[]) => {
-    console.log('Search term:', searchTerm, 'Selected columns:', selectedColumns);
-  };
+  if (error) {
+    return (
+      <div className="p-6 space-y-6">
+        <Card className="p-8 text-center">
+          <p className="text-destructive">Failed to load purchase orders</p>
+        </Card>
+      </div>
+    );
+  }
 
-  const handleExportXLSX = () => {
-    console.log('Exporting POs to XLSX...');
-  };
+  const purchaseOrders = data?.data || [];
+  const totalPages = data?.pagination?.totalPages || 1;
 
-  const handleExportCSV = () => {
-    console.log('Exporting POs to CSV...');
-  };
-
-  const handleAdd = () => {
-    console.log('Creating new purchase order...');
-  };
-
-  const handleRowClick = (row: any) => {
-    console.log('Row clicked:', row);
-  };
-
-  const handleSelectionChange = (selected: any[]) => {
-    setSelectedRows(selected);
-    console.log('Selection changed:', selected);
+  // Calculate summary stats
+  const statusCounts = {
+    pending: purchaseOrders.filter((po) => po.status === 'pending_approval').length,
+    inProgress: purchaseOrders.filter((po) => po.status === 'in_progress').length,
+    completed: purchaseOrders.filter((po) => po.status === 'completed').length,
+    cancelled: purchaseOrders.filter((po) => po.status === 'cancelled').length,
   };
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Purchase Orders</h1>
-          <p className="text-muted-foreground">Manage and track all purchase orders</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Purchase Orders
+          </h1>
+          <p className="text-muted-foreground">
+            Manage and track all purchase orders
+          </p>
         </div>
       </div>
 
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Pending</CardTitle>
+            <Clock className="h-4 w-4 text-yellow-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{statusCounts.pending}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+            <Package className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{statusCounts.inProgress}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Completed</CardTitle>
+            <CheckCircle className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{statusCounts.completed}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Cancelled</CardTitle>
+            <XCircle className="h-4 w-4 text-red-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{statusCounts.cancelled}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <POFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        statusFilter={statusFilter}
+        onStatusChange={(value) => setStatusFilter(value as POStatus | 'all')}
+        onClearFilters={handleClearFilters}
+      />
+
       <CustomTable
         columns={columns}
-        data={mockData}
-        filterCallback={handleFilterCallback}
-        searchCallback={handleSearchCallback}
+        data={purchaseOrders}
         onRowClick={handleRowClick}
-        onExport={{
-          xlsx: handleExportXLSX,
-          csv: handleExportCSV,
-        }}
-        onAdd={handleAdd}
         selectable={true}
-        onSelectionChange={handleSelectionChange}
+        onSelectionChange={setSelectedRows}
         globalSearchPlaceholder="Search purchase orders..."
         pagination={{
           enabled: true,
-          pageSize: 10,
-          currentPage: 1,
+          pageSize,
+          currentPage: page,
+          onPageChange: setPage,
         }}
       />
     </div>

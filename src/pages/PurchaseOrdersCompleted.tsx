@@ -1,160 +1,202 @@
-import React, { useState } from "react";
-import CustomTable from "@/components/CustomTable";
-import { ColumnConfig, FilterConfig } from "@/types/table";
-
-interface PurchaseOrderCompletedRow {
-  id: string;
-  requirementId: string;
-  vendorName: string;
-  orderValue: string;
-  startDate: string;
-  completedDate: string;
-  deliveryTime: string;
-  rating: string;
-  status: string;
-}
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import CustomTable from '@/components/CustomTable';
+import { ColumnConfig } from '@/types/table';
+import { purchaseOrdersService } from '@/services/modules/purchase-orders';
+import { POStatusBadge } from '@/components/purchase-order/POStatusBadge';
+import { POQuickActions } from '@/components/purchase-order/POQuickActions';
+import { POFilters } from '@/components/purchase-order/POFilters';
+import { format } from 'date-fns';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle, Package, DollarSign } from 'lucide-react';
 
 const PurchaseOrdersCompleted = () => {
-  const [selectedRows, setSelectedRows] = useState<PurchaseOrderCompletedRow[]>(
-    []
-  );
+  const navigate = useNavigate();
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
-  const mockData: PurchaseOrderCompletedRow[] = [
-    {
-      id: "PO-005",
-      requirementId: "REQ-001",
-      vendorName: "TechnovaSoft",
-      orderValue: "$50,000",
-      startDate: "2023-12-01",
-      completedDate: "2024-01-15",
-      deliveryTime: "45 days",
-      rating: "4.8/5",
-      status: "Completed",
-    },
-    {
-      id: "PO-006",
-      requirementId: "REQ-002",
-      vendorName: "MarketMax Agency",
-      orderValue: "$25,000",
-      startDate: "2023-12-10",
-      completedDate: "2024-01-20",
-      deliveryTime: "41 days",
-      rating: "4.5/5",
-      status: "Delivered",
-    },
-  ];
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['purchase-orders-completed', page, searchTerm],
+    queryFn: () =>
+      purchaseOrdersService.getCompleted({
+        page,
+        limit: pageSize,
+      }),
+  });
+
+  const handleExport = async (orderId: string) => {
+    await purchaseOrdersService.exportToPDF(orderId);
+  };
+
+  const handleRowClick = (row: any) => {
+    navigate(`/dashboard/purchase-orders/${row.id}`);
+  };
 
   const columns: ColumnConfig[] = [
     {
-      name: "id",
-      label: "PO Number",
+      name: 'orderNumber',
+      label: 'PO Number',
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log("View PO:", row.id),
-      width: "120px",
+      action: handleRowClick,
+      width: '120px',
     },
     {
-      name: "requirementId",
-      label: "Requirement",
-      isSortable: true,
-      isSearchable: true,
-      action: (row) => console.log("View requirement:", row.requirementId),
-      width: "120px",
-    },
-    {
-      name: "vendorName",
-      label: "Vendor",
+      name: 'projectTitle',
+      label: 'Project',
       isSortable: true,
       isSearchable: true,
     },
     {
-      name: "orderValue",
-      label: "Order Value",
+      name: 'vendorName',
+      label: 'Vendor',
       isSortable: true,
-      align: "right",
+      isSearchable: true,
     },
     {
-      name: "startDate",
-      label: "Start Date",
+      name: 'totalValue',
+      label: 'Total Value',
       isSortable: true,
+      align: 'right',
+      render: (row) => `${row.currency} ${row.totalValue.toLocaleString()}`,
     },
     {
-      name: "completedDate",
-      label: "Completed Date",
+      name: 'startDate',
+      label: 'Start Date',
       isSortable: true,
+      render: (row) => format(new Date(row.startDate), 'PP'),
     },
     {
-      name: "deliveryTime",
-      label: "Delivery Time",
+      name: 'completedAt',
+      label: 'Completed Date',
       isSortable: true,
-      align: "center",
+      render: (row) =>
+        row.completedAt ? format(new Date(row.completedAt), 'PP') : 'N/A',
     },
     {
-      name: "rating",
-      label: "Rating",
+      name: 'status',
+      label: 'Status',
       isSortable: true,
-      align: "center",
+      render: (row) => <POStatusBadge status={row.status} />,
     },
     {
-      name: "status",
-      label: "Status",
-      isSortable: true,
-      isFilterable: true,
-      filterOptions: [
-        { key: "Completed", value: "Completed", color: "#dcfce7" },
-        { key: "Delivered", value: "Delivered", color: "#d1fae5" },
-        { key: "Closed", value: "Closed", color: "#f3f4f6" },
-      ],
+      name: 'actions',
+      label: 'Actions',
+      align: 'right',
+      render: (row) => (
+        <POQuickActions
+          orderId={row.id}
+          status={row.status}
+          onExport={() => handleExport(row.id)}
+        />
+      ),
     },
   ];
 
-  const handleFilter = (filters: FilterConfig) => {
-    console.log("Applied filters:", filters);
-  };
+  if (isLoading) {
+    return (
+      <div className="p-6 bg-background min-h-screen">
+        <Card className="p-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-muted rounded w-1/4"></div>
+            <div className="h-64 bg-muted rounded"></div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
-  const handleSearch = (searchTerm: string, selectedColumns: string[]) => {
-    console.log("Search:", searchTerm, selectedColumns);
-  };
+  if (error) {
+    return (
+      <div className="p-6 bg-background min-h-screen">
+        <Card className="p-8 text-center">
+          <p className="text-destructive">Failed to load purchase orders</p>
+        </Card>
+      </div>
+    );
+  }
 
-  const handleExportXLSX = () => {
-    console.log("Export XLSX");
-  };
+  const purchaseOrders = data?.data || [];
 
-  const handleExportCSV = () => {
-    console.log("Export CSV");
-  };
-
-  const handleSelectionChange = (selected: PurchaseOrderCompletedRow[]) => {
-    setSelectedRows(selected);
-  };
+  // Calculate summary stats
+  const totalCompleted = purchaseOrders.length;
+  const totalValue = purchaseOrders.reduce(
+    (sum, po) => sum + po.totalValue,
+    0
+  );
 
   return (
-    <div className="p-6 bg-background min-h-screen">
+    <div className="p-6 bg-background min-h-screen space-y-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-foreground mb-2">
           Completed Purchase Orders
         </h1>
         <p className="text-muted-foreground">
-          Successfully completed purchase orders and their performance metrics
+          View all successfully completed purchase orders
         </p>
       </div>
 
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Completed
+            </CardTitle>
+            <CheckCircle className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalCompleted}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Total Value</CardTitle>
+            <DollarSign className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              ${totalValue.toLocaleString()}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">This Month</CardTitle>
+            <Package className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalCompleted}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <POFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        statusFilter="completed"
+        onStatusChange={() => {}}
+        onClearFilters={() => setSearchTerm('')}
+        showStatusFilter={false}
+      />
+
       <CustomTable
         columns={columns}
-        data={mockData}
-        filterCallback={handleFilter}
-        searchCallback={handleSearch}
-        onExport={{
-          xlsx: handleExportXLSX,
-          csv: handleExportCSV,
-        }}
+        data={purchaseOrders}
+        onRowClick={handleRowClick}
         selectable={true}
-        onSelectionChange={handleSelectionChange}
+        onSelectionChange={setSelectedRows}
         globalSearchPlaceholder="Search completed purchase orders..."
         pagination={{
           enabled: true,
-          pageSize: 10,
-          currentPage: 1,
+          pageSize,
+          currentPage: page,
+          onPageChange: setPage,
         }}
       />
     </div>
