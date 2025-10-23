@@ -313,6 +313,7 @@ export const menuConfig: MenuConfig = {
       path: "/dashboard/service-vendor",
     },
     { icon: FileText, label: "RFQs", path: "/dashboard/service-vendor-rfqs" },
+    { icon: Quote, label: "My Quotations", path: "/dashboard/vendor/quotations" },
     {
       icon: Clipboard,
       label: "Projects",

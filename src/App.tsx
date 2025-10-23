@@ -134,6 +134,9 @@ import ProjectsActive from "@/pages/ProjectsActive";
 
 // Vendor sub-pages
 import VendorRFQsBrowse from "@/pages/VendorRFQsBrowse";
+import VendorSubmitQuotation from "@/pages/VendorSubmitQuotation";
+import VendorQuotations from "@/pages/VendorQuotations";
+import VendorQuotationDetails from "@/pages/VendorQuotationDetails";
 
 function App() {
   return (
@@ -501,6 +504,18 @@ function App() {
                               <Route
                                 path="rfqs/browse"
                                 element={<VendorRFQsBrowse />}
+                              />
+                              <Route
+                                path="rfqs/:rfqId/submit-quotation"
+                                element={<VendorSubmitQuotation />}
+                              />
+                              <Route
+                                path="vendor/quotations"
+                                element={<VendorQuotations />}
+                              />
+                              <Route
+                                path="vendor/quotations/:quotationId"
+                                element={<VendorQuotationDetails />}
                               />
 
                               {/* Test & Common */}
