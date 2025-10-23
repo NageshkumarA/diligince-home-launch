@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { FileText, Plus, Package, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import CustomTable, { ColumnConfig } from '@/components/CustomTable';
 import { purchaseOrdersService, POStatus } from '@/services/modules/purchase-orders';
 import { POStatusBadge } from '@/components/purchase-order/POStatusBadge';
@@ -8,7 +10,6 @@ import { POQuickActions } from '@/components/purchase-order/POQuickActions';
 import { POFilters } from '@/components/purchase-order/POFilters';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { useAsyncOperation } from '@/hooks/useAsyncOperation';
 
 const IndustryPurchaseOrders = () => {
@@ -169,6 +170,10 @@ const IndustryPurchaseOrders = () => {
             Manage and track all purchase orders
           </p>
         </div>
+        <Button onClick={() => navigate('/dashboard/purchase-orders/create')} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Create Purchase Order
+        </Button>
       </div>
 
       {/* Summary Cards */}

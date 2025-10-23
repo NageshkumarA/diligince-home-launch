@@ -60,6 +60,7 @@ import IndustryTeam from "@/pages/IndustryTeam";
 import IndustryNotifications from "@/pages/IndustryNotifications";
 import CreateRequirement from "@/pages/CreateRequirement";
 import CreatePurchaseOrder from "@/pages/CreatePurchaseOrder";
+import CreateEditPurchaseOrder from "@/pages/CreateEditPurchaseOrder";
 import RoleManagement from "@/pages/RoleManagement";
 
 // Requirements sub-pages
@@ -271,6 +272,14 @@ function App() {
                               <Route
                                 path="create-purchase-order"
                                 element={<CreatePurchaseOrder />}
+                              />
+                              <Route
+                                path="purchase-orders/create"
+                                element={<CreateEditPurchaseOrder />}
+                              />
+                              <Route
+                                path="purchase-orders/:id/edit"
+                                element={<CreateEditPurchaseOrder />}
                               />
                               <Route
                                 path="role-management"

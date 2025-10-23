@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { CheckCircle, Plus, Package, DollarSign } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import CustomTable from '@/components/CustomTable';
 import { ColumnConfig } from '@/types/table';
 import { purchaseOrdersService } from '@/services/modules/purchase-orders';
@@ -9,7 +11,6 @@ import { POQuickActions } from '@/components/purchase-order/POQuickActions';
 import { POFilters } from '@/components/purchase-order/POFilters';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Package, DollarSign } from 'lucide-react';
 
 const PurchaseOrdersCompleted = () => {
   const navigate = useNavigate();
@@ -130,13 +131,19 @@ const PurchaseOrdersCompleted = () => {
 
   return (
     <div className="p-6 bg-background min-h-screen space-y-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          Completed Purchase Orders
-        </h1>
-        <p className="text-muted-foreground">
-          View all successfully completed purchase orders
-        </p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Completed Purchase Orders
+          </h1>
+          <p className="text-muted-foreground">
+            View all successfully completed purchase orders
+          </p>
+        </div>
+        <Button onClick={() => navigate('/dashboard/purchase-orders/create')} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Create Purchase Order
+        </Button>
       </div>
 
       {/* Summary Cards */}

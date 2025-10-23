@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { Clock, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import CustomTable from '@/components/CustomTable';
 import { ColumnConfig } from '@/types/table';
 import { purchaseOrdersService } from '@/services/modules/purchase-orders';
@@ -139,13 +141,19 @@ const PurchaseOrdersInProgress = () => {
 
   return (
     <div className="p-6 bg-background min-h-screen">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          In Progress Purchase Orders
-        </h1>
-        <p className="text-muted-foreground">
-          Track ongoing purchase orders and their completion status
-        </p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            In Progress Purchase Orders
+          </h1>
+          <p className="text-muted-foreground">
+            Track ongoing purchase orders and their completion status
+          </p>
+        </div>
+        <Button onClick={() => navigate('/dashboard/purchase-orders/create')} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Create Purchase Order
+        </Button>
       </div>
 
       <POFilters
