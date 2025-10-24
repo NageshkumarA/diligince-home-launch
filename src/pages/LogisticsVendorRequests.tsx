@@ -1,7 +1,5 @@
 import React from 'react';
 import { Truck, Package, TrendingUp, Clock } from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import { logisticsVendorHeaderConfig } from '@/utils/navigationConfigs';
 import { Card } from '@/components/ui/card';
 import { RequirementsFeed } from '@/components/shared/requirements/RequirementsFeed';
 import { useNavigate } from 'react-router-dom';
@@ -61,8 +59,9 @@ const LogisticsVendorRequests = () => {
   };
 
   return (
-    <DashboardLayout config={logisticsVendorHeaderConfig}>
-      <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50">
+      <main className="pt-32 p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6 mt-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Transport Requests</h1>
           <p className="text-muted-foreground mt-2">
@@ -98,8 +97,9 @@ const LogisticsVendorRequests = () => {
           onViewDetails={handleViewDetails}
           onSubmitQuote={handleSubmitQuote}
         />
-      </div>
-    </DashboardLayout>
+        </div>
+      </main>
+    </div>
   );
 };
 
