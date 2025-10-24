@@ -340,7 +340,7 @@ const Index: React.FC = () => {
               <span className="text-sm font-medium text-[#2F80ED]">AI-Powered Features</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-[#333333] mb-4">
-              Why Choose <span className="text-[#2F80ED]">Diligence.ai</span>?
+              Why Choose <span className="text-[#2F80ED]">Diligince.ai</span>?
             </h2>
             <p className="text-[#828282] text-lg max-w-2xl mx-auto">
               Experience the power of artificial intelligence in business connections with our comprehensive platform
