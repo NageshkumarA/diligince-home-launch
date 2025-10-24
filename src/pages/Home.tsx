@@ -487,7 +487,7 @@ const Home: React.FC = () => {
             <span className="block bg-[#F2994A] bg-clip-text text-transparent">Business with AI?</span>
           </h2>
           <p className="text-xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Join thousands of successful businesses already using Deligence.ai's intelligent platform to streamline
+            Join thousands of successful businesses already using Deligince.ai's intelligent platform to streamline
             operations, connect with qualified professionals, and accelerate growth through AI-powered insights.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">

@@ -589,7 +589,7 @@ const Index: React.FC = () => {
             <span className="block text-[#F2994A]">Business with AI?</span>
           </h2>
           <p className="text-xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Join thousands of successful businesses already using Diligence.ai's intelligent platform to streamline
+            Join thousands of successful businesses already using Diligince.ai's intelligent platform to streamline
             operations, connect with qualified professionals, and accelerate growth through AI-powered insights.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
