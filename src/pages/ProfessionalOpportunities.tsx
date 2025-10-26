@@ -1,242 +1,115 @@
 import React, { useState } from "react";
-import {
-  Search,
-  Filter,
-  BookmarkPlus,
-  Briefcase,
-  MapPin,
-  Clock,
-  DollarSign,
-  Star,
-  Calendar,
-  Building2,
-  Home,
-  MessageSquare,
-  User,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Briefcase, TrendingUp, FileText, Clock, Eye } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { JobApplicationModal } from "@/components/professional/dashboard/JobApplicationModal";
-import ProfessionalHeader from "@/components/professional/ProfessionalHeader";
-import { toast } from "sonner";
-
-// ---- Types ----
-interface Job {
-  id: number;
-  title: string;
-  company: string;
-  budget: string;
-  duration: string;
-  location: string;
-  skillsMatch: number;
-  postedDate: string;
-  deadline: string;
-  status: string;
-  description: string;
-  requirements: string[];
-  companyLogo: string;
-  urgency: "high" | "medium" | "low";
-  applicants: number;
-  saved: boolean;
-}
+import { RequirementsFeed } from "@/components/shared/requirements/RequirementsFeed";
+import { useToast } from "@/hooks/use-toast";
 
 interface ApplicationData {
   coverLetter: string;
   resume: string;
 }
 
-// ---- Mock Data ----
-const mockJobs: Job[] = [
-  {
-    id: 1,
-    title: "Control System Upgrade",
-    company: "Steel Plant Ltd.",
-    budget: "₹350,000",
-    duration: "4 weeks",
-    location: "Mumbai",
-    skillsMatch: 95,
-    postedDate: "2024-05-01",
-    deadline: "2024-05-15",
-    status: "open",
-    description:
-      "Upgrade existing control systems with latest PLC technology. This project involves modernizing legacy systems and implementing new safety protocols.",
-    requirements: [
-      "PLC Programming",
-      "Control Systems",
-      "Industrial Automation",
-      "Safety Systems",
-    ],
-    companyLogo: "SP",
-    urgency: "high",
-    applicants: 12,
-    saved: false,
-  },
-  {
-    id: 2,
-    title: "PLC Programming for New Line",
-    company: "AutoParts Ltd.",
-    budget: "₹280,000",
-    duration: "3 weeks",
-    location: "Pune",
-    skillsMatch: 88,
-    postedDate: "2024-04-28",
-    deadline: "2024-05-12",
-    status: "open",
-    description:
-      "Program PLC for new automotive parts production line with quality control integration.",
-    requirements: [
-      "PLC Programming",
-      "Manufacturing",
-      "Quality Control",
-      "HMI Design",
-    ],
-    companyLogo: "AP",
-    urgency: "medium",
-    applicants: 8,
-    saved: true,
-  },
-];
-
-// ---- Component ----
 const ProfessionalOpportunities = () => {
-  const [jobs, setJobs] = useState<Job[]>(mockJobs);
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [selectedJob, setSelectedJob] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [locationFilter, setLocationFilter] = useState("all");
-  const [budgetFilter, setBudgetFilter] = useState("all");
-  const [skillsFilter, setSkillsFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("match");
+  const { toast } = useToast();
 
-  const headerNavItems = [
-    {
-      label: "Dashboard",
-      icon: <Home size={18} />,
-      href: "/dashboard/professional",
-    },
-    {
-      label: "Opportunities",
-      icon: <Briefcase size={18} />,
-      href: "/dashboard/professional-opportunities",
-      active: true,
-    },
-    {
-      label: "Calendar",
-      icon: <Calendar size={18} />,
-      href: "/dashboard/professional-calendar",
-    },
-    {
-      label: "Messages",
-      icon: <MessageSquare size={18} />,
-      href: "/dashboard/professional-messages",
-    },
-    {
-      label: "Profile",
-      icon: <User size={18} />,
-      href: "/dashboard/professional-profile",
-    },
-  ];
-
-  const filteredJobs = jobs
-    .filter((job) => {
-      const matchesSearch =
-        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesLocation =
-        locationFilter === "all" || job.location === locationFilter;
-
-      const budget = parseInt(job.budget.replace(/[₹,]/g, ""));
-      const matchesBudget =
-        budgetFilter === "all" ||
-        (budgetFilter === "high" && budget >= 300000) ||
-        (budgetFilter === "medium" && budget >= 200000 && budget < 300000) ||
-        (budgetFilter === "low" && budget < 200000);
-
-      const matchesSkills =
-        skillsFilter === "all" ||
-        job.requirements.some((req) =>
-          req.toLowerCase().includes(skillsFilter.toLowerCase())
-        );
-
-      return matchesSearch && matchesLocation && matchesBudget && matchesSkills;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "match":
-          return b.skillsMatch - a.skillsMatch;
-        case "budget":
-          return (
-            parseInt(b.budget.replace(/[₹,]/g, "")) -
-            parseInt(a.budget.replace(/[₹,]/g, ""))
-          );
-        case "deadline":
-          return (
-            new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
-          );
-        case "posted":
-          return (
-            new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime()
-          );
-        default:
-          return 0;
-      }
+  const handleJobClick = (id: string) => {
+    toast({
+      title: "View Opportunity",
+      description: `Opening details for opportunity ${id}`,
     });
-
-  const handleJobClick = (job: Job) => {
-    setSelectedJob(job);
     setIsModalOpen(true);
   };
 
-  const handleSaveJob = (jobId: number) => {
-    setJobs((prev) =>
-      prev.map((job) =>
-        job.id === jobId ? { ...job, saved: !job.saved } : job
-      )
-    );
-    const job = jobs.find((j) => j.id === jobId);
-    toast.success(
-      job?.saved ? "Job removed from saved" : "Job saved successfully"
-    );
-  };
-
-  const handleApplicationSubmit = (
-    jobId: number,
-    applicationData: ApplicationData
-  ) => {
+  const handleApplicationSubmit = (jobId: number, applicationData: ApplicationData) => {
     console.log(`Application for job ${jobId}:`, applicationData);
-    toast.success("Application submitted successfully");
+    toast({
+      title: "Application Submitted",
+      description: "Your application has been submitted successfully!",
+    });
     setIsModalOpen(false);
     setSelectedJob(null);
   };
 
-  const getUrgencyColor = (urgency: Job["urgency"]) => {
-    switch (urgency) {
-      case "high":
-        return "text-red-600 bg-red-50";
-      case "medium":
-        return "text-orange-600 bg-orange-50";
-      case "low":
-        return "text-green-600 bg-green-50";
-      default:
-        return "text-gray-600 bg-gray-50";
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* // <ProfessionalHeader navItems={headerNavItems} /> */}
-      {/* --- Rest of your JSX remains unchanged --- */}
+      {/* <ProfessionalHeader navItems={headerNavItems} /> */}
+
+      <main className="pt-32 p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6 mt-8">
+          {/* Header */}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Professional Opportunities</h1>
+            <p className="text-gray-600 mt-1">
+              Discover projects that match your expertise
+            </p>
+          </div>
+
+          {/* AI Recommendations Banner */}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg border border-blue-100">
+            <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-primary" />
+              Diligence AI Suggests These Opportunities for You
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Based on your profile: Safety Engineering Expert, 15 years experience
+            </p>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <Briefcase className="h-6 w-6 text-blue-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-gray-900">42</p>
+                  <p className="text-sm text-gray-600">Total Available Opportunities</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <FileText className="h-6 w-6 text-green-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-green-600">5</p>
+                  <p className="text-sm text-gray-600">Your Applications</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <TrendingUp className="h-6 w-6 text-purple-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-purple-600">8</p>
+                  <p className="text-sm text-gray-600">AI Recommended for You</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <Clock className="h-6 w-6 text-orange-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-orange-600">6</p>
+                  <p className="text-sm text-gray-600">Applications Closing Soon</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Requirements Feed */}
+          <RequirementsFeed
+            userType="professional"
+            categoryFilter="professional"
+            showAIRecommendations={true}
+            maxRecommendations={5}
+            onViewDetails={handleJobClick}
+            onSubmitQuote={handleJobClick}
+          />
+        </div>
+      </main>
+
       <JobApplicationModal
         isOpen={isModalOpen}
         onClose={() => {
