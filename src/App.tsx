@@ -17,6 +17,7 @@ import { Toaster } from "@/components/ui/sonner";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Layout from "@/components/Layout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { MockAuthBanner } from "@/components/shared/MockAuthBanner";
 
 // Public pages
 import Index from "@/pages/Index";
@@ -150,6 +151,7 @@ function App() {
                   <ApprovalProvider>
                     <StakeholderProvider>
                       <VendorSpecializationProvider>
+                        <MockAuthBanner />
                         <div className="App">
                           <Routes>
                             {/* Public Routes */}

@@ -3,6 +3,45 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 // import { getAccessToken, getRefreshToken, setTokens, clearTokens } from '../utils/cookieService';
 const BASE_URL = 'http://localhost:9000';
 
+/**
+ * API Connection Status Tracker
+ * Monitors connectivity to the backend API
+ */
+export const apiConnectionStatus = {
+  isConnected: true,
+  lastChecked: null as Date | null,
+  
+  /**
+   * Check if the API is reachable
+   * Caches result for 60 seconds to avoid excessive checks
+   */
+  async check(): Promise<boolean> {
+    // Use cached result if checked within last minute
+    if (this.lastChecked && Date.now() - this.lastChecked.getTime() < 60000) {
+      return this.isConnected;
+    }
+    
+    try {
+      await axios.get(`${BASE_URL}/api/v1/health`, { timeout: 3000 });
+      this.isConnected = true;
+      this.lastChecked = new Date();
+      return true;
+    } catch {
+      this.isConnected = false;
+      this.lastChecked = new Date();
+      return false;
+    }
+  },
+  
+  /**
+   * Force recheck of API connection (bypasses cache)
+   */
+  async forceCheck(): Promise<boolean> {
+    this.lastChecked = null;
+    return this.check();
+  }
+};
+
 export const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {

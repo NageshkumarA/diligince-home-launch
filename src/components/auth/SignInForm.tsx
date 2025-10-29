@@ -42,7 +42,14 @@ export const SignInForm = () => {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
-        toast.success("Login successful! Redirecting...");
+        // Different toast message for mock vs real auth
+        if (result.isMockAuth) {
+          toast.success("Login successful (Development Mode)", {
+            description: "Using demo authentication. Real API unavailable.",
+          });
+        } else {
+          toast.success("Login successful! Redirecting...");
+        }
         
         // Redirect to dashboard after short delay for toast to show
         setTimeout(() => {
