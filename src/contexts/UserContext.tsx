@@ -147,8 +147,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       const response: any = await api.post(apiRoutes.auth.login, { email, password });
       
       // Extract from new API structure: { data: { user }, meta: { access_token, refresh_token } }
-      const { data, meta } = response;
-
+      const { data, meta } = response?.data ;
+      
       if (meta?.access_token && data?.user) {
         console.log('[Auth] API login successful');
         

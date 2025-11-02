@@ -21,6 +21,8 @@ const getTextColor = (percentage: number) => {
 };
 
 export const BudgetUtilization: React.FC<BudgetUtilizationProps> = ({ data }) => {
+  console.log(data)
+
   const categories = data?.categories ?? [];
   const totalAllocated = data?.totalAllocated ?? 0;
   const totalSpent = data?.totalSpent ?? 0;

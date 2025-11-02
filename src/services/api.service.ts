@@ -3,7 +3,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 // import { getAccessToken, getRefreshToken, setTokens, clearTokens } from '../utils/cookieService';
 const BASE_URL = 'http://localhost:5000';
 
-export const api: AxiosInstance = axios.create({
+const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json'
@@ -94,4 +94,4 @@ const remove = async <T>(url: string, config?: AxiosRequestConfig): Promise<T> =
 /**
  * @deprecated Import from '@/services/core/api.service' instead
  */
-// export { default, api } from './core/api.service';
+export { default, api } from './core/api.service';

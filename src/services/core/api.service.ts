@@ -1,7 +1,7 @@
 //API Service tsx
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 // import { getAccessToken, getRefreshToken, setTokens, clearTokens } from '../utils/cookieService';
-const BASE_URL = 'http://localhost:9000';
+const BASE_URL = 'http://localhost:5000';
 
 /**
  * API Connection Status Tracker
