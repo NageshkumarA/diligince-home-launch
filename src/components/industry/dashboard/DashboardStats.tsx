@@ -1,6 +1,7 @@
 import React from "react";
 import { GenericDashboardStats } from "@/components/shared/dashboard/GenericDashboardStats";
 import { DashboardStats as DashboardStatsType } from "@/types/industry-dashboard";
+import { extractValue } from "@/types/api-common";
 import { DollarSign, ShoppingCart, TrendingUp, PiggyBank } from "lucide-react";
 
 interface DashboardStatsProps {
@@ -8,10 +9,15 @@ interface DashboardStatsProps {
 }
 
 export const DashboardStats: React.FC<DashboardStatsProps> = ({ data }) => {
+  // Helper to safely extract numeric values from both flat and enhanced formats
+  const getValue = (field: any): number => {
+    return extractValue(field) as number ?? 0;
+  };
+
   const stats = [
     {
       title: "Total Procurement Spend",
-      value: `$${((data?.totalProcurementSpend ?? 0) / 1000000).toFixed(2)}M`,
+      value: `$${(getValue(data?.totalProcurementSpend) / 1000000).toFixed(2)}M`,
       subtitle: data?.period ?? "N/A",
       icon: DollarSign,
       color: "text-blue-600",
@@ -19,7 +25,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({ data }) => {
     },
     {
       title: "Active Purchase Orders",
-      value: (data?.activePurchaseOrders ?? 0).toString(),
+      value: getValue(data?.activePurchaseOrders).toString(),
       subtitle: "in progress",
       icon: ShoppingCart,
       color: "text-green-600",
@@ -27,7 +33,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({ data }) => {
     },
     {
       title: "Budget Utilization",
-      value: `${data?.budgetUtilization ?? 0}%`,
+      value: `${getValue(data?.budgetUtilization)}%`,
       subtitle: "of allocated budget",
       icon: TrendingUp,
       color: "text-purple-600",
@@ -35,7 +41,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({ data }) => {
     },
     {
       title: "Cost Savings",
-      value: `$${((data?.costSavings ?? 0) / 1000).toFixed(0)}K`,
+      value: `$${(getValue(data?.costSavings) / 1000).toFixed(0)}K`,
       subtitle: "through competitive bidding",
       icon: PiggyBank,
       color: "text-orange-600",

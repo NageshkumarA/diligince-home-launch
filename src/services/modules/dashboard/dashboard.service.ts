@@ -27,6 +27,35 @@ const MOCK_DASHBOARD_STATS: DashboardStats = {
   period: "Last 30 days"
 };
 
+const MOCK_DASHBOARD_STATS_ENHANCED: DashboardStatsEnhanced = {
+  totalProcurementSpend: {
+    value: 2500000,
+    formatted: "$2.5M",
+    change: 5.2,
+    trend: "up"
+  },
+  activePurchaseOrders: {
+    value: 12,
+    formatted: "12",
+    change: 2.0,
+    trend: "up"
+  },
+  budgetUtilization: {
+    value: 68,
+    formatted: "68%",
+    change: -3.1,
+    trend: "down",
+    status: "healthy"
+  },
+  costSavings: {
+    value: 45000,
+    formatted: "$45K",
+    change: 8.7,
+    trend: "up"
+  },
+  period: "Last 30 days"
+};
+
 const MOCK_PROCUREMENT_ANALYTICS: ProcurementAnalytics = {
   categories: [
     { name: "Product", amount: 850000, percentage: 34, color: "#8b5cf6" },
@@ -94,6 +123,7 @@ const MOCK_PENDING_APPROVALS: PendingApproval[] = [
 ];
 import {
   DashboardStats,
+  DashboardStatsEnhanced,
   ProcurementAnalytics,
   BudgetOverview,
   VendorPerformance,
@@ -105,17 +135,37 @@ import {
   DashboardResponse,
   PaginatedResponse
 } from '@/types/industry-dashboard';
+import { isEnhancedValue } from '@/types/api-common';
 
 class IndustryDashboardService {
   /**
    * Get Dashboard Statistics (KPIs)
    * Endpoint: GET /api/industry/dashboard/stats
+   * 
+   * Handles both flat and enhanced API response formats
    */
   async getDashboardStats(): Promise<DashboardStats> {
     try {
-      return await apiService.get<DashboardStats>(
+      const response = await apiService.get<any>(
         dashboardRoutes.stats
       );
+      
+      console.log('📊 Dashboard Stats API Response:', response);
+      
+      // Check if response has enhanced format (nested objects with value/trend)
+      if (response.totalProcurementSpend && isEnhancedValue(response.totalProcurementSpend)) {
+        console.log('✅ Detected enhanced API format with trends');
+        // Return as-is, components will extract values
+        return {
+          ...response,
+          period: response.period || 'N/A'
+        };
+      }
+      
+      // Already flat format
+      console.log('✅ Detected flat API format');
+      return response;
+      
     } catch (error) {
       console.warn('⚠️ Using mock data for dashboard stats - API not available:', error);
       return MOCK_DASHBOARD_STATS;
@@ -135,10 +185,12 @@ class IndustryDashboardService {
         endDate: dateRange.endDate
       } : undefined;
 
-      return await apiService.get<ProcurementAnalytics>(
+      const response = await apiService.get<ProcurementAnalytics>(
         dashboardRoutes.analytics,
         { params }
       );
+      console.log('📊 Analytics API Response:', response);
+      return response;
     } catch (error) {
       console.warn('⚠️ Using mock data for procurement analytics - API not available:', error);
       return MOCK_PROCUREMENT_ANALYTICS;
@@ -151,9 +203,11 @@ class IndustryDashboardService {
    */
   async getBudgetOverview(): Promise<BudgetOverview> {
     try {
-      return await apiService.get<BudgetOverview>(
+      const response = await apiService.get<BudgetOverview>(
         dashboardRoutes.budget
       );
+      console.log('📊 Budget API Response:', response);
+      return response;
     } catch (error) {
       console.warn('⚠️ Using mock data for budget overview - API not available:', error);
       return MOCK_BUDGET_OVERVIEW;
@@ -168,10 +222,12 @@ class IndustryDashboardService {
    */
   async getVendorPerformance(limit: number = 5): Promise<VendorPerformance[]> {
     try {
-      return await apiService.get<VendorPerformance[]>(
+      const response = await apiService.get<VendorPerformance[]>(
         dashboardRoutes.vendorPerformance,
         { params: { limit } }
       );
+      console.log('📊 Vendor Performance API Response:', response);
+      return response;
     } catch (error) {
       console.warn('⚠️ Using mock data for vendor performance - API not available:', error);
       return MOCK_VENDOR_PERFORMANCE.slice(0, limit);

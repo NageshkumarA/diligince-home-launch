@@ -4,13 +4,47 @@
  * Based on API Documentation: docs/api/industry/industry-dashboard-api.md
  */
 
-// Dashboard Statistics (KPIs)
+import { EnhancedValue, extractValue } from './api-common';
+
+// ===== Dashboard Statistics (KPIs) =====
+
+/**
+ * Enhanced dashboard stats from API (with trend data)
+ */
+export interface DashboardStatsEnhanced {
+  totalProcurementSpend: EnhancedValue<number>;
+  activePurchaseOrders: EnhancedValue<number>;
+  budgetUtilization: EnhancedValue<number>;
+  costSavings: EnhancedValue<number>;
+  period?: string;
+}
+
+/**
+ * Flat dashboard stats for components (backward compatible)
+ */
 export interface DashboardStats {
-  totalProcurementSpend: number;
-  activePurchaseOrders: number;
-  budgetUtilization: number;
-  costSavings: number;
+  totalProcurementSpend: number | EnhancedValue<number>;
+  activePurchaseOrders: number | EnhancedValue<number>;
+  budgetUtilization: number | EnhancedValue<number>;
+  costSavings: number | EnhancedValue<number>;
   period: string; // e.g., "Q1 2024", "This Quarter"
+}
+
+/**
+ * Normalize enhanced stats to flat structure
+ * Extracts primitive values from EnhancedValue objects
+ * 
+ * @param enhanced - Enhanced stats from API
+ * @returns Flat stats with primitive values
+ */
+export function normalizeDashboardStats(enhanced: DashboardStatsEnhanced): DashboardStats {
+  return {
+    totalProcurementSpend: extractValue(enhanced.totalProcurementSpend),
+    activePurchaseOrders: extractValue(enhanced.activePurchaseOrders),
+    budgetUtilization: extractValue(enhanced.budgetUtilization),
+    costSavings: extractValue(enhanced.costSavings),
+    period: enhanced.period || 'N/A'
+  };
 }
 
 // Procurement Analytics
