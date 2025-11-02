@@ -102,26 +102,66 @@ api.interceptors.response.use(
 
 // Generic GET method
 const get = async <T>(url: string, config?: AxiosRequestConfig): Promise<T> => {
-  const response: AxiosResponse<T> = await api.get(url, config);
-  return response.data;
+  const response: AxiosResponse = await api.get(url, config);
+  
+  // Check if response has standardized envelope structure
+  if (response.data && 
+      typeof response.data === 'object' && 
+      'success' in response.data && 
+      'data' in response.data) {
+    return response.data.data as T;
+  }
+  
+  // Return raw data for non-enveloped responses
+  return response.data as T;
 };
 
 // Generic POST method
 const post = async <T, D>(url: string, data: D, config?: AxiosRequestConfig): Promise<T> => {
-  const response: AxiosResponse<T> = await api.post(url, data, config);
-  return response.data;
+  const response: AxiosResponse = await api.post(url, data, config);
+  
+  // Check if response has standardized envelope structure
+  if (response.data && 
+      typeof response.data === 'object' && 
+      'success' in response.data && 
+      'data' in response.data) {
+    return response.data.data as T;
+  }
+  
+  // Return raw data for non-enveloped responses
+  return response.data as T;
 };
 
 // Generic PUT method
 const put = async <T, D>(url: string, data: D, config?: AxiosRequestConfig): Promise<T> => {
-  const response: AxiosResponse<T> = await api.put(url, data, config);
-  return response.data;
+  const response: AxiosResponse = await api.put(url, data, config);
+  
+  // Check if response has standardized envelope structure
+  if (response.data && 
+      typeof response.data === 'object' && 
+      'success' in response.data && 
+      'data' in response.data) {
+    return response.data.data as T;
+  }
+  
+  // Return raw data for non-enveloped responses
+  return response.data as T;
 };
 
 // Generic DELETE method
 const remove = async <T>(url: string, config?: AxiosRequestConfig): Promise<T> => {
-  const response: AxiosResponse<T> = await api.delete(url, config);
-  return response.data;
+  const response: AxiosResponse = await api.delete(url, config);
+  
+  // Check if response has standardized envelope structure
+  if (response.data && 
+      typeof response.data === 'object' && 
+      'success' in response.data && 
+      'data' in response.data) {
+    return response.data.data as T;
+  }
+  
+  // Return raw data for non-enveloped responses
+  return response.data as T;
 };
 
 export default {
