@@ -61,6 +61,13 @@ export const DemoAccountsInfo: React.FC<DemoAccountsInfoProps> = ({ onCredential
         <CardDescription>
           Click on any account credentials to auto-fill the login form
         </CardDescription>
+        
+        <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <p className="text-xs text-blue-700 dark:text-blue-300">
+            <strong>Note:</strong> These demo accounts work as automatic fallback when the real API is unavailable. 
+            The system will try the real API first, then seamlessly switch to demo mode if needed.
+          </p>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">

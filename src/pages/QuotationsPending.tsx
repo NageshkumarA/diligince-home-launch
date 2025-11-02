@@ -1,46 +1,49 @@
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import CustomTable from "@/components/CustomTable";
 import { ColumnConfig, FilterConfig } from "@/types/table";
-
-interface Quotation {
-  id: string;
-  requirementId: string;
-  requirementTitle: string;
-  vendorName: string;
-  quotedAmount: string;
-  submittedDate: string;
-  validUntil: string;
-  responseTime: string;
-  status: string;
-}
+import { quotationService } from "@/services/modules/quotations";
+import type { Quotation } from "@/types/quotation";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 const QuotationsPending = () => {
   const [selectedRows, setSelectedRows] = useState<Quotation[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const mockData: Quotation[] = [
-    {
-      id: "QUO-001",
-      requirementId: "REQ-007",
-      requirementTitle: "Mobile App Development",
-      vendorName: "TechSolutions Inc.",
-      quotedAmount: "$115,000",
-      submittedDate: "2024-01-29",
-      validUntil: "2024-02-15",
-      responseTime: "2 days",
-      status: "Pending Review",
-    },
-    {
-      id: "QUO-002",
-      requirementId: "REQ-008",
-      requirementTitle: "Supply Chain Optimization",
-      vendorName: "LogiFlow Systems",
-      quotedAmount: "$62,000",
-      submittedDate: "2024-01-28",
-      validUntil: "2024-02-20",
-      responseTime: "1 day",
-      status: "Under Evaluation",
-    },
-  ];
+  const { data: response, isLoading, error } = useQuery({
+    queryKey: ["quotations", "pending", currentPage, pageSize, filters, searchTerm],
+    queryFn: () =>
+      quotationService.getPending({
+        page: currentPage,
+        pageSize,
+        search: searchTerm,
+        ...filters,
+      }),
+  });
+
+  const quotations = response?.data.quotations || [];
+  const pagination = response?.data.pagination;
+
+  const tableData = quotations.map((q) => ({
+    id: q.quotationNumber,
+    requirementId: q.requirementId,
+    requirementTitle: q.requirementTitle,
+    vendorName: q.vendorName,
+    quotedAmount: `${q.currency} ${q.quotedAmount.toLocaleString()}`,
+    submittedDate: new Date(q.submittedDate).toLocaleDateString(),
+    validUntil: new Date(q.validUntil).toLocaleDateString(),
+    responseTime: q.responseTime,
+    deliveryTime: `${q.deliveryTimeWeeks} weeks`,
+    status: q.status,
+    vendorRating: q.vendorRating.toFixed(1),
+  }));
 
   const columns: ColumnConfig[] = [
     {
@@ -48,7 +51,10 @@ const QuotationsPending = () => {
       label: "Quote ID",
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log("View quote:", row.id),
+      action: (row) => {
+        const quotation = quotations.find((q) => q.quotationNumber === row.id);
+        if (quotation) navigate(`/dashboard/quotations/${quotation.id}`);
+      },
       width: "120px",
     },
     {
@@ -56,7 +62,7 @@ const QuotationsPending = () => {
       label: "Requirement",
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log("View requirement:", row.requirementId),
+      action: (row) => navigate(`/dashboard/requirements/${row.requirementId}`),
       width: "120px",
     },
     {
@@ -99,40 +105,59 @@ const QuotationsPending = () => {
       isSortable: true,
       isFilterable: true,
       filterOptions: [
-        { key: "Pending Review", value: "Pending Review", color: "#fef3c7" },
-        {
-          key: "Under Evaluation",
-          value: "Under Evaluation",
-          color: "#ddd6fe",
-        },
-        {
-          key: "Awaiting Clarification",
-          value: "Awaiting Clarification",
-          color: "#fed7aa",
-        },
+        { key: "pending_review", value: "Pending Review", color: "#fef3c7" },
+        { key: "under_evaluation", value: "Under Evaluation", color: "#fed7aa" },
+        { key: "awaiting_clarification", value: "Awaiting Clarification", color: "#ddd6fe" },
       ],
     },
   ];
 
-  const handleFilter = (filters: FilterConfig) => {
-    console.log("Applied filters:", filters);
+  const handleFilter = (appliedFilters: FilterConfig) => {
+    setFilters(appliedFilters);
+    setCurrentPage(1);
   };
 
-  const handleSearch = (searchTerm: string, selectedColumns: string[]) => {
-    console.log("Search:", searchTerm, selectedColumns);
+  const handleSearch = (search: string) => {
+    setSearchTerm(search);
+    setCurrentPage(1);
   };
 
-  const handleExportXLSX = () => {
-    console.log("Export XLSX");
+  const handleExportXLSX = async () => {
+    try {
+      const blob = await quotationService.exportToXLSX({ status: 'pending_review', ...filters });
+      quotationService.downloadFile(blob, `pending-quotations-${new Date().toISOString().split('T')[0]}.xlsx`);
+      toast({ title: "Export successful", description: "Pending quotations exported to XLSX" });
+    } catch (error) {
+      toast({ title: "Export failed", description: "Failed to export quotations", variant: "destructive" });
+    }
   };
 
-  const handleExportCSV = () => {
-    console.log("Export CSV");
+  const handleExportCSV = async () => {
+    try {
+      const blob = await quotationService.exportToCSV({ status: 'pending_review', ...filters });
+      quotationService.downloadFile(blob, `pending-quotations-${new Date().toISOString().split('T')[0]}.csv`);
+      toast({ title: "Export successful", description: "Pending quotations exported to CSV" });
+    } catch (error) {
+      toast({ title: "Export failed", description: "Failed to export quotations", variant: "destructive" });
+    }
   };
 
-  const handleSelectionChange = (selected: Quotation[]) => {
-    setSelectedRows(selected);
+  const handleSelectionChange = (selected: any[]) => {
+    const selectedQuotations = selected.map((row) =>
+      quotations.find((q) => q.quotationNumber === row.id)
+    ).filter(Boolean) as Quotation[];
+    setSelectedRows(selectedQuotations);
   };
+
+  if (error) {
+    return (
+      <div className="p-6 bg-background min-h-screen">
+        <div className="text-center py-12">
+          <p className="text-destructive">Failed to load pending quotations. Please try again.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-background min-h-screen">
@@ -145,24 +170,31 @@ const QuotationsPending = () => {
         </p>
       </div>
 
-      <CustomTable
-        columns={columns}
-        data={mockData}
-        filterCallback={handleFilter}
-        searchCallback={handleSearch}
-        onExport={{
-          xlsx: handleExportXLSX,
-          csv: handleExportCSV,
-        }}
-        selectable={true}
-        onSelectionChange={handleSelectionChange}
-        globalSearchPlaceholder="Search pending quotations..."
-        pagination={{
-          enabled: true,
-          pageSize: 10,
-          currentPage: 1,
-        }}
-      />
+      {isLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        <CustomTable
+          columns={columns}
+          data={tableData}
+          filterCallback={handleFilter}
+          searchCallback={handleSearch}
+          onExport={{
+            xlsx: handleExportXLSX,
+            csv: handleExportCSV,
+          }}
+          selectable={true}
+          onSelectionChange={handleSelectionChange}
+          globalSearchPlaceholder="Search pending quotations..."
+          pagination={{
+            enabled: true,
+            pageSize: pageSize,
+            currentPage: currentPage,
+            onPageChange: setCurrentPage,
+          }}
+        />
+      )}
     </div>
   );
 };

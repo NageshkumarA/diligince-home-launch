@@ -55,7 +55,7 @@ const RequirementsDrafts = () => {
       label: "Requirement ID",
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log("View requirement:", row.id),
+      action: (row) => navigate(`/dashboard/requirements/${row.id}`),
       width: "150px",
     },
     {

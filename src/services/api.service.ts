@@ -85,9 +85,13 @@ const remove = async <T>(url: string, config?: AxiosRequestConfig): Promise<T> =
   return response.data;
 };
 
-export default {
-  get,
-  post,
-  put,
-  remove
-};
+// export default {
+//   get,
+//   post,
+//   put,
+//   remove
+// };
+/**
+ * @deprecated Import from '@/services/core/api.service' instead
+ */
+// export { default, api } from './core/api.service';

@@ -1,95 +1,113 @@
-import React from 'react';
-import { ArrowRight, CheckCircle, Users, Building2, TrendingUp, Zap, Shield, Globe, Clock, Star, Target, Workflow, MessageSquare, FileText, Award, BarChart3 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import {
+  ArrowRight,
+  CheckCircle,
+  Users,
+  Building2,
+  TrendingUp,
+  Zap,
+  Shield,
+  Globe,
+  Clock,
+  Star,
+  Target,
+  Workflow,
+  MessageSquare,
+  FileText,
+  Award,
+  BarChart3,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Home: React.FC = () => {
   const services = [
     {
-      title: 'For Industries',
-      description: 'Post requirements and connect with qualified professionals and vendors to solve your business challenges',
-      image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800',
-      features: ['Post Requirements', 'Review Proposals', 'Manage Projects', 'Track Progress']
+      title: "For Industries",
+      description:
+        "Post requirements and connect with qualified professionals and vendors to solve your business challenges",
+      image: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800",
+      features: ["Post Requirements", "Review Proposals", "Manage Projects", "Track Progress"],
     },
     {
-      title: 'For Professionals',
-      description: 'Discover opportunities, showcase your expertise, and collaborate with leading industries',
-      image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800',
-      features: ['Browse Opportunities', 'Submit Proposals', 'Direct Communication', 'Build Portfolio']
+      title: "For Professionals",
+      description: "Discover opportunities, showcase your expertise, and collaborate with leading industries",
+      image: "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800",
+      features: ["Browse Opportunities", "Submit Proposals", "Direct Communication", "Build Portfolio"],
     },
     {
-      title: 'For Vendors',
-      description: 'Access business requirements, submit competitive quotations, and grow your client base',
-      image: 'https://images.pexels.com/photos/590020/pexels-photo-590020.jpg?auto=compress&cs=tinysrgb&w=800',
-      features: ['View Requirements', 'Send Quotations', 'Negotiate Terms', 'Deliver Solutions']
-    }
+      title: "For Vendors",
+      description: "Access business requirements, submit competitive quotations, and grow your client base",
+      image: "https://images.pexels.com/photos/590020/pexels-photo-590020.jpg?auto=compress&cs=tinysrgb&w=800",
+      features: ["View Requirements", "Send Quotations", "Negotiate Terms", "Deliver Solutions"],
+    },
   ];
 
   const features = [
     {
       icon: Zap,
-      title: 'Lightning Fast',
-      description: 'Connect with the right professionals in minutes, not days'
+      title: "Lightning Fast",
+      description: "Connect with the right professionals in minutes, not days",
     },
     {
       icon: Shield,
-      title: 'Secure & Trusted',
-      description: 'Enterprise-grade security with verified professionals'
+      title: "Secure & Trusted",
+      description: "Enterprise-grade security with verified professionals",
     },
     {
       icon: Globe,
-      title: 'Global Network',
-      description: 'Access talent and opportunities from around the world'
+      title: "Global Network",
+      description: "Access talent and opportunities from around the world",
     },
     {
       icon: BarChart3,
-      title: 'Smart Analytics',
-      description: 'Data-driven insights to optimize your business decisions'
-    }
+      title: "Smart Analytics",
+      description: "Data-driven insights to optimize your business decisions",
+    },
   ];
 
   const howItWorks = [
     {
-      step: '01',
-      title: 'Post Your Requirements',
-      description: 'Industries post detailed project requirements with budget and timeline',
+      step: "01",
+      title: "Post Your Requirements",
+      description: "Industries post detailed project requirements with budget and timeline",
       icon: FileText,
-      color: 'text-[#2F80ED] bg-[#2F80ED]/10'
+      color: "text-[#2F80ED] bg-[#2F80ED]/10",
     },
     {
-      step: '02',
-      title: 'Get Proposals',
-      description: 'Professionals show interest and vendors submit competitive quotations',
+      step: "02",
+      title: "Get Proposals",
+      description: "Professionals show interest and vendors submit competitive quotations",
       icon: Target,
-      color: 'text-[#27AE60] bg-[#27AE60]/10'
+      color: "text-[#27AE60] bg-[#27AE60]/10",
     },
     {
-      step: '03',
-      title: 'Collaborate & Deliver',
-      description: 'Direct communication, project tracking, and successful delivery with trust',
+      step: "03",
+      title: "Collaborate & Deliver",
+      description: "Direct communication, project tracking, and successful delivery with trust",
       icon: Workflow,
-      color: 'text-[#F2994A] bg-[#F2994A]/10'
-    }
+      color: "text-[#F2994A] bg-[#F2994A]/10",
+    },
   ];
 
   const benefits = [
     {
       icon: Clock,
-      title: '75% Faster',
-      subtitle: 'Project Completion',
-      description: 'Streamlined workflows reduce project timelines significantly'
+      title: "75% Faster",
+      subtitle: "Project Completion",
+      description: "Streamlined workflows reduce project timelines significantly",
     },
     {
       icon: Star,
-      title: '98% Success',
-      subtitle: 'Rate',
-      description: 'High-quality matches lead to successful project outcomes'
+      title: "98% Success",
+      subtitle: "Rate",
+      description: "High-quality matches lead to successful project outcomes",
     },
     {
       icon: Award,
-      title: '24/7 Support',
-      subtitle: 'Available',
-      description: 'Round-the-clock assistance for all your business needs'
-    }
+      title: "24/7 Support",
+      subtitle: "Available",
+      description: "Round-the-clock assistance for all your business needs",
+    },
   ];
 
   return (
@@ -108,11 +126,21 @@ const Home: React.FC = () => {
 
               {/* Navigation Menu */}
               <nav className="hidden md:flex items-center space-x-8">
-                <a href="#features" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Features</a>
-                <a href="#modules" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Modules</a>
-                <a href="#benefits" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Benefits</a>
-                <a href="#pricing" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Pricing</a>
-                <a href="#contact" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">Contact</a>
+                <a href="#features" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">
+                  Features
+                </a>
+                <a href="#modules" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">
+                  Modules
+                </a>
+                <a href="#benefits" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">
+                  Benefits
+                </a>
+                <a href="#pricing" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">
+                  Pricing
+                </a>
+                <a href="#contact" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">
+                  Contact
+                </a>
               </nav>
 
               <Link
@@ -140,7 +168,7 @@ const Home: React.FC = () => {
             {/* Left Content */}
             <div className="relative z-10">
               {/* AI Badge */}
-              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6 " >
+              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6 ">
                 <div className="w-2 h-2 bg-[#27AE60] rounded-full animate-pulse"></div>
                 {/* <span className="text-sm font-medium">World's #1 AI-Native Business Platform</span> */}
                 <span className="text-sm font-medium">World's #1 B2B & B2C AI-Native Business Platform</span>
@@ -149,16 +177,15 @@ const Home: React.FC = () => {
               </div>
               <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
                 Streamline Requirements,
-                <span className="block text-[#bfdbfe]">
-                  Connect Expertise
-                </span>
+                <span className="block text-[#bfdbfe]">Connect Expertise</span>
                 <span className="block text-4xl md:text-5xl">with Deligence’s</span>
                 <span className="block text-[#bfdbfe]">Powerful AI Platform</span>
               </h1>
 
               <p className="text-xl text-blue-100 mb-8 max-w-2xl leading-relaxed">
                 From automated requirement matching to intelligent vendor selection—our AI-driven platform empowers
-                industries to streamline operations, connect with qualified professionals, and optimize business outcomes.
+                industries to streamline operations, connect with qualified professionals, and optimize business
+                outcomes.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -200,7 +227,9 @@ const Home: React.FC = () => {
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="text-3xl font-bold text-[#fff]">98.5%</span>
-                      <span className="text-sm bg-[#27AE60]/10 text-[#27AE60] px-2 py-1 rounded-full font-medium">+12%</span>
+                      <span className="text-sm bg-[#27AE60]/10 text-[#27AE60] px-2 py-1 rounded-full font-medium">
+                        +12%
+                      </span>
                     </div>
 
                     {/* Progress Bars */}
@@ -210,7 +239,10 @@ const Home: React.FC = () => {
                         <span className="font-medium">87%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-gradient-to-r from-[#2F80ED] to-[#27AE60] h-2 rounded-full" style={{ width: '87%' }}></div>
+                        <div
+                          className="bg-gradient-to-r from-[#2F80ED] to-[#27AE60] h-2 rounded-full"
+                          style={{ width: "87%" }}
+                        ></div>
                       </div>
 
                       <div className="flex justify-between text-sm">
@@ -218,7 +250,10 @@ const Home: React.FC = () => {
                         <span className="font-medium">94%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-gradient-to-r from-[#F2994A] to-[#27AE60] h-2 rounded-full" style={{ width: '94%' }}></div>
+                        <div
+                          className="bg-gradient-to-r from-[#F2994A] to-[#27AE60] h-2 rounded-full"
+                          style={{ width: "94%" }}
+                        ></div>
                       </div>
                     </div>
                   </div>
@@ -227,9 +262,7 @@ const Home: React.FC = () => {
                 {/* Floating Stats Cards */}
                 <div className="absolute -top-4 -right-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-4 border border-white/30 text-white border border-gray-100">
                   <div className="text-center">
-                    <div className="text-sm text-[#f2994a] mb-1">
-                      MONTHLY ROI
-                    </div>
+                    <div className="text-sm text-[#f2994a] mb-1">MONTHLY ROI</div>
                     <div className="text-2xl font-bold text-[#000]">$2.4M</div>
                     <div className="text-xs text-[#27AE60] font-medium">↗ +23%</div>
                   </div>
@@ -243,21 +276,22 @@ const Home: React.FC = () => {
                   </div>
                 </div>
               </div>
-              
             </div>
           </div>
         </div>
       </section>
 
-
       {/* Features Section */}
       <section className="py-20 bg-white relative">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 25px 25px, #2F80ED 2px, transparent 0)`,
-            backgroundSize: '50px 50px'
-          }}></div>
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(circle at 25px 25px, #2F80ED 2px, transparent 0)`,
+              backgroundSize: "50px 50px",
+            }}
+          ></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -267,21 +301,27 @@ const Home: React.FC = () => {
               <span className="text-sm font-medium text-[#2F80ED]">AI-Powered Features</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-[#333333] mb-4">
-              Why Choose <span className="text-[#2F80ED]">Deligence.ai</span>?
+              Why Choose <span className="text-[#2F80ED]">Deligince.ai</span>?
             </h2>
             <p className="text-[#828282] text-lg max-w-2xl mx-auto">
-              Experience the power of artificial intelligence in business connections with our comprehensive platform features.
+              Experience the power of artificial intelligence in business connections with our comprehensive platform
+              features.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             {features.map((feature, index) => (
-              <div key={index} className="text-center group hover:transform hover:-translate-y-3 transition-all duration-500">
+              <div
+                key={index}
+                className="text-center group hover:transform hover:-translate-y-3 transition-all duration-500"
+              >
                 <div className="w-20 h-20 bg-gradient-to-br from-[#2F80ED]/10 to-[#27AE60]/10 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300 relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#2F80ED]/20 to-[#27AE60]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <feature.icon className="w-8 h-8 text-[#2F80ED]" />
                 </div>
-                <h3 className="text-xl font-bold text-[#333333] mb-3 group-hover:text-[#2F80ED] transition-colors">{feature.title}</h3>
+                <h3 className="text-xl font-bold text-[#333333] mb-3 group-hover:text-[#2F80ED] transition-colors">
+                  {feature.title}
+                </h3>
                 <p className="text-[#828282] leading-relaxed">{feature.description}</p>
               </div>
             ))}
@@ -292,7 +332,10 @@ const Home: React.FC = () => {
             {/* Animated Background Elements */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full blur-3xl animate-pulse"></div>
-              <div className="absolute bottom-0 right-0 w-60 h-60 bg-[#27AE60] rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+              <div
+                className="absolute bottom-0 right-0 w-60 h-60 bg-[#27AE60] rounded-full blur-3xl animate-pulse"
+                style={{ animationDelay: "1s" }}
+              ></div>
             </div>
 
             <div className="text-center mb-12">
@@ -301,7 +344,10 @@ const Home: React.FC = () => {
             </div>
             <div className="grid md:grid-cols-3 gap-8 relative z-10">
               {benefits.map((benefit, index) => (
-                <div key={index} className="text-center group hover:transform hover:-translate-y-2 transition-all duration-300">
+                <div
+                  key={index}
+                  className="text-center group hover:transform hover:-translate-y-2 transition-all duration-300"
+                >
                   <div className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:bg-white/20 transition-all duration-300 border border-white/20">
                     <benefit.icon className="w-8 h-8 text-white" />
                   </div>
@@ -344,12 +390,18 @@ const Home: React.FC = () => {
                 <div key={index} className="relative">
                   <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-[#E0E0E0] hover:border-[#2F80ED]/30 group hover:-translate-y-2">
                     <div className="text-center">
-                      <div className={`w-20 h-20 ${step.color} rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 relative overflow-hidden`}>
+                      <div
+                        className={`w-20 h-20 ${step.color} rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 relative overflow-hidden`}
+                      >
                         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <step.icon className="w-10 h-10 relative z-10" />
                       </div>
-                      <div className="text-6xl font-bold text-[#E0E0E0] mb-4 group-hover:text-[#2F80ED]/20 transition-colors">{step.step}</div>
-                      <h3 className="text-2xl font-bold text-[#333333] mb-4 group-hover:text-[#2F80ED] transition-colors">{step.title}</h3>
+                      <div className="text-6xl font-bold text-[#E0E0E0] mb-4 group-hover:text-[#2F80ED]/20 transition-colors">
+                        {step.step}
+                      </div>
+                      <h3 className="text-2xl font-bold text-[#333333] mb-4 group-hover:text-[#2F80ED] transition-colors">
+                        {step.title}
+                      </h3>
                       <p className="text-[#828282] leading-relaxed text-lg">{step.description}</p>
                     </div>
                   </div>
@@ -381,12 +433,11 @@ const Home: React.FC = () => {
 
           <div className="grid md:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <div key={index} className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-[#E0E0E0]">
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-full h-56 object-cover"
-                />
+              <div
+                key={index}
+                className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-[#E0E0E0]"
+              >
+                <img src={service.image} alt={service.title} className="w-full h-56 object-cover" />
                 <div className="p-8">
                   <h3 className="text-xl font-semibold text-[#333333] mb-3">{service.title}</h3>
                   <p className="text-[#828282] mb-4">{service.description}</p>
@@ -415,8 +466,14 @@ const Home: React.FC = () => {
         {/* Animated Background */}
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#27AE60]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div
+            className="absolute bottom-0 right-0 w-80 h-80 bg-[#27AE60]/10 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-400/10 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: "1s" }}
+          ></div>
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -427,12 +484,10 @@ const Home: React.FC = () => {
 
           <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
             Ready to Transform Your
-            <span className="block bg-[#F2994A] bg-clip-text text-transparent">
-              Business with AI?
-            </span>
+            <span className="block bg-[#F2994A] bg-clip-text text-transparent">Business with AI?</span>
           </h2>
           <p className="text-xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Join thousands of successful businesses already using Deligence.ai's intelligent platform to streamline
+            Join thousands of successful businesses already using Deligince.ai's intelligent platform to streamline
             operations, connect with qualified professionals, and accelerate growth through AI-powered insights.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -443,8 +498,7 @@ const Home: React.FC = () => {
               <span>Start Free Trial</span>
               <ArrowRight className="w-5 h-5" />
             </Link>
-            <button className="border-2 border-white/30 text-white px-10 py-4 rounded-xl hover:bg-white/10 transition-all duration-300 font-bold text-lg backdrop-blur-sm hover:border-white/50 flex items-center justify-center space-x-2"
-            >
+            <button className="border-2 border-white/30 text-white px-10 py-4 rounded-xl hover:bg-white/10 transition-all duration-300 font-bold text-lg backdrop-blur-sm hover:border-white/50 flex items-center justify-center space-x-2">
               <span>Schedule Demo</span>
               <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
                 <div className="w-0 h-0 border-l-[6px] border-l-white border-y-[4px] border-y-transparent ml-0.5"></div>
@@ -458,11 +512,14 @@ const Home: React.FC = () => {
       <section className="py-20 bg-white relative">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(45deg, #2F80ED 25%, transparent 25%), linear-gradient(-45deg, #2F80ED 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #2F80ED 75%), linear-gradient(-45deg, transparent 75%, #2F80ED 75%)`,
-            backgroundSize: '20px 20px',
-            backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
-          }}></div>
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `linear-gradient(45deg, #2F80ED 25%, transparent 25%), linear-gradient(-45deg, #2F80ED 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #2F80ED 75%), linear-gradient(-45deg, transparent 75%, #2F80ED 75%)`,
+              backgroundSize: "20px 20px",
+              backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
+            }}
+          ></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -512,7 +569,8 @@ const Home: React.FC = () => {
                 <span className="text-2xl font-bold">Deligence.ai</span>
               </div>
               <p className="text-gray-300 mb-4">
-                Connecting industries, professionals, and vendors through intelligent business solutions for accelerated growth and success.
+                Connecting industries, professionals, and vendors through intelligent business solutions for accelerated
+                growth and success.
               </p>
               <div className="flex space-x-4">
                 <div className="w-10 h-10 bg-gray-600 rounded-lg flex items-center justify-center hover:bg-[#2F80ED] transition-colors cursor-pointer">
@@ -526,19 +584,51 @@ const Home: React.FC = () => {
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><a href="#" className="hover:text-white">About</a></li>
-                <li><a href="#" className="hover:text-white">Careers</a></li>
-                <li><a href="#" className="hover:text-white">Contact</a></li>
-                <li><a href="#" className="hover:text-white">Blog</a></li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    About
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Careers
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Contact
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Blog
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><a href="#" className="hover:text-white">Help Center</a></li>
-                <li><a href="#" className="hover:text-white">Documentation</a></li>
-                <li><a href="#" className="hover:text-white">API</a></li>
-                <li><a href="#" className="hover:text-white">Community</a></li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Help Center
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Documentation
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    API
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Community
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
@@ -547,7 +637,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       </footer>
-    </div >
+    </div>
   );
 };
 

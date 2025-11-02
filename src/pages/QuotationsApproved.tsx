@@ -1,46 +1,47 @@
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import CustomTable from "@/components/CustomTable";
 import { ColumnConfig, FilterConfig } from "@/types/table";
-
-interface ApprovedQuotationRow {
-  id: string;
-  requirementId: string;
-  requirementTitle: string;
-  vendorName: string;
-  quotedAmount: string;
-  approvedDate: string;
-  approvedBy: string;
-  contractValue: string;
-  status: string;
-}
+import { quotationService } from "@/services/modules/quotations";
+import type { Quotation } from "@/types/quotation";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 const QuotationsApproved = () => {
-  const [selectedRows, setSelectedRows] = useState<ApprovedQuotationRow[]>([]);
+  const [selectedRows, setSelectedRows] = useState<Quotation[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const mockData: ApprovedQuotationRow[] = [
-    {
-      id: "QUO-003",
-      requirementId: "REQ-005",
-      requirementTitle: "Digital Marketing Platform",
-      vendorName: "DigitalPro Agency",
-      quotedAmount: "$78,000",
-      approvedDate: "2024-01-26",
-      approvedBy: "Sarah Johnson",
-      contractValue: "$78,000",
-      status: "Approved",
-    },
-    {
-      id: "QUO-004",
-      requirementId: "REQ-006",
-      requirementTitle: "Warehouse Management System",
-      vendorName: "SystemWorks Ltd.",
-      quotedAmount: "$92,000",
-      approvedDate: "2024-01-25",
-      approvedBy: "Robert Wilson",
-      contractValue: "$90,000",
-      status: "Contract Signed",
-    },
-  ];
+  const { data: response, isLoading, error } = useQuery({
+    queryKey: ["quotations", "approved", currentPage, pageSize, filters, searchTerm],
+    queryFn: () =>
+      quotationService.getApproved({
+        page: currentPage,
+        pageSize,
+        search: searchTerm,
+        ...filters,
+      }),
+  });
+
+  const quotations = response?.data.quotations || [];
+  const pagination = response?.data.pagination;
+
+  const tableData = quotations.map((q) => ({
+    id: q.quotationNumber,
+    requirementId: q.requirementId,
+    requirementTitle: q.requirementTitle,
+    vendorName: q.vendorName,
+    quotedAmount: `${q.currency} ${q.quotedAmount.toLocaleString()}`,
+    approvedDate: q.approvedDate ? new Date(q.approvedDate).toLocaleDateString() : "N/A",
+    approvedBy: q.approvedBy || "N/A",
+    contractValue: `${q.currency} ${q.quotedAmount.toLocaleString()}`,
+    status: q.status,
+  }));
 
   const columns: ColumnConfig[] = [
     {
@@ -48,7 +49,10 @@ const QuotationsApproved = () => {
       label: "Quote ID",
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log("View quote:", row.id),
+      action: (row) => {
+        const quotation = quotations.find((q) => q.quotationNumber === row.id);
+        if (quotation) navigate(`/dashboard/quotations/${quotation.id}`);
+      },
       width: "120px",
     },
     {
@@ -56,7 +60,7 @@ const QuotationsApproved = () => {
       label: "Requirement",
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log("View requirement:", row.requirementId),
+      action: (row) => navigate(`/dashboard/requirements/${row.requirementId}`),
       width: "120px",
     },
     {
@@ -100,32 +104,57 @@ const QuotationsApproved = () => {
       isSortable: true,
       isFilterable: true,
       filterOptions: [
-        { key: "Approved", value: "Approved", color: "#dcfce7" },
-        { key: "Contract Signed", value: "Contract Signed", color: "#d1fae5" },
-        { key: "Project Started", value: "Project Started", color: "#bfdbfe" },
+        { key: "approved", value: "Approved", color: "#dcfce7" },
       ],
     },
   ];
 
-  const handleFilter = (filters: FilterConfig) => {
-    console.log("Applied filters:", filters);
+  const handleFilter = (appliedFilters: FilterConfig) => {
+    setFilters(appliedFilters);
+    setCurrentPage(1);
   };
 
-  const handleSearch = (searchTerm: string, selectedColumns: string[]) => {
-    console.log("Search:", searchTerm, selectedColumns);
+  const handleSearch = (search: string) => {
+    setSearchTerm(search);
+    setCurrentPage(1);
   };
 
-  const handleExportXLSX = () => {
-    console.log("Export XLSX");
+  const handleExportXLSX = async () => {
+    try {
+      const blob = await quotationService.exportToXLSX({ status: 'approved', ...filters });
+      quotationService.downloadFile(blob, `approved-quotations-${new Date().toISOString().split('T')[0]}.xlsx`);
+      toast({ title: "Export successful", description: "Approved quotations exported to XLSX" });
+    } catch (error) {
+      toast({ title: "Export failed", description: "Failed to export quotations", variant: "destructive" });
+    }
   };
 
-  const handleExportCSV = () => {
-    console.log("Export CSV");
+  const handleExportCSV = async () => {
+    try {
+      const blob = await quotationService.exportToCSV({ status: 'approved', ...filters });
+      quotationService.downloadFile(blob, `approved-quotations-${new Date().toISOString().split('T')[0]}.csv`);
+      toast({ title: "Export successful", description: "Approved quotations exported to CSV" });
+    } catch (error) {
+      toast({ title: "Export failed", description: "Failed to export quotations", variant: "destructive" });
+    }
   };
 
-  const handleSelectionChange = (selected: ApprovedQuotationRow[]) => {
-    setSelectedRows(selected);
+  const handleSelectionChange = (selected: any[]) => {
+    const selectedQuotations = selected.map((row) =>
+      quotations.find((q) => q.quotationNumber === row.id)
+    ).filter(Boolean) as Quotation[];
+    setSelectedRows(selectedQuotations);
   };
+
+  if (error) {
+    return (
+      <div className="p-6 bg-background min-h-screen">
+        <div className="text-center py-12">
+          <p className="text-destructive">Failed to load approved quotations. Please try again.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-background min-h-screen">
@@ -139,24 +168,31 @@ const QuotationsApproved = () => {
         </p>
       </div>
 
-      <CustomTable
-        columns={columns}
-        data={mockData}
-        filterCallback={handleFilter}
-        searchCallback={handleSearch}
-        onExport={{
-          xlsx: handleExportXLSX,
-          csv: handleExportCSV,
-        }}
-        selectable={true}
-        onSelectionChange={handleSelectionChange}
-        globalSearchPlaceholder="Search approved quotations..."
-        pagination={{
-          enabled: true,
-          pageSize: 10,
-          currentPage: 1,
-        }}
-      />
+      {isLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        <CustomTable
+          columns={columns}
+          data={tableData}
+          filterCallback={handleFilter}
+          searchCallback={handleSearch}
+          onExport={{
+            xlsx: handleExportXLSX,
+            csv: handleExportCSV,
+          }}
+          selectable={true}
+          onSelectionChange={handleSelectionChange}
+          globalSearchPlaceholder="Search approved quotations..."
+          pagination={{
+            enabled: true,
+            pageSize: pageSize,
+            currentPage: currentPage,
+            onPageChange: setCurrentPage,
+          }}
+        />
+      )}
     </div>
   );
 };

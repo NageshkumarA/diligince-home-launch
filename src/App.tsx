@@ -17,6 +17,7 @@ import { Toaster } from "@/components/ui/sonner";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Layout from "@/components/Layout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { MockAuthBanner } from "@/components/shared/MockAuthBanner";
 
 // Public pages
 import Index from "@/pages/Index";
@@ -60,6 +61,7 @@ import IndustryTeam from "@/pages/IndustryTeam";
 import IndustryNotifications from "@/pages/IndustryNotifications";
 import CreateRequirement from "@/pages/CreateRequirement";
 import CreatePurchaseOrder from "@/pages/CreatePurchaseOrder";
+import CreateEditPurchaseOrder from "@/pages/CreateEditPurchaseOrder";
 import RoleManagement from "@/pages/RoleManagement";
 
 // Requirements sub-pages
@@ -68,6 +70,7 @@ import RequirementsPending from "@/pages/RequirementsPending";
 import RequirementsApproved from "@/pages/RequirementsApproved";
 import RequirementsPublished from "@/pages/RequirementsPublished";
 import RequirementsArchived from "@/pages/RequirementsArchived";
+import RequirementDetails from "@/pages/RequirementDetails";
 
 // Quotations sub-pages
 import QuotationsPending from "@/pages/QuotationsPending";
@@ -79,6 +82,7 @@ import QuotationDetails from "@/pages/QuotationDetails";
 import PurchaseOrdersPending from "@/pages/PurchaseOrdersPending";
 import PurchaseOrdersInProgress from "@/pages/PurchaseOrdersInProgress";
 import PurchaseOrdersCompleted from "@/pages/PurchaseOrdersCompleted";
+import PurchaseOrderDetails from "@/pages/PurchaseOrderDetails";
 
 // Workflow sub-pages
 import WorkflowsActive from "@/pages/WorkflowsActive";
@@ -131,6 +135,9 @@ import ProjectsActive from "@/pages/ProjectsActive";
 
 // Vendor sub-pages
 import VendorRFQsBrowse from "@/pages/VendorRFQsBrowse";
+import VendorSubmitQuotation from "@/pages/VendorSubmitQuotation";
+import VendorQuotations from "@/pages/VendorQuotations";
+import VendorQuotationDetails from "@/pages/VendorQuotationDetails";
 
 function App() {
   return (
@@ -144,6 +151,7 @@ function App() {
                   <ApprovalProvider>
                     <StakeholderProvider>
                       <VendorSpecializationProvider>
+                        <MockAuthBanner />
                         <div className="App">
                           <Routes>
                             {/* Public Routes */}
@@ -271,6 +279,14 @@ function App() {
                                 element={<CreatePurchaseOrder />}
                               />
                               <Route
+                                path="purchase-orders/create"
+                                element={<CreateEditPurchaseOrder />}
+                              />
+                              <Route
+                                path="purchase-orders/:id/edit"
+                                element={<CreateEditPurchaseOrder />}
+                              />
+                              <Route
                                 path="role-management"
                                 element={<RoleManagement />}
                               />
@@ -292,9 +308,14 @@ function App() {
                                 path="requirements/published"
                                 element={<RequirementsPublished />}
                               />
-                              <Route
+                            <Route
                                 path="requirements/archived"
                                 element={<RequirementsArchived />}
+                              />
+                              {/* Requirement Details */}
+                              <Route
+                                path="requirements/:id"
+                                element={<RequirementDetails />}
                               />
 
                               {/* Quotations Sub-routes */}
@@ -327,6 +348,10 @@ function App() {
                               <Route
                                 path="purchase-orders/completed"
                                 element={<PurchaseOrdersCompleted />}
+                              />
+                              <Route
+                                path="purchase-orders/:id"
+                                element={<PurchaseOrderDetails />}
                               />
 
                               {/* Workflow Sub-routes */}
@@ -481,6 +506,18 @@ function App() {
                               <Route
                                 path="rfqs/browse"
                                 element={<VendorRFQsBrowse />}
+                              />
+                              <Route
+                                path="rfqs/:rfqId/submit-quotation"
+                                element={<VendorSubmitQuotation />}
+                              />
+                              <Route
+                                path="vendor/quotations"
+                                element={<VendorQuotations />}
+                              />
+                              <Route
+                                path="vendor/quotations/:quotationId"
+                                element={<VendorQuotationDetails />}
                               />
 
                               {/* Test & Common */}

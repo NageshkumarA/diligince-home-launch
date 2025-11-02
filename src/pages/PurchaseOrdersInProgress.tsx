@@ -1,139 +1,182 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { Clock, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import CustomTable from '@/components/CustomTable';
-import { ColumnConfig, FilterConfig } from '@/types/table';
+import { ColumnConfig } from '@/types/table';
+import { purchaseOrdersService } from '@/services/modules/purchase-orders';
+import { POStatusBadge } from '@/components/purchase-order/POStatusBadge';
+import { POQuickActions } from '@/components/purchase-order/POQuickActions';
+import { POFilters } from '@/components/purchase-order/POFilters';
+import { format } from 'date-fns';
+import { Card } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 
 const PurchaseOrdersInProgress = () => {
+  const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
-  const mockData = [
-    {
-      id: 'PO-003',
-      requirementId: 'REQ-003',
-      vendorName: 'CloudTech Solutions',
-      orderValue: '$75,000',
-      approvedDate: '2024-01-20',
-      startDate: '2024-01-25',
-      expectedDelivery: '2024-03-10',
-      progress: '35%',
-      status: 'In Progress'
-    },
-    {
-      id: 'PO-004',
-      requirementId: 'REQ-004',
-      vendorName: 'BuildRight Construction',
-      orderValue: '$120,000',
-      approvedDate: '2024-01-18',
-      startDate: '2024-01-22',
-      expectedDelivery: '2024-04-15',
-      progress: '20%',
-      status: 'Materials Ordered'
-    }
-  ];
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['purchase-orders-in-progress', page, searchTerm],
+    queryFn: () =>
+      purchaseOrdersService.getInProgress({
+        page,
+        limit: pageSize,
+      }),
+  });
+
+  const handleExport = async (orderId: string) => {
+    await purchaseOrdersService.exportToPDF(orderId);
+  };
+
+  const handleRowClick = (row: any) => {
+    navigate(`/dashboard/purchase-orders/${row.id}`);
+  };
 
   const columns: ColumnConfig[] = [
     {
-      name: 'id',
+      name: 'orderNumber',
       label: 'PO Number',
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log('View PO:', row.id),
-      width: '120px'
+      action: handleRowClick,
+      width: '120px',
     },
     {
-      name: 'requirementId',
-      label: 'Requirement',
+      name: 'projectTitle',
+      label: 'Project',
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log('View requirement:', row.requirementId),
-      width: '120px'
     },
     {
       name: 'vendorName',
       label: 'Vendor',
       isSortable: true,
-      isSearchable: true
+      isSearchable: true,
     },
     {
-      name: 'orderValue',
-      label: 'Order Value',
+      name: 'totalValue',
+      label: 'Total Value',
       isSortable: true,
-      align: 'right'
+      align: 'right',
+      render: (row) => `${row.currency} ${row.totalValue.toLocaleString()}`,
     },
     {
-      name: 'startDate',
-      label: 'Start Date',
-      isSortable: true
-    },
-    {
-      name: 'expectedDelivery',
-      label: 'Expected Delivery',
-      isSortable: true
-    },
-    {
-      name: 'progress',
+      name: 'completionPercentage',
       label: 'Progress',
       isSortable: true,
-      align: 'center'
+      render: (row) => (
+        <div className="flex items-center gap-2 min-w-[150px]">
+          <Progress value={row.completionPercentage} className="h-2 flex-1" />
+          <span className="text-sm font-medium w-12 text-right">
+            {row.completionPercentage}%
+          </span>
+        </div>
+      ),
+    },
+    {
+      name: 'milestonesCompleted',
+      label: 'Milestones',
+      align: 'center',
+      render: (row) => (
+        <span className="text-sm">
+          {row.milestonesCompleted}/{row.totalMilestones}
+        </span>
+      ),
+    },
+    {
+      name: 'endDate',
+      label: 'End Date',
+      isSortable: true,
+      render: (row) => format(new Date(row.endDate), 'PP'),
     },
     {
       name: 'status',
       label: 'Status',
       isSortable: true,
-      isFilterable: true,
-      filterOptions: [
-        { key: 'In Progress', value: 'In Progress', color: '#bfdbfe' },
-        { key: 'Materials Ordered', value: 'Materials Ordered', color: '#fbbf24' },
-        { key: 'Development Started', value: 'Development Started', color: '#a78bfa' },
-        { key: 'Testing Phase', value: 'Testing Phase', color: '#fb7185' }
-      ]
-    }
+      render: (row) => <POStatusBadge status={row.status} />,
+    },
+    {
+      name: 'actions',
+      label: 'Actions',
+      align: 'right',
+      render: (row) => (
+        <POQuickActions
+          orderId={row.id}
+          status={row.status}
+          onExport={() => handleExport(row.id)}
+        />
+      ),
+    },
   ];
 
-  const handleFilter = (filters: FilterConfig) => {
-    console.log('Applied filters:', filters);
-  };
+  if (isLoading) {
+    return (
+      <div className="p-6 bg-background min-h-screen">
+        <Card className="p-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-muted rounded w-1/4"></div>
+            <div className="h-64 bg-muted rounded"></div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
-  const handleSearch = (searchTerm: string, selectedColumns: string[]) => {
-    console.log('Search:', searchTerm, selectedColumns);
-  };
+  if (error) {
+    return (
+      <div className="p-6 bg-background min-h-screen">
+        <Card className="p-8 text-center">
+          <p className="text-destructive">Failed to load purchase orders</p>
+        </Card>
+      </div>
+    );
+  }
 
-  const handleExportXLSX = () => {
-    console.log('Export XLSX');
-  };
-
-  const handleExportCSV = () => {
-    console.log('Export CSV');
-  };
-
-  const handleSelectionChange = (selected: any[]) => {
-    setSelectedRows(selected);
-  };
+  const purchaseOrders = data?.data || [];
 
   return (
     <div className="p-6 bg-background min-h-screen">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Purchase Orders In Progress</h1>
-        <p className="text-muted-foreground">
-          Active purchase orders currently being executed by vendors
-        </p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            In Progress Purchase Orders
+          </h1>
+          <p className="text-muted-foreground">
+            Track ongoing purchase orders and their completion status
+          </p>
+        </div>
+        <Button onClick={() => navigate('/dashboard/purchase-orders/create')} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Create Purchase Order
+        </Button>
       </div>
+
+      <POFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        statusFilter="in_progress"
+        onStatusChange={() => {}}
+        onClearFilters={() => setSearchTerm('')}
+        showStatusFilter={false}
+      />
 
       <CustomTable
         columns={columns}
-        data={mockData}
-        filterCallback={handleFilter}
-        searchCallback={handleSearch}
-        onExport={{
-          xlsx: handleExportXLSX,
-          csv: handleExportCSV
-        }}
+        data={purchaseOrders}
+        onRowClick={handleRowClick}
         selectable={true}
-        onSelectionChange={handleSelectionChange}
+        onSelectionChange={setSelectedRows}
         globalSearchPlaceholder="Search in-progress purchase orders..."
         pagination={{
           enabled: true,
-          pageSize: 10,
-          currentPage: 1
+          pageSize,
+          currentPage: page,
+          onPageChange: setPage,
         }}
       />
     </div>

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import {api} from '../services/api.service';
-import { apiRoutes } from '../services/api.routes';
+import {api} from '../services/core/api.service';
+import { apiRoutes } from '../services';
 
 interface User {
   id: string;

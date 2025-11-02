@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import CustomTable from "@/components/CustomTable";
 import { ColumnConfig, FilterConfig } from "@/types/table";
 import requirementListService from "@/services/requirement-list.service";
@@ -7,6 +8,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 const RequirementsArchived = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState<RequirementListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRows, setSelectedRows] = useState<RequirementListItem[]>([]);
@@ -52,7 +54,7 @@ const RequirementsArchived = () => {
       label: "Requirement ID",
       isSortable: true,
       isSearchable: true,
-      action: (row) => console.log("View requirement:", row.id),
+      action: (row) => navigate(`/dashboard/requirements/${row.id}`),
       width: "150px",
     },
     {
