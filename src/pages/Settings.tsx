@@ -6,11 +6,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Save, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Save, CheckCircle2, AlertCircle, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { CompanyProfile, VerificationStatus } from '@/types/verification';
-import { calculateProfileCompletion, canSubmitForVerification } from '@/utils/profileValidation';
-import { mockSaveProfile, mockSubmitForVerification } from '@/services/verification.mock';
+import { calculateProfileCompletion, canSubmitForVerification, getMissingFields } from '@/utils/profileValidation';
+import { mockSaveProfile, mockSubmitForVerification, MOCK_COMPLETE_PROFILE } from '@/services/verification.mock';
 import { ProfileCompletionBanner } from '@/components/verification/ProfileCompletionBanner';
 import { useUser } from '@/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
@@ -19,31 +19,50 @@ const Settings: React.FC = () => {
   const { refreshVerificationStatus } = useUser();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [profile, setProfile] = useState<Partial<CompanyProfile>>({
-    companyName: '',
-    industryFocus: '',
-    companyDescription: '',
-    yearEstablished: '',
-    gstNumber: '',
-    registrationNumber: '',
-    email: '',
-    mobile: '',
-    telephone: '',
-    website: '',
-    addresses: [{
-      line1: '',
-      city: '',
-      state: '',
-      pincode: '',
-      isPrimary: true
-    }],
-    verificationStatus: VerificationStatus.INCOMPLETE,
-    isProfileComplete: false,
-    profileCompletionPercentage: 0
-  });
+  const [profile, setProfile] = useState<Partial<CompanyProfile>>(MOCK_COMPLETE_PROFILE);
 
   const completionPercentage = calculateProfileCompletion(profile);
   const canSubmit = canSubmitForVerification(profile);
+
+  // Helper functions for field validation status
+  const getFieldStatus = (fieldValue: any, required: boolean = true, minLength?: number) => {
+    if (!required) return 'optional';
+    if (!fieldValue || String(fieldValue).trim() === '') return 'empty';
+    if (minLength && String(fieldValue).length < minLength) return 'too_short';
+    return 'filled';
+  };
+
+  const getFieldClassName = (status: string) => {
+    if (status === 'empty') return 'border-red-300 focus:border-red-500';
+    if (status === 'too_short') return 'border-yellow-300 focus:border-yellow-500';
+    if (status === 'filled') return 'border-green-300 focus:border-green-500';
+    return '';
+  };
+
+  const resetForm = () => {
+    setProfile({
+      companyName: '',
+      industryFocus: '',
+      companyDescription: '',
+      yearEstablished: '',
+      gstNumber: '',
+      registrationNumber: '',
+      email: '',
+      mobile: '',
+      telephone: '',
+      website: '',
+      addresses: [{ line1: '', city: '', state: '', pincode: '', isPrimary: true }],
+      verificationStatus: VerificationStatus.INCOMPLETE,
+      isProfileComplete: false,
+      profileCompletionPercentage: 0
+    });
+    toast.info('Form reset to empty');
+  };
+
+  const fillMockData = () => {
+    setProfile(MOCK_COMPLETE_PROFILE);
+    toast.info('Form filled with mock data');
+  };
 
   // Load saved profile from localStorage
   useEffect(() => {
@@ -93,33 +112,58 @@ const Settings: React.FC = () => {
 
   const handleSubmitForVerification = async () => {
     if (!canSubmit) {
-      toast.error('Please complete all required fields');
+      const missing = getMissingFields(profile);
+      toast.error(`Please complete the following fields: ${missing.join(', ')}`);
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const result = await mockSubmitForVerification(profile as CompanyProfile);
-      toast.success('Profile submitted for verification!');
-      toast.info(`Verification ID: ${result.verificationId}`);
+      const loadingToast = toast.loading('Submitting profile for verification...');
       
-      // Refresh verification status and navigate
+      const result = await mockSubmitForVerification(profile as CompanyProfile);
+      
+      toast.dismiss(loadingToast);
+      toast.success('✅ Profile submitted for verification!');
+      toast.info(`📋 Verification ID: ${result.verificationId}`, { duration: 5000 });
+      toast.info('⏰ Estimated completion: 24 hours', { duration: 5000 });
+      
       await refreshVerificationStatus();
-      navigate('/verification-pending');
+      
+      setTimeout(() => {
+        navigate('/verification-pending');
+      }, 1500);
     } catch (error) {
-      toast.error('Failed to submit for verification');
+      toast.error('❌ Failed to submit for verification');
+      console.error('Verification submission error:', error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const address = profile.addresses?.[0] || { line1: '', city: '', state: '', pincode: '', isPrimary: true };
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Company Profile</h1>
-        <p className="text-muted-foreground mt-2">
-          Complete all required fields to submit your profile for verification
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Company Profile</h1>
+            <p className="text-muted-foreground mt-2">
+              Complete all required fields to submit your profile for verification
+            </p>
+          </div>
+          
+          {/* Developer Testing Buttons */}
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={fillMockData}>
+              Fill Mock Data
+            </Button>
+            <Button variant="outline" size="sm" onClick={resetForm}>
+              Reset Form
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Profile Completion Banner */}
@@ -159,26 +203,42 @@ const Settings: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="companyName">
+              <Label htmlFor="companyName" className="flex items-center gap-2">
                 Company Name <span className="text-red-500">*</span>
+                {getFieldStatus(profile.companyName) === 'filled' && (
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                )}
+                {getFieldStatus(profile.companyName) === 'empty' && (
+                  <XCircle className="w-4 h-4 text-red-600" />
+                )}
               </Label>
               <Input
                 id="companyName"
                 value={profile.companyName || ''}
                 onChange={(e) => handleChange('companyName', e.target.value)}
                 placeholder="Enter company name"
+                className={getFieldClassName(getFieldStatus(profile.companyName))}
               />
+              {getFieldStatus(profile.companyName) === 'empty' && (
+                <p className="text-xs text-red-600 mt-1">This field is required</p>
+              )}
             </div>
 
             <div>
-              <Label htmlFor="industryFocus">
+              <Label htmlFor="industryFocus" className="flex items-center gap-2">
                 Industry Focus <span className="text-red-500">*</span>
+                {getFieldStatus(profile.industryFocus) === 'filled' && (
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                )}
+                {getFieldStatus(profile.industryFocus) === 'empty' && (
+                  <XCircle className="w-4 h-4 text-red-600" />
+                )}
               </Label>
               <Select 
                 value={profile.industryFocus || ''} 
                 onValueChange={(value) => handleChange('industryFocus', value)}
               >
-                <SelectTrigger>
+                <SelectTrigger className={getFieldClassName(getFieldStatus(profile.industryFocus))}>
                   <SelectValue placeholder="Select industry" />
                 </SelectTrigger>
                 <SelectContent>
@@ -193,29 +253,52 @@ const Settings: React.FC = () => {
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
+              {getFieldStatus(profile.industryFocus) === 'empty' && (
+                <p className="text-xs text-red-600 mt-1">This field is required</p>
+              )}
             </div>
 
             <div>
-              <Label htmlFor="companyDescription">
+              <Label htmlFor="companyDescription" className="flex items-center gap-2">
                 Company Description <span className="text-red-500">*</span>
-                <span className="text-sm text-muted-foreground ml-2">(Min 50 characters)</span>
+                {getFieldStatus(profile.companyDescription, true, 50) === 'filled' && (
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                )}
+                {getFieldStatus(profile.companyDescription, true, 50) === 'empty' && (
+                  <XCircle className="w-4 h-4 text-red-600" />
+                )}
+                {getFieldStatus(profile.companyDescription, true, 50) === 'too_short' && (
+                  <AlertCircle className="w-4 h-4 text-yellow-600" />
+                )}
               </Label>
               <Textarea
                 id="companyDescription"
                 value={profile.companyDescription || ''}
                 onChange={(e) => handleChange('companyDescription', e.target.value)}
-                placeholder="Describe your company, products, and services..."
+                placeholder="Describe your company, products, and services (minimum 50 characters)..."
                 rows={5}
-                className="resize-none"
+                className={`resize-none ${getFieldClassName(getFieldStatus(profile.companyDescription, true, 50))}`}
               />
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className={`text-xs mt-1 ${
+                getFieldStatus(profile.companyDescription, true, 50) === 'empty' ? 'text-red-600' :
+                getFieldStatus(profile.companyDescription, true, 50) === 'too_short' ? 'text-yellow-600' :
+                'text-muted-foreground'
+              }`}>
                 {(profile.companyDescription || '').length} / 1000 characters
+                {getFieldStatus(profile.companyDescription, true, 50) === 'too_short' && ' (Minimum 50 characters required)'}
+                {getFieldStatus(profile.companyDescription, true, 50) === 'empty' && ' - This field is required'}
               </p>
             </div>
 
             <div>
-              <Label htmlFor="yearEstablished">
+              <Label htmlFor="yearEstablished" className="flex items-center gap-2">
                 Year Established <span className="text-red-500">*</span>
+                {getFieldStatus(profile.yearEstablished) === 'filled' && (
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                )}
+                {getFieldStatus(profile.yearEstablished) === 'empty' && (
+                  <XCircle className="w-4 h-4 text-red-600" />
+                )}
               </Label>
               <Input
                 id="yearEstablished"
@@ -225,7 +308,11 @@ const Settings: React.FC = () => {
                 placeholder="YYYY"
                 min="1900"
                 max={new Date().getFullYear()}
+                className={getFieldClassName(getFieldStatus(profile.yearEstablished))}
               />
+              {getFieldStatus(profile.yearEstablished) === 'empty' && (
+                <p className="text-xs text-red-600 mt-1">This field is required</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -240,8 +327,14 @@ const Settings: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="gstNumber">
+              <Label htmlFor="gstNumber" className="flex items-center gap-2">
                 GST Number <span className="text-red-500">*</span>
+                {getFieldStatus(profile.gstNumber) === 'filled' && (
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                )}
+                {getFieldStatus(profile.gstNumber) === 'empty' && (
+                  <XCircle className="w-4 h-4 text-red-600" />
+                )}
               </Label>
               <Input
                 id="gstNumber"
@@ -249,22 +342,37 @@ const Settings: React.FC = () => {
                 onChange={(e) => handleChange('gstNumber', e.target.value.toUpperCase())}
                 placeholder="27AABCU9603R1Z5"
                 maxLength={15}
+                className={getFieldClassName(getFieldStatus(profile.gstNumber))}
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                15-character GST Identification Number
-              </p>
+              {getFieldStatus(profile.gstNumber) === 'empty' ? (
+                <p className="text-xs text-red-600 mt-1">This field is required</p>
+              ) : (
+                <p className="text-xs text-muted-foreground mt-1">
+                  15-character GST Identification Number
+                </p>
+              )}
             </div>
 
             <div>
-              <Label htmlFor="registrationNumber">
+              <Label htmlFor="registrationNumber" className="flex items-center gap-2">
                 Company Registration Number <span className="text-red-500">*</span>
+                {getFieldStatus(profile.registrationNumber) === 'filled' && (
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                )}
+                {getFieldStatus(profile.registrationNumber) === 'empty' && (
+                  <XCircle className="w-4 h-4 text-red-600" />
+                )}
               </Label>
               <Input
                 id="registrationNumber"
                 value={profile.registrationNumber || ''}
                 onChange={(e) => handleChange('registrationNumber', e.target.value.toUpperCase())}
                 placeholder="U74900MH2010PTC123456"
+                className={getFieldClassName(getFieldStatus(profile.registrationNumber))}
               />
+              {getFieldStatus(profile.registrationNumber) === 'empty' && (
+                <p className="text-xs text-red-600 mt-1">This field is required</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -279,8 +387,14 @@ const Settings: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="email">
+              <Label htmlFor="email" className="flex items-center gap-2">
                 Email Address <span className="text-red-500">*</span>
+                {getFieldStatus(profile.email) === 'filled' && (
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                )}
+                {getFieldStatus(profile.email) === 'empty' && (
+                  <XCircle className="w-4 h-4 text-red-600" />
+                )}
               </Label>
               <Input
                 id="email"
@@ -288,12 +402,22 @@ const Settings: React.FC = () => {
                 value={profile.email || ''}
                 onChange={(e) => handleChange('email', e.target.value)}
                 placeholder="contact@company.com"
+                className={getFieldClassName(getFieldStatus(profile.email))}
               />
+              {getFieldStatus(profile.email) === 'empty' && (
+                <p className="text-xs text-red-600 mt-1">This field is required</p>
+              )}
             </div>
 
             <div>
-              <Label htmlFor="mobile">
+              <Label htmlFor="mobile" className="flex items-center gap-2">
                 Mobile Number <span className="text-red-500">*</span>
+                {getFieldStatus(profile.mobile) === 'filled' && (
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                )}
+                {getFieldStatus(profile.mobile) === 'empty' && (
+                  <XCircle className="w-4 h-4 text-red-600" />
+                )}
               </Label>
               <Input
                 id="mobile"
@@ -301,7 +425,11 @@ const Settings: React.FC = () => {
                 value={profile.mobile || ''}
                 onChange={(e) => handleChange('mobile', e.target.value)}
                 placeholder="+919876543210"
+                className={getFieldClassName(getFieldStatus(profile.mobile))}
               />
+              {getFieldStatus(profile.mobile) === 'empty' && (
+                <p className="text-xs text-red-600 mt-1">This field is required</p>
+              )}
             </div>
 
             <div>
@@ -337,65 +465,103 @@ const Settings: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {profile.addresses && profile.addresses.map((address, index) => (
-              <div key={index} className="space-y-4 p-4 border rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium">Primary Address</h4>
-                  <Badge variant="secondary">Primary</Badge>
+            <div className="space-y-4 p-4 border rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium">Primary Address</h4>
+                <Badge variant="secondary">Primary</Badge>
+              </div>
+
+              <div>
+                <Label htmlFor="line1" className="flex items-center gap-2">
+                  Address Line 1 <span className="text-red-500">*</span>
+                  {getFieldStatus(address.line1) === 'filled' && (
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  )}
+                  {getFieldStatus(address.line1) === 'empty' && (
+                    <XCircle className="w-4 h-4 text-red-600" />
+                  )}
+                </Label>
+                <Input
+                  id="line1"
+                  value={address.line1 || ''}
+                  onChange={(e) => handleAddressChange(0, 'line1', e.target.value)}
+                  placeholder="Street address, building name, etc."
+                  className={getFieldClassName(getFieldStatus(address.line1))}
+                />
+                {getFieldStatus(address.line1) === 'empty' && (
+                  <p className="text-xs text-red-600 mt-1">This field is required</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="city" className="flex items-center gap-2">
+                    City <span className="text-red-500">*</span>
+                    {getFieldStatus(address.city) === 'filled' && (
+                      <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    )}
+                    {getFieldStatus(address.city) === 'empty' && (
+                      <XCircle className="w-4 h-4 text-red-600" />
+                    )}
+                  </Label>
+                  <Input
+                    id="city"
+                    value={address.city || ''}
+                    onChange={(e) => handleAddressChange(0, 'city', e.target.value)}
+                    placeholder="City"
+                    className={getFieldClassName(getFieldStatus(address.city))}
+                  />
+                  {getFieldStatus(address.city) === 'empty' && (
+                    <p className="text-xs text-red-600 mt-1">This field is required</p>
+                  )}
                 </div>
 
                 <div>
-                  <Label htmlFor={`address-line1-${index}`}>
-                    Address Line 1 <span className="text-red-500">*</span>
+                  <Label htmlFor="state" className="flex items-center gap-2">
+                    State <span className="text-red-500">*</span>
+                    {getFieldStatus(address.state) === 'filled' && (
+                      <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    )}
+                    {getFieldStatus(address.state) === 'empty' && (
+                      <XCircle className="w-4 h-4 text-red-600" />
+                    )}
                   </Label>
                   <Input
-                    id={`address-line1-${index}`}
-                    value={address.line1 || ''}
-                    onChange={(e) => handleAddressChange(index, 'line1', e.target.value)}
-                    placeholder="Street address, building name, etc."
+                    id="state"
+                    value={address.state || ''}
+                    onChange={(e) => handleAddressChange(0, 'state', e.target.value)}
+                    placeholder="State"
+                    className={getFieldClassName(getFieldStatus(address.state))}
                   />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor={`address-city-${index}`}>
-                      City <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id={`address-city-${index}`}
-                      value={address.city || ''}
-                      onChange={(e) => handleAddressChange(index, 'city', e.target.value)}
-                      placeholder="City"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor={`address-state-${index}`}>
-                      State <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id={`address-state-${index}`}
-                      value={address.state || ''}
-                      onChange={(e) => handleAddressChange(index, 'state', e.target.value)}
-                      placeholder="State"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor={`address-pincode-${index}`}>
-                    Pincode <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id={`address-pincode-${index}`}
-                    value={address.pincode || ''}
-                    onChange={(e) => handleAddressChange(index, 'pincode', e.target.value)}
-                    placeholder="400001"
-                    maxLength={6}
-                  />
+                  {getFieldStatus(address.state) === 'empty' && (
+                    <p className="text-xs text-red-600 mt-1">This field is required</p>
+                  )}
                 </div>
               </div>
-            ))}
+
+              <div>
+                <Label htmlFor="pincode" className="flex items-center gap-2">
+                  Pincode <span className="text-red-500">*</span>
+                  {getFieldStatus(address.pincode) === 'filled' && (
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  )}
+                  {getFieldStatus(address.pincode) === 'empty' && (
+                    <XCircle className="w-4 h-4 text-red-600" />
+                  )}
+                </Label>
+                <Input
+                  id="pincode"
+                  value={address.pincode || ''}
+                  onChange={(e) => handleAddressChange(0, 'pincode', e.target.value)}
+                  placeholder="400001"
+                  maxLength={6}
+                  className={getFieldClassName(getFieldStatus(address.pincode))}
+                />
+                {getFieldStatus(address.pincode) === 'empty' && (
+                  <p className="text-xs text-red-600 mt-1">This field is required</p>
+                )}
+              </div>
+            </div>
           </CardContent>
         </Card>
 

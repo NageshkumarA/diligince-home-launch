@@ -6,6 +6,7 @@ import { Clock, CheckCircle2, RefreshCw, Mail, Phone } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { VerificationStatus } from '@/types/verification';
+import { toast } from 'sonner';
 
 const VerificationPending = () => {
   const { verificationStatus, refreshVerificationStatus } = useUser();
@@ -148,6 +149,48 @@ const VerificationPending = () => {
               Call Support
             </Button>
           </div>
+        </Card>
+        
+        {/* Developer Testing - Quick Approve Button */}
+        <Card className="p-6 bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800">
+          <h3 className="font-semibold mb-2 flex items-center gap-2">
+            <span>⚡</span> Developer Testing
+          </h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            For testing purposes only - instantly approve verification
+          </p>
+          <Button 
+            variant="default"
+            className="bg-green-600 hover:bg-green-700 w-full"
+            onClick={async () => {
+              // Update localStorage to approved status
+              const stored = localStorage.getItem('company_profile');
+              if (stored) {
+                const profile = JSON.parse(stored);
+                const approvedProfile = {
+                  ...profile,
+                  verificationStatus: VerificationStatus.APPROVED,
+                  verificationCompletedAt: new Date().toISOString()
+                };
+                localStorage.setItem('company_profile', JSON.stringify(approvedProfile));
+                localStorage.setItem('verification_status', VerificationStatus.APPROVED);
+              }
+              
+              // Refresh verification status in context
+              await refreshVerificationStatus();
+              
+              // Show success message
+              toast.success('✅ Verification approved! Redirecting to dashboard...');
+              
+              // Redirect to dashboard after 1 second
+              setTimeout(() => {
+                navigate('/dashboard/industry');
+              }, 1000);
+            }}
+          >
+            <CheckCircle2 className="w-4 h-4 mr-2" />
+            Quick Approve (Dev Only)
+          </Button>
         </Card>
         
         {/* Refresh Button */}

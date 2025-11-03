@@ -62,5 +62,12 @@ export const getMissingFields = (profile: Partial<CompanyProfile> | null): strin
 };
 
 export const canSubmitForVerification = (profile: Partial<CompanyProfile> | null): boolean => {
-  return calculateProfileCompletion(profile) === 100;
+  if (calculateProfileCompletion(profile) !== 100) return false;
+  
+  // Additional validation: Company Description must be at least 50 characters
+  if (!profile?.companyDescription || profile.companyDescription.length < 50) {
+    return false;
+  }
+  
+  return true;
 };
