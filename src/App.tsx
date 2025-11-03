@@ -40,6 +40,7 @@ import BlogArticle from "@/pages/BlogArticle";
 import StakeholderOnboarding from "@/pages/StakeholderOnboarding";
 import PendingApproval from "@/pages/PendingApproval";
 import WorkCompletionPayment from "@/pages/WorkCompletionPayment";
+import VerificationPending from "@/pages/VerificationPending";
 
 // Industry pages
 import IndustryDashboard from "@/pages/IndustryDashboard";
@@ -183,6 +184,14 @@ function App() {
                             <Route
                               path="/pending-approval"
                               element={<PendingApproval />}
+                            />
+                            <Route
+                              path="/verification-pending"
+                              element={
+                                <ProtectedRoute>
+                                  <VerificationPending />
+                                </ProtectedRoute>
+                              }
                             />
 
                             {/* Profile & Onboarding */}

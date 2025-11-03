@@ -3,14 +3,18 @@ import { useLocation, Link } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { menuConfig } from '@/config/menuConfig';
 import { getMenuConfigKey } from '@/utils/roleMapper';
-import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, User, LogOut, Settings as SettingsIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, User, LogOut, Settings as SettingsIcon, Lock } from 'lucide-react';
+import { VerificationStatus } from '@/types/verification';
+import { toast } from 'sonner';
 
 const Sidebar: React.FC = () => {
-  const { user, logout } = useUser();
+  const { user, logout, verificationStatus } = useUser();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
+  
+  const canAccessFeature = verificationStatus === VerificationStatus.APPROVED;
 
   if (!user) return null;
 
@@ -90,11 +94,20 @@ const Sidebar: React.FC = () => {
               const isExpanded = expandedMenus.includes(item.path);
               const hasSubmenu = item.submenu && item.submenu.length > 0;
               const isSubmenuActive = activeSubmenu === item.path;
+              
+              // Check if this item should be locked during verification
+              const isSettingsPage = item.path.includes('industry-settings');
+              const isLocked = !canAccessFeature && !isSettingsPage;
 
               return (
                 <div key={item.path} className="relative">
                   <div
                     onClick={(e) => {
+                      if (isLocked) {
+                        e.preventDefault();
+                        toast.error('Complete profile verification to access this feature');
+                        return;
+                      }
                       if (hasSubmenu && !isCollapsed) {
                         e.preventDefault();
                         toggleAccordion(item.path);
@@ -109,14 +122,16 @@ const Sidebar: React.FC = () => {
                       isActive || isSubmenuActive
                         ? 'bg-primary-foreground text-primary'
                         : 'text-primary-foreground hover:bg-primary-foreground hover:text-primary'
-                    } ${hasSubmenu ? 'cursor-pointer' : ''}`}
+                    } ${hasSubmenu || isLocked ? 'cursor-pointer' : ''} ${isLocked ? 'opacity-50' : ''}`}
                     title={isCollapsed ? item.label : ''}
                   >
                     {hasSubmenu && !isCollapsed ? (
                       <>
                         <Icon className="w-5 h-5 flex-shrink-0" />
                         <span className="font-medium flex-1">{item.label}</span>
-                        {isExpanded ? (
+                        {isLocked ? (
+                          <Lock className="w-4 h-4 text-gray-400" />
+                        ) : isExpanded ? (
                           <ChevronUp className="w-4 h-4" />
                         ) : (
                           <ChevronDown className="w-4 h-4" />
@@ -124,6 +139,16 @@ const Sidebar: React.FC = () => {
                       </>
                     ) : hasSubmenu && isCollapsed ? (
                       <Icon className="w-6 h-6" />
+                    ) : isLocked ? (
+                      <div className={`flex items-center w-full ${isCollapsed ? 'justify-center' : ''}`}>
+                        <Icon className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
+                        {!isCollapsed && (
+                          <>
+                            <span className="font-medium ml-3">{item.label}</span>
+                            <Lock className="w-3 h-3 ml-auto text-gray-400" />
+                          </>
+                        )}
+                      </div>
                     ) : (
                       <Link to={item.path} className={`flex items-center w-full ${isCollapsed ? 'justify-center' : ''}`}>
                         <Icon className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />

@@ -1,213 +1,448 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { Building2, Users, CreditCard, Save, Edit } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Save, CheckCircle2, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { CompanyProfile, VerificationStatus } from '@/types/verification';
+import { calculateProfileCompletion, canSubmitForVerification } from '@/utils/profileValidation';
+import { mockSaveProfile, mockSubmitForVerification } from '@/services/verification.mock';
+import { ProfileCompletionBanner } from '@/components/verification/ProfileCompletionBanner';
+import { useUser } from '@/contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 const Settings: React.FC = () => {
-  const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('company');
+  const { refreshVerificationStatus } = useUser();
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [profile, setProfile] = useState<Partial<CompanyProfile>>({
+    companyName: '',
+    industryFocus: '',
+    companyDescription: '',
+    yearEstablished: '',
+    gstNumber: '',
+    registrationNumber: '',
+    email: '',
+    mobile: '',
+    telephone: '',
+    website: '',
+    addresses: [{
+      line1: '',
+      city: '',
+      state: '',
+      pincode: '',
+      isPrimary: true
+    }],
+    verificationStatus: VerificationStatus.INCOMPLETE,
+    isProfileComplete: false,
+    profileCompletionPercentage: 0
+  });
 
-  const tabs = [
-    { id: 'company', label: 'Company Profile', icon: Building2 },
-    { id: 'members', label: 'Members', icon: Users },
-    { id: 'payments', label: 'Payments', icon: CreditCard }
-  ];
+  const completionPercentage = calculateProfileCompletion(profile);
+  const canSubmit = canSubmitForVerification(profile);
 
-  const renderCompanyProfile = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-[#333333] mb-2">Company Name</label>
-          <input
-            type="text"
-            defaultValue="Tech Solutions Inc."
-            className="w-full px-4 py-3 border border-[#E0E0E0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED] focus:border-transparent"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-[#333333] mb-2">Industry</label>
-          <select className="w-full px-4 py-3 border border-[#E0E0E0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED] focus:border-transparent">
-            <option>Technology</option>
-            <option>Healthcare</option>
-            <option>Finance</option>
-            <option>Manufacturing</option>
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-[#333333] mb-2">Email</label>
-          <input
-            type="email"
-            defaultValue="contact@techsolutions.com"
-            className="w-full px-4 py-3 border border-[#E0E0E0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED] focus:border-transparent"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-[#333333] mb-2">Phone</label>
-          <input
-            type="tel"
-            defaultValue="+1 (555) 123-4567"
-            className="w-full px-4 py-3 border border-[#E0E0E0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED] focus:border-transparent"
-          />
-        </div>
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-[#333333] mb-2">Address</label>
-        <textarea
-          rows={3}
-          defaultValue="123 Business Street, Suite 100, New York, NY 10001"
-          className="w-full px-4 py-3 border border-[#E0E0E0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED] focus:border-transparent"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-[#333333] mb-2">Company Description</label>
-        <textarea
-          rows={4}
-          defaultValue="Leading technology solutions provider specializing in digital transformation and innovative software development."
-          className="w-full px-4 py-3 border border-[#E0E0E0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F80ED] focus:border-transparent"
-        />
-      </div>
-    </div>
-  );
+  // Load saved profile from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('company_profile');
+    if (saved) {
+      try {
+        const savedProfile = JSON.parse(saved);
+        setProfile(savedProfile);
+      } catch (error) {
+        console.error('Error loading saved profile:', error);
+      }
+    }
+  }, []);
 
-  const renderMembers = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-[#333333]">Team Members</h3>
-        <button className="bg-[#2F80ED] text-white px-4 py-2 rounded-lg hover:bg-[#1A2A4F] transition-colors">
-          Invite Member
-        </button>
-      </div>
+  const handleChange = (field: keyof CompanyProfile, value: any) => {
+    setProfile(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleAddressChange = (index: number, field: string, value: string) => {
+    setProfile(prev => {
+      const addresses = [...(prev.addresses || [])];
+      addresses[index] = {
+        ...addresses[index],
+        [field]: value
+      };
+      return {
+        ...prev,
+        addresses
+      };
+    });
+  };
+
+  const handleSave = async () => {
+    setIsSubmitting(true);
+    try {
+      await mockSaveProfile(profile);
+      toast.success('Profile saved successfully!');
+    } catch (error) {
+      toast.error('Failed to save profile');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmitForVerification = async () => {
+    if (!canSubmit) {
+      toast.error('Please complete all required fields');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const result = await mockSubmitForVerification(profile as CompanyProfile);
+      toast.success('Profile submitted for verification!');
+      toast.info(`Verification ID: ${result.verificationId}`);
       
-      <div className="space-y-4">
-        {[
-          { name: 'John Smith', email: 'john@techsolutions.com', role: 'Admin', status: 'Active' },
-          { name: 'Sarah Johnson', email: 'sarah@techsolutions.com', role: 'Manager', status: 'Active' },
-          { name: 'Mike Wilson', email: 'mike@techsolutions.com', role: 'Member', status: 'Pending' }
-        ].map((member, index) => (
-          <div key={index} className="bg-[#FAFAFA] rounded-lg p-4 flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-[#2F80ED] rounded-full flex items-center justify-center text-white font-medium">
-                {member.name.charAt(0)}
-              </div>
-              <div>
-                <h4 className="font-medium text-[#333333]">{member.name}</h4>
-                <p className="text-sm text-[#828282]">{member.email}</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-[#828282]">{member.role}</span>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                member.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-              }`}>
-                {member.status}
-              </span>
-              <button className="text-[#828282] hover:text-[#333333]">
-                <Edit className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderPayments = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[#FAFAFA] rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-[#333333] mb-4">Current Plan</h3>
-          <div className="space-y-2">
-            <p className="text-2xl font-bold text-[#2F80ED]">Professional</p>
-            <p className="text-[#828282]">$99/month</p>
-            <p className="text-sm text-[#828282]">Next billing: March 15, 2024</p>
-          </div>
-          <button className="mt-4 bg-[#2F80ED] text-white px-4 py-2 rounded-lg hover:bg-[#1A2A4F] transition-colors">
-            Upgrade Plan
-          </button>
-        </div>
-        
-        <div className="bg-[#FAFAFA] rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-[#333333] mb-4">Payment Method</h3>
-          <div className="space-y-2">
-            <p className="text-[#333333]">**** **** **** 4567</p>
-            <p className="text-[#828282]">Expires 12/26</p>
-            <p className="text-sm text-[#828282]">Visa</p>
-          </div>
-          <button className="mt-4 border border-[#E0E0E0] text-[#333333] px-4 py-2 rounded-lg hover:bg-white transition-colors">
-            Update Card
-          </button>
-        </div>
-      </div>
-      
-      <div>
-        <h3 className="text-lg font-semibold text-[#333333] mb-4">Billing History</h3>
-        <div className="space-y-3">
-          {[
-            { date: 'Feb 15, 2024', amount: '$99.00', status: 'Paid' },
-            { date: 'Jan 15, 2024', amount: '$99.00', status: 'Paid' },
-            { date: 'Dec 15, 2023', amount: '$99.00', status: 'Paid' }
-          ].map((invoice, index) => (
-            <div key={index} className="flex items-center justify-between p-4 border border-[#E0E0E0] rounded-lg">
-              <div>
-                <p className="font-medium text-[#333333]">{invoice.date}</p>
-                <p className="text-sm text-[#828282]">Professional Plan</p>
-              </div>
-              <div className="text-right">
-                <p className="font-medium text-[#333333]">{invoice.amount}</p>
-                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                  {invoice.status}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+      // Refresh verification status and navigate
+      await refreshVerificationStatus();
+      navigate('/verification-pending');
+    } catch (error) {
+      toast.error('Failed to submit for verification');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <div className="p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#333333] mb-2">Settings</h1>
-        <p className="text-[#828282]">Manage your company profile, team members, and billing information.</p>
+    <div className="p-6 max-w-6xl mx-auto">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Company Profile</h1>
+        <p className="text-muted-foreground mt-2">
+          Complete all required fields to submit your profile for verification
+        </p>
       </div>
 
-      {/* Tabs */}
-      <div className="border-b border-[#E0E0E0] mb-8">
-        <nav className="flex space-x-8">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === tab.id
-                    ? 'border-[#2F80ED] text-[#2F80ED]'
-                    : 'border-transparent text-[#828282] hover:text-[#333333]'
-                }`}
+      {/* Profile Completion Banner */}
+      <ProfileCompletionBanner 
+        profile={profile} 
+        completionPercentage={completionPercentage}
+      />
+
+      {/* Rejection Notice if applicable */}
+      {profile.verificationStatus === VerificationStatus.REJECTED && profile.verificationRemarks && (
+        <Card className="mb-6 bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-red-600 mt-1" />
+              <div>
+                <h3 className="font-semibold text-red-900 dark:text-red-200">Profile Verification Rejected</h3>
+                <p className="text-sm text-red-700 dark:text-red-400 mt-1">
+                  {profile.verificationRemarks}
+                </p>
+                <p className="text-sm text-red-600 dark:text-red-500 mt-2">
+                  Please correct the issues and resubmit for verification.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="space-y-6">
+        {/* Basic Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              Basic Information
+              <Badge variant="outline" className="ml-2">Required</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="companyName">
+                Company Name <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="companyName"
+                value={profile.companyName || ''}
+                onChange={(e) => handleChange('companyName', e.target.value)}
+                placeholder="Enter company name"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="industryFocus">
+                Industry Focus <span className="text-red-500">*</span>
+              </Label>
+              <Select 
+                value={profile.industryFocus || ''} 
+                onValueChange={(value) => handleChange('industryFocus', value)}
               >
-                <Icon className="w-4 h-4" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select industry" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="manufacturing">Manufacturing</SelectItem>
+                  <SelectItem value="construction">Construction</SelectItem>
+                  <SelectItem value="automotive">Automotive</SelectItem>
+                  <SelectItem value="pharmaceuticals">Pharmaceuticals</SelectItem>
+                  <SelectItem value="textiles">Textiles</SelectItem>
+                  <SelectItem value="food_beverage">Food & Beverage</SelectItem>
+                  <SelectItem value="electronics">Electronics</SelectItem>
+                  <SelectItem value="chemicals">Chemicals</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-      {/* Tab Content */}
-      <div className="bg-white rounded-xl shadow-sm border border-[#E0E0E0] p-6">
-        {activeTab === 'company' && renderCompanyProfile()}
-        {activeTab === 'members' && renderMembers()}
-        {activeTab === 'payments' && renderPayments()}
-        
-        {activeTab === 'company' && (
-          <div className="flex justify-end mt-8 pt-6 border-t border-[#E0E0E0]">
-            <button className="flex items-center space-x-2 bg-[#27AE60] text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors">
-              <Save className="w-4 h-4" />
-              <span>Save Changes</span>
-            </button>
-          </div>
-        )}
+            <div>
+              <Label htmlFor="companyDescription">
+                Company Description <span className="text-red-500">*</span>
+                <span className="text-sm text-muted-foreground ml-2">(Min 50 characters)</span>
+              </Label>
+              <Textarea
+                id="companyDescription"
+                value={profile.companyDescription || ''}
+                onChange={(e) => handleChange('companyDescription', e.target.value)}
+                placeholder="Describe your company, products, and services..."
+                rows={5}
+                className="resize-none"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                {(profile.companyDescription || '').length} / 1000 characters
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="yearEstablished">
+                Year Established <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="yearEstablished"
+                type="number"
+                value={profile.yearEstablished || ''}
+                onChange={(e) => handleChange('yearEstablished', e.target.value)}
+                placeholder="YYYY"
+                min="1900"
+                max={new Date().getFullYear()}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Legal Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              Legal Information
+              <Badge variant="outline" className="ml-2">Required</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="gstNumber">
+                GST Number <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="gstNumber"
+                value={profile.gstNumber || ''}
+                onChange={(e) => handleChange('gstNumber', e.target.value.toUpperCase())}
+                placeholder="27AABCU9603R1Z5"
+                maxLength={15}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                15-character GST Identification Number
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="registrationNumber">
+                Company Registration Number <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="registrationNumber"
+                value={profile.registrationNumber || ''}
+                onChange={(e) => handleChange('registrationNumber', e.target.value.toUpperCase())}
+                placeholder="U74900MH2010PTC123456"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Contact Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              Contact Information
+              <Badge variant="outline" className="ml-2">Required</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="email">
+                Email Address <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={profile.email || ''}
+                onChange={(e) => handleChange('email', e.target.value)}
+                placeholder="contact@company.com"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="mobile">
+                Mobile Number <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="mobile"
+                type="tel"
+                value={profile.mobile || ''}
+                onChange={(e) => handleChange('mobile', e.target.value)}
+                placeholder="+919876543210"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="telephone">Telephone (Optional)</Label>
+              <Input
+                id="telephone"
+                type="tel"
+                value={profile.telephone || ''}
+                onChange={(e) => handleChange('telephone', e.target.value)}
+                placeholder="+912240123456"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="website">Website (Optional)</Label>
+              <Input
+                id="website"
+                type="url"
+                value={profile.website || ''}
+                onChange={(e) => handleChange('website', e.target.value)}
+                placeholder="https://www.company.com"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Address Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              Address Information
+              <Badge variant="outline" className="ml-2">Required</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {profile.addresses && profile.addresses.map((address, index) => (
+              <div key={index} className="space-y-4 p-4 border rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium">Primary Address</h4>
+                  <Badge variant="secondary">Primary</Badge>
+                </div>
+
+                <div>
+                  <Label htmlFor={`address-line1-${index}`}>
+                    Address Line 1 <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id={`address-line1-${index}`}
+                    value={address.line1 || ''}
+                    onChange={(e) => handleAddressChange(index, 'line1', e.target.value)}
+                    placeholder="Street address, building name, etc."
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor={`address-city-${index}`}>
+                      City <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id={`address-city-${index}`}
+                      value={address.city || ''}
+                      onChange={(e) => handleAddressChange(index, 'city', e.target.value)}
+                      placeholder="City"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`address-state-${index}`}>
+                      State <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id={`address-state-${index}`}
+                      value={address.state || ''}
+                      onChange={(e) => handleAddressChange(index, 'state', e.target.value)}
+                      placeholder="State"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor={`address-pincode-${index}`}>
+                    Pincode <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id={`address-pincode-${index}`}
+                    value={address.pincode || ''}
+                    onChange={(e) => handleAddressChange(index, 'pincode', e.target.value)}
+                    placeholder="400001"
+                    maxLength={6}
+                  />
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Action Buttons */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex justify-between items-center">
+              <div className="text-sm text-muted-foreground">
+                {canSubmit ? (
+                  <div className="flex items-center gap-2 text-green-600">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Profile is complete and ready for verification</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    <span>Complete all required fields to submit for verification</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                {!canSubmit && (
+                  <Button
+                    onClick={handleSave}
+                    disabled={isSubmitting}
+                    variant="outline"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Progress
+                  </Button>
+                )}
+
+                {canSubmit && (
+                  <Button
+                    onClick={handleSubmitForVerification}
+                    disabled={isSubmitting}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    Submit for Verification
+                  </Button>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

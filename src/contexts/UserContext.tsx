@@ -6,6 +6,9 @@ import { api } from '@/services/api.service';
 import { apiRoutes } from '@/services/api.routes';
 import { mapApiRoleToUserRole } from '@/utils/roleMapper';
 import { mockAuthService } from '@/services/auth/mock-auth.service';
+import { VerificationStatus } from '@/types/verification';
+import { mockCheckVerificationStatus } from '@/services/verification.mock';
+import { toast } from 'sonner';
 
 interface UserContextType {
   user: UserProfile | null;
@@ -24,6 +27,9 @@ interface UserContextType {
   setFirstTimeUser: (isFirst: boolean) => void;
   hasCompletedOnboarding: boolean;
   setHasCompletedOnboarding: (completed: boolean) => void;
+  verificationStatus: VerificationStatus;
+  canAccessDashboard: boolean;
+  refreshVerificationStatus: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -57,10 +63,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [isFirstTimeUser, setIsFirstTimeUser] = useState(false);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [profileCompletion, setProfileCompletion] = useState<ProfileCompletion>(defaultProfileCompletion);
+  const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>(VerificationStatus.INCOMPLETE);
+  
+  const canAccessDashboard = verificationStatus === VerificationStatus.APPROVED;
 
   useEffect(() => {
     // Load user data from localStorage on mount
-    const loadUserData = () => {
+    const loadUserData = async () => {
       try {
         const savedUser = localStorage.getItem('user');
         const savedOnboarding = localStorage.getItem('hasCompletedOnboarding');
@@ -74,6 +83,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           // Calculate profile completion immediately
           const completion = calculateProfileCompleteness(userData);
           setProfileCompletion(completion);
+          
+          // Load verification status
+          const statusResult = await mockCheckVerificationStatus();
+          setVerificationStatus(statusResult.status);
         }
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -254,6 +267,21 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const isVendorCategory = (category: string): boolean => {
     return user?.role === 'vendor' && user?.profile?.vendorCategory === category;
   };
+  
+  const refreshVerificationStatus = async () => {
+    try {
+      const result = await mockCheckVerificationStatus();
+      setVerificationStatus(result.status);
+      
+      if (result.status === VerificationStatus.APPROVED) {
+        toast.success('Profile verification completed!');
+      } else if (result.status === VerificationStatus.REJECTED) {
+        toast.error('Profile verification rejected. Please review and resubmit.');
+      }
+    } catch (error) {
+      console.error('Error refreshing verification status:', error);
+    }
+  };
 
   const value: UserContextType = {
     user,
@@ -272,6 +300,9 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     setFirstTimeUser: setIsFirstTimeUser,
     hasCompletedOnboarding,
     setHasCompletedOnboarding,
+    verificationStatus,
+    canAccessDashboard,
+    refreshVerificationStatus,
   };
 
   return (

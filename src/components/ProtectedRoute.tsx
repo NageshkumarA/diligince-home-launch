@@ -1,12 +1,14 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
+import { VerificationStatus } from '@/types/verification';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user, isLoading } = useUser();
+  const { user, isLoading, verificationStatus } = useUser();
+  const location = useLocation();
 
   if (isLoading) {
     return (
@@ -23,5 +25,26 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <Navigate to="/signin" replace />;
   }
 
+  // Allow access to Settings page during all statuses
+  if (location.pathname.includes('industry-settings')) {
+    return <>{children}</>;
+  }
+  
+  // Allow access to verification pending page
+  if (location.pathname.includes('verification-pending')) {
+    return <>{children}</>;
+  }
+
+  // Check verification status for other pages
+  if (verificationStatus === VerificationStatus.INCOMPLETE || 
+      verificationStatus === VerificationStatus.REJECTED) {
+    return <Navigate to="/dashboard/industry-settings" replace />;
+  }
+
+  if (verificationStatus === VerificationStatus.PENDING) {
+    return <Navigate to="/verification-pending" replace />;
+  }
+
+  // Full access for approved users
   return <>{children}</>;
 };
