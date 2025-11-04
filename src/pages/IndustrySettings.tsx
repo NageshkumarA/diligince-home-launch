@@ -12,10 +12,11 @@ import { CheckCircle2, XCircle, AlertCircle, Plus, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
-import { CompanyProfile, VerificationStatus, Address } from '@/types/verification';
-import { MOCK_COMPLETE_PROFILE, mockSaveProfile, mockSubmitForVerification } from '@/services/verification.mock';
+import { CompanyProfile, VerificationStatus, Address, VerificationDocument } from '@/types/verification';
+import { MOCK_COMPLETE_PROFILE, mockSaveProfile, mockSubmitForVerification, mockUploadDocument, mockDeleteDocument } from '@/services/verification.mock';
 import { calculateProfileCompletion, getMissingFields, canSubmitForVerification } from '@/utils/profileValidation';
 import { ProfileCompletionBanner } from '@/components/verification/ProfileCompletionBanner';
+import { DocumentUploadField } from '@/components/verification/DocumentUploadField';
 
 const IndustrySettings = () => {
   const navigate = useNavigate();
@@ -134,6 +135,35 @@ const IndustrySettings = () => {
   
   const handleNotificationChange = (key: string, value: boolean) => {
     setNotifications(prev => ({ ...prev, [key]: value }));
+  };
+
+  // Document handlers
+  const handleDocumentUpload = async (file: File, documentType: string) => {
+    const uploadedDoc = await mockUploadDocument(file, documentType as VerificationDocument['documentType']);
+    
+    setProfile(prev => {
+      const existingDocs = prev.documents || [];
+      const filteredDocs = existingDocs.filter(doc => doc.documentType !== documentType);
+      return {
+        ...prev,
+        documents: [...filteredDocs, uploadedDoc]
+      };
+    });
+    
+    return uploadedDoc;
+  };
+
+  const handleDocumentDelete = async (documentId: string) => {
+    await mockDeleteDocument(documentId);
+    
+    setProfile(prev => ({
+      ...prev,
+      documents: (prev.documents || []).filter(doc => doc.id !== documentId)
+    }));
+  };
+
+  const getDocumentByType = (type: VerificationDocument['documentType']) => {
+    return profile.documents?.find(doc => doc.documentType === type);
   };
 
   return (
@@ -333,52 +363,78 @@ const IndustrySettings = () => {
               <CardTitle>Legal Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* GST Number */}
-                <div className="space-y-2">
-                  <Label htmlFor="gstNumber" className="flex items-center gap-2">
-                    GST Number <span className="text-red-500">*</span>
-                    {getFieldStatus(profile.gstNumber) === 'filled' && (
-                      <CheckCircle2 className="w-4 h-4 text-green-600" />
-                    )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* GST Number + Certificate */}
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="gstNumber" className="flex items-center gap-2">
+                      GST Number <span className="text-red-500">*</span>
+                      {getFieldStatus(profile.gstNumber) === 'filled' && (
+                        <CheckCircle2 className="w-4 h-4 text-green-600" />
+                      )}
+                      {getFieldStatus(profile.gstNumber) === 'empty' && (
+                        <XCircle className="w-4 h-4 text-red-600" />
+                      )}
+                    </Label>
+                    <Input
+                      id="gstNumber"
+                      value={profile.gstNumber || ''}
+                      onChange={(e) => handleChange('gstNumber', e.target.value.toUpperCase())}
+                      placeholder="27AABCU9603R1Z5"
+                      maxLength={15}
+                      className={getFieldClassName(getFieldStatus(profile.gstNumber))}
+                    />
                     {getFieldStatus(profile.gstNumber) === 'empty' && (
-                      <XCircle className="w-4 h-4 text-red-600" />
+                      <p className="text-xs text-red-600 mt-1">This field is required</p>
                     )}
-                  </Label>
-                  <Input
-                    id="gstNumber"
-                    value={profile.gstNumber || ''}
-                    onChange={(e) => handleChange('gstNumber', e.target.value.toUpperCase())}
-                    placeholder="27AABCU9603R1Z5"
-                    maxLength={15}
-                    className={getFieldClassName(getFieldStatus(profile.gstNumber))}
+                  </div>
+                  
+                  <DocumentUploadField
+                    label="GST Certificate"
+                    documentType="gst_certificate"
+                    required={true}
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    currentDocument={getDocumentByType('gst_certificate')}
+                    onUpload={handleDocumentUpload}
+                    onDelete={handleDocumentDelete}
+                    helperText="Upload your GST registration certificate (PDF or Image)"
                   />
-                  {getFieldStatus(profile.gstNumber) === 'empty' && (
-                    <p className="text-xs text-red-600 mt-1">This field is required</p>
-                  )}
                 </div>
 
-                {/* Registration Number */}
-                <div className="space-y-2">
-                  <Label htmlFor="registrationNumber" className="flex items-center gap-2">
-                    Company Registration Number <span className="text-red-500">*</span>
-                    {getFieldStatus(profile.registrationNumber) === 'filled' && (
-                      <CheckCircle2 className="w-4 h-4 text-green-600" />
-                    )}
+                {/* Registration Number + Certificate */}
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="registrationNumber" className="flex items-center gap-2">
+                      Company Registration Number <span className="text-red-500">*</span>
+                      {getFieldStatus(profile.registrationNumber) === 'filled' && (
+                        <CheckCircle2 className="w-4 h-4 text-green-600" />
+                      )}
+                      {getFieldStatus(profile.registrationNumber) === 'empty' && (
+                        <XCircle className="w-4 h-4 text-red-600" />
+                      )}
+                    </Label>
+                    <Input
+                      id="registrationNumber"
+                      value={profile.registrationNumber || ''}
+                      onChange={(e) => handleChange('registrationNumber', e.target.value)}
+                      placeholder="U74900MH2010PTC123456"
+                      className={getFieldClassName(getFieldStatus(profile.registrationNumber))}
+                    />
                     {getFieldStatus(profile.registrationNumber) === 'empty' && (
-                      <XCircle className="w-4 h-4 text-red-600" />
+                      <p className="text-xs text-red-600 mt-1">This field is required</p>
                     )}
-                  </Label>
-                  <Input
-                    id="registrationNumber"
-                    value={profile.registrationNumber || ''}
-                    onChange={(e) => handleChange('registrationNumber', e.target.value)}
-                    placeholder="U74900MH2010PTC123456"
-                    className={getFieldClassName(getFieldStatus(profile.registrationNumber))}
+                  </div>
+                  
+                  <DocumentUploadField
+                    label="Registration Certificate"
+                    documentType="registration_certificate"
+                    required={true}
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    currentDocument={getDocumentByType('registration_certificate')}
+                    onUpload={handleDocumentUpload}
+                    onDelete={handleDocumentDelete}
+                    helperText="Upload your company registration certificate"
                   />
-                  {getFieldStatus(profile.registrationNumber) === 'empty' && (
-                    <p className="text-xs text-red-600 mt-1">This field is required</p>
-                  )}
                 </div>
               </div>
             </CardContent>
@@ -459,6 +515,53 @@ const IndustrySettings = () => {
                     placeholder="https://www.company.com"
                   />
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Additional Documents Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Additional Documents</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Company Logo */}
+                <DocumentUploadField
+                  label="Company Logo"
+                  documentType="company_logo"
+                  required={false}
+                  accept=".jpg,.jpeg,.png,.svg"
+                  maxSizeMB={5}
+                  currentDocument={getDocumentByType('company_logo')}
+                  onUpload={handleDocumentUpload}
+                  onDelete={handleDocumentDelete}
+                  helperText="Upload your company logo (JPG, PNG, or SVG)"
+                />
+
+                {/* Address Proof */}
+                <DocumentUploadField
+                  label="Address Proof"
+                  documentType="address_proof"
+                  required={true}
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  currentDocument={getDocumentByType('address_proof')}
+                  onUpload={handleDocumentUpload}
+                  onDelete={handleDocumentDelete}
+                  helperText="Utility bill, lease agreement, or property document"
+                />
+
+                {/* Authorization Letter */}
+                <DocumentUploadField
+                  label="Authorization Letter"
+                  documentType="authorization_letter"
+                  required={false}
+                  accept=".pdf"
+                  currentDocument={getDocumentByType('authorization_letter')}
+                  onUpload={handleDocumentUpload}
+                  onDelete={handleDocumentDelete}
+                  helperText="Letter authorizing signatory (if applicable)"
+                />
               </div>
             </CardContent>
           </Card>
@@ -615,10 +718,14 @@ const IndustrySettings = () => {
                 >
                   {isSubmitting ? 'Saving...' : 'Save Progress'}
                 </Button>
-                {missingFields.length > 0 && (
+                {(missingFields.length > 0 || profile.companyDescription && profile.companyDescription.length < 50) && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <AlertCircle className="w-4 h-4" />
-                    <span>Complete {missingFields.length} more field(s) to verify</span>
+                    <span>
+                      {missingFields.length > 0 
+                        ? `Complete ${missingFields.length} more field(s) to verify`
+                        : 'Complete description (minimum 50 characters)'}
+                    </span>
                   </div>
                 )}
               </>

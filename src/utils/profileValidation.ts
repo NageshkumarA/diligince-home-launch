@@ -69,5 +69,32 @@ export const canSubmitForVerification = (profile: Partial<CompanyProfile> | null
     return false;
   }
   
+  // Required documents validation
+  const documents = profile?.documents || [];
+  const hasGSTCert = documents.some(doc => doc.documentType === 'gst_certificate');
+  const hasRegCert = documents.some(doc => doc.documentType === 'registration_certificate');
+  const hasAddressProof = documents.some(doc => doc.documentType === 'address_proof');
+  
+  if (!hasGSTCert || !hasRegCert || !hasAddressProof) {
+    return false;
+  }
+  
   return true;
+};
+
+export const getMissingDocuments = (profile: Partial<CompanyProfile> | null): string[] => {
+  const missing: string[] = [];
+  const documents = profile?.documents || [];
+  
+  if (!documents.some(doc => doc.documentType === 'gst_certificate')) {
+    missing.push('GST Certificate');
+  }
+  if (!documents.some(doc => doc.documentType === 'registration_certificate')) {
+    missing.push('Registration Certificate');
+  }
+  if (!documents.some(doc => doc.documentType === 'address_proof')) {
+    missing.push('Address Proof');
+  }
+  
+  return missing;
 };

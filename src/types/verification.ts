@@ -5,6 +5,18 @@ export enum VerificationStatus {
   REJECTED = 'rejected'
 }
 
+export interface VerificationDocument {
+  id: string;
+  name: string;
+  type: string; // MIME type
+  size: number; // bytes
+  url: string; // preview/download URL
+  documentType: 'gst_certificate' | 'registration_certificate' | 'company_logo' | 'address_proof' | 'authorization_letter';
+  uploadedAt: Date;
+  status?: 'pending' | 'verified' | 'rejected';
+  remarks?: string;
+}
+
 export interface Address {
   line1: string;
   city: string;
@@ -32,6 +44,9 @@ export interface CompanyProfile {
   
   // Address
   addresses: Address[];
+  
+  // Documents
+  documents?: VerificationDocument[];
   
   // Verification
   verificationStatus: VerificationStatus;

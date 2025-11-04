@@ -1,4 +1,4 @@
-import { CompanyProfile, VerificationStatus } from '@/types/verification';
+import { CompanyProfile, VerificationStatus, VerificationDocument } from '@/types/verification';
 
 export const MOCK_INCOMPLETE_PROFILE: Partial<CompanyProfile> = {
   companyName: "TechPro Industries",
@@ -89,4 +89,53 @@ export const mockCheckVerificationStatus = async (): Promise<{
   }
   
   return { status: VerificationStatus.INCOMPLETE };
+};
+
+export const mockUploadDocument = async (
+  file: File, 
+  documentType: VerificationDocument['documentType']
+): Promise<VerificationDocument> => {
+  await new Promise(resolve => setTimeout(resolve, 1500));
+  
+  const mockDocument: VerificationDocument = {
+    id: `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    name: file.name,
+    type: file.type,
+    size: file.size,
+    url: URL.createObjectURL(file),
+    documentType,
+    uploadedAt: new Date(),
+    status: 'pending'
+  };
+  
+  const stored = localStorage.getItem('company_profile');
+  if (stored) {
+    const profile = JSON.parse(stored);
+    const documents = profile.documents || [];
+    
+    const filteredDocs = documents.filter((doc: VerificationDocument) => 
+      doc.documentType !== documentType
+    );
+    
+    profile.documents = [...filteredDocs, mockDocument];
+    localStorage.setItem('company_profile', JSON.stringify(profile));
+  }
+  
+  console.log('Mock: Document uploaded', mockDocument);
+  return mockDocument;
+};
+
+export const mockDeleteDocument = async (documentId: string): Promise<void> => {
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  const stored = localStorage.getItem('company_profile');
+  if (stored) {
+    const profile = JSON.parse(stored);
+    profile.documents = (profile.documents || []).filter(
+      (doc: VerificationDocument) => doc.id !== documentId
+    );
+    localStorage.setItem('company_profile', JSON.stringify(profile));
+  }
+  
+  console.log('Mock: Document deleted', documentId);
 };
