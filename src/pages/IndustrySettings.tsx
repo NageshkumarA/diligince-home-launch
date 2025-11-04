@@ -176,12 +176,10 @@ const IndustrySettings = () => {
       </div>
 
       <Tabs defaultValue="company" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="company">Company Profile</TabsTrigger>
-          <TabsTrigger value="approval">Approval Matrix</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
-          <TabsTrigger value="integrations">Integrations</TabsTrigger>
         </TabsList>
 
         <TabsContent value="company" className="space-y-6">
@@ -359,122 +357,122 @@ const IndustrySettings = () => {
           </Card>
 
           {/* Legal Information Section */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Legal Information</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      {/* PAN Number + Card */}
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="panNumber" className="flex items-center gap-2">
-                            PAN Number <span className="text-red-500">*</span>
-                            {getFieldStatus(profile.panNumber) === 'filled' && (
-                              <CheckCircle2 className="w-4 h-4 text-green-600" />
-                            )}
-                            {getFieldStatus(profile.panNumber) === 'empty' && (
-                              <XCircle className="w-4 h-4 text-red-600" />
-                            )}
-                          </Label>
-                          <Input
-                            id="panNumber"
-                            value={profile.panNumber || ''}
-                            onChange={(e) => handleChange('panNumber', e.target.value.toUpperCase())}
-                            placeholder="AABCU9603R"
-                            maxLength={10}
-                            className={getFieldClassName(getFieldStatus(profile.panNumber))}
-                          />
-                          {getFieldStatus(profile.panNumber) === 'empty' && (
-                            <p className="text-xs text-red-600 mt-1">This field is required</p>
-                          )}
-                          <p className="text-xs text-muted-foreground">10-character alphanumeric code</p>
-                        </div>
-                        
-                        <DocumentUploadField
-                          label="PAN Card"
-                          documentType="pan_card"
-                          required={true}
-                          accept=".pdf,.jpg,.jpeg,.png"
-                          currentDocument={getDocumentByType('pan_card')}
-                          onUpload={handleDocumentUpload}
-                          onDelete={handleDocumentDelete}
-                          helperText="Upload company PAN card (PDF or Image)"
-                        />
-                      </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Legal Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Input Fields Row */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* PAN Number */}
+                <div className="space-y-2">
+                  <Label htmlFor="panNumber" className="flex items-center gap-2">
+                    PAN Number <span className="text-red-500">*</span>
+                    {getFieldStatus(profile.panNumber) === 'filled' && (
+                      <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    )}
+                    {getFieldStatus(profile.panNumber) === 'empty' && (
+                      <XCircle className="w-4 h-4 text-red-600" />
+                    )}
+                  </Label>
+                  <Input
+                    id="panNumber"
+                    value={profile.panNumber || ''}
+                    onChange={(e) => handleChange('panNumber', e.target.value.toUpperCase())}
+                    placeholder="AABCU9603R"
+                    maxLength={10}
+                    className={getFieldClassName(getFieldStatus(profile.panNumber))}
+                  />
+                  {getFieldStatus(profile.panNumber) === 'empty' && (
+                    <p className="text-xs text-red-600 mt-1">This field is required</p>
+                  )}
+                </div>
 
-                      {/* GST Number + Certificate */}
-                      <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="gstNumber" className="flex items-center gap-2">
-                      GST Number <span className="text-red-500">*</span>
-                      {getFieldStatus(profile.gstNumber) === 'filled' && (
-                        <CheckCircle2 className="w-4 h-4 text-green-600" />
-                      )}
-                      {getFieldStatus(profile.gstNumber) === 'empty' && (
-                        <XCircle className="w-4 h-4 text-red-600" />
-                      )}
-                    </Label>
-                    <Input
-                      id="gstNumber"
-                      value={profile.gstNumber || ''}
-                      onChange={(e) => handleChange('gstNumber', e.target.value.toUpperCase())}
-                      placeholder="27AABCU9603R1Z5"
-                      maxLength={15}
-                      className={getFieldClassName(getFieldStatus(profile.gstNumber))}
-                    />
+                {/* GST Number */}
+                <div className="space-y-2">
+                  <Label htmlFor="gstNumber" className="flex items-center gap-2">
+                    GST Number <span className="text-red-500">*</span>
+                    {getFieldStatus(profile.gstNumber) === 'filled' && (
+                      <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    )}
                     {getFieldStatus(profile.gstNumber) === 'empty' && (
-                      <p className="text-xs text-red-600 mt-1">This field is required</p>
+                      <XCircle className="w-4 h-4 text-red-600" />
                     )}
-                  </div>
-                  
-                  <DocumentUploadField
-                    label="GST Certificate"
-                    documentType="gst_certificate"
-                    required={true}
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    currentDocument={getDocumentByType('gst_certificate')}
-                    onUpload={handleDocumentUpload}
-                    onDelete={handleDocumentDelete}
-                    helperText="Upload your GST registration certificate (PDF or Image)"
+                  </Label>
+                  <Input
+                    id="gstNumber"
+                    value={profile.gstNumber || ''}
+                    onChange={(e) => handleChange('gstNumber', e.target.value.toUpperCase())}
+                    placeholder="27AABCU9603R1Z5"
+                    maxLength={15}
+                    className={getFieldClassName(getFieldStatus(profile.gstNumber))}
                   />
+                  {getFieldStatus(profile.gstNumber) === 'empty' && (
+                    <p className="text-xs text-red-600 mt-1">This field is required</p>
+                  )}
                 </div>
 
-                {/* Registration Number + Certificate */}
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="registrationNumber" className="flex items-center gap-2">
-                      Company Registration Number <span className="text-red-500">*</span>
-                      {getFieldStatus(profile.registrationNumber) === 'filled' && (
-                        <CheckCircle2 className="w-4 h-4 text-green-600" />
-                      )}
-                      {getFieldStatus(profile.registrationNumber) === 'empty' && (
-                        <XCircle className="w-4 h-4 text-red-600" />
-                      )}
-                    </Label>
-                    <Input
-                      id="registrationNumber"
-                      value={profile.registrationNumber || ''}
-                      onChange={(e) => handleChange('registrationNumber', e.target.value)}
-                      placeholder="U74900MH2010PTC123456"
-                      className={getFieldClassName(getFieldStatus(profile.registrationNumber))}
-                    />
-                    {getFieldStatus(profile.registrationNumber) === 'empty' && (
-                      <p className="text-xs text-red-600 mt-1">This field is required</p>
+                {/* Registration Number */}
+                <div className="space-y-2">
+                  <Label htmlFor="registrationNumber" className="flex items-center gap-2">
+                    Company Registration Number <span className="text-red-500">*</span>
+                    {getFieldStatus(profile.registrationNumber) === 'filled' && (
+                      <CheckCircle2 className="w-4 h-4 text-green-600" />
                     )}
-                  </div>
-                  
-                  <DocumentUploadField
-                    label="Registration Certificate"
-                    documentType="registration_certificate"
-                    required={true}
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    currentDocument={getDocumentByType('registration_certificate')}
-                    onUpload={handleDocumentUpload}
-                    onDelete={handleDocumentDelete}
-                    helperText="Upload your company registration certificate"
+                    {getFieldStatus(profile.registrationNumber) === 'empty' && (
+                      <XCircle className="w-4 h-4 text-red-600" />
+                    )}
+                  </Label>
+                  <Input
+                    id="registrationNumber"
+                    value={profile.registrationNumber || ''}
+                    onChange={(e) => handleChange('registrationNumber', e.target.value)}
+                    placeholder="U74900MH2010PTC123456"
+                    className={getFieldClassName(getFieldStatus(profile.registrationNumber))}
                   />
+                  {getFieldStatus(profile.registrationNumber) === 'empty' && (
+                    <p className="text-xs text-red-600 mt-1">This field is required</p>
+                  )}
                 </div>
+              </div>
+
+              {/* Document Upload Row */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* PAN Card */}
+                <DocumentUploadField
+                  label="PAN Card"
+                  documentType="pan_card"
+                  required={true}
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  currentDocument={getDocumentByType('pan_card')}
+                  onUpload={handleDocumentUpload}
+                  onDelete={handleDocumentDelete}
+                  helperText="Upload company PAN card"
+                />
+
+                {/* GST Certificate */}
+                <DocumentUploadField
+                  label="GST Certificate"
+                  documentType="gst_certificate"
+                  required={true}
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  currentDocument={getDocumentByType('gst_certificate')}
+                  onUpload={handleDocumentUpload}
+                  onDelete={handleDocumentDelete}
+                  helperText="Upload GST certificate"
+                />
+
+                {/* Registration Certificate */}
+                <DocumentUploadField
+                  label="Registration Certificate"
+                  documentType="registration_certificate"
+                  required={true}
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  currentDocument={getDocumentByType('registration_certificate')}
+                  onUpload={handleDocumentUpload}
+                  onDelete={handleDocumentDelete}
+                  helperText="Upload registration certificate"
+                />
               </div>
             </CardContent>
           </Card>
