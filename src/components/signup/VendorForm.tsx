@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAuth } from "@/components/auth/hooks/useAuth";
 
 const formSchema = z.object({
   businessName: z.string().min(1, {
@@ -41,6 +42,9 @@ const formSchema = z.object({
   confirmPassword: z.string(),
   acceptTerms: z.boolean().refine((value) => value === true, {
     message: "You must accept the terms and conditions",
+  }),
+  privacyAccepted: z.boolean().refine((value) => value === true, {
+    message: "You must accept the privacy policy",
   }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -94,11 +98,10 @@ const specializations = {
 };
 
 export function VendorForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { signUp, isLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -111,23 +114,24 @@ export function VendorForm() {
       password: "",
       confirmPassword: "",
       acceptTerms: false,
+      privacyAccepted: false,
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
-    
-    // Simulate API call delay
-    setTimeout(() => {
-      console.log("Form values:", values);
-      setIsSubmitting(false);
-      toast.success("Sign-up successful!", {
-        description: "Welcome to diligince.ai",
-      });
-      
-      // Redirect to sign-in page after successful sign-up
-      navigate("/signin?role=vendor");
-    }, 1500);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const registrationData = {
+      email: values.email,
+      password: values.password,
+      phone: values.phone,
+      role: 'Vendor',
+      businessName: values.businessName,
+      vendorCategory: values.vendorCategory,
+      specialization: values.specialization,
+      termsAccepted: values.acceptTerms,
+      privacyAccepted: values.privacyAccepted,
+    };
+
+    await signUp(registrationData);
   }
 
   // Handle vendor category change to update specialization options
@@ -338,12 +342,34 @@ export function VendorForm() {
           )}
         />
         
+        <FormField
+          control={form.control}
+          name="privacyAccepted"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>
+                  I accept the 
+                  <a href="/privacy" className="text-primary hover:underline ml-1">privacy policy</a>
+                </FormLabel>
+                <FormMessage />
+              </div>
+            </FormItem>
+          )}
+        />
+        
         <Button 
           type="submit" 
           className="w-full hover:scale-105 transition-transform duration-200"
-          disabled={isSubmitting}
+          disabled={isLoading}
         >
-          {isSubmitting ? "Creating Account..." : "Create Account"}
+          {isLoading ? "Creating Account..." : "Create Account"}
         </Button>
       </form>
     </Form>

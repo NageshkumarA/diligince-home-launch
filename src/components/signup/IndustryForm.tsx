@@ -18,8 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useUser } from "@/contexts/UserContext";
-import { WelcomeModal } from "@/components/shared/WelcomeModal";
+import { useAuth } from "@/components/auth/hooks/useAuth";
 
 // Define industry types array to be shared between signup and profile pages
 export const industries = [
@@ -48,6 +47,12 @@ export const industries = [
 ];
 
 const formSchema = z.object({
+  firstName: z.string().min(1, {
+    message: "First name is required",
+  }),
+  lastName: z.string().min(1, {
+    message: "Last name is required",
+  }),
   companyName: z.string().min(1, {
     message: "Company name is required",
   }),
@@ -68,6 +73,9 @@ const formSchema = z.object({
   acceptTerms: z.boolean().refine((value) => value === true, {
     message: "You must accept the terms and conditions",
   }),
+  privacyAccepted: z.boolean().refine((value) => value === true, {
+    message: "You must accept the privacy policy",
+  }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -80,17 +88,15 @@ const formSchema = z.object({
 );
 
 export function IndustryForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { signUp, isLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
-  const [newUser, setNewUser] = useState<any>(null);
-  const navigate = useNavigate();
-  const { setUser, setFirstTimeUser } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      firstName: "",
+      lastName: "",
       companyName: "",
       email: "",
       phone: "",
@@ -99,89 +105,74 @@ export function IndustryForm() {
       password: "",
       confirmPassword: "",
       acceptTerms: false,
+      privacyAccepted: false,
     },
   });
 
   const selectedIndustryType = form.watch("industryType");
   const showCustomIndustryField = selectedIndustryType === "Others";
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
-    
-    setTimeout(() => {
-      // Generate initials from company name
-      const initials = values.companyName
-        .split(' ')
-        .map(word => word.charAt(0))
-        .join('')
-        .substring(0, 2)
-        .toUpperCase();
-      
-      // Create user profile
-      const userProfile = {
-        id: Math.random().toString(36).substr(2, 9),
-        email: values.email,
-        name: values.companyName,
-        role: 'industry' as const,
-        avatar: '',
-        initials: initials,
-        status: 'active' as const,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        preferences: {
-          theme: 'system' as const,
-          notifications: {
-            email: true,
-            push: true,
-            sms: false,
-            marketing: false,
-          },
-          language: 'en',
-          timezone: 'UTC',
-        },
-        profile: {
-          companyName: values.companyName,
-          industryType: values.industryType === "Others" ? values.customIndustryType : values.industryType,
-          phone: values.phone
-        }
-      };
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const registrationData = {
+      email: values.email,
+      password: values.password,
+      phone: values.phone,
+      role: 'IndustryAdmin',
+      firstName: values.firstName,
+      lastName: values.lastName,
+      companyName: values.companyName,
+      industryType: values.industryType === "Others" ? values.customIndustryType! : values.industryType,
+      ...(values.industryType === "Others" && { customIndustryType: values.customIndustryType }),
+      termsAccepted: values.acceptTerms,
+      privacyAccepted: values.privacyAccepted,
+    };
 
-      // Set user in context
-      setUser(userProfile);
-      setFirstTimeUser(true);
-      setNewUser(userProfile);
-      
-      setIsSubmitting(false);
-      toast.success("Sign-up successful!", {
-        description: "Welcome to diligince.ai",
-      });
-      
-      // Show welcome modal instead of direct redirect
-      setShowWelcomeModal(true);
-    }, 1500);
+    await signUp(registrationData);
   }
 
-  const handleCompleteProfile = () => {
-    setShowWelcomeModal(false);
-    setTimeout(() => {
-      navigate("/profile-completion");
-    }, 300);
-  };
-
-  const handleGoToDashboard = () => {
-    setShowWelcomeModal(false);
-    setTimeout(() => {
-      navigate("/industry-dashboard");
-    }, 300);
-  };
-
   return (
-    <>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-fade-in">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-fade-in">
+        <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="companyName"
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700">First Name</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="John" 
+                    className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700">Last Name</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Doe" 
+                    className="bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-blue-200"
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        
+        <FormField
+          control={form.control}
+          name="companyName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-gray-700">Company Name</FormLabel>
@@ -348,49 +339,58 @@ export function IndustryForm() {
             )}
           />
           
-          <FormField
-            control={form.control}
-            name="acceptTerms"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel className="text-gray-700">
-                    I accept the 
-                    <a href="/terms" className="text-blue-600 hover:underline ml-1">terms and conditions</a>
-                  </FormLabel>
-                  <FormMessage />
-                </div>
-              </FormItem>
-            )}
-          />
-          
-          <Button 
-            type="submit" 
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 transition-transform duration-200"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Creating Account..." : "Create Account"}
-          </Button>
-        </form>
-      </Form>
-
-      {showWelcomeModal && newUser && (
-        <WelcomeModal
-          isOpen={showWelcomeModal}
-          onClose={() => setShowWelcomeModal(false)}
-          userRole={newUser.role}
-          userName={newUser.name}
-          onCompleteProfile={handleCompleteProfile}
-          onGoToDashboard={handleGoToDashboard}
-          profileCompletion={85} // Industry form collects most required data
+        <FormField
+          control={form.control}
+          name="acceptTerms"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel className="text-gray-700">
+                  I accept the 
+                  <a href="/terms" className="text-blue-600 hover:underline ml-1">terms and conditions</a>
+                </FormLabel>
+                <FormMessage />
+              </div>
+            </FormItem>
+          )}
         />
-      )}
-    </>
+        
+        <FormField
+          control={form.control}
+          name="privacyAccepted"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel className="text-gray-700">
+                  I accept the 
+                  <a href="/privacy" className="text-blue-600 hover:underline ml-1">privacy policy</a>
+                </FormLabel>
+                <FormMessage />
+              </div>
+            </FormItem>
+          )}
+        />
+        
+        <Button 
+          type="submit" 
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 transition-transform duration-200"
+          disabled={isLoading}
+        >
+          {isLoading ? "Creating Account..." : "Create Account"}
+        </Button>
+      </form>
+    </Form>
   );
 }
