@@ -37,6 +37,7 @@ export const getMissingFields = (profile: Partial<CompanyProfile> | null): strin
     industryFocus: 'Industry Focus',
     companyDescription: 'Company Description',
     yearEstablished: 'Year Established',
+    panNumber: 'PAN Number',
     gstNumber: 'GST Number',
     registrationNumber: 'Registration Number',
     email: 'Email',
@@ -71,11 +72,12 @@ export const canSubmitForVerification = (profile: Partial<CompanyProfile> | null
   
   // Required documents validation
   const documents = profile?.documents || [];
+  const hasPANCard = documents.some(doc => doc.documentType === 'pan_card');
   const hasGSTCert = documents.some(doc => doc.documentType === 'gst_certificate');
   const hasRegCert = documents.some(doc => doc.documentType === 'registration_certificate');
   const hasAddressProof = documents.some(doc => doc.documentType === 'address_proof');
   
-  if (!hasGSTCert || !hasRegCert || !hasAddressProof) {
+  if (!hasPANCard || !hasGSTCert || !hasRegCert || !hasAddressProof) {
     return false;
   }
   
@@ -86,6 +88,9 @@ export const getMissingDocuments = (profile: Partial<CompanyProfile> | null): st
   const missing: string[] = [];
   const documents = profile?.documents || [];
   
+  if (!documents.some(doc => doc.documentType === 'pan_card')) {
+    missing.push('PAN Card');
+  }
   if (!documents.some(doc => doc.documentType === 'gst_certificate')) {
     missing.push('GST Certificate');
   }

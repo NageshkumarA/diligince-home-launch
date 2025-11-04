@@ -11,7 +11,7 @@ export interface VerificationDocument {
   type: string; // MIME type
   size: number; // bytes
   url: string; // preview/download URL
-  documentType: 'gst_certificate' | 'registration_certificate' | 'company_logo' | 'address_proof' | 'authorization_letter';
+  documentType: 'gst_certificate' | 'registration_certificate' | 'pan_card' | 'company_logo' | 'address_proof' | 'authorization_letter';
   uploadedAt: Date;
   status?: 'pending' | 'verified' | 'rejected';
   remarks?: string;
@@ -33,6 +33,7 @@ export interface CompanyProfile {
   yearEstablished: string;
   
   // Legal
+  panNumber: string;
   gstNumber: string;
   registrationNumber: string;
   
@@ -64,6 +65,7 @@ export const REQUIRED_FIELDS = [
   'industryFocus',
   'companyDescription',
   'yearEstablished',
+  'panNumber',
   'gstNumber',
   'registrationNumber',
   'email',

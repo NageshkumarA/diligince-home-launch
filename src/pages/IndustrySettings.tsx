@@ -212,6 +212,7 @@ const IndustrySettings = () => {
                   industryFocus: '',
                   companyDescription: '',
                   yearEstablished: '',
+                  panNumber: '',
                   gstNumber: '',
                   registrationNumber: '',
                   email: '',
@@ -358,14 +359,52 @@ const IndustrySettings = () => {
           </Card>
 
           {/* Legal Information Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Legal Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* GST Number + Certificate */}
-                <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Legal Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {/* PAN Number + Card */}
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="panNumber" className="flex items-center gap-2">
+                            PAN Number <span className="text-red-500">*</span>
+                            {getFieldStatus(profile.panNumber) === 'filled' && (
+                              <CheckCircle2 className="w-4 h-4 text-green-600" />
+                            )}
+                            {getFieldStatus(profile.panNumber) === 'empty' && (
+                              <XCircle className="w-4 h-4 text-red-600" />
+                            )}
+                          </Label>
+                          <Input
+                            id="panNumber"
+                            value={profile.panNumber || ''}
+                            onChange={(e) => handleChange('panNumber', e.target.value.toUpperCase())}
+                            placeholder="AABCU9603R"
+                            maxLength={10}
+                            className={getFieldClassName(getFieldStatus(profile.panNumber))}
+                          />
+                          {getFieldStatus(profile.panNumber) === 'empty' && (
+                            <p className="text-xs text-red-600 mt-1">This field is required</p>
+                          )}
+                          <p className="text-xs text-muted-foreground">10-character alphanumeric code</p>
+                        </div>
+                        
+                        <DocumentUploadField
+                          label="PAN Card"
+                          documentType="pan_card"
+                          required={true}
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          currentDocument={getDocumentByType('pan_card')}
+                          onUpload={handleDocumentUpload}
+                          onDelete={handleDocumentDelete}
+                          helperText="Upload company PAN card (PDF or Image)"
+                        />
+                      </div>
+
+                      {/* GST Number + Certificate */}
+                      <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="gstNumber" className="flex items-center gap-2">
                       GST Number <span className="text-red-500">*</span>

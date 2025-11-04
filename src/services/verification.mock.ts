@@ -14,6 +14,7 @@ export const MOCK_COMPLETE_PROFILE: CompanyProfile = {
   industryFocus: "manufacturing",
   companyDescription: "Leading manufacturer of industrial automation equipment and solutions specialized in cutting-edge technology.",
   yearEstablished: "2010",
+  panNumber: "AABCU9603R",
   gstNumber: "27AABCU9603R1Z5",
   registrationNumber: "U74900MH2010PTC123456",
   email: "contact@techpro.com",
