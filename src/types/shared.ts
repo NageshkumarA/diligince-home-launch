@@ -80,19 +80,19 @@ export interface BaseNotification {
 export const getDashboardRoute = (user: UserProfile): string => {
   switch (user.role) {
     case 'industry':
-      return '/industry-dashboard';
+      return '/dashboard/industry';
     case 'professional':
-      return '/professional-dashboard';
+      return '/dashboard/professional';
     case 'vendor':
       if (user.profile?.vendorCategory === 'service') {
-        return '/service-vendor-dashboard';
+        return '/dashboard/service-vendor';
       } else if (user.profile?.vendorCategory === 'product') {
-        return '/product-vendor-dashboard';
+        return '/dashboard/product-vendor';
       } else if (user.profile?.vendorCategory === 'logistics') {
-        return '/logistics-vendor-dashboard';
+        return '/dashboard/logistics-vendor';
       }
-      return '/vendor-dashboard';
+      return '/dashboard';
     default:
-      return '/';
+      return '/signin';
   }
 };

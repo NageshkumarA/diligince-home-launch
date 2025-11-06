@@ -5,9 +5,7 @@ import { calculateProfileCompleteness, ProfileCompletion } from '@/utils/profile
 import { api } from '@/services/api.service';
 import { apiRoutes } from '@/services/api.routes';
 import { mapApiRoleToUserRole } from '@/utils/roleMapper';
-import { mockAuthService } from '@/services/auth/mock-auth.service';
 import { VerificationStatus } from '@/types/verification';
-import { mockCheckVerificationStatus } from '@/services/verification.mock';
 import { toast } from 'sonner';
 
 interface UserContextType {
@@ -17,7 +15,7 @@ interface UserContextType {
   isLoading: boolean;
   updateProfile: (updates: Partial<UserProfile>) => void;
   updatePreferences: (preferences: Partial<UserPreferences>) => void;
-  login: (email: string, password: string) => Promise<{success: boolean, error?: string, isMockAuth?: boolean}>;
+  login: (email: string, password: string) => Promise<{success: boolean, error?: string}>;
   logout: () => void;
   getDashboardUrl: () => string;
   isUserType: (role: UserRole) => boolean;
@@ -85,8 +83,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           setProfileCompletion(completion);
           
           // Load verification status
-          const statusResult = await mockCheckVerificationStatus();
-          setVerificationStatus(statusResult.status);
+          try {
+            // TODO: Replace with real API call when available
+            setVerificationStatus(VerificationStatus.APPROVED); // Default for now
+          } catch (error) {
+            console.error('Error loading verification status:', error);
+            setVerificationStatus(VerificationStatus.INCOMPLETE);
+          }
         }
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -155,22 +158,17 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const login = useCallback(async (email: string, password: string) => {
     try {
-      // First, try real API
       console.log('[Auth] Attempting API login...');
       const response: any = await api.post(apiRoutes.auth.login, { email, password });
       
-      // Extract from new API structure: { data: { user }, meta: { access_token, refresh_token } }
-      const { data, meta } = response?.data ;
+      const { data, meta } = response?.data;
       
       if (meta?.access_token && data?.user) {
         console.log('[Auth] API login successful');
         
-        // Store both tokens
         localStorage.setItem('authToken', meta.access_token);
         localStorage.setItem('refreshToken', meta.refresh_token);
-        localStorage.removeItem('isMockAuth'); // Clear mock auth flag
         
-        // Transform API user format to UserContext format
         const apiUser = data.user;
         const userProfile: UserProfile = {
           id: apiUser.id,
@@ -190,56 +188,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         
         setUser(userProfile);
         setIsFirstTimeUser(!apiUser.profile?.isProfileComplete);
-        return { success: true, isMockAuth: false };
+        return { success: true };
       }
       return { success: false, error: 'Invalid credentials' };
     } catch (error: any) {
-      console.warn('[Auth] API login failed, attempting mock login fallback...', error);
-      
-      // Fallback to mock authentication
-      try {
-        const mockResponse = await mockAuthService.login(email, password);
-        
-        if (mockResponse.success && mockResponse.data) {
-          console.log('[Auth] Mock login successful');
-          const { data, meta } = mockResponse.data;
-          
-          // Store tokens and set mock auth flag
-          localStorage.setItem('authToken', meta.access_token);
-          localStorage.setItem('refreshToken', meta.refresh_token);
-          localStorage.setItem('isMockAuth', 'true'); // Flag for mock mode
-          
-          // Transform mock user to UserProfile format
-          const apiUser = data.user;
-          const userProfile: UserProfile = {
-            id: apiUser.id,
-            name: apiUser.profile ? `${apiUser.profile.firstName} ${apiUser.profile.lastName}` : apiUser.email,
-            email: apiUser.email,
-            role: mapApiRoleToUserRole(apiUser.role),
-            profile: {
-              vendorCategory: apiUser.profile?.vendorCategory,
-              companyName: apiUser.profile?.companyName,
-              firstName: apiUser.profile?.firstName,
-              lastName: apiUser.profile?.lastName,
-            },
-            preferences: defaultPreferences,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          };
-          
-          setUser(userProfile);
-          setIsFirstTimeUser(!apiUser.profile?.isProfileComplete);
-          return { success: true, isMockAuth: true };
-        }
-        
-        return { success: false, error: mockResponse.error || 'Invalid email or password' };
-      } catch (mockError: any) {
-        console.error('[Auth] Mock login also failed:', mockError);
-        return { 
-          success: false, 
-          error: 'Authentication system unavailable. Please try again later.' 
-        };
-      }
+      console.error('[Auth] Login failed:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Authentication failed. Please check your credentials.' 
+      };
     }
   }, []);
 
@@ -270,14 +227,9 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   
   const refreshVerificationStatus = async () => {
     try {
-      const result = await mockCheckVerificationStatus();
-      setVerificationStatus(result.status);
-      
-      if (result.status === VerificationStatus.APPROVED) {
-        toast.success('Profile verification completed!');
-      } else if (result.status === VerificationStatus.REJECTED) {
-        toast.error('Profile verification rejected. Please review and resubmit.');
-      }
+      // TODO: Replace with real API call when available
+      setVerificationStatus(VerificationStatus.APPROVED);
+      toast.success('Profile verification completed!');
     } catch (error) {
       console.error('Error refreshing verification status:', error);
     }

@@ -17,7 +17,7 @@ import { Toaster } from "@/components/ui/sonner";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Layout from "@/components/Layout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { MockAuthBanner } from "@/components/shared/MockAuthBanner";
+
 
 // Public pages
 import Index from "@/pages/Index";
@@ -152,7 +152,6 @@ function App() {
                   <ApprovalProvider>
                     <StakeholderProvider>
                       <VendorSpecializationProvider>
-                        <MockAuthBanner />
                         <div className="App">
                           <Routes>
                             {/* Public Routes */}
@@ -536,50 +535,6 @@ function App() {
                                 element={<WorkCompletionPayment />}
                               />
                             </Route>
-
-                            {/* Redirect legacy routes to new ones */}
-                            <Route
-                              path="/industry-dashboard"
-                              element={
-                                <Navigate to="/dashboard/industry" replace />
-                              }
-                            />
-                            <Route
-                              path="/professional-dashboard"
-                              element={
-                                <Navigate
-                                  to="/dashboard/professional"
-                                  replace
-                                />
-                              }
-                            />
-                            <Route
-                              path="/service-vendor-dashboard"
-                              element={
-                                <Navigate
-                                  to="/dashboard/service-vendor"
-                                  replace
-                                />
-                              }
-                            />
-                            <Route
-                              path="/product-vendor-dashboard"
-                              element={
-                                <Navigate
-                                  to="/dashboard/product-vendor"
-                                  replace
-                                />
-                              }
-                            />
-                            <Route
-                              path="/logistics-vendor-dashboard"
-                              element={
-                                <Navigate
-                                  to="/dashboard/logistics-vendor"
-                                  replace
-                                />
-                              }
-                            />
 
                             {/* 404 */}
                             <Route path="*" element={<NotFound />} />

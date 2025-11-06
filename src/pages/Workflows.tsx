@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useUser } from '@/contexts/UserContext';
 import { Search, Filter, Play, Pause, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 
 const Workflows: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 

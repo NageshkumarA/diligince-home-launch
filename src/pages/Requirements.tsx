@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useUser } from '@/contexts/UserContext';
 import RequirementCard from '../components/RequirementCard';
 import { Plus, Filter, Search } from 'lucide-react';
 import CustomTable, { ColumnConfig, FilterConfig } from '../components/CustomTable';
 import { SteppedForm } from '../components/form';
-import { isIndustryRole, isProfessionalRole, isVendorRole } from '@/utils/roleUtils';
 
 const Requirements: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
 
@@ -129,16 +128,16 @@ const Requirements: React.FC = () => {
   };
 
   const getPageTitle = () => {
-    if (isIndustryRole(user?.role)) return 'My Requirements';
-    if (isProfessionalRole(user?.role)) return 'Available Opportunities';
-    if (isVendorRole(user?.role)) return 'Business Requirements';
+    if (user?.role === 'industry') return 'My Requirements';
+    if (user?.role === 'professional') return 'Available Opportunities';
+    if (user?.role === 'vendor') return 'Business Requirements';
     return 'Requirements';
   };
 
   const getPageDescription = () => {
-    if (isIndustryRole(user?.role)) return 'Manage your posted requirements and view proposals from professionals and vendors.';
-    if (isProfessionalRole(user?.role)) return 'Browse available opportunities and show interest to connect with industries.';
-    if (isVendorRole(user?.role)) return 'Find business requirements and submit quotations to potential clients.';
+    if (user?.role === 'industry') return 'Manage your posted requirements and view proposals from professionals and vendors.';
+    if (user?.role === 'professional') return 'Browse available opportunities and show interest to connect with industries.';
+    if (user?.role === 'vendor') return 'Find business requirements and submit quotations to potential clients.';
     return 'Browse requirements and opportunities.';
   };
 

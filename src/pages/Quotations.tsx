@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useUser } from '@/contexts/UserContext';
 import { Search, Filter, FileText, DollarSign, Calendar, Building2 } from 'lucide-react';
-import { isIndustryRole } from '@/utils/roleUtils';
 
 const Quotations: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 
@@ -56,7 +55,7 @@ const Quotations: React.FC = () => {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[#333333] mb-2">Quotations</h1>
         <p className="text-[#828282]">
-          {isIndustryRole(user?.role)
+          {user?.role === 'industry'
             ? 'Review quotations received from vendors for your requirements.'
             : 'Manage your submitted quotations and track their status.'
           }

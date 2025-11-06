@@ -1,15 +1,14 @@
 import React from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useUser } from '@/contexts/UserContext';
 import DashboardCard from '../components/DashboardCard';
 import { FileText, Quote, Workflow, Users, TrendingUp, Clock } from 'lucide-react';
 import { SteppedForm } from '../components/form/stepped-form';
-import { isIndustryRole, isProfessionalRole, isVendorRole } from '@/utils/roleUtils';
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useUser();
 
   const getDashboardData = () => {
-    if (isIndustryRole(user?.role)) {
+    if (user?.role === 'industry') {
       return {
         title: 'Industry Dashboard',
         cards: [
@@ -19,7 +18,7 @@ const Dashboard: React.FC = () => {
           { title: 'Completed Projects', value: 12, icon: Clock, color: 'purple' as const }
         ]
       };
-    } else if (isProfessionalRole(user?.role)) {
+    } else if (user?.role === 'professional') {
       return {
         title: 'Professional Dashboard',
         cards: [
@@ -29,7 +28,7 @@ const Dashboard: React.FC = () => {
           { title: 'Completed Projects', value: 15, icon: Clock, color: 'purple' as const }
         ]
       };
-    } else if (isVendorRole(user?.role)) {
+    } else if (user?.role === 'vendor') {
       return {
         title: 'Vendor Dashboard',
         cards: [

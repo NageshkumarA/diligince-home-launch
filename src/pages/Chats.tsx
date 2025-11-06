@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useUser } from '@/contexts/UserContext';
 import ChatList from '../components/ChatList';
 import { MessageCircle, Send, Paperclip, Smile } from 'lucide-react';
-import { isIndustryRole } from '@/utils/roleUtils';
 
 const Chats: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useUser();
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [messageText, setMessageText] = useState('');
 
   // Mock chat data
-  const isIndustry = isIndustryRole(user?.role);
+  const isIndustry = user?.role === 'industry';
   const mockChats = [
     {
       id: '1',

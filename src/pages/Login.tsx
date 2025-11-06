@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useUser } from '@/contexts/UserContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { Lock, Mail, AlertCircle, Building2, Users, Package } from 'lucide-react';
 
@@ -9,7 +9,7 @@ const Login: React.FC = () => {
   const [userType, setUserType] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login } = useUser();
   const navigate = useNavigate();
 
   const userTypes = [

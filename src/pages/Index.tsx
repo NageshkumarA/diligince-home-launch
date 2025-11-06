@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   ArrowRight,
   CheckCircle,
@@ -18,10 +18,28 @@ import {
   BarChart3,
   Truck,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useStaggeredAnimation } from "../hooks/useScrollAnimation";
+import { useUser } from "@/contexts/UserContext";
+import { getDashboardRoute } from "@/types/shared";
+
 const Index: React.FC = () => {
+  const { user, isLoading } = useUser();
+  const navigate = useNavigate();
+  
+  // Redirect authenticated users to their dashboard
+  useEffect(() => {
+    if (!isLoading && user) {
+      const dashboardUrl = getDashboardRoute(user);
+      navigate(dashboardUrl, { replace: true });
+    }
+  }, [user, isLoading, navigate]);
+  
+  // Show nothing while checking auth or redirecting
+  if (isLoading || user) {
+    return null;
+  }
   const { elementRef: servicesRef, visibleItems } = useStaggeredAnimation(3, 200);
   const services = [
     {
