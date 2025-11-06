@@ -28,6 +28,9 @@ const Index: React.FC = () => {
   const { user, isLoading } = useUser();
   const navigate = useNavigate();
   
+  // Call hooks before any conditional returns
+  const { elementRef: servicesRef, visibleItems } = useStaggeredAnimation(3, 200);
+  
   // Redirect authenticated users to their dashboard
   useEffect(() => {
     if (!isLoading && user) {
@@ -40,7 +43,6 @@ const Index: React.FC = () => {
   if (isLoading || user) {
     return null;
   }
-  const { elementRef: servicesRef, visibleItems } = useStaggeredAnimation(3, 200);
   const services = [
     {
       title: "Enterprise Industries",
