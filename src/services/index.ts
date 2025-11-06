@@ -7,6 +7,7 @@ export * from './modules/analytics';
 export * from './modules/approvals';
 export * from './modules/auth';
 export * from './modules/budget';
+export * from './modules/company-profile';
 export * from './modules/dashboard';
 export * from './modules/purchase-orders';
 export * from './modules/quotations';

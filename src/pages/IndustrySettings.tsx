@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,8 +13,9 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { CompanyProfile, VerificationStatus, Address, VerificationDocument } from '@/types/verification';
-import { MOCK_COMPLETE_PROFILE, mockSaveProfile, mockSubmitForVerification, mockUploadDocument, mockDeleteDocument } from '@/services/verification.mock';
+import { MOCK_COMPLETE_PROFILE } from '@/services/verification.mock';
 import { calculateProfileCompletion, getMissingFields, canSubmitForVerification } from '@/utils/profileValidation';
+import { companyProfileService } from '@/services';
 import { ProfileCompletionBanner } from '@/components/verification/ProfileCompletionBanner';
 import { DocumentUploadField } from '@/components/verification/DocumentUploadField';
 
@@ -22,9 +23,10 @@ const IndustrySettings = () => {
   const navigate = useNavigate();
   const { refreshVerificationStatus } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   
   // Company Profile State (Tab 1)
-  const [profile, setProfile] = useState<Partial<CompanyProfile>>(MOCK_COMPLETE_PROFILE);
+  const [profile, setProfile] = useState<Partial<CompanyProfile>>({});
   
   // Notifications State (Tab 3)
   const [notifications, setNotifications] = useState({
@@ -48,6 +50,35 @@ const IndustrySettings = () => {
   const canSubmit = useMemo(() => {
     return canSubmitForVerification(profile);
   }, [profile]);
+
+  const isProfileLocked = useMemo(() => {
+    return profile.verificationStatus === VerificationStatus.PENDING || 
+           profile.verificationStatus === VerificationStatus.APPROVED;
+  }, [profile.verificationStatus]);
+
+  // Fetch profile on mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setIsLoadingProfile(true);
+        const data = await companyProfileService.getProfile();
+        setProfile(data);
+      } catch (error: any) {
+        // If 404, user doesn't have a profile yet - this is normal for new users
+        if (error.response?.status === 404) {
+          console.log('No existing profile found - user will create one');
+          setProfile({});
+        } else {
+          console.error('Error fetching profile:', error);
+          toast.error('Failed to load profile');
+        }
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   // Field validation helpers
   const getFieldStatus = (fieldValue: any, required: boolean = true) => {
@@ -93,14 +124,29 @@ const IndustrySettings = () => {
   };
   
   const handleSave = async () => {
+    if (isProfileLocked) {
+      toast.error('Profile is locked for verification and cannot be edited');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const loadingToast = toast.loading('Saving profile...');
-      await mockSaveProfile(profile);
+      const response = await companyProfileService.saveProfile(profile);
+      setProfile(response.data);
       toast.dismiss(loadingToast);
       toast.success('✅ Profile saved successfully!');
-    } catch (error) {
-      toast.error('❌ Failed to save profile');
+    } catch (error: any) {
+      console.error('Save profile error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to save profile';
+      
+      if (error.response?.status === 403 || error.response?.data?.error?.code === 'PROFILE_LOCKED') {
+        toast.error('Profile is locked for verification and cannot be edited');
+      } else if (error.response?.status === 400) {
+        toast.error(`Validation error: ${errorMessage}`);
+      } else {
+        toast.error(`❌ ${errorMessage}`);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -111,23 +157,40 @@ const IndustrySettings = () => {
       toast.error(`Please complete: ${missingFields.join(', ')}`);
       return;
     }
+
+    if (isProfileLocked) {
+      toast.error('Profile has already been submitted for verification');
+      return;
+    }
     
     setIsSubmitting(true);
     try {
       const loadingToast = toast.loading('Submitting for verification...');
-      const result = await mockSubmitForVerification(profile as CompanyProfile);
+      const result = await companyProfileService.submitForVerification();
+      setProfile(result.data.profile);
       toast.dismiss(loadingToast);
       toast.success('✅ Profile submitted for verification!');
-      toast.info(`📋 Verification ID: ${result.verificationId}`, { duration: 5000 });
-      toast.info('⏰ Estimated completion: 24 hours', { duration: 5000 });
+      toast.info(`📋 Verification ID: ${result.data.verificationId}`, { duration: 5000 });
+      
+      const estimatedTime = new Date(result.data.estimatedCompletionAt).toLocaleString();
+      toast.info(`⏰ Estimated completion: ${estimatedTime}`, { duration: 5000 });
       
       await refreshVerificationStatus();
       
       setTimeout(() => {
         navigate('/verification-pending');
       }, 1500);
-    } catch (error) {
-      toast.error('❌ Failed to submit for verification');
+    } catch (error: any) {
+      console.error('Submit verification error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to submit for verification';
+      
+      if (error.response?.status === 422) {
+        toast.error('Profile is incomplete. Please fill all required fields and upload documents.');
+      } else if (error.response?.status === 409) {
+        toast.error('Profile has already been submitted for verification');
+      } else {
+        toast.error(`❌ ${errorMessage}`);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -139,27 +202,63 @@ const IndustrySettings = () => {
 
   // Document handlers
   const handleDocumentUpload = async (file: File, documentType: string) => {
-    const uploadedDoc = await mockUploadDocument(file, documentType as VerificationDocument['documentType']);
-    
-    setProfile(prev => {
-      const existingDocs = prev.documents || [];
-      const filteredDocs = existingDocs.filter(doc => doc.documentType !== documentType);
-      return {
-        ...prev,
-        documents: [...filteredDocs, uploadedDoc]
-      };
-    });
-    
-    return uploadedDoc;
+    if (isProfileLocked) {
+      toast.error('Profile is locked for verification. Documents cannot be modified.');
+      throw new Error('Profile locked');
+    }
+
+    try {
+      const response = await companyProfileService.uploadDocument(
+        file,
+        documentType as VerificationDocument['documentType']
+      );
+      const uploadedDoc = response.data;
+      
+      setProfile(prev => {
+        const existingDocs = prev.documents || [];
+        const filteredDocs = existingDocs.filter(doc => doc.documentType !== documentType);
+        return {
+          ...prev,
+          documents: [...filteredDocs, uploadedDoc]
+        };
+      });
+      
+      return uploadedDoc;
+    } catch (error: any) {
+      console.error('Document upload error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to upload document';
+      
+      if (error.response?.status === 413) {
+        toast.error('File size exceeds limit');
+      } else if (error.response?.status === 403) {
+        toast.error('Profile is locked for verification');
+      } else {
+        toast.error(errorMessage);
+      }
+      throw error;
+    }
   };
 
   const handleDocumentDelete = async (documentId: string) => {
-    await mockDeleteDocument(documentId);
-    
-    setProfile(prev => ({
-      ...prev,
-      documents: (prev.documents || []).filter(doc => doc.id !== documentId)
-    }));
+    if (isProfileLocked) {
+      toast.error('Profile is locked for verification. Documents cannot be deleted.');
+      return;
+    }
+
+    try {
+      await companyProfileService.deleteDocument(documentId);
+      
+      setProfile(prev => ({
+        ...prev,
+        documents: (prev.documents || []).filter(doc => doc.id !== documentId)
+      }));
+      
+      toast.success('Document deleted successfully');
+    } catch (error: any) {
+      console.error('Document delete error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to delete document';
+      toast.error(errorMessage);
+    }
   };
 
   const getDocumentByType = (type: VerificationDocument['documentType']) => {
@@ -175,19 +274,50 @@ const IndustrySettings = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="company" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="company">Company Profile</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
-        </TabsList>
+      {isLoadingProfile ? (
+        <Card>
+          <CardContent className="flex items-center justify-center py-12">
+            <div className="text-center space-y-2">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p className="text-muted-foreground">Loading profile...</p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Tabs defaultValue="company" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="company">Company Profile</TabsTrigger>
+            <TabsTrigger value="notifications">Notifications</TabsTrigger>
+            <TabsTrigger value="security">Security</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="company" className="space-y-6">
-          {/* Profile Completion Banner */}
-          <ProfileCompletionBanner 
-            profile={profile}
-            completionPercentage={profileCompletion}
-          />
+          <TabsContent value="company" className="space-y-6">
+            {/* Profile Lock Warning */}
+            {isProfileLocked && (
+              <Card className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20">
+                <CardContent className="pt-6">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 mt-0.5" />
+                    <div>
+                      <h3 className="font-semibold text-yellow-800 dark:text-yellow-400">
+                        Profile Locked
+                      </h3>
+                      <p className="text-sm text-yellow-700 dark:text-yellow-500 mt-1">
+                        {profile.verificationStatus === VerificationStatus.PENDING 
+                          ? 'Your profile has been submitted for verification and is currently under review. No changes can be made during this period.'
+                          : 'Your profile has been verified and is permanently locked. Please contact support if you need to make changes.'}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Profile Completion Banner */}
+            <ProfileCompletionBanner 
+              profile={profile}
+              completionPercentage={profileCompletion}
+            />
           
           {/* Developer Testing Buttons */}
           <div className="flex gap-2">
@@ -253,6 +383,7 @@ const IndustrySettings = () => {
                     onChange={(e) => handleChange('companyName', e.target.value)}
                     placeholder="Enter company name"
                     className={getFieldClassName(getFieldStatus(profile.companyName))}
+                    disabled={isProfileLocked}
                   />
                   {getFieldStatus(profile.companyName) === 'empty' && (
                     <p className="text-xs text-red-600 mt-1">This field is required</p>
@@ -273,6 +404,7 @@ const IndustrySettings = () => {
                   <Select
                     value={profile.industryFocus || ''}
                     onValueChange={(value) => handleChange('industryFocus', value)}
+                    disabled={isProfileLocked}
                   >
                     <SelectTrigger className={getFieldClassName(getFieldStatus(profile.industryFocus))}>
                       <SelectValue placeholder="Select industry" />
@@ -311,6 +443,7 @@ const IndustrySettings = () => {
                     placeholder="YYYY"
                     maxLength={4}
                     className={getFieldClassName(getFieldStatus(profile.yearEstablished))}
+                    disabled={isProfileLocked}
                   />
                   {getFieldStatus(profile.yearEstablished) === 'empty' && (
                     <p className="text-xs text-red-600 mt-1">This field is required</p>
@@ -343,6 +476,7 @@ const IndustrySettings = () => {
                     descriptionStatus() === 'too_short' ? 'border-yellow-300' :
                     'border-green-300'
                   }`}
+                  disabled={isProfileLocked}
                 />
                 <p className={`text-xs mt-1 ${
                   descriptionStatus() === 'empty' ? 'text-red-600' :
@@ -382,6 +516,7 @@ const IndustrySettings = () => {
                     placeholder="AABCU9603R"
                     maxLength={10}
                     className={getFieldClassName(getFieldStatus(profile.panNumber))}
+                    disabled={isProfileLocked}
                   />
                   {getFieldStatus(profile.panNumber) === 'empty' && (
                     <p className="text-xs text-red-600 mt-1">This field is required</p>
@@ -406,6 +541,7 @@ const IndustrySettings = () => {
                     placeholder="27AABCU9603R1Z5"
                     maxLength={15}
                     className={getFieldClassName(getFieldStatus(profile.gstNumber))}
+                    disabled={isProfileLocked}
                   />
                   {getFieldStatus(profile.gstNumber) === 'empty' && (
                     <p className="text-xs text-red-600 mt-1">This field is required</p>
@@ -429,6 +565,7 @@ const IndustrySettings = () => {
                     onChange={(e) => handleChange('registrationNumber', e.target.value)}
                     placeholder="U74900MH2010PTC123456"
                     className={getFieldClassName(getFieldStatus(profile.registrationNumber))}
+                    disabled={isProfileLocked}
                   />
                   {getFieldStatus(profile.registrationNumber) === 'empty' && (
                     <p className="text-xs text-red-600 mt-1">This field is required</p>
@@ -502,6 +639,7 @@ const IndustrySettings = () => {
                     onChange={(e) => handleChange('email', e.target.value)}
                     placeholder="contact@company.com"
                     className={getFieldClassName(getFieldStatus(profile.email))}
+                    disabled={isProfileLocked}
                   />
                   {getFieldStatus(profile.email) === 'empty' && (
                     <p className="text-xs text-red-600 mt-1">This field is required</p>
@@ -525,6 +663,7 @@ const IndustrySettings = () => {
                     onChange={(e) => handleChange('mobile', e.target.value)}
                     placeholder="+919876543210"
                     className={getFieldClassName(getFieldStatus(profile.mobile))}
+                    disabled={isProfileLocked}
                   />
                   {getFieldStatus(profile.mobile) === 'empty' && (
                     <p className="text-xs text-red-600 mt-1">This field is required</p>
@@ -539,6 +678,7 @@ const IndustrySettings = () => {
                     value={profile.telephone || ''}
                     onChange={(e) => handleChange('telephone', e.target.value)}
                     placeholder="+912240123456"
+                    disabled={isProfileLocked}
                   />
                 </div>
 
@@ -550,6 +690,7 @@ const IndustrySettings = () => {
                     value={profile.website || ''}
                     onChange={(e) => handleChange('website', e.target.value)}
                     placeholder="https://www.company.com"
+                    disabled={isProfileLocked}
                   />
                 </div>
               </div>
@@ -612,6 +753,7 @@ const IndustrySettings = () => {
                   variant="outline"
                   size="sm"
                   onClick={handleAddAddress}
+                  disabled={isProfileLocked}
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Address
@@ -630,6 +772,7 @@ const IndustrySettings = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleRemoveAddress(index)}
+                        disabled={isProfileLocked}
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
                       </Button>
@@ -653,6 +796,7 @@ const IndustrySettings = () => {
                         onChange={(e) => handleAddressChange(index, 'line1', e.target.value)}
                         placeholder="Street address, building number"
                         className={getFieldClassName(getFieldStatus(address.line1))}
+                        disabled={isProfileLocked}
                       />
                     </div>
 
@@ -672,6 +816,7 @@ const IndustrySettings = () => {
                         onChange={(e) => handleAddressChange(index, 'city', e.target.value)}
                         placeholder="City"
                         className={getFieldClassName(getFieldStatus(address.city))}
+                        disabled={isProfileLocked}
                       />
                     </div>
 
@@ -691,6 +836,7 @@ const IndustrySettings = () => {
                         onChange={(e) => handleAddressChange(index, 'state', e.target.value)}
                         placeholder="State"
                         className={getFieldClassName(getFieldStatus(address.state))}
+                        disabled={isProfileLocked}
                       />
                     </div>
 
@@ -711,6 +857,7 @@ const IndustrySettings = () => {
                         placeholder="400001"
                         maxLength={6}
                         className={getFieldClassName(getFieldStatus(address.pincode))}
+                        disabled={isProfileLocked}
                       />
                     </div>
 
@@ -725,6 +872,7 @@ const IndustrySettings = () => {
                           })) || [];
                           setProfile(prev => ({ ...prev, addresses: newAddresses }));
                         }}
+                        disabled={isProfileLocked}
                       />
                       <Label>Set as Primary Address</Label>
                     </div>
@@ -739,7 +887,7 @@ const IndustrySettings = () => {
             {canSubmit ? (
               <Button
                 onClick={handleSubmitForVerification}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isProfileLocked}
                 className="bg-green-600 hover:bg-green-700"
                 size="lg"
               >
@@ -750,7 +898,7 @@ const IndustrySettings = () => {
               <>
                 <Button
                   onClick={handleSave}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isProfileLocked}
                   size="lg"
                 >
                   {isSubmitting ? 'Saving...' : 'Save Progress'}
@@ -947,6 +1095,7 @@ const IndustrySettings = () => {
           </Card>
         </TabsContent>
       </Tabs>
+      )}
     </div>
   );
 };
