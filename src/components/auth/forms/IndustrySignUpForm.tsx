@@ -121,39 +121,14 @@ export function IndustrySignUpForm() {
 
     // Create user profile
     const registrationData = {
-      // const userProfile = {
-      //   id: Math.random().toString(36).substr(2, 9),
       email: values.email,
-      // name: values.companyName,
-      // role: 'industry' as const,
-      // avatar: '',
-      // initials: initials,
-      // status: 'active' as const,
-      // createdAt: new Date().toISOString(),
-      // updatedAt: new Date().toISOString(),
-      // preferences: {
-      //   theme: 'system' as const,
-      //   notifications: {
-      //     email: true,
-      //     push: true,
-      //     sms: false,
-      //     marketing: false,
-      //   },
-      //   language: 'en',
-      //   timezone: 'UTC',
-      // },
-      // profile: {
-      //   companyName: values.companyName,
-      //   industryType: values.industryType === "Others" ? values.customIndustryType : values.industryType,
-      //   phone: values.phone
-      // },
-      // password: values.password
-      //       password: values.password,
+      password: values.password,
       phone: values.phone,
       role: 'IndustryAdmin',
       firstName: values.firstName,
       lastName: values.lastName,
       companyName: values.companyName,
+      industryType: values.industryType === "Others" ? values.customIndustryType : values.industryType,
       termsAccepted: values.termsAccepted,
       privacyAccepted: values.privacyAccepted,
     };
