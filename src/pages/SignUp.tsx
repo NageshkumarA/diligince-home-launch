@@ -30,22 +30,22 @@ const SignUp: React.FC = () => {
         className="w-full"
       >
         {/* Tab Headers */}
-        <TabsList className="grid grid-cols-3 mb-8 bg-gray-100">
+        <TabsList className="grid grid-cols-3 mb-8 bg-muted">
           <TabsTrigger
             value="industry"
-            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
             Industry
           </TabsTrigger>
           <TabsTrigger
             value="professional"
-            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
             Professional
           </TabsTrigger>
           <TabsTrigger
             value="vendor"
-            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
             Vendor
           </TabsTrigger>
