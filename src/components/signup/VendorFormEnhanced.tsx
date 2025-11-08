@@ -87,6 +87,8 @@ export function VendorFormEnhanced() {
     },
   });
 
+  const navigate = useNavigate();
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const registrationData = {
       email: values.email,
@@ -101,9 +103,15 @@ export function VendorFormEnhanced() {
       specialization: values.specialization,
       termsAccepted: values.termsAccepted,
       privacyAccepted: values.privacyAccepted,
+      verificationStatus: 'incomplete', // Set initial verification status
     };
 
-    await signUp(registrationData);
+    const result = await signUp(registrationData);
+    
+    // Redirect to vendor settings instead of dashboard
+    if (result.success) {
+      navigate('/vendor-settings');
+    }
   }
 
   const handleCategoryChange = (value: string) => {

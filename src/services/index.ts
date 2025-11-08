@@ -13,6 +13,7 @@ export * from './modules/purchase-orders';
 export * from './modules/quotations';
 export * from './modules/requirements';
 export * from './modules/vendors';
+export * from './modules/vendor-profile';
 
 // ============= Convenience Aggregations =============
 import { authRoutes } from './modules/auth';
