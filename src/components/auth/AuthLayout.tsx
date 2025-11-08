@@ -49,11 +49,11 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
         
         <div className={`bg-gray-50 flex-1 overflow-y-auto ${leftContent ? 'md:ml-[40%]' : ''}`}>
           <div className="min-h-full flex flex-col items-center justify-center p-8">
-            <div className="w-full max-w-md py-8">
+            <div className="w-full max-w-4xl py-8">
               <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">{title}</h1>
               <p className="text-sm text-gray-600 text-center mb-8">{subtitle}</p>
               
-              <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-6">
+              <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-6 md:p-8 lg:p-10">
                 {children}
               </div>
             </div>
