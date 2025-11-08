@@ -25,9 +25,9 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       
-      <div className="flex flex-col md:flex-row flex-grow mt-16">
+      <div className="flex flex-col md:flex-row flex-grow mt-16 relative">
         {leftContent && (
-          <div className="bg-primary text-white p-8 flex flex-col items-center justify-between md:w-2/5">
+          <div className="bg-primary text-white p-8 flex flex-col items-center justify-between md:w-2/5 md:fixed md:left-0 md:top-16 md:h-[calc(100vh-4rem)] md:overflow-hidden">
             <div className="pt-10 md:pt-20 text-center max-w-md mx-auto">
               <h2 className="text-2xl md:text-3xl font-bold mb-4">{leftContent.title}</h2>
               <p className="text-base md:text-lg opacity-90">
@@ -36,18 +36,18 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
             </div>
             
             {leftContent.imageSrc && (
-              <div className="mt-8 w-full max-w-md">
+              <div className="mt-8 w-full max-w-sm px-8">
                 <img 
                   src={leftContent.imageSrc} 
                   alt={leftContent.imageAlt || "Authentication"} 
-                  className="w-full h-auto object-cover rounded-lg" 
+                  className="w-full h-auto object-contain" 
                 />
               </div>
             )}
           </div>
         )}
         
-        <div className={`bg-gray-50 p-8 flex flex-col items-center ${leftContent ? 'md:w-3/5' : 'w-full'}`}>
+        <div className={`bg-gray-50 p-8 flex flex-col items-center min-h-screen ${leftContent ? 'md:w-3/5 md:ml-[40%]' : 'w-full'}`}>
           <div className="w-full max-w-md py-8">
             <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">{title}</h1>
             <p className="text-sm text-gray-600 text-center mb-8">{subtitle}</p>
