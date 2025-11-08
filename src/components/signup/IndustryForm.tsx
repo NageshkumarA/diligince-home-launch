@@ -117,7 +117,7 @@ export function IndustryForm() {
       email: values.email,
       password: values.password,
       phone: values.phone,
-      role: 'IndustryAdmin',
+      userType: 'Industry',
       firstName: values.firstName,
       lastName: values.lastName,
       companyName: values.companyName,

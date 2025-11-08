@@ -71,9 +71,10 @@ export function ProfessionalForm() {
       email: values.email,
       password: values.password,
       phone: values.phone,
-      role: 'Professional',
+      userType: 'Professional',
       firstName: values.firstName,
       lastName: values.lastName,
+      expertise: values.expertise,
       termsAccepted: values.termsAccepted,
       privacyAccepted: values.privacyAccepted,
     };
