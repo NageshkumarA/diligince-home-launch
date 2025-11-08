@@ -18,11 +18,10 @@ export const useAuth = () => {
       if (response.status === 201 || response.status === 200) {
         toast({
           title: "Sign-up successful!",
-          description: "Please check your email to verify your account.",
+          description: response.data.message || "Your account has been created. Please sign in to continue.",
         });
         
-        // Redirect to a page that informs the user to check their email
-        navigate('/pending-approval'); 
+        navigate('/signin');
         return { success: true, user: response.data.user };
       } else {
         toast({
