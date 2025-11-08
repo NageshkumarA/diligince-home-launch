@@ -41,6 +41,7 @@ import StakeholderOnboarding from "@/pages/StakeholderOnboarding";
 import PendingApproval from "@/pages/PendingApproval";
 import WorkCompletionPayment from "@/pages/WorkCompletionPayment";
 import VerificationPending from "@/pages/VerificationPending";
+import VendorSettings from "@/pages/VendorSettings";
 
 // Industry pages
 import IndustryDashboard from "@/pages/IndustryDashboard";
@@ -189,6 +190,14 @@ function App() {
                               element={
                                 <ProtectedRoute>
                                   <VerificationPending />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/vendor-settings"
+                              element={
+                                <ProtectedRoute>
+                                  <VendorSettings />
                                 </ProtectedRoute>
                               }
                             />

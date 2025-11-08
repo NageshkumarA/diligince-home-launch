@@ -25,24 +25,33 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <Navigate to="/signin" replace />;
   }
 
-  // Allow access to Settings page during all statuses
-  if (location.pathname.includes('industry-settings')) {
-    return <>{children}</>;
-  }
-  
-  // Allow access to verification pending page
-  if (location.pathname.includes('verification-pending')) {
+  // Allow access to Settings and verification pages for all user types
+  if (location.pathname.includes('industry-settings') || 
+      location.pathname.includes('vendor-settings') ||
+      location.pathname.includes('verification-pending')) {
     return <>{children}</>;
   }
 
-  // Check verification status for other pages
-  if (verificationStatus === VerificationStatus.INCOMPLETE || 
-      verificationStatus === VerificationStatus.REJECTED) {
-    return <Navigate to="/dashboard/industry-settings" replace />;
+  // Check user role and verification status
+  const isVendor = user.role === 'vendor';
+  const isIndustry = user.role === 'industry';
+
+  // Redirect based on user type and verification status
+  if (isIndustry) {
+    if (verificationStatus === VerificationStatus.INCOMPLETE || 
+        verificationStatus === VerificationStatus.REJECTED) {
+      return <Navigate to="/dashboard/industry-settings" replace />;
+    }
+
+    if (verificationStatus === VerificationStatus.PENDING) {
+      return <Navigate to="/verification-pending" replace />;
+    }
   }
 
-  if (verificationStatus === VerificationStatus.PENDING) {
-    return <Navigate to="/verification-pending" replace />;
+  if (isVendor) {
+    // TODO: Get vendor verification status from context
+    // For now, allow access to vendor pages
+    // Later, implement vendor-specific verification checks similar to industry
   }
 
   // Full access for approved users
