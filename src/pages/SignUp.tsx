@@ -21,7 +21,7 @@ const SignUp: React.FC = () => {
     <AuthLayout
       title="Create Your Account"
       subtitle=""
-      leftContent={leftContent}
+      leftContent={null}
     >
       <Tabs
         defaultValue="industry"
