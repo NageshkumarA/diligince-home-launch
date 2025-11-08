@@ -388,7 +388,7 @@ export function VendorFormEnhanced() {
           
           <Button 
             type="submit" 
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 transition-transform duration-200"
+            className="w-full hover:scale-105 transition-transform duration-200"
             disabled={isLoading}
           >
             {isLoading ? "Creating Account..." : "Create Account"}
