@@ -40,7 +40,14 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <Link to="/" className="flex items-center space-x-2">
-            <img src="/logo-main-no-bg.svg" alt="Diligince.ai" className="h-8 w-8" />
+            <img 
+              src={location.pathname === '/signup' || location.pathname === '/signin' 
+                ? "/diligence-no-bg-white.svg" 
+                : "/logo-main-no-bg.svg"
+              } 
+              alt="Diligince.ai" 
+              className="h-8 w-8" 
+            />
             <span className="text-xl font-bold text-white">Diligince.ai</span>
           </Link>
         </div>
