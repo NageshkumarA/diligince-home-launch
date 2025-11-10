@@ -46,3 +46,64 @@ export interface ProfessionalProject {
 }
 
 export type ProjectStatus = 'ongoing' | 'completed' | 'paused' | 'cancelled';
+
+// ============= Diligence HUB Types =============
+
+export interface ProfessionalListItem {
+  id: string;
+  name: string;
+  expertise: string;
+  experience: number;
+  location: string;
+  city: string;
+  state: string;
+  rating: number;
+  reviewCount: number;
+  hourlyRate: number;
+  currency: string;
+  availability: ProfessionalAvailability;
+  skills: string[];
+  topSkills: string[];
+  completedProjects: number;
+  responseTime: string;
+  certificationCount: number;
+  isVerified: boolean;
+  avatar?: string;
+}
+
+export interface ProfessionalSearchFilters {
+  search?: string;
+  rating?: number;
+  expertise?: string;
+  skills?: string[];
+  location?: string;
+  minExperience?: number;
+  maxExperience?: number;
+  minRate?: number;
+  maxRate?: number;
+  availability?: ProfessionalAvailability;
+  page?: number;
+  limit?: number;
+}
+
+export interface ProfessionalListResponse {
+  success: boolean;
+  data: {
+    professionals: ProfessionalListItem[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+    };
+    aggregations: {
+      totalProfessionals: number;
+      averageRating: number;
+      averageHourlyRate: number;
+      expertiseCounts: Record<string, number>;
+      locationCounts: Record<string, number>;
+    };
+  };
+}

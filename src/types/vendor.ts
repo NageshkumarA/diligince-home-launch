@@ -312,3 +312,57 @@ export interface VendorPOStats {
   totalRevenue: number;
   averageValue: number;
 }
+
+// ============= Diligence HUB Types =============
+
+export interface VendorListItem {
+  id: string;
+  name: string;
+  companyName: string;
+  vendorType: VendorType;
+  specialization: string[];
+  location: string;
+  city: string;
+  state: string;
+  rating: number;
+  reviewCount: number;
+  completedProjects: number;
+  yearsInBusiness: number;
+  isVerified: boolean;
+  availability: 'available' | 'busy' | 'unavailable';
+  responseTime: string;
+  avatar?: string;
+}
+
+export interface VendorSearchFilters {
+  search?: string;
+  rating?: number;
+  category?: VendorType;
+  specializations?: string[];
+  location?: string;
+  minProjects?: number;
+  maxProjects?: number;
+  page?: number;
+  limit?: number;
+}
+
+export interface VendorListResponse {
+  success: boolean;
+  data: {
+    vendors: VendorListItem[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+    };
+    aggregations: {
+      totalVendors: number;
+      averageRating: number;
+      specializationCounts: Record<string, number>;
+      locationCounts: Record<string, number>;
+    };
+  };
+}

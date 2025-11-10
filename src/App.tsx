@@ -95,6 +95,10 @@ import WorkflowsActive from "@/pages/WorkflowsActive";
 import StakeholdersVendors from "@/pages/StakeholdersVendors";
 import StakeholdersProfessionals from "@/pages/StakeholdersProfessionals";
 
+// Diligence HUB pages
+import FindVendors from "@/pages/diligence-hub/FindVendors";
+import FindProfessionals from "@/pages/diligence-hub/FindProfessionals";
+
 // Vendor pages
 import ServiceVendorDashboard from "@/pages/ServiceVendorDashboard";
 import ProductVendorDashboard from "@/pages/ProductVendorDashboard";
@@ -393,6 +397,16 @@ function App() {
                               <Route
                                 path="stakeholders/professionals"
                                 element={<StakeholdersProfessionals />}
+                              />
+
+                              {/* Diligence HUB Routes */}
+                              <Route
+                                path="diligence-hub/vendors"
+                                element={<FindVendors />}
+                              />
+                              <Route
+                                path="diligence-hub/professionals"
+                                element={<FindProfessionals />}
                               />
 
                               {/* Vendor Routes */}

@@ -220,6 +220,23 @@ export const menuConfig: MenuConfig = {
       path: "/dashboard/industry-analytics",
     },
     {
+      icon: Target,
+      label: "Diligence HUB",
+      path: "/dashboard/industry-diligence-hub",
+      submenu: [
+        {
+          icon: Building,
+          label: "Find Vendors",
+          path: "/dashboard/diligence-hub/vendors",
+        },
+        {
+          icon: UserCheck,
+          label: "Find Professionals",
+          path: "/dashboard/diligence-hub/professionals",
+        },
+      ],
+    },
+    {
       icon: Settings,
       label: "Settings",
       path: "/dashboard/industry-settings",
