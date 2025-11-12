@@ -122,7 +122,7 @@ const Vendors = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Helmet>
-        <title>Stakeholders | Diligince.ai</title>
+        <title>Stakeholders | Diligence.ai</title>
       </Helmet>
 
       

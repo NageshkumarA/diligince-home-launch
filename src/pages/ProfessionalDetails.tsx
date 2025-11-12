@@ -19,7 +19,7 @@ const ProfessionalDetails = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Professional Details | Diligince.ai</title>
+        <title>Professional Details | Diligence.ai</title>
       </Helmet>
 
       {/* Industry header from shared component */}

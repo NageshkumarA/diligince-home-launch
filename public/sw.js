@@ -1,4 +1,4 @@
-const CACHE_NAME = 'diligince-v1';
+const CACHE_NAME = 'Diligence-v1';
 const urlsToCache = [
   '/',
   '/static/js/bundle.js',

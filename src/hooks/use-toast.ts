@@ -8,7 +8,7 @@ type ToasterToast = {
   title?: React.ReactNode
   description?: React.ReactNode
   action?: React.ReactElement
-  variant?: "default" | "destructive"
+  variant?: "default" | "destructive" | "success"
   onOpenChange?: (open: boolean) => void
 }
 

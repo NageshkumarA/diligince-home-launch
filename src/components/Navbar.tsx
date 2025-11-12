@@ -45,10 +45,10 @@ const Navbar = () => {
                 ? "/diligence-no-bg-white.svg" 
                 : "/logo-main-no-bg.svg"
               } 
-              alt="Diligince.ai" 
+              alt="Diligence.ai" 
               className="h-8 w-8" 
             />
-            <span className="text-xl font-bold text-white">Diligince.ai</span>
+            <span className="text-xl font-bold text-white">Diligence.ai</span>
           </Link>
         </div>
         

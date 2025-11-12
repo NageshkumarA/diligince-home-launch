@@ -231,7 +231,7 @@ const CreateRequirement = () => {
                   onViewRequirement={() => navigate("/industry-requirements")} 
                   onReturnToDashboard={handleReturnToDashboard} 
                 />
-                <Toaster />
+                <Toaster richColors position="top-right"/>
               </div>
             </RequirementProvider>
           </StakeholderProvider>
@@ -318,7 +318,7 @@ const CreateRequirement = () => {
                 isLastStep={currentStep === 6}
               />
 
-              <Toaster />
+              <Toaster richColors position="top-right"/>
             </div>
           </RequirementProvider>
         </StakeholderProvider>

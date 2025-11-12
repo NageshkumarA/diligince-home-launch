@@ -26,7 +26,7 @@ export interface HeaderConfig {
 
 // Industry Dashboard Navigation - ISO 9001 Compliant Flow
 export const industryHeaderConfig: HeaderConfig = {
-  brandName: "Diligince.ai",
+  brandName: "Diligence.ai",
   brandHref: "/industry-dashboard",
   navItems: [
     {
@@ -79,7 +79,7 @@ export const industryHeaderConfig: HeaderConfig = {
 
 // Service Vendor Dashboard Navigation
 export const serviceVendorHeaderConfig: HeaderConfig = {
-  brandName: "Diligince.ai",
+  brandName: "Diligence.ai",
   brandHref: "/service-vendor-dashboard",
   navItems: [
     {
@@ -126,7 +126,7 @@ export const serviceVendorHeaderConfig: HeaderConfig = {
 
 // Product Vendor Dashboard Navigation (NEW - Fixed for product vendors)
 export const productVendorHeaderConfig: HeaderConfig = {
-  brandName: "Diligince.ai",
+  brandName: "Diligence.ai",
   brandHref: "/product-vendor-dashboard",
   navItems: [
     {
@@ -214,7 +214,7 @@ export const productVendorHeaderConfig: HeaderConfig = {
 
 // Logistics Vendor Dashboard Navigation (NEW - Fixed for logistics vendors)
 export const logisticsVendorHeaderConfig: HeaderConfig = {
-  brandName: "Diligince.ai",
+  brandName: "Diligence.ai",
   brandHref: "/logistics-vendor-dashboard",
   navItems: [
     {
@@ -306,7 +306,7 @@ export const logisticsVendorHeaderConfig: HeaderConfig = {
 
 // Professional Dashboard Navigation (missing export)
 export const professionalHeaderConfig: HeaderConfig = {
-  brandName: "Diligince.ai",
+  brandName: "Diligence.ai",
   brandHref: "/professional-dashboard",
   navItems: [
     {

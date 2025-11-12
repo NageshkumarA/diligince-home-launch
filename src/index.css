@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import 'sonner/dist/sonner.css';
 
 /* Custom Scrollbars - Thin and Transparent */
 * {

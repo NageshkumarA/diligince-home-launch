@@ -562,7 +562,7 @@ function App() {
                             {/* 404 */}
                             <Route path="*" element={<NotFound />} />
                           </Routes>
-                          <Toaster />
+                          <Toaster richColors position="top-right"/>
                         </div>
                       </VendorSpecializationProvider>
                     </StakeholderProvider>

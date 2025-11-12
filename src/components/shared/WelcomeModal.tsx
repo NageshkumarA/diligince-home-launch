@@ -38,7 +38,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-center text-xl">
-            Welcome to diligince.ai, {userName}!
+            Welcome to Diligence.ai, {userName}!
           </DialogTitle>
         </DialogHeader>
         
@@ -78,7 +78,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
                     <div className="flex-1">
                       <h4 className="font-medium">Complete Your Profile</h4>
                       <p className="text-sm text-muted-foreground">
-                        Add missing information to get the most out of diligince.ai
+                        Add missing information to get the most out of Diligence.ai
                       </p>
                     </div>
                   </div>

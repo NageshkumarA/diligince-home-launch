@@ -105,7 +105,7 @@ const mockConversations: Conversation[] = [
   },
   {
     id: 5,
-    contact: "Diligince.ai",
+    contact: "Diligence.ai",
     initials: "DL",
     lastMessage:
       "Your profile has been updated successfully. You have 5 new job matches.",
