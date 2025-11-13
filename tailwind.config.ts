@@ -312,7 +312,8 @@ export default {
 				'flow-3': 'flow-dots-3 4s ease-in-out infinite',
 				'pulse-slow': 'pulse-slow 3s ease-in-out infinite',
 				'pulse-flow-down': 'pulse-flow-down 3s ease-in-out infinite',
-				'float': 'float 3s ease-in-out infinite'
+				'float': 'float 3s ease-in-out infinite',
+				'slide-up': 'slide-up 0.6s ease-out'
 			}
 		}
 	},

@@ -418,43 +418,64 @@ const Index: React.FC = () => {
       </section>
 
       {/* Services Section - Enterprise Solutions */}
-      <section className="py-24 lg:py-32 bg-white relative overflow-hidden" id="modules">
-        {/* Minimal Background Pattern */}
-        <div className="absolute inset-0 opacity-[0.02]">
+      <section className="py-24 lg:py-32 bg-[#FAFAFA] relative overflow-hidden" id="modules">
+        {/* Enhanced Background Pattern */}
+        <div className="absolute inset-0 opacity-[0.015]">
           <div
             className="absolute inset-0"
             style={{
               backgroundImage: `radial-gradient(circle at 2px 2px, #153b60 1px, transparent 0)`,
-              backgroundSize: "40px 40px",
+              backgroundSize: "50px 50px",
             }}
           ></div>
         </div>
 
+        {/* Floating Accent Dots */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[10%] left-[5%] w-2 h-2 bg-[#153b60] rounded-full opacity-[0.08] animate-float"></div>
+          <div className="absolute top-[25%] right-[8%] w-3 h-3 bg-[#1e4976] rounded-full opacity-[0.08] animate-float" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute bottom-[20%] left-[15%] w-2.5 h-2.5 bg-[#2a5f8f] rounded-full opacity-[0.08] animate-float" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-[60%] right-[20%] w-2 h-2 bg-[#153b60] rounded-full opacity-[0.08] animate-float" style={{ animationDelay: '0.5s' }}></div>
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Section Header */}
-          <div className="text-center mb-16 lg:mb-20">
-            <div className="inline-flex items-center space-x-2 bg-[#153b60]/5 border border-[#153b60]/20 rounded-full px-4 py-2 mb-6">
-              <Building2 className="w-4 h-4 text-[#153b60]" />
-              <span className="text-sm font-medium text-[#153b60]">Enterprise Solutions</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#333333] mb-6">
-              Enterprise <span className="text-[#153b60]">Solutions</span>
-            </h2>
-            
-            {/* Minimal Decorative Line */}
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <div className="w-12 h-[2px] bg-[#153b60]"></div>
-              <div className="w-2 h-2 rounded-full bg-[#153b60]"></div>
-              <div className="w-12 h-[2px] bg-[#153b60]"></div>
+          {/* Enhanced Section Header */}
+          <div className="text-center mb-20 lg:mb-24 animate-slide-up">
+            {/* Neumorphic Badge */}
+            <div 
+              className="inline-flex items-center space-x-2 bg-white rounded-full px-5 py-2.5 mb-8 border-2 border-[#153b60]/10 animate-pulse-slow"
+              style={{
+                boxShadow: '4px 4px 8px #e5e5e5, -4px -4px 8px #ffffff'
+              }}
+            >
+              <Building2 className="w-5 h-5 text-[#153b60]" />
+              <span className="text-sm font-semibold text-[#153b60] tracking-wide">Enterprise Solutions</span>
             </div>
 
-            <p className="text-[#828282] text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+            {/* Title with Gradient Accent */}
+            <h2 className="text-4xl md:text-6xl font-extrabold text-[#333333] mb-8 px-4">
+              Enterprise{" "}
+              <span className="bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] bg-clip-text text-transparent">
+                Solutions
+              </span>
+            </h2>
+            
+            {/* Enhanced Decorative Separator */}
+            <div className="flex items-center justify-center gap-3 mb-8">
+              <div className="h-[2px] w-16 bg-gradient-to-r from-transparent via-[#153b60]/40 to-[#1e4976]/40"></div>
+              <div className="w-2 h-2 rounded-full bg-[#153b60]/50"></div>
+              <div className="w-3 h-3 rounded-full bg-gradient-to-br from-[#153b60] to-[#2a5f8f] animate-pulse-slow"></div>
+              <div className="w-2 h-2 rounded-full bg-[#153b60]/50"></div>
+              <div className="h-[2px] w-16 bg-gradient-to-l from-transparent via-[#153b60]/40 to-[#1e4976]/40"></div>
+            </div>
+
+            <p className="text-[#828282] text-lg md:text-2xl max-w-4xl mx-auto leading-relaxed tracking-wide font-light">
               Empowering businesses with AI-driven procurement intelligence and seamless stakeholder collaboration
             </p>
           </div>
 
-          {/* Service Cards Grid */}
-          <div ref={servicesRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Enhanced Service Cards Grid */}
+          <div ref={servicesRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
             {services.map((service, index) => {
               const IconComponent = service.icon;
               const keyFeatures = service.features.slice(0, 3);
@@ -462,69 +483,99 @@ const Index: React.FC = () => {
               return (
                 <article
                   key={index}
-                  className={`group bg-white rounded-3xl p-8 transition-all duration-500 hover:-translate-y-2 opacity-0 ${visibleItems[index] ? "animate-fade-in" : ""}`}
+                  className={`group bg-white rounded-3xl p-6 md:p-8 lg:p-10 transition-all duration-500 hover:-translate-y-3 border border-[#153b60]/5 ${visibleItems[index] ? "opacity-0 animate-fade-in" : "opacity-100"}`}
                   style={{
                     animationDelay: visibleItems[index] ? `${index * 0.15}s` : "0s",
                     animationFillMode: "forwards",
-                    boxShadow: '6px 6px 12px #d1d1d1, -6px -6px 12px #ffffff',
+                    boxShadow: '6px 6px 16px #d1d1d1, -6px -6px 16px #ffffff',
                   }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = '8px 8px 20px #c5c5c5, -8px -8px 20px #ffffff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = '6px 6px 16px #d1d1d1, -6px -6px 16px #ffffff';
+                  }}
+                  aria-label={`${service.title} enterprise solution card`}
                 >
-                  {/* Icon with Gradient Background */}
-                  <div className="mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-[#153b60] to-[#1e4976] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <IconComponent className="w-8 h-8 text-white relative z-10" />
+                  {/* Enhanced Icon with Gradient */}
+                  <div className="mb-8">
+                    <div 
+                      className="w-16 h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 bg-gradient-to-br from-[#153b60] via-[#1e4976] to-[#2a5f8f] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-400 relative overflow-hidden"
+                      style={{
+                        transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                      }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400"></div>
+                      <IconComponent className="w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 text-white relative z-10" />
                     </div>
                   </div>
 
-                  {/* Title & Description */}
-                  <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-[#333333] mb-3 group-hover:text-[#153b60] transition-colors duration-300">
+                  {/* Enhanced Title & Description */}
+                  <div className="mb-8">
+                    <h3 className="text-2xl md:text-2xl lg:text-3xl font-bold text-[#333333] mb-4 group-hover:text-[#153b60] transition-colors duration-250">
                       {service.title}
                     </h3>
-                    <div className="w-12 h-1 bg-[#153b60]/30 rounded-full mb-4 group-hover:w-24 transition-all duration-300"></div>
-                    <p className="text-[#828282] text-base leading-relaxed">
+                    <div className="relative mb-4 h-1 w-16 overflow-hidden rounded-full bg-[#153b60]/10">
+                      <div className="absolute inset-0 w-8 bg-gradient-to-r from-[#153b60] to-[#2a5f8f] group-hover:w-20 transition-all duration-350 ease-out"></div>
+                    </div>
+                    <p className="text-[#828282] text-base md:text-lg leading-relaxed">
                       {service.description}
                     </p>
                   </div>
 
-                  {/* Key Features */}
-                  <div className="mb-6">
-                    <ul className="space-y-3">
+                  {/* Enhanced Key Features */}
+                  <div className="mb-8">
+                    <ul className="space-y-3.5">
                       {keyFeatures.map((feature, idx) => (
-                        <li key={idx} className="flex items-start text-sm text-[#333333]">
-                          <CheckCircle className="w-4 h-4 text-[#153b60] mr-3 flex-shrink-0 mt-0.5" />
-                          <span className="font-medium">{feature}</span>
+                        <li 
+                          key={idx} 
+                          className="flex items-start text-sm md:text-base text-[#333333] font-medium group-hover:translate-x-1 transition-transform duration-300"
+                          style={{ transitionDelay: `${idx * 50}ms` }}
+                        >
+                          <CheckCircle className="w-5 h-5 text-[#153b60] mr-3 flex-shrink-0 mt-0.5" />
+                          <span>{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  {/* Metrics Box with Neumorphic Design */}
+                  {/* Enhanced Metrics Box with Neumorphic Design */}
                   <div 
-                    className="rounded-2xl p-5 mb-6 group-hover:scale-105 transition-transform duration-300"
+                    className="rounded-2xl p-6 mb-8 group-hover:scale-105 transition-transform duration-300 ease-out"
                     style={{
-                      boxShadow: 'inset 3px 3px 6px #d1d1d1, inset -3px -3px 6px #ffffff',
-                      background: '#fafafa'
+                      boxShadow: 'inset 3px 3px 6px #e5e5e5, inset -3px -3px 6px #ffffff',
+                      background: 'linear-gradient(135deg, #FAFAFA 0%, #FFFFFF 100%)',
                     }}
                   >
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-[#153b60] mb-1">
+                      <div className="text-4xl md:text-4xl lg:text-5xl font-extrabold mb-2 bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] bg-clip-text text-transparent">
                         {service.metrics.improvement}
                       </div>
-                      <div className="text-sm text-[#828282] font-medium">
+                      <div className="text-sm text-[#828282] font-medium tracking-wide">
                         {service.metrics.description}
                       </div>
                     </div>
                   </div>
 
-                  {/* CTA Link */}
-                  <button className="w-full group/btn flex items-center justify-center text-[#153b60] hover:text-[#1e4976] font-semibold text-base transition-all duration-300">
+                  {/* Enhanced CTA Button */}
+                  <button 
+                    className="w-full group/btn flex items-center justify-center bg-white text-[#153b60] hover:text-[#1e4976] font-bold text-base py-4 rounded-xl transition-all duration-200"
+                    style={{
+                      boxShadow: '4px 4px 8px #e5e5e5, -4px -4px 8px #ffffff'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.boxShadow = 'inset 2px 2px 4px #e5e5e5, inset -2px -2px 4px #ffffff';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = '4px 4px 8px #e5e5e5, -4px -4px 8px #ffffff';
+                    }}
+                    aria-label={`Learn more about ${service.title}`}
+                  >
                     <span className="relative">
                       Learn More
                       <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#153b60] group-hover/btn:w-full transition-all duration-300"></span>
                     </span>
-                    <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-300 group-hover/btn:translate-x-2" />
+                    <ArrowRight className="w-5 h-5 ml-2 transition-transform duration-300 group-hover/btn:translate-x-3" />
                   </button>
                 </article>
               );
