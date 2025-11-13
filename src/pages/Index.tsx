@@ -379,10 +379,10 @@ const Index: React.FC = () => {
                           {/* Inner Gradient Overlay */}
                           <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           
-                          <step.icon className="w-12 h-12 relative z-10 text-[#153b60] group-hover:text-white transition-all duration-300" />
+                          <step.icon className="w-12 h-12 relative z-10 text-[#153b60] group-hover:text-[#153b60] transition-all duration-300" />
                         </div>
                       </div>
-                      
+                      <br></br>
                       {/* Title with Animated Underline */}
                       <h3 className="text-2xl font-bold text-[#333333] mb-4 group-hover:text-[#153b60] transition-colors duration-300 relative inline-block">
                         {step.title}
@@ -392,7 +392,7 @@ const Index: React.FC = () => {
                       <p className="text-[#828282] leading-relaxed text-lg mb-6">{step.description}</p>
                       
                       {/* Activity Indicator Dots */}
-                      <div className="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="flex justify-center gap-2 opacity-100 transition-opacity duration-500">
                         <div className="w-1.5 h-1.5 bg-[#153b60] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                         <div className="w-1.5 h-1.5 bg-[#1e4976] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
                         <div className="w-1.5 h-1.5 bg-[#2a5f8f] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
