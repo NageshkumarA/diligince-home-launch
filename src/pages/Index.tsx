@@ -263,8 +263,11 @@ const Index: React.FC = () => {
 
           {/* Benefits Section */}
           <div
-            className="bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] rounded-3xl p-8 md:p-12 relative overflow-hidden"
+            className=" rounded-3xl p-8 md:p-12 relative overflow-hidden"
             id="benefits"
+            style={{
+                    boxShadow: '6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff'
+                  }}
           >
             {/* Animated Background Elements */}
             <div className="absolute inset-0 opacity-10">
@@ -278,17 +281,15 @@ const Index: React.FC = () => {
             </div>
 
             <div className="text-center mb-12">
-              <h3 className="text-4xl font-bold text-white mb-4">AI-Driven Results</h3>
-              <p className="text-white/90 text-xl">See why thousands of businesses trust our intelligent platform</p>
+              <h3 className="text-4xl font-bold text-black mb-4">AI-Driven Results</h3>
+              <p className="text-black text-xl">See why thousands of businesses trust our intelligent platform</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 relative z-10">
               {benefits.map((benefit, index) => (
                 <div
                   key={index}
                   className="text-center group hover:transform hover:-translate-y-2 transition-all duration-300 bg-white rounded-3xl p-8"
-                  style={{
-                    boxShadow: '6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff'
-                  }}
+                  
                 >
                   <div className="w-20 h-20 bg-gradient-to-br from-[#153b60]/10 to-[#1e4976]/10 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-xl transition-all duration-300">
                     <benefit.icon className="w-8 h-8 text-[#153b60]" />
