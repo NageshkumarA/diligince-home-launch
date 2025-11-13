@@ -285,14 +285,17 @@ const Index: React.FC = () => {
               {benefits.map((benefit, index) => (
                 <div
                   key={index}
-                  className="text-center group hover:transform hover:-translate-y-2 transition-all duration-300"
+                  className="text-center group hover:transform hover:-translate-y-2 transition-all duration-300 bg-white rounded-3xl p-8"
+                  style={{
+                    boxShadow: '6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff'
+                  }}
                 >
-                  <div className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:bg-white/20 transition-all duration-300 border border-white/20">
-                    <benefit.icon className="w-8 h-8 text-white" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-[#153b60]/10 to-[#1e4976]/10 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-xl transition-all duration-300">
+                    <benefit.icon className="w-8 h-8 text-[#153b60]" />
                   </div>
-                  <h4 className="text-3xl font-bold text-white mb-2">{benefit.title}</h4>
-                  <p className="text-white/80 font-semibold mb-3 text-lg">{benefit.subtitle}</p>
-                  <p className="text-white/70 leading-relaxed">{benefit.description}</p>
+                  <h4 className="text-3xl font-bold text-[#333333] mb-2">{benefit.title}</h4>
+                  <p className="text-[#153b60] font-semibold mb-3 text-lg">{benefit.subtitle}</p>
+                  <p className="text-[#828282] leading-relaxed">{benefit.description}</p>
                 </div>
               ))}
             </div>
