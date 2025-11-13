@@ -504,53 +504,106 @@ const Index: React.FC = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-[#1A2A4F] via-[#2F80ED] to-purple-600 relative overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
-          <div
-            className="absolute bottom-0 right-0 w-80 h-80 bg-[#27AE60]/10 rounded-full blur-3xl animate-pulse"
-            style={{
-              animationDelay: "2s",
-            }}
-          ></div>
-          <div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-400/10 rounded-full blur-3xl animate-pulse"
-            style={{
-              animationDelay: "1s",
-            }}
-          ></div>
+      {/* CTA Section - Ready to Transform */}
+      <section className="py-32 bg-[#FAFAFA] relative overflow-hidden">
+        {/* Minimal Geometric Background Elements */}
+        <div className="absolute inset-0 opacity-[0.03]">
+          {/* Top Right Circle */}
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full border-[80px] border-[#153b60] translate-x-1/3 -translate-y-1/3"></div>
+          {/* Bottom Left Square */}
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] border-[60px] border-[#1e4976] -translate-x-1/4 translate-y-1/4 rotate-12"></div>
+          {/* Center Triangle */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-l-[200px] border-l-transparent border-r-[200px] border-r-transparent border-b-[300px] border-b-[#2a5f8f] opacity-50"></div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6">
-            <div className="w-2 h-2 bg-[#27AE60] rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium text-white">Join 10,000+ Businesses</span>
+        {/* Floating Dots Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-[10%] w-3 h-3 bg-[#153b60] rounded-full animate-float"></div>
+          <div className="absolute top-40 right-[15%] w-2 h-2 bg-[#1e4976] rounded-full animate-float" style={{ animationDelay: '0.5s' }}></div>
+          <div className="absolute bottom-32 left-[20%] w-2.5 h-2.5 bg-[#2a5f8f] rounded-full animate-float" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute bottom-20 right-[25%] w-3 h-3 bg-[#153b60] rounded-full animate-float" style={{ animationDelay: '1.5s' }}></div>
+        </div>
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* Minimal Badge */}
+          <div className="flex justify-center mb-8">
+            <div className="inline-flex items-center space-x-3 bg-white rounded-full px-6 py-3 border-2 border-[#153b60]/10" 
+                 style={{
+                   boxShadow: '4px 4px 8px #d1d1d1, -4px -4px 8px #ffffff'
+                 }}>
+              <div className="relative">
+                <div className="w-2.5 h-2.5 bg-[#153b60] rounded-full animate-pulse"></div>
+                <div className="absolute inset-0 w-2.5 h-2.5 bg-[#153b60] rounded-full animate-ping"></div>
+              </div>
+              <span className="text-sm font-semibold text-[#153b60] tracking-wide">TRUSTED BY 10,000+ BUSINESSES</span>
+            </div>
           </div>
 
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-            Ready to Transform Your
-            <span className="block text-[#F2994A]">Business with AI?</span>
-          </h2>
-          <p className="text-xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Join thousands of successful businesses already using Diligence.ai's intelligent platform to streamline
-            operations, connect with qualified professionals, and accelerate growth through AI-powered insights.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+          {/* Main Heading with Modern Typography */}
+          <div className="text-center mb-8">
+            <h2 className="text-5xl md:text-7xl font-bold text-[#333333] mb-6 leading-[1.1] tracking-tight">
+              Ready to Transform
+              <span className="block mt-3 bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] bg-clip-text text-transparent">
+                Your Business?
+              </span>
+            </h2>
+            
+            {/* Minimal Decorative Line */}
+            <div className="flex items-center justify-center gap-2 mb-8">
+              <div className="w-12 h-[2px] bg-[#153b60]"></div>
+              <div className="w-2 h-2 rounded-full bg-[#153b60]"></div>
+              <div className="w-12 h-[2px] bg-[#153b60]"></div>
+            </div>
+
+            <p className="text-xl md:text-2xl text-[#828282] max-w-3xl mx-auto leading-relaxed font-light">
+              Join thousands of successful businesses using AI-powered intelligence to streamline operations and accelerate growth.
+            </p>
+          </div>
+
+          {/* CTA Buttons with Neumorphic Design */}
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-12">
             <Link
               to="/signup"
-              className="bg-white text-[#1A2A4F] px-10 py-4 rounded-xl hover:bg-gray-100 transition-all duration-300 flex items-center justify-center space-x-2 font-bold text-lg shadow-2xl hover:shadow-3xl hover:scale-105"
+              className="group relative bg-gradient-to-r from-[#153b60] to-[#1e4976] text-white px-12 py-5 rounded-2xl font-bold text-lg transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
             >
-              <span>Start Free Trial</span>
-              <ArrowRight className="w-5 h-5" />
+              {/* Shine Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+              
+              <span className="relative flex items-center justify-center space-x-3">
+                <span>Start Free Trial</span>
+                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" />
+              </span>
             </Link>
-            <button className="border-2 border-white/30 text-white px-10 py-4 rounded-xl hover:bg-white/10 transition-all duration-300 font-bold text-lg backdrop-blur-sm hover:border-white/50 flex items-center justify-center space-x-2">
-              <span>Schedule Demo</span>
-              <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
-                <div className="w-0 h-0 border-l-[6px] border-l-white border-y-[4px] border-y-transparent ml-0.5"></div>
-              </div>
+
+            <button 
+              className="relative bg-white text-[#153b60] px-12 py-5 rounded-2xl font-bold text-lg transition-all duration-300 hover:-translate-y-1 group"
+              style={{
+                boxShadow: '6px 6px 12px #d1d1d1, -6px -6px 12px #ffffff'
+              }}
+            >
+              <span className="flex items-center justify-center space-x-3">
+                <span>Schedule Demo</span>
+                <div className="w-8 h-8 rounded-full bg-[#153b60]/10 flex items-center justify-center transition-all duration-300 group-hover:bg-[#153b60] group-hover:scale-110">
+                  <div className="w-0 h-0 border-l-[6px] border-l-[#153b60] border-y-[4px] border-y-transparent ml-0.5 transition-colors duration-300 group-hover:border-l-white"></div>
+                </div>
+              </span>
             </button>
+          </div>
+
+          {/* Trust Indicators */}
+          <div className="mt-16 flex flex-wrap justify-center items-center gap-8 text-[#828282] text-sm">
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="w-5 h-5 text-[#153b60]" />
+              <span className="font-medium">No credit card required</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="w-5 h-5 text-[#153b60]" />
+              <span className="font-medium">14-day free trial</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="w-5 h-5 text-[#153b60]" />
+              <span className="font-medium">Cancel anytime</span>
+            </div>
           </div>
         </div>
       </section>
