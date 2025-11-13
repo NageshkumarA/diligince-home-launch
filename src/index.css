@@ -459,6 +459,38 @@
   @apply transition-all duration-300;
 }
 
+/* Hero Section Styles - Modern Split Layout */
+.hero-gradient {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.hero-decoration-circle {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 197, 253, 0.1) 100%);
+}
+
+.hero-decoration-square {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(196, 181, 253, 0.1) 100%);
+}
+
+/* Floating Animations */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 6s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-20px); 
+  }
+}
+
 /* Advanced animations */
 @keyframes fadeInUp {
   from {
