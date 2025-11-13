@@ -25,6 +25,13 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				// Brand color - Dashboard Navy
+				brand: {
+					DEFAULT: '#153b60',
+					primary: '#153b60',
+					light: '#1e4976',
+					dark: '#0f2840'
+				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))',

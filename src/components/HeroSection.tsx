@@ -11,7 +11,7 @@ const HeroSection = () => {
           <div className="lg:col-span-3 text-center lg:text-left space-y-6 lg:space-y-8">
             {/* Eyebrow Text */}
             <div className="inline-block">
-              <span className="text-sm font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-4 py-2 rounded-full">
+              <span className="text-sm font-semibold uppercase tracking-wider text-[#153b60] bg-[#153b60]/5 border border-[#153b60]/20 px-4 py-2 rounded-full">
                 AI-Powered Industrial Network
               </span>
             </div>
@@ -19,7 +19,7 @@ const HeroSection = () => {
             {/* Main Heading */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight max-w-2xl mx-auto lg:mx-0">
               Connect. Collaborate.{" "}
-              <span className="text-blue-600">Transform</span> Your Industrial Operations
+              <span className="text-[#153b60]">Transform</span> Your Industrial Operations
             </h1>
 
             {/* Subheading */}
@@ -31,7 +31,7 @@ const HeroSection = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
               <Button 
                 size="lg" 
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-base shadow-md hover:shadow-lg transition-all duration-300 group"
+                className="bg-[#153b60] hover:bg-[#1e4976] text-white font-medium text-base shadow-md hover:shadow-lg transition-all duration-300 group"
                 asChild
               >
                 <Link to="/signup">
@@ -71,14 +71,14 @@ const HeroSection = () => {
               
               {/* Icon Elements */}
               <div className="absolute top-20 right-12 bg-white rounded-2xl p-4 shadow-lg animate-float">
-                <Network className="h-8 w-8 text-blue-600" />
+                <Network className="h-8 w-8 text-[#153b60]" />
               </div>
               <div className="absolute bottom-32 left-16 bg-white rounded-2xl p-4 shadow-lg animate-float-delayed">
-                <Zap className="h-8 w-8 text-indigo-600" />
+                <Zap className="h-8 w-8 text-[#1e4976]" />
               </div>
               
               {/* Central Glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-[#153b60]/20 to-[#1e4976]/20 rounded-full blur-3xl" />
             </div>
           </div>
         </div>

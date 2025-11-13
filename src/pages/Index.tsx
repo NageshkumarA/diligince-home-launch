@@ -50,7 +50,7 @@ const Index: React.FC = () => {
       description:
         "Streamline procurement processes with AI-powered vendor matching and requirement management for enterprise-level efficiency",
       icon: Building2,
-      gradient: "from-[#1A2A4F] to-[#2F80ED]",
+      gradient: "from-[#153b60] to-[#1e4976]",
       features: [
         "AI-Powered Vendor Matching",
         "Automated RFQ Processing",
@@ -68,7 +68,7 @@ const Index: React.FC = () => {
       description:
         "Connect with vetted industry experts and showcase your expertise through our premium professional network platform",
       icon: Users,
-      gradient: "from-[#2F80ED] to-[#27AE60]",
+      gradient: "from-[#1e4976] to-[#2a5f8f]",
       features: [
         "Verified Expert Network",
         "Skills Assessment Tools",
@@ -86,7 +86,7 @@ const Index: React.FC = () => {
       description:
         "Access high-value opportunities and deliver exceptional solutions through our enterprise vendor marketplace",
       icon: Truck,
-      gradient: "from-[#27AE60] to-[#F2994A]",
+      gradient: "from-[#2a5f8f] to-[#3a7baf]",
       features: [
         "Enterprise Opportunity Access",
         "Automated Quote Generation",
@@ -128,21 +128,21 @@ const Index: React.FC = () => {
       title: "Post Your Requirements",
       description: "Industries post detailed project requirements with budget and timeline",
       icon: FileText,
-      color: "text-[#2F80ED] bg-[#2F80ED]/10",
+      color: "text-[#153b60] bg-[#153b60]/10",
     },
     {
       step: "02",
       title: "Get Proposals",
       description: "Professionals show interest and vendors submit competitive quotations",
       icon: Target,
-      color: "text-[#27AE60] bg-[#27AE60]/10",
+      color: "text-[#1e4976] bg-[#1e4976]/10",
     },
     {
       step: "03",
       title: "Collaborate & Deliver",
       description: "Direct communication, project tracking, and successful delivery with trust",
       icon: Workflow,
-      color: "text-[#F2994A] bg-[#F2994A]/10",
+      color: "text-[#2a5f8f] bg-[#2a5f8f]/10",
     },
   ];
   const benefits = [
@@ -184,25 +184,25 @@ const Index: React.FC = () => {
                 <div className="w-8 h-8 bg-[#fff] rounded-md flex items-center justify-center font-bold text-white">
                   <img src="/logo-main-no-bg.svg" alt="Diligence.ai" />
                 </div>
-                <span className="text-xl font-bold text-[#1A2A4F]">Diligence.ai</span>
+                <span className="text-xl font-bold text-[#153b60]">Diligence.ai</span>
               </Link>
               <div className="flex items-center space-x-6">
                 {/* Navigation Menu */}
                 <nav className="hidden md:flex items-center space-x-8">
-                  <Link to="/about" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">
+                  <Link to="/about" className="text-[#333333] hover:text-[#153b60] transition-colors font-medium">
                     About
                   </Link>
-                  <Link to="/pricing" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">
+                  <Link to="/pricing" className="text-[#333333] hover:text-[#153b60] transition-colors font-medium">
                     Pricing
                   </Link>
-                  <Link to="/contact" className="text-[#333333] hover:text-[#2F80ED] transition-colors font-medium">
+                  <Link to="/contact" className="text-[#333333] hover:text-[#153b60] transition-colors font-medium">
                     Contact
                   </Link>
                 </nav>
 
                 <Link
                   to="/signin"
-                  className="bg-gradient-to-r from-[#1A2A4F] to-[#2F80ED] text-white px-6 py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 font-medium"
+                  className="bg-gradient-to-r from-[#153b60] to-[#1e4976] text-white px-6 py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 font-medium"
                 >
                   Start Free Trial
                 </Link>
@@ -219,10 +219,10 @@ const Index: React.FC = () => {
       <section className="py-20 bg-white relative" id="features">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
-          <div
+        <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `radial-gradient(circle at 25px 25px, #2F80ED 2px, transparent 0)`,
+              backgroundImage: `radial-gradient(circle at 25px 25px, #153b60 2px, transparent 0)`,
               backgroundSize: "50px 50px",
             }}
           ></div>
@@ -230,12 +230,12 @@ const Index: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center space-x-2 bg-[#2F80ED]/5 border border-[#2F80ED]/20 rounded-full px-4 py-2 mb-6">
-              <div className="w-2 h-2 bg-[#2F80ED] rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-[#2F80ED]">AI-Powered Features</span>
+            <div className="inline-flex items-center space-x-2 bg-[#153b60]/5 border border-[#153b60]/20 rounded-full px-4 py-2 mb-6">
+              <div className="w-2 h-2 bg-[#153b60] rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-[#153b60]">AI-Powered Features</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-[#333333] mb-4">
-              Why Choose <span className="text-[#2F80ED]">Diligence.ai</span>?
+              Why Choose <span className="text-[#153b60]">Diligence.ai</span>?
             </h2>
             <p className="text-[#828282] text-lg max-w-2xl mx-auto">
               Experience the power of artificial intelligence in business connections with our comprehensive platform
@@ -249,11 +249,11 @@ const Index: React.FC = () => {
                 key={index}
                 className="text-center group hover:transform hover:-translate-y-3 transition-all duration-500"
               >
-                <div className="w-20 h-20 bg-gradient-to-br from-[#2F80ED]/10 to-[#27AE60]/10 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#2F80ED]/20 to-[#27AE60]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <feature.icon className="w-8 h-8 text-[#2F80ED]" />
+                <div className="w-20 h-20 bg-gradient-to-br from-[#153b60]/10 to-[#1e4976]/10 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#153b60]/20 to-[#1e4976]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <feature.icon className="w-8 h-8 text-[#153b60]" />
                 </div>
-                <h3 className="text-xl font-bold text-[#333333] mb-3 group-hover:text-[#2F80ED] transition-colors">
+                <h3 className="text-xl font-bold text-[#333333] mb-3 group-hover:text-[#153b60] transition-colors">
                   {feature.title}
                 </h3>
                 <p className="text-[#828282] leading-relaxed">{feature.description}</p>
@@ -263,14 +263,14 @@ const Index: React.FC = () => {
 
           {/* Benefits Section */}
           <div
-            className="bg-gradient-to-r from-[#1A2A4F] via-[#2F80ED] to-purple-600 rounded-3xl p-8 md:p-12 relative overflow-hidden"
+            className="bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] rounded-3xl p-8 md:p-12 relative overflow-hidden"
             id="benefits"
           >
             {/* Animated Background Elements */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full blur-3xl animate-pulse"></div>
               <div
-                className="absolute bottom-0 right-0 w-60 h-60 bg-[#27AE60] rounded-full blur-3xl animate-pulse"
+                className="absolute bottom-0 right-0 w-60 h-60 bg-[#1e4976] rounded-full blur-3xl animate-pulse"
                 style={{
                   animationDelay: "1s",
                 }}
@@ -279,7 +279,7 @@ const Index: React.FC = () => {
 
             <div className="text-center mb-12">
               <h3 className="text-4xl font-bold text-white mb-4">AI-Driven Results</h3>
-              <p className="text-blue-100 text-xl">See why thousands of businesses trust our intelligent platform</p>
+              <p className="text-white/90 text-xl">See why thousands of businesses trust our intelligent platform</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 relative z-10">
               {benefits.map((benefit, index) => (
@@ -291,8 +291,8 @@ const Index: React.FC = () => {
                     <benefit.icon className="w-8 h-8 text-white" />
                   </div>
                   <h4 className="text-3xl font-bold text-white mb-2">{benefit.title}</h4>
-                  <p className="text-blue-200 font-semibold mb-3 text-lg">{benefit.subtitle}</p>
-                  <p className="text-blue-100 leading-relaxed">{benefit.description}</p>
+                  <p className="text-white/80 font-semibold mb-3 text-lg">{benefit.subtitle}</p>
+                  <p className="text-white/70 leading-relaxed">{benefit.description}</p>
                 </div>
               ))}
             </div>
@@ -304,15 +304,15 @@ const Index: React.FC = () => {
       <section className="py-20 bg-gradient-to-br from-[#FAFAFA] to-white relative overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-20 right-20 w-64 h-64 bg-[#2F80ED] rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-20 w-48 h-48 bg-[#27AE60] rounded-full blur-3xl"></div>
+          <div className="absolute top-20 right-20 w-64 h-64 bg-[#153b60] rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-48 h-48 bg-[#1e4976] rounded-full blur-3xl"></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center space-x-2 bg-[#27AE60]/5 border border-[#27AE60]/20 rounded-full px-4 py-2 mb-6">
-              <div className="w-2 h-2 bg-[#27AE60] rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-[#27AE60]">AI-Powered Workflow</span>
+            <div className="inline-flex items-center space-x-2 bg-[#153b60]/5 border border-[#153b60]/20 rounded-full px-4 py-2 mb-6">
+              <div className="w-2 h-2 bg-[#153b60] rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-[#153b60]">AI-Powered Workflow</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-[#333333] mb-4">How It Works</h2>
             <p className="text-[#828282] text-lg max-w-2xl mx-auto">
@@ -322,12 +322,12 @@ const Index: React.FC = () => {
 
           <div className="relative">
             {/* Connection Lines */}
-            <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-[#2F80ED] via-[#27AE60] to-[#F2994A] transform -translate-y-1/2 rounded-full opacity-30"></div>
+            <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] transform -translate-y-1/2 rounded-full opacity-30"></div>
 
             <div className="grid lg:grid-cols-3 gap-12 relative">
               {howItWorks.map((step, index) => (
                 <div key={index} className="relative">
-                  <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-[#E0E0E0] hover:border-[#2F80ED]/30 group hover:-translate-y-2">
+                  <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-[#E0E0E0] hover:border-[#153b60]/30 group hover:-translate-y-2">
                     <div className="text-center">
                       <div
                         className={`w-20 h-20 ${step.color} rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 relative overflow-hidden`}
@@ -335,10 +335,10 @@ const Index: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <step.icon className="w-10 h-10 relative z-10" />
                       </div>
-                      <div className="text-6xl font-bold text-[#E0E0E0] mb-4 group-hover:text-[#2F80ED]/20 transition-colors">
+                      <div className="text-6xl font-bold text-[#E0E0E0] mb-4 group-hover:text-[#153b60]/20 transition-colors">
                         {step.step}
                       </div>
-                      <h3 className="text-2xl font-bold text-[#333333] mb-4 group-hover:text-[#2F80ED] transition-colors">
+                      <h3 className="text-2xl font-bold text-[#333333] mb-4 group-hover:text-[#153b60] transition-colors">
                         {step.title}
                       </h3>
                       <p className="text-[#828282] leading-relaxed text-lg">{step.description}</p>
@@ -348,8 +348,8 @@ const Index: React.FC = () => {
                   {/* Step connector for mobile */}
                   {index < howItWorks.length - 1 && (
                     <div className="lg:hidden flex justify-center mt-6 mb-6">
-                      <div className="w-8 h-8 bg-[#2F80ED]/10 rounded-full flex items-center justify-center">
-                        <ArrowRight className="w-5 h-5 text-[#2F80ED]" />
+                      <div className="w-8 h-8 bg-[#153b60]/10 rounded-full flex items-center justify-center">
+                        <ArrowRight className="w-5 h-5 text-[#153b60]" />
                       </div>
                     </div>
                   )}

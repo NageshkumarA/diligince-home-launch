@@ -459,17 +459,17 @@
   @apply transition-all duration-300;
 }
 
-/* Hero Section Styles - Modern Split Layout */
+/* Hero Section Styles - Modern Split Layout with Navy Theme */
 .hero-gradient {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, rgba(21, 59, 96, 0.03) 0%, rgba(21, 59, 96, 0.08) 100%);
 }
 
 .hero-decoration-circle {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 197, 253, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(21, 59, 96, 0.1) 0%, rgba(30, 73, 118, 0.15) 100%);
 }
 
 .hero-decoration-square {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(196, 181, 253, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(21, 59, 96, 0.15) 0%, rgba(30, 73, 118, 0.2) 100%);
 }
 
 /* Floating Animations */
