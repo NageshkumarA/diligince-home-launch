@@ -23,6 +23,7 @@ import { Helmet } from "react-helmet";
 import { useStaggeredAnimation } from "../hooks/useScrollAnimation";
 import { useUser } from "@/contexts/UserContext";
 import { getDashboardRoute } from "@/types/shared";
+import HeroSection from "@/components/HeroSection";
 
 const Index: React.FC = () => {
   const { user, isLoading } = useUser();
@@ -212,133 +213,7 @@ const Index: React.FC = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-800 to-purple-800 text-white pt-40 pb-20 relative overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-10 w-32 h-32 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-48 h-48 bg-[#27AE60] rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-400 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="relative z-10">
-              {/* AI Badge */}
-              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6">
-                <div className="w-2 h-2 bg-[#27AE60] rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium">World's #1 B2B & B2C AI-Native Business Platform</span>
-                <span className="bg-[#F2994A] text-white text-xs px-2 py-1 rounded-full font-bold">New</span>
-              </div>
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                Streamline Requirements,
-                <span className="block text-[#bfdbfe]">Connect Expertise</span>
-                <span className="block text-4xl md:text-5xl">with Diligence's</span>
-                <span className="block text-[#bfdbfe]">Powerful AI Platform</span>
-              </h1>
-
-              <p className="text-xl text-blue-100 mb-8 max-w-2xl leading-relaxed">
-                From automated requirement matching to intelligent vendor selection—our AI-driven platform empowers
-                industries to streamline operations, connect with qualified professionals, and optimize business
-                outcomes.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Link
-                  to="/signup"
-                  className="bg-white text-black px-8 py-4 rounded-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center space-x-2 font-semibold"
-                >
-                  <span>Start Free Trial</span>
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-                <button className="border-2 border-white/30 text-white px-8 py-4 rounded-xl hover:bg-white/10 transition-colors flex items-center justify-center space-x-2 font-semibold backdrop-blur-sm">
-                  <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
-                    <div className="w-0 h-0 border-l-[6px] border-l-white border-y-[4px] border-y-transparent ml-0.5"></div>
-                  </div>
-                  <span>Watch Demo</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Right Dashboard Preview */}
-            <div className="relative z-10">
-              <div className="relative">
-                {/* Main Dashboard Card */}
-                <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-2xl p-6 border border-white/20 text-white">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                      <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                      <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                    </div>
-                    <span className="text-sm font-medium text-white-600">Diligence.AI Dashboard</span>
-                  </div>
-
-                  {/* Dashboard Content */}
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-white-600">EFFICIENCY RATE</span>
-                      <span className="text-sm text-[#fff] font-medium">Live</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-3xl font-bold text-[#fff]">98.5%</span>
-                      <span className="text-sm bg-[#27AE60]/10 text-[#27AE60] px-2 py-1 rounded-full font-medium">
-                        +12%
-                      </span>
-                    </div>
-
-                    {/* Progress Bars */}
-                    <div className="space-y-3 mt-6">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white-600">Requirements Matched</span>
-                        <span className="font-medium">87%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-gradient-to-r from-[#2F80ED] to-[#27AE60] h-2 rounded-full"
-                          style={{
-                            width: "87%",
-                          }}
-                        ></div>
-                      </div>
-
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white-600">Vendor Response Rate</span>
-                        <span className="font-medium">94%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-gradient-to-r from-[#F2994A] to-[#27AE60] h-2 rounded-full"
-                          style={{
-                            width: "94%",
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Floating Stats Cards */}
-                <div className="absolute -top-4 -right-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-4 border border-gray-100">
-                  <div className="text-center">
-                    <div className="text-sm text-[#f2994a] mb-1">MONTHLY ROI</div>
-                    <div className="text-2xl font-bold text-[#000]">$2.4M</div>
-                    <div className="text-xs text-[#27AE60] font-medium">↗ +23%</div>
-                  </div>
-                </div>
-
-                <div className="absolute -bottom-8 -left-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-4 border border-gray-100">
-                  <div className="text-center">
-                    <div className="text-sm text-[#01bab5] mb-1">ACTIVE PROJECTS</div>
-                    <div className="text-2xl font-bold text-[#000]">156</div>
-                    <div className="text-xs text-[#27AE60] font-medium">↗ +8%</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* Features Section */}
       <section className="py-20 bg-white relative" id="features">
