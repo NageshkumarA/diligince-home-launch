@@ -301,7 +301,7 @@ const Index: React.FC = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 bg-gradient-to-br from-[#FAFAFA] to-white relative overflow-hidden">
+      <section className="py-24 bg-gradient-to-br from-[#FAFAFA] to-white relative overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-20 right-20 w-64 h-64 bg-[#153b60] rounded-full blur-3xl"></div>
@@ -309,47 +309,112 @@ const Index: React.FC = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center space-x-2 bg-[#153b60]/5 border border-[#153b60]/20 rounded-full px-4 py-2 mb-6">
-              <div className="w-2 h-2 bg-[#153b60] rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-[#153b60]">AI-Powered Workflow</span>
+          {/* Enhanced Section Header */}
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center space-x-2 bg-[#153b60]/5 border border-[#153b60]/20 rounded-full px-4 py-2 mb-6 relative">
+              <div className="absolute inset-0 bg-[#153b60]/10 rounded-full animate-ping"></div>
+              <div className="w-2 h-2 bg-[#153b60] rounded-full animate-pulse relative z-10"></div>
+              <span className="text-sm font-medium text-[#153b60] relative z-10">AI-Powered Workflow</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#333333] mb-4">How It Works</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-[#333333] mb-4">
+              How It <span className="text-[#153b60]">Works</span>
+            </h2>
+            
+            {/* Visual Separator */}
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="w-2 h-2 rounded-full bg-[#153b60]"></div>
+              <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#153b60]/50 to-transparent"></div>
+              <div className="w-2 h-2 rounded-full bg-[#1e4976]"></div>
+              <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#1e4976]/50 to-transparent"></div>
+              <div className="w-2 h-2 rounded-full bg-[#2a5f8f]"></div>
+            </div>
+            
             <p className="text-[#828282] text-lg max-w-2xl mx-auto">
               Simple, intelligent, and effective. Our AI streamlines your business processes in three easy steps.
             </p>
           </div>
 
           <div className="relative">
-            {/* Connection Lines */}
-            <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] transform -translate-y-1/2 rounded-full opacity-30"></div>
+            {/* Enhanced Desktop Connection Line with Animated Flow */}
+            <div className="hidden lg:block absolute top-[120px] left-[10%] right-[10%] h-1">
+              {/* Base Line */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] rounded-full opacity-20"></div>
+              
+              {/* Animated Flowing Dots */}
+              <div className="absolute inset-0 flex items-center justify-between px-8">
+                <div className="w-3 h-3 bg-[#153b60] rounded-full animate-flow-1 shadow-lg"></div>
+                <div className="w-3 h-3 bg-[#1e4976] rounded-full animate-flow-2 shadow-lg"></div>
+                <div className="w-3 h-3 bg-[#2a5f8f] rounded-full animate-flow-3 shadow-lg"></div>
+              </div>
+              
+              {/* Directional Arrows */}
+              <div className="absolute left-[30%] -top-1">
+                <ArrowRight className="w-6 h-6 text-[#153b60] animate-pulse-slow" />
+              </div>
+              <div className="absolute right-[30%] -top-1">
+                <ArrowRight className="w-6 h-6 text-[#1e4976] animate-pulse-slow" />
+              </div>
+            </div>
 
-            <div className="grid lg:grid-cols-3 gap-12 relative">
+            {/* Mobile Vertical Timeline */}
+            <div className="lg:hidden absolute left-8 top-0 bottom-0 w-px">
+              <div className="absolute inset-0 bg-gradient-to-b from-[#153b60] via-[#1e4976] to-[#2a5f8f] opacity-20"></div>
+              <div className="absolute top-[15%] left-1/2 -translate-x-1/2 w-2 h-2 bg-[#153b60] rounded-full animate-pulse-flow-down shadow-lg"></div>
+            </div>
+
+            <div className="grid lg:grid-cols-3 gap-12 lg:gap-16 relative">
               {howItWorks.map((step, index) => (
                 <div key={index} className="relative">
-                  <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-[#E0E0E0] hover:border-[#153b60]/30 group hover:-translate-y-2">
-                    <div className="text-center">
-                      <div
-                        className={`w-20 h-20 ${step.color} rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 relative overflow-hidden`}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        <step.icon className="w-10 h-10 relative z-10" />
+                  {/* Enhanced Step Card */}
+                  <div className="bg-white rounded-3xl p-10 shadow-lg hover:shadow-2xl transition-all duration-500 border-2 border-[#E0E0E0] hover:border-[#153b60]/30 group hover:-translate-y-2 relative overflow-hidden">
+                    {/* Gradient Background on Hover */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#153b60]/5 via-transparent to-[#1e4976]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    
+                    {/* Floating Step Number Badge */}
+                    <div className="absolute top-6 right-6 w-12 h-12 rounded-full bg-[#153b60]/5 border-2 border-[#153b60]/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 z-10">
+                      <span className="text-lg font-bold text-[#153b60]">{step.step}</span>
+                    </div>
+                    
+                    <div className="text-center relative z-10">
+                      {/* Enhanced Icon Container */}
+                      <div className="relative inline-block mb-8">
+                        <div
+                          className={`w-24 h-24 ${step.color} rounded-3xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 relative overflow-hidden shadow-lg`}
+                        >
+                          {/* Outer Glow Ring */}
+                          <div className="absolute -inset-2 bg-gradient-to-br from-[#153b60]/20 to-[#1e4976]/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-md"></div>
+                          
+                          {/* Inner Gradient Overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          
+                          <step.icon className="w-12 h-12 relative z-10 text-white group-hover:scale-110 transition-transform duration-300" />
+                        </div>
                       </div>
-                      <div className="text-6xl font-bold text-[#E0E0E0] mb-4 group-hover:text-[#153b60]/20 transition-colors">
-                        {step.step}
-                      </div>
-                      <h3 className="text-2xl font-bold text-[#333333] mb-4 group-hover:text-[#153b60] transition-colors">
+                      
+                      {/* Title with Animated Underline */}
+                      <h3 className="text-2xl font-bold text-[#333333] mb-4 group-hover:text-[#153b60] transition-colors duration-300 relative inline-block">
                         {step.title}
+                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#153b60] group-hover:w-full transition-all duration-500"></span>
                       </h3>
-                      <p className="text-[#828282] leading-relaxed text-lg">{step.description}</p>
+                      
+                      <p className="text-[#828282] leading-relaxed text-lg mb-6">{step.description}</p>
+                      
+                      {/* Activity Indicator Dots */}
+                      <div className="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <div className="w-1.5 h-1.5 bg-[#153b60] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-1.5 h-1.5 bg-[#1e4976] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-1.5 h-1.5 bg-[#2a5f8f] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Step connector for mobile */}
+                  {/* Enhanced Mobile Step Connector */}
                   {index < howItWorks.length - 1 && (
-                    <div className="lg:hidden flex justify-center mt-6 mb-6">
-                      <div className="w-8 h-8 bg-[#153b60]/10 rounded-full flex items-center justify-center">
-                        <ArrowRight className="w-5 h-5 text-[#153b60]" />
+                    <div className="lg:hidden flex justify-center mt-8 mb-8">
+                      <div className="relative">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[#153b60]/10 to-[#1e4976]/10 rounded-full flex items-center justify-center border-2 border-[#153b60]/20 animate-pulse-slow">
+                          <ArrowRight className="w-6 h-6 text-[#153b60]" />
+                        </div>
                       </div>
                     </div>
                   )}
