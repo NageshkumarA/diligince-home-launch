@@ -346,14 +346,6 @@ const Index: React.FC = () => {
                 <div className="w-3 h-3 bg-[#1e4976] rounded-full animate-flow-2 shadow-lg"></div>
                 <div className="w-3 h-3 bg-[#2a5f8f] rounded-full animate-flow-3 shadow-lg"></div>
               </div>
-              
-              {/* Directional Arrows */}
-              <div className="absolute left-[30%] -top-1">
-                <ArrowRight className="w-6 h-6 text-[#153b60] animate-pulse-slow" />
-              </div>
-              <div className="absolute right-[30%] -top-1">
-                <ArrowRight className="w-6 h-6 text-[#1e4976] animate-pulse-slow" />
-              </div>
             </div>
 
             {/* Mobile Vertical Timeline */}
@@ -387,7 +379,7 @@ const Index: React.FC = () => {
                           {/* Inner Gradient Overlay */}
                           <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           
-                          <step.icon className="w-12 h-12 relative z-10 text-white group-hover:scale-110 transition-transform duration-300" />
+                          <step.icon className="w-12 h-12 relative z-10 text-[#153b60] group-hover:text-white transition-all duration-300" />
                         </div>
                       </div>
                       
@@ -408,14 +400,10 @@ const Index: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Enhanced Mobile Step Connector */}
+                  {/* Mobile Step Connector */}
                   {index < howItWorks.length - 1 && (
                     <div className="lg:hidden flex justify-center mt-8 mb-8">
-                      <div className="relative">
-                        <div className="w-10 h-10 bg-gradient-to-br from-[#153b60]/10 to-[#1e4976]/10 rounded-full flex items-center justify-center border-2 border-[#153b60]/20 animate-pulse-slow">
-                          <ArrowRight className="w-6 h-6 text-[#153b60]" />
-                        </div>
-                      </div>
+                      <div className="w-px h-12 bg-gradient-to-b from-[#153b60] via-[#1e4976] to-[#2a5f8f] opacity-30"></div>
                     </div>
                   )}
                 </div>
