@@ -360,94 +360,87 @@ const Index: React.FC = () => {
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="py-24 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden" id="modules">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `radial-gradient(circle at 25% 25%, #2F80ED 2px, transparent 2px), radial-gradient(circle at 75% 75%, #27AE60 2px, transparent 2px)`,
-              backgroundSize: "60px 60px",
-            }}
-          />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center mb-20">
-            <div className="animate-corporate-fade-up">
-              <h2 className="text-5xl font-bold text-[#1A2A4F] mb-6">Enterprise Solutions</h2>
-              <p className="text-[#4F4F4F] text-xl max-w-3xl mx-auto leading-relaxed">
-                Empowering businesses with AI-driven procurement intelligence and seamless stakeholder collaboration
-              </p>
+      {/* Services Section - Enterprise Solutions */}
+      <section className="py-24 lg:py-32 bg-background relative" id="modules">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center mb-16 lg:mb-20">
+            <div className="inline-flex items-center space-x-2 bg-primary/5 border border-primary/10 rounded-full px-4 py-2 mb-6">
+              <Building2 className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-primary">Enterprise Solutions</span>
             </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+              Enterprise Solutions
+            </h2>
+            <p className="text-muted-foreground text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+              Empowering businesses with AI-driven procurement intelligence and seamless stakeholder collaboration
+            </p>
           </div>
 
-          <div ref={servicesRef} className="grid lg:grid-cols-3 gap-8">
+          {/* Service Cards Grid */}
+          <div ref={servicesRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {services.map((service, index) => {
               const IconComponent = service.icon;
+              // Only show first 3 features for minimalistic design
+              const keyFeatures = service.features.slice(0, 3);
+              
               return (
-                <div
+                <article
                   key={index}
-                  className={`corporate-service-card rounded-3xl overflow-hidden opacity-0 ${visibleItems[index] ? "animate-corporate-scale-in" : ""}`}
+                  className={`enterprise-card bg-card border border-border rounded-2xl p-8 lg:p-10 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 opacity-0 ${visibleItems[index] ? "animate-fade-in" : ""}`}
                   style={{
-                    animationDelay: visibleItems[index] ? `${index * 0.2}s` : "0s",
+                    animationDelay: visibleItems[index] ? `${index * 0.15}s` : "0s",
                     animationFillMode: "forwards",
                   }}
                 >
-                  {/* Icon Header */}
-                  <div className="relative p-8 pb-6">
-                    <div
-                      className="absolute top-6 right-6 w-16 h-16 corporate-icon-wrapper rounded-2xl flex items-center justify-center animate-corporate-float"
-                      style={{
-                        animationDelay: `${index * 0.5}s`,
-                      }}
-                    >
-                      <IconComponent className="w-8 h-8 text-white" />
-                    </div>
-
-                    <div className="mt-4">
-                      <h3 className="text-2xl font-bold text-[#1A2A4F] mb-3">{service.title}</h3>
-                      <p className="text-[#4F4F4F] text-base leading-relaxed">{service.description}</p>
+                  {/* Icon - Top Left */}
+                  <div className="mb-6">
+                    <div className="enterprise-icon w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center transition-transform duration-300">
+                      <IconComponent className="w-7 h-7 text-primary" />
                     </div>
                   </div>
 
-                  {/* Features List */}
-                  <div className="px-8 pb-6">
+                  {/* Title & Accent Line */}
+                  <div className="mb-4">
+                    <h3 className="text-2xl font-bold text-foreground mb-3">{service.title}</h3>
+                    <div className="w-12 h-1 bg-primary/20 rounded-full mb-4"></div>
+                    <p className="text-muted-foreground text-base leading-relaxed line-clamp-2">
+                      {service.description}
+                    </p>
+                  </div>
+
+                  {/* Key Features - Only 3 */}
+                  <div className="mb-6">
                     <ul className="space-y-3">
-                      {service.features.map((feature, idx) => (
-                        <li
-                          key={idx}
-                          className={`corporate-feature-item flex items-center text-sm text-[#333333] ${visibleItems[index] ? "" : "opacity-0"}`}
-                          style={{
-                            animationDelay: visibleItems[index] ? `${index * 0.2 + idx * 0.1 + 0.3}s` : "0s",
-                          }}
-                        >
-                          <div className="w-2 h-2 bg-gradient-to-r from-[#2F80ED] to-[#27AE60] rounded-full mr-3 flex-shrink-0" />
+                      {keyFeatures.map((feature, idx) => (
+                        <li key={idx} className="flex items-start text-sm text-foreground">
+                          <CheckCircle className="w-4 h-4 text-primary mr-3 flex-shrink-0 mt-0.5" />
                           <span className="font-medium">{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  {/* Metrics & CTA */}
-                  <div className="px-8 pb-8">
-                    <div className="bg-gradient-to-r from-[#1A2A4F]/5 to-[#2F80ED]/5 rounded-2xl p-4 mb-6">
-                      <div className="text-center">
-                        <div
-                          className={`text-2xl font-bold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}
-                        >
-                          {service.metrics.improvement}
-                        </div>
-                        <div className="text-sm text-[#4F4F4F] font-medium">{service.metrics.description}</div>
+                  {/* Metrics Box */}
+                  <div className="bg-muted rounded-xl p-4 mb-6">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-primary mb-1">
+                        {service.metrics.improvement}
+                      </div>
+                      <div className="text-sm text-muted-foreground font-medium">
+                        {service.metrics.description}
                       </div>
                     </div>
-
-                    <button className="w-full corporate-cta-button text-white py-4 rounded-2xl font-semibold text-base shadow-lg">
-                      Explore Solutions
-                    </button>
                   </div>
-                </div>
+
+                  {/* CTA Link */}
+                  <button className="w-full group flex items-center justify-center text-primary hover:text-primary-hover font-medium text-base transition-colors duration-300">
+                    <span className="border-b-2 border-transparent group-hover:border-primary transition-all duration-300">
+                      Learn More
+                    </span>
+                    <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+                  </button>
+                </article>
               );
             })}
           </div>

@@ -555,100 +555,38 @@
   transform: translateY(-2px);
 }
 
-/* Corporate Services Styles */
-.corporate-service-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 
-    0 8px 32px rgba(26, 42, 79, 0.08),
-    0 4px 16px rgba(26, 42, 79, 0.04);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.corporate-service-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 
-    0 20px 64px rgba(26, 42, 79, 0.15),
-    0 8px 32px rgba(47, 128, 237, 0.1);
-}
-
-.corporate-icon-wrapper {
-  background: linear-gradient(135deg, #1A2A4F, #2F80ED);
-  box-shadow: 0 8px 24px rgba(47, 128, 237, 0.3);
+/* Enterprise Solutions - Minimalistic Corporate Styles */
+.enterprise-card {
+  box-shadow: 0 1px 3px hsl(var(--primary) / 0.05);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.corporate-icon-wrapper:hover {
-  transform: scale(1.1) rotate(3deg);
-  box-shadow: 0 12px 32px rgba(47, 128, 237, 0.4);
+.enterprise-card:hover {
+  box-shadow: 0 12px 24px hsl(var(--primary) / 0.08);
 }
 
-.corporate-feature-item {
-  opacity: 0;
-  transform: translateX(-20px);
-  animation: corporate-slide-right 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+.enterprise-card:hover .enterprise-icon {
+  transform: scale(1.1);
 }
 
-.corporate-cta-button {
-  background: linear-gradient(135deg, #1A2A4F, #2F80ED, #27AE60);
-  background-size: 200% 200%;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.corporate-cta-button:hover {
-  background-position: right center;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(47, 128, 237, 0.4);
-}
-
-/* Corporate animation keyframes */
-@keyframes corporate-fade-up {
-  0% { 
-    opacity: 0; 
-    transform: translateY(40px); 
+/* Responsive adjustments for enterprise cards */
+@media (max-width: 767px) {
+  .enterprise-card {
+    padding: 1.5rem !important;
   }
-  100% { 
-    opacity: 1; 
-    transform: translateY(0); 
+  
+  .enterprise-icon {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+  
+  .enterprise-card h3 {
+    font-size: 1.25rem !important;
   }
 }
 
-@keyframes corporate-scale-in {
-  0% { 
-    opacity: 0; 
-    transform: scale(0.9); 
+@media (min-width: 768px) and (max-width: 1023px) {
+  .enterprise-card {
+    padding: 2rem !important;
   }
-  100% { 
-    opacity: 1; 
-    transform: scale(1); 
-  }
-}
-
-@keyframes corporate-slide-right {
-  0% { 
-    opacity: 0; 
-    transform: translateX(-30px); 
-  }
-  100% { 
-    opacity: 1; 
-    transform: translateX(0); 
-  }
-}
-
-@keyframes corporate-float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-
-.animate-corporate-fade-up {
-  animation: corporate-fade-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.animate-corporate-scale-in {
-  animation: corporate-scale-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.animate-corporate-float {
-  animation: corporate-float 3s ease-in-out infinite;
 }
