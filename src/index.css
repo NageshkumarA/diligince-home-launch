@@ -3,6 +3,68 @@
 @tailwind utilities;
 @import 'sonner/dist/sonner.css';
 
+/* Custom Toast Styling */
+.toaster {
+  --normal-bg: hsl(var(--background)) !important;
+  --normal-border: hsl(var(--border)) !important;
+  --normal-text: hsl(var(--foreground)) !important;
+  
+  --success-bg: hsl(134 61% 96%) !important;
+  --success-border: hsl(134 61% 41%) !important;
+  --success-text: hsl(134 61% 20%) !important;
+  
+  --error-bg: hsl(354 70% 96%) !important;
+  --error-border: hsl(354 70% 54%) !important;
+  --error-text: hsl(354 70% 25%) !important;
+  
+  --warning-bg: hsl(45 100% 96%) !important;
+  --warning-border: hsl(45 100% 51%) !important;
+  --warning-text: hsl(45 100% 20%) !important;
+  
+  --info-bg: hsl(211 100% 96%) !important;
+  --info-border: hsl(211 100% 50%) !important;
+  --info-text: hsl(211 100% 20%) !important;
+}
+
+/* Dark mode toast overrides */
+.dark .toaster {
+  --normal-bg: hsl(var(--card)) !important;
+  --normal-border: hsl(var(--border)) !important;
+  --normal-text: hsl(var(--card-foreground)) !important;
+  
+  --success-bg: hsl(134 61% 8% / 0.3) !important;
+  --success-border: hsl(134 61% 41%) !important;
+  --success-text: hsl(134 61% 85%) !important;
+  
+  --error-bg: hsl(354 70% 8% / 0.3) !important;
+  --error-border: hsl(354 70% 54%) !important;
+  --error-text: hsl(354 70% 85%) !important;
+  
+  --warning-bg: hsl(45 100% 8% / 0.3) !important;
+  --warning-border: hsl(45 100% 51%) !important;
+  --warning-text: hsl(45 100% 85%) !important;
+  
+  --info-bg: hsl(211 100% 8% / 0.3) !important;
+  --info-border: hsl(211 100% 50%) !important;
+  --info-text: hsl(211 100% 85%) !important;
+}
+
+/* Toast animations */
+.toaster [data-sonner-toast] {
+  animation: slideInFromTop 0.3s ease-out;
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%) translateX(0);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) translateX(0);
+    opacity: 1;
+  }
+}
+
 /* Custom Scrollbars - Thin and Transparent */
 * {
   scrollbar-width: thin;
