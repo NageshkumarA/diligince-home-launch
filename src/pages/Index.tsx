@@ -263,42 +263,143 @@ const Index: React.FC = () => {
 
           {/* Benefits Section */}
           <div
-            className=" rounded-3xl p-8 md:p-12 relative overflow-hidden"
+            className="relative overflow-hidden py-16 md:py-20"
             id="benefits"
-            style={{
-                    boxShadow: '6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff'
-                  }}
           >
-            {/* Animated Background Elements */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full blur-3xl animate-pulse"></div>
-              <div
-                className="absolute bottom-0 right-0 w-60 h-60 bg-[#1e4976] rounded-full blur-3xl animate-pulse"
-                style={{
-                  animationDelay: "1s",
-                }}
-              ></div>
+            {/* Multi-Layer Animated Background */}
+            {/* Layer 1 - Base Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#FAFAFA] via-white to-[#F5F5F5]"></div>
+            
+            {/* Layer 2 - Floating Geometric Shapes */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-10 left-10 w-20 h-20 bg-corporate-navy-500/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '0s' }}></div>
+              <div className="absolute top-32 right-20 w-16 h-16 bg-corporate-navy-400/5 rounded-2xl blur-2xl animate-float" style={{ animationDelay: '1s' }}></div>
+              <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-corporate-navy-500/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }}></div>
+              <div className="absolute top-1/2 right-1/3 w-20 h-20 bg-corporate-navy-300/5 rounded-2xl blur-2xl animate-float" style={{ animationDelay: '1.5s' }}></div>
+              <div className="absolute bottom-32 right-16 w-28 h-28 bg-corporate-navy-500/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '0.5s' }}></div>
             </div>
 
-            <div className="text-center mb-12">
-              <h3 className="text-4xl font-bold text-black mb-4">AI-Driven Results</h3>
-              <p className="text-black text-xl">See why thousands of businesses trust our intelligent platform</p>
+            {/* Layer 3 - Animated Dot Grid */}
+            <div 
+              className="absolute inset-0 opacity-[0.03] animate-grid-pulse"
+              style={{
+                backgroundImage: 'radial-gradient(circle at 1px 1px, hsl(210, 64%, 23%) 1px, transparent 0)',
+                backgroundSize: '40px 40px'
+              }}
+            ></div>
+
+            {/* Layer 4 - Gradient Orbs */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute -top-20 -left-20 w-[300px] h-[300px] bg-gradient-to-br from-corporate-navy-500/5 to-transparent rounded-full blur-3xl animate-orb-pulse" style={{ animationDelay: '0s' }}></div>
+              <div className="absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-gradient-to-tl from-corporate-navy-400/5 to-transparent rounded-full blur-3xl animate-orb-pulse" style={{ animationDelay: '2s' }}></div>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] bg-gradient-to-br from-corporate-navy-300/5 to-transparent rounded-full blur-3xl animate-orb-pulse" style={{ animationDelay: '4s' }}></div>
             </div>
-            <div className="grid md:grid-cols-3 gap-8 relative z-10">
-              {benefits.map((benefit, index) => (
+
+            {/* Layer 5 - Floating Particles */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {[...Array(15)].map((_, i) => (
                 <div
-                  key={index}
-                  className="text-center group hover:transform hover:-translate-y-2 transition-all duration-300 rounded-3xl p-8"
-                  
-                >
-                  <div className="w-20 h-20 bg-gradient-to-br from-[#153b60]/10 to-[#1e4976]/10 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-xl transition-all duration-300">
-                    <benefit.icon className="w-8 h-8 text-[#153b60]" />
-                  </div>
-                  <h4 className="text-3xl font-bold text-[#333333] mb-2">{benefit.title}</h4>
-                  <p className="text-[#153b60] font-semibold mb-3 text-lg">{benefit.subtitle}</p>
-                  <p className="text-[#828282] leading-relaxed">{benefit.description}</p>
-                </div>
+                  key={i}
+                  className="absolute w-1 h-1 bg-corporate-navy-500/20 rounded-full animate-float-particle"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 10}s`,
+                    animationDuration: `${10 + Math.random() * 5}s`
+                  }}
+                ></div>
               ))}
+            </div>
+
+            {/* Layer 6 - Scanline Effect */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+              <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-corporate-navy-500/10 to-transparent animate-scanline"></div>
+            </div>
+
+            {/* Content Wrapper */}
+            <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              {/* Section Header */}
+              <div className="text-center mb-12 md:mb-16">
+                {/* Badge */}
+                <div className="inline-flex items-center gap-2 px-5 py-2 mb-6 bg-white/90 backdrop-blur-sm border border-corporate-navy-500/20 rounded-full shadow-sm">
+                  <svg className="w-4 h-4 text-corporate-navy-500 animate-pulse-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span className="text-sm font-semibold text-corporate-navy-700">Proven Results</span>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-3xl md:text-5xl font-extrabold text-[#333333] mb-3 tracking-tight">
+                  AI-Driven{' '}
+                  <span className="bg-gradient-to-r from-corporate-navy-500 via-corporate-navy-400 to-corporate-navy-300 bg-clip-text text-transparent animate-gradient-shift bg-[length:200%_auto]">
+                    Results
+                  </span>
+                </h3>
+
+                {/* Description */}
+                <p className="text-base md:text-xl text-corporate-gray-500 max-w-2xl mx-auto leading-relaxed font-light">
+                  See why thousands of businesses trust our intelligent platform
+                </p>
+              </div>
+
+              {/* Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {benefits.map((benefit, index) => (
+                  <article
+                    key={index}
+                    className="group text-center bg-white/80 backdrop-blur-sm border border-corporate-navy-500/5 rounded-2xl p-6 md:p-8 hover:-translate-y-3 hover:scale-[1.02] hover:border-corporate-navy-500/20 hover:bg-white/95 transition-all duration-500 animate-fade-up-stagger"
+                    style={{
+                      boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08), -4px -4px 12px rgba(255, 255, 255, 0.9), inset 0 1px 2px rgba(255, 255, 255, 0.5)',
+                      animationDelay: `${index * 100}ms`,
+                      animationFillMode: 'backwards'
+                    }}
+                    aria-label={`Benefit card: ${benefit.title}`}
+                  >
+                    {/* Icon Container */}
+                    <div 
+                      className="w-16 h-16 bg-gradient-to-br from-corporate-navy-500/8 via-corporate-navy-400/8 to-corporate-navy-300/8 border-2 border-corporate-navy-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-lg transition-all duration-500 animate-gradient-shift bg-[length:200%_auto]"
+                      style={{
+                        boxShadow: 'inset 0 2px 8px rgba(21, 59, 96, 0.05)'
+                      }}
+                    >
+                      <benefit.icon className="w-7 h-7 text-corporate-navy-600" />
+                    </div>
+
+                    {/* Title */}
+                    <h4 
+                      className="text-xl md:text-2xl font-bold text-[#333333] mb-2 tracking-tight leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                      style={{
+                        animation: 'fade-up-stagger 0.4s ease-out forwards',
+                        animationDelay: `${index * 100}ms`
+                      }}
+                    >
+                      {benefit.title}
+                    </h4>
+
+                    {/* Subtitle */}
+                    <p 
+                      className="text-base text-corporate-navy-600 font-semibold mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                      style={{
+                        animation: 'fade-up-stagger 0.4s ease-out forwards',
+                        animationDelay: `${index * 100 + 100}ms`
+                      }}
+                    >
+                      {benefit.subtitle}
+                    </p>
+
+                    {/* Description */}
+                    <p 
+                      className="text-sm md:text-base text-corporate-gray-500 leading-relaxed font-normal opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                      style={{
+                        animation: 'fade-up-stagger 0.4s ease-out forwards',
+                        animationDelay: `${index * 100 + 200}ms`
+                      }}
+                    >
+                      {benefit.description}
+                    </p>
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -418,64 +519,77 @@ const Index: React.FC = () => {
       </section>
 
       {/* Services Section - Enterprise Solutions */}
-      <section className="py-24 lg:py-32 bg-[#FAFAFA] relative overflow-hidden" id="modules">
-        {/* Enhanced Background Pattern */}
-        <div className="absolute inset-0 opacity-[0.015]">
+      <section className="py-28 lg:py-40 bg-[#FAFAFA] relative overflow-hidden" id="modules">
+        {/* Enhanced Background Pattern with Gradient Overlay */}
+        <div className="absolute inset-0 opacity-[0.02]">
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `radial-gradient(circle at 2px 2px, #153b60 1px, transparent 0)`,
-              backgroundSize: "50px 50px",
+              backgroundImage: `radial-gradient(circle at 2px 2px, #153b60 1.5px, transparent 0)`,
+              backgroundSize: "60px 60px",
             }}
           ></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-[#FAFAFA] via-transparent to-[#FAFAFA]"></div>
         </div>
 
-        {/* Floating Accent Dots */}
+        {/* Animated Floating Accent Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[10%] left-[5%] w-2 h-2 bg-[#153b60] rounded-full opacity-[0.08] animate-float"></div>
-          <div className="absolute top-[25%] right-[8%] w-3 h-3 bg-[#1e4976] rounded-full opacity-[0.08] animate-float" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute bottom-[20%] left-[15%] w-2.5 h-2.5 bg-[#2a5f8f] rounded-full opacity-[0.08] animate-float" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-[60%] right-[20%] w-2 h-2 bg-[#153b60] rounded-full opacity-[0.08] animate-float" style={{ animationDelay: '0.5s' }}></div>
+          <div className="absolute top-[12%] left-[8%] w-3 h-3 bg-[#153b60] rounded-full opacity-[0.12] animate-float blur-[0.5px]"></div>
+          <div className="absolute top-[28%] right-[10%] w-4 h-4 bg-[#1e4976] rounded-full opacity-[0.10] animate-float blur-[0.5px]" style={{ animationDelay: '1.2s', animationDuration: '5s' }}></div>
+          <div className="absolute bottom-[25%] left-[18%] w-3.5 h-3.5 bg-[#2a5f8f] rounded-full opacity-[0.11] animate-float blur-[0.5px]" style={{ animationDelay: '2.3s', animationDuration: '6s' }}></div>
+          <div className="absolute top-[65%] right-[15%] w-2.5 h-2.5 bg-[#153b60] rounded-full opacity-[0.12] animate-float blur-[0.5px]" style={{ animationDelay: '0.7s', animationDuration: '5.5s' }}></div>
+          <div className="absolute top-[45%] left-[25%] w-2 h-2 bg-[#1e4976] rounded-full opacity-[0.10] animate-float blur-[0.5px]" style={{ animationDelay: '1.8s', animationDuration: '4.5s' }}></div>
+          <div className="absolute bottom-[40%] right-[30%] w-3 h-3 bg-[#2a5f8f] rounded-full opacity-[0.11] animate-float blur-[0.5px]" style={{ animationDelay: '3s', animationDuration: '7s' }}></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Enhanced Section Header */}
-          <div className="text-center mb-20 lg:mb-24 animate-slide-up">
-            {/* Neumorphic Badge */}
+          {/* Premium Section Header */}
+          <div className="text-center mb-24 lg:mb-32 animate-slide-up">
+            {/* Elevated Neumorphic Badge */}
             <div 
-              className="inline-flex items-center space-x-2 bg-white rounded-full px-5 py-2.5 mb-8 border-2 border-[#153b60]/10 animate-pulse-slow"
+              className="inline-flex items-center space-x-3 bg-white rounded-full px-6 py-3.5 mb-10 border border-[#153b60]/8 animate-pulse-slow group cursor-default"
               style={{
-                boxShadow: '4px 4px 8px #e5e5e5, -4px -4px 8px #ffffff'
+                boxShadow: '6px 6px 16px #e0e0e0, -6px -6px 16px #ffffff'
               }}
             >
-              <Building2 className="w-5 h-5 text-[#153b60]" />
-              <span className="text-sm font-semibold text-[#153b60] tracking-wide">Enterprise Solutions</span>
+              <div className="relative">
+                <Building2 className="w-6 h-6 text-[#153b60] group-hover:scale-110 transition-transform duration-300" />
+                <div className="absolute inset-0 bg-[#153b60] blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+              </div>
+              <span className="text-sm font-bold text-[#153b60] tracking-[0.15em] uppercase">Enterprise Solutions</span>
             </div>
 
-            {/* Title with Gradient Accent */}
-            <h2 className="text-4xl md:text-6xl font-extrabold text-[#333333] mb-8 px-4">
+            {/* Enhanced Title with Superior Typography */}
+            <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-[#333333] mb-10 px-4 leading-[1.1] tracking-tight">
               Enterprise{" "}
-              <span className="bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] bg-clip-text text-transparent">
-                Solutions
+              <span className="relative inline-block">
+                <span className="bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] bg-clip-text text-transparent animate-gradient">
+                  Solutions
+                </span>
+                <div className="absolute -bottom-3 left-0 right-0 h-1.5 bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
               </span>
             </h2>
             
-            {/* Enhanced Decorative Separator */}
-            <div className="flex items-center justify-center gap-3 mb-8">
-              <div className="h-[2px] w-16 bg-gradient-to-r from-transparent via-[#153b60]/40 to-[#1e4976]/40"></div>
-              <div className="w-2 h-2 rounded-full bg-[#153b60]/50"></div>
-              <div className="w-3 h-3 rounded-full bg-gradient-to-br from-[#153b60] to-[#2a5f8f] animate-pulse-slow"></div>
-              <div className="w-2 h-2 rounded-full bg-[#153b60]/50"></div>
-              <div className="h-[2px] w-16 bg-gradient-to-l from-transparent via-[#153b60]/40 to-[#1e4976]/40"></div>
+            {/* Premium Decorative Separator */}
+            <div className="flex items-center justify-center gap-4 mb-10">
+              <div className="h-[3px] w-24 bg-gradient-to-r from-transparent via-[#153b60]/50 to-[#1e4976]/50 rounded-full"></div>
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#153b60]/40 animate-pulse"></div>
+                <div className="w-4 h-4 rounded-full bg-gradient-to-br from-[#153b60] to-[#2a5f8f] animate-pulse-slow relative">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#153b60] to-[#2a5f8f] blur-md opacity-50"></div>
+                </div>
+                <div className="w-2.5 h-2.5 rounded-full bg-[#153b60]/40 animate-pulse"></div>
+              </div>
+              <div className="h-[3px] w-24 bg-gradient-to-l from-transparent via-[#153b60]/50 to-[#1e4976]/50 rounded-full"></div>
             </div>
 
-            <p className="text-[#828282] text-lg md:text-2xl max-w-4xl mx-auto leading-relaxed tracking-wide font-light">
-              Empowering businesses with AI-driven procurement intelligence and seamless stakeholder collaboration
+            <p className="text-[#828282] text-xl md:text-2xl lg:text-3xl max-w-5xl mx-auto leading-[1.6] tracking-wide font-light">
+              Empowering businesses with <span className="text-[#333333] font-medium">AI-driven procurement intelligence</span> and seamless stakeholder collaboration
             </p>
           </div>
 
-          {/* Enhanced Service Cards Grid */}
-          <div ref={servicesRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+          {/* Premium Service Cards Grid */}
+          <div ref={servicesRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
             {services.map((service, index) => {
               const IconComponent = service.icon;
               const keyFeatures = service.features.slice(0, 3);
@@ -483,99 +597,99 @@ const Index: React.FC = () => {
               return (
                 <article
                   key={index}
-                  className={`group bg-white rounded-3xl p-6 md:p-8 lg:p-10 transition-all duration-500 hover:-translate-y-3 border border-[#153b60]/5 ${visibleItems[index] ? "opacity-0 animate-fade-in" : "opacity-100"}`}
+                  className={`group bg-white rounded-[2rem] p-8 md:p-10 lg:p-12 transition-all duration-700 hover:-translate-y-4 hover:scale-[1.02] border border-[#153b60]/8 cursor-default ${visibleItems[index] ? "opacity-0 animate-fade-in" : "opacity-100"}`}
                   style={{
-                    animationDelay: visibleItems[index] ? `${index * 0.15}s` : "0s",
+                    animationDelay: visibleItems[index] ? `${index * 0.2}s` : "0s",
                     animationFillMode: "forwards",
-                    boxShadow: '6px 6px 16px #d1d1d1, -6px -6px 16px #ffffff',
+                    boxShadow: '8px 8px 24px #d1d1d1, -8px -8px 24px #ffffff',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = '8px 8px 20px #c5c5c5, -8px -8px 20px #ffffff';
+                    e.currentTarget.style.boxShadow = '12px 12px 32px #c5c5c5, -12px -12px 32px #ffffff';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = '6px 6px 16px #d1d1d1, -6px -6px 16px #ffffff';
+                    e.currentTarget.style.boxShadow = '8px 8px 24px #d1d1d1, -8px -8px 24px #ffffff';
                   }}
                   aria-label={`${service.title} enterprise solution card`}
                 >
-                  {/* Enhanced Icon with Gradient */}
-                  <div className="mb-8">
+                  {/* Premium Icon Container */}
+                  <div className="mb-8 relative">
                     <div 
-                      className="w-16 h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 bg-gradient-to-br from-[#153b60] via-[#1e4976] to-[#2a5f8f] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-400 relative overflow-hidden"
+                      className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#153b60] via-[#1e4976] to-[#2a5f8f] flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 relative overflow-hidden"
                       style={{
-                        transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                        boxShadow: '0 8px 24px rgba(21, 59, 96, 0.25)'
                       }}
                     >
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400"></div>
-                      <IconComponent className="w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 text-white relative z-10" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <IconComponent className="w-12 h-12 text-white relative z-10 transition-transform duration-500 group-hover:scale-110" />
+                      <div className="absolute inset-0 bg-white blur-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500"></div>
                     </div>
+                    <div className="absolute -inset-2 bg-gradient-to-br from-[#153b60]/20 to-[#2a5f8f]/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
                   </div>
 
-                  {/* Enhanced Title & Description */}
-                  <div className="mb-8">
-                    <h3 className="text-2xl md:text-2xl lg:text-3xl font-bold text-[#333333] mb-4 group-hover:text-[#153b60] transition-colors duration-250">
-                      {service.title}
-                    </h3>
-                    <div className="relative mb-4 h-1 w-16 overflow-hidden rounded-full bg-[#153b60]/10">
-                      <div className="absolute inset-0 w-8 bg-gradient-to-r from-[#153b60] to-[#2a5f8f] group-hover:w-20 transition-all duration-350 ease-out"></div>
-                    </div>
-                    <p className="text-[#828282] text-base md:text-lg leading-relaxed">
-                      {service.description}
-                    </p>
-                  </div>
+                  {/* Enhanced Title */}
+                  <h3 className="text-3xl md:text-4xl font-bold text-[#333333] mb-4 transition-all duration-300 group-hover:text-[#153b60] leading-tight tracking-tight">
+                    {service.title}
+                    <div className="h-1 w-12 bg-gradient-to-r from-[#153b60] to-[#2a5f8f] rounded-full mt-3 transition-all duration-500 group-hover:w-24"></div>
+                  </h3>
 
-                  {/* Enhanced Key Features */}
-                  <div className="mb-8">
-                    <ul className="space-y-3.5">
-                      {keyFeatures.map((feature, idx) => (
-                        <li 
-                          key={idx} 
-                          className="flex items-start text-sm md:text-base text-[#333333] font-medium group-hover:translate-x-1 transition-transform duration-300"
-                          style={{ transitionDelay: `${idx * 50}ms` }}
-                        >
-                          <CheckCircle className="w-5 h-5 text-[#153b60] mr-3 flex-shrink-0 mt-0.5" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  {/* Enhanced Description */}
+                  <p className="text-[#828282] text-base md:text-lg leading-relaxed mb-8 font-normal transition-colors duration-300 group-hover:text-[#666666]">
+                    {service.description}
+                  </p>
 
-                  {/* Enhanced Metrics Box with Neumorphic Design */}
-                  <div 
-                    className="rounded-2xl p-6 mb-8 group-hover:scale-105 transition-transform duration-300 ease-out"
-                    style={{
-                      boxShadow: 'inset 3px 3px 6px #e5e5e5, inset -3px -3px 6px #ffffff',
-                      background: 'linear-gradient(135deg, #FAFAFA 0%, #FFFFFF 100%)',
-                    }}
-                  >
-                    <div className="text-center">
-                      <div className="text-4xl md:text-4xl lg:text-5xl font-extrabold mb-2 bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] bg-clip-text text-transparent">
-                        {service.metrics.improvement}
+                  {/* Premium Key Features */}
+                  <div className="space-y-4 mb-8">
+                    {keyFeatures.map((feature, featureIndex) => (
+                      <div 
+                        key={featureIndex} 
+                        className="flex items-start space-x-3 transition-all duration-300 group-hover:translate-x-1"
+                        style={{ transitionDelay: `${featureIndex * 50}ms` }}
+                      >
+                        <CheckCircle className="w-6 h-6 text-[#153b60] flex-shrink-0 mt-0.5 transition-transform duration-300 group-hover:scale-110" />
+                        <span className="text-[#333333] font-medium text-sm md:text-base leading-relaxed">
+                          {feature}
+                        </span>
                       </div>
-                      <div className="text-sm text-[#828282] font-medium tracking-wide">
-                        {service.metrics.description}
-                      </div>
-                    </div>
+                    ))}
                   </div>
 
-                  {/* Enhanced CTA Button */}
-                  <button 
-                    className="w-full group/btn flex items-center justify-center bg-white text-[#153b60] hover:text-[#1e4976] font-bold text-base py-4 rounded-xl transition-all duration-200"
+                  {/* Premium Metrics Display */}
+                  {service.metrics && (
+                    <div 
+                      className="rounded-2xl p-6 mb-8 transition-all duration-500 group-hover:scale-105 relative overflow-hidden"
+                      style={{
+                        background: 'linear-gradient(135deg, #FAFAFA 0%, #FFFFFF 100%)',
+                        boxShadow: 'inset 4px 4px 12px #e5e5e5, inset -4px -4px 12px #ffffff'
+                      }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#153b60]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="text-center relative z-10">
+                        <div className="text-5xl md:text-6xl font-black mb-3 bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] bg-clip-text text-transparent leading-none tracking-tighter">
+                          {service.metrics.improvement}
+                        </div>
+                        <div className="text-sm md:text-base text-[#828282] font-semibold tracking-wider uppercase">
+                          {service.metrics.description}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Premium CTA Button */}
+                  <button
+                    className="w-full bg-white text-[#153b60] font-bold text-base md:text-lg py-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2 group/btn relative overflow-hidden"
                     style={{
-                      boxShadow: '4px 4px 8px #e5e5e5, -4px -4px 8px #ffffff'
+                      boxShadow: '4px 4px 12px #e5e5e5, -4px -4px 12px #ffffff'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.boxShadow = 'inset 2px 2px 4px #e5e5e5, inset -2px -2px 4px #ffffff';
+                      e.currentTarget.style.boxShadow = 'inset 3px 3px 8px #e5e5e5, inset -3px -3px 8px #ffffff';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.boxShadow = '4px 4px 8px #e5e5e5, -4px -4px 8px #ffffff';
+                      e.currentTarget.style.boxShadow = '4px 4px 12px #e5e5e5, -4px -4px 12px #ffffff';
                     }}
-                    aria-label={`Learn more about ${service.title}`}
                   >
-                    <span className="relative">
-                      Learn More
-                      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#153b60] group-hover/btn:w-full transition-all duration-300"></span>
-                    </span>
-                    <ArrowRight className="w-5 h-5 ml-2 transition-transform duration-300 group-hover/btn:translate-x-3" />
+                    <span className="relative z-10 transition-all duration-300 group-hover/btn:tracking-wider">Learn More</span>
+                    <ArrowRight className="w-5 h-5 transition-transform duration-500 group-hover/btn:translate-x-2 relative z-10" />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#153b60] to-[#2a5f8f] transform scale-x-0 group-hover/btn:scale-x-100 transition-transform duration-500"></div>
                   </button>
                 </article>
               );
