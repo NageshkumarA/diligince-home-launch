@@ -85,7 +85,7 @@ export interface CompanyProfile {
 
 export const REQUIRED_FIELDS = [
   'companyName',
-  'industryFocus',
+  'industryType',
   'companyDescription',
   'yearEstablished',
   'panNumber',
