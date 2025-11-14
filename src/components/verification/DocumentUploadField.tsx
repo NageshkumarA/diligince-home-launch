@@ -229,7 +229,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
                   </p>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-col">
                 <Button 
                   size="sm" 
                   onClick={handleConfirmSelection}
@@ -287,7 +287,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
                     }`}>
                       {currentDocument.status === 'verified' ? '✓ Verified' : 
                        currentDocument.status === 'rejected' ? '✗ Rejected' : 
-                       '⏳ Pending Review'}
+                       'Pending'}
                     </span>
                   )}
                 </div>
@@ -330,7 +330,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col items-center gap-2">
               {/* Always show preview button */}
               <Button 
                 variant="ghost" 
@@ -341,7 +341,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
                 <Eye className="w-4 h-4" />
               </Button>
               {/* Only show delete button when can delete */}
-              {canDelete && (
+              {/* {canDelete && ( */}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -350,7 +350,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
                 >
                   <X className="w-4 h-4" />
                 </Button>
-              )}
+              {/* )} */}
             </div>
           </div>
         </div>
