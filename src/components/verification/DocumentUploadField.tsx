@@ -216,7 +216,6 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-1" />
-                  Confirm
                 </Button>
                 <Button 
                   size="sm" 
@@ -225,7 +224,6 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
                   className="border-blue-300"
                 >
                   <X className="w-4 h-4 mr-1" />
-                  Cancel
                 </Button>
               </div>
             </div>
@@ -237,9 +235,9 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
         <div className="border-2 rounded-lg p-4 bg-green-50 border-green-500 dark:bg-green-950/20 dark:border-green-700 animate-in fade-in slide-in-from-top-2 duration-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-green-100 dark:bg-green-900/30 rounded-full p-2">
+              {/* <div className="bg-green-100 dark:bg-green-900/30 rounded-full p-2">
                 <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-500" />
-              </div>
+              </div> */}
               <div>
                 <p className="text-sm font-semibold text-green-900 dark:text-green-100">
                   {currentDocument.name}

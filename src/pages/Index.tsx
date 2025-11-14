@@ -28,10 +28,10 @@ import HeroSection from "@/components/HeroSection";
 const Index: React.FC = () => {
   const { user, isLoading } = useUser();
   const navigate = useNavigate();
-  
+
   // Call hooks before any conditional returns
   const { elementRef: servicesRef, visibleItems } = useStaggeredAnimation(3, 200);
-  
+
   // Redirect authenticated users to their dashboard
   useEffect(() => {
     if (!isLoading && user) {
@@ -39,7 +39,7 @@ const Index: React.FC = () => {
       navigate(dashboardUrl, { replace: true });
     }
   }, [user, isLoading, navigate]);
-  
+
   // Show nothing while checking auth or redirecting
   if (isLoading || user) {
     return null;
@@ -219,7 +219,7 @@ const Index: React.FC = () => {
       <section className="py-20 bg-white relative" id="features">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
-        <div
+          <div
             className="absolute inset-0"
             style={{
               backgroundImage: `radial-gradient(circle at 25px 25px, #153b60 2px, transparent 0)`,
@@ -269,7 +269,7 @@ const Index: React.FC = () => {
             {/* Multi-Layer Animated Background */}
             {/* Layer 1 - Base Gradient */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#FAFAFA] via-white to-[#F5F5F5]"></div>
-            
+
             {/* Layer 2 - Floating Geometric Shapes */}
             <div className="absolute inset-0 overflow-hidden">
               <div className="absolute top-10 left-10 w-20 h-20 bg-corporate-navy-500/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '0s' }}></div>
@@ -280,7 +280,7 @@ const Index: React.FC = () => {
             </div>
 
             {/* Layer 3 - Animated Dot Grid */}
-            <div 
+            <div
               className="absolute inset-0 opacity-[0.03] animate-grid-pulse"
               style={{
                 backgroundImage: 'radial-gradient(circle at 1px 1px, hsl(210, 64%, 23%) 1px, transparent 0)',
@@ -356,7 +356,7 @@ const Index: React.FC = () => {
                     aria-label={`Benefit card: ${benefit.title}`}
                   >
                     {/* Icon Container */}
-                    <div 
+                    <div
                       className="w-16 h-16 bg-gradient-to-br from-corporate-navy-500/8 via-corporate-navy-400/8 to-corporate-navy-300/8 border-2 border-corporate-navy-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-lg transition-all duration-500 animate-gradient-shift bg-[length:200%_auto]"
                       style={{
                         boxShadow: 'inset 0 2px 8px rgba(21, 59, 96, 0.05)'
@@ -366,7 +366,7 @@ const Index: React.FC = () => {
                     </div>
 
                     {/* Title */}
-                    <h4 
+                    <h4
                       className="text-xl md:text-2xl font-bold text-[#333333] mb-2 tracking-tight leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-400"
                       style={{
                         animation: 'fade-up-stagger 0.4s ease-out forwards',
@@ -377,7 +377,7 @@ const Index: React.FC = () => {
                     </h4>
 
                     {/* Subtitle */}
-                    <p 
+                    <p
                       className="text-base text-corporate-navy-600 font-semibold mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
                       style={{
                         animation: 'fade-up-stagger 0.4s ease-out forwards',
@@ -388,7 +388,7 @@ const Index: React.FC = () => {
                     </p>
 
                     {/* Description */}
-                    <p 
+                    <p
                       className="text-sm md:text-base text-corporate-gray-500 leading-relaxed font-normal opacity-0 group-hover:opacity-100 transition-opacity duration-400"
                       style={{
                         animation: 'fade-up-stagger 0.4s ease-out forwards',
@@ -424,7 +424,7 @@ const Index: React.FC = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-[#333333] mb-4">
               How It <span className="text-[#153b60]">Works</span>
             </h2>
-            
+
             {/* Visual Separator */}
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="w-2 h-2 rounded-full bg-[#153b60]"></div>
@@ -433,7 +433,7 @@ const Index: React.FC = () => {
               <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#1e4976]/50 to-transparent"></div>
               <div className="w-2 h-2 rounded-full bg-[#2a5f8f]"></div>
             </div>
-            
+
             <p className="text-[#828282] text-lg max-w-2xl mx-auto">
               Simple, intelligent, and effective. Our AI streamlines your business processes in three easy steps.
             </p>
@@ -444,7 +444,7 @@ const Index: React.FC = () => {
             <div className="hidden lg:block absolute top-[120px] left-[10%] right-[10%] h-1">
               {/* Base Line */}
               <div className="absolute inset-0 bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] rounded-full opacity-20"></div>
-              
+
               {/* Animated Flowing Dots */}
               <div className="absolute inset-0 flex items-center justify-between px-8">
                 <div className="w-3 h-3 bg-[#153b60] rounded-full animate-flow-1 shadow-lg"></div>
@@ -466,12 +466,12 @@ const Index: React.FC = () => {
                   <div className="bg-white rounded-3xl p-10 shadow-lg hover:shadow-2xl transition-all duration-500 border-2 border-[#E0E0E0] hover:border-[#153b60]/30 group hover:-translate-y-2 relative overflow-hidden">
                     {/* Gradient Background on Hover */}
                     <div className="absolute inset-0 bg-gradient-to-br from-[#153b60]/5 via-transparent to-[#1e4976]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    
+
                     {/* Floating Step Number Badge */}
                     <div className="absolute top-6 right-6 w-12 h-12 rounded-full bg-[#153b60]/5 border-2 border-[#153b60]/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 z-10">
                       <span className="text-lg font-bold text-[#153b60]">{step.step}</span>
                     </div>
-                    
+
                     <div className="text-center relative z-10">
                       {/* Enhanced Icon Container */}
                       <div className="relative inline-block mb-8">
@@ -480,10 +480,10 @@ const Index: React.FC = () => {
                         >
                           {/* Outer Glow Ring */}
                           <div className="absolute -inset-2 bg-gradient-to-br from-[#153b60]/20 to-[#1e4976]/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-md"></div>
-                          
+
                           {/* Inner Gradient Overlay */}
                           <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          
+
                           <step.icon className="w-12 h-12 relative z-10 text-[#153b60] group-hover:text-[#153b60] transition-all duration-300" />
                         </div>
                       </div>
@@ -493,9 +493,9 @@ const Index: React.FC = () => {
                         {step.title}
                         <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#153b60] group-hover:w-full transition-all duration-500"></span>
                       </h3>
-                      
+
                       <p className="text-[#828282] leading-relaxed text-lg mb-6">{step.description}</p>
-                      
+
                       {/* Activity Indicator Dots */}
                       <div className="flex justify-center gap-2 opacity-100 transition-opacity duration-500">
                         <div className="w-1.5 h-1.5 bg-[#153b60] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
@@ -520,27 +520,36 @@ const Index: React.FC = () => {
 
       {/* Services Section - Enterprise Solutions */}
       <section className="py-20 md:py-28 lg:py-36 relative overflow-hidden" id="modules">
-        {/* Base Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#FAFAFA] via-white to-[#F8F8F8]"></div>
-        
-        {/* Animated Grid Pattern Layer */}
-        <div 
-          className="absolute inset-0 animate-grid-pulse"
-          style={{
-            backgroundImage: `
-              radial-gradient(circle at 2px 2px, rgba(21, 59, 96, 0.05) 2px, transparent 0),
-              radial-gradient(circle at 1px 1px, rgba(21, 59, 96, 0.025) 1px, transparent 0),
-              linear-gradient(rgba(21, 59, 96, 0.015) 0.5px, transparent 0.5px),
-              linear-gradient(90deg, rgba(21, 59, 96, 0.015) 0.5px, transparent 0.5px)
-            `,
-            backgroundSize: '192px 192px, 32px 32px, 48px 48px, 48px 48px',
-            backgroundPosition: '0 0, 0 0, 0 0, 0 0',
-          }}
-        ></div>
-        
+        {/* Background Pattern */}
+        {/* <div className="absolute inset-0 opacity-10">
+ ̰          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `
+        linear-gradient(#153b60 1px, transparent 1px),
+        linear-gradient(90deg, #153b60 1px, transparent 1px)
+      `,
+              backgroundSize: "50px 50px"
+            }}
+          ></div>
+        </div> */}
+        <div className="absolute inset-0 opacity-10">
+  <div
+    className="absolute inset-0"
+    style={{
+      backgroundImage: `
+        linear-gradient(#153b60 1px, transparent 1px),
+        linear-gradient(90deg, #153b60 1px, transparent 1px)
+      `,
+      backgroundSize: "50px 50px",
+      WebkitMaskImage: "radial-gradient(circle, white 60%, transparent 100%)",
+      maskImage: "radial-gradient(circle, white 60%, transparent 100%)",
+    }}
+  ></div>
+</div>
         {/* Edge Vignette */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(250,250,250,0.6)_100%)]"></div>
-        
+
         {/* Minimal Floating Particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[15%] left-[12%] w-2 h-2 bg-[#153b60] rounded-full opacity-[0.08] animate-float" style={{ animationDuration: '8s' }}></div>
@@ -553,7 +562,7 @@ const Index: React.FC = () => {
           {/* Premium Section Header */}
           <div className="text-center mb-24 lg:mb-32 animate-slide-up">
             {/* Elevated Neumorphic Badge */}
-            <div 
+            <div
               className="inline-flex items-center space-x-3 bg-white rounded-full px-6 py-3.5 mb-10 border border-[#153b60]/8 animate-pulse-slow group cursor-default"
               style={{
                 boxShadow: '6px 6px 16px #e0e0e0, -6px -6px 16px #ffffff'
@@ -570,7 +579,7 @@ const Index: React.FC = () => {
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#1a1a1a] mb-10 px-4 leading-[1.1] tracking-tighter">
               Enterprise{" "}
               <span className="relative inline-block">
-                <span 
+                <span
                   className="bg-gradient-to-r from-[#153b60] via-[#1e4976] to-[#2a5f8f] bg-clip-text text-transparent"
                   style={{
                     backgroundSize: '200% 100%',
@@ -581,7 +590,7 @@ const Index: React.FC = () => {
                 </span>
               </span>
             </h2>
-            
+
             {/* Refined Description */}
             <p className="text-base md:text-lg text-[#666666] max-w-3xl mx-auto leading-relaxed font-light px-6 tracking-wide mb-16">
               Comprehensive platform solutions designed for organizations seeking to streamline their procurement processes and maximize operational efficiency.
@@ -593,7 +602,7 @@ const Index: React.FC = () => {
             {services.map((service, index) => {
               const IconComponent = service.icon;
               const keyFeatures = service.features.slice(0, 3);
-              
+
               return (
                 <article
                   key={index}
@@ -615,7 +624,7 @@ const Index: React.FC = () => {
                 >
                   {/* Refined Icon Container */}
                   <div className="mb-8 relative">
-                    <div 
+                    <div
                       className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#153b60] via-[#1e4976] to-[#2a5f8f] flex items-center justify-center transition-all duration-500 group-hover:scale-[1.08] group-hover:rotate-4 relative overflow-hidden"
                       style={{
                         boxShadow: '0 8px 24px rgba(21, 59, 96, 0.25)'
@@ -642,8 +651,8 @@ const Index: React.FC = () => {
                   {/* Premium Key Features */}
                   <div className="space-y-4 mb-8">
                     {keyFeatures.map((feature, featureIndex) => (
-                      <div 
-                        key={featureIndex} 
+                      <div
+                        key={featureIndex}
                         className="flex items-start space-x-3 transition-all duration-300 group-hover:translate-x-1"
                         style={{ transitionDelay: `${featureIndex * 50}ms` }}
                       >
@@ -723,10 +732,10 @@ const Index: React.FC = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Minimal Badge */}
           <div className="flex justify-center mb-8">
-            <div className="inline-flex items-center space-x-3 bg-white rounded-full px-6 py-3 border-2 border-[#153b60]/10" 
-                 style={{
-                   boxShadow: '4px 4px 8px #d1d1d1, -4px -4px 8px #ffffff'
-                 }}>
+            <div className="inline-flex items-center space-x-3 bg-white rounded-full px-6 py-3 border-2 border-[#153b60]/10"
+              style={{
+                boxShadow: '4px 4px 8px #d1d1d1, -4px -4px 8px #ffffff'
+              }}>
               <div className="relative">
                 <div className="w-2.5 h-2.5 bg-[#153b60] rounded-full animate-pulse"></div>
                 <div className="absolute inset-0 w-2.5 h-2.5 bg-[#153b60] rounded-full animate-ping"></div>
@@ -743,7 +752,7 @@ const Index: React.FC = () => {
                 Your Business?
               </span>
             </h2>
-            
+
             {/* Minimal Decorative Line */}
             <div className="flex items-center justify-center gap-2 mb-8">
               <div className="w-12 h-[2px] bg-[#153b60]"></div>
@@ -764,14 +773,14 @@ const Index: React.FC = () => {
             >
               {/* Shine Effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-              
+
               <span className="relative flex items-center justify-center space-x-3">
                 <span>Start Free Trial</span>
                 <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" />
               </span>
             </Link>
 
-            <button 
+            <button
               className="relative bg-white text-[#153b60] px-12 py-5 rounded-2xl font-bold text-lg transition-all duration-300 hover:-translate-y-1 group"
               style={{
                 boxShadow: '6px 6px 12px #d1d1d1, -6px -6px 12px #ffffff'
@@ -877,26 +886,26 @@ const Index: React.FC = () => {
             <div>
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 bg-gradient-to-br from-[#153b60] to-[#1e4976] rounded-xl flex items-center justify-center">
-                  <img src="/logo-main-no-bg.svg" alt="Diligince.ai" className="w-8 h-8" />
+                  <img src="/diligence-no-bg-white.svg" alt="Diligince.ai" className="w-8 h-8" />
                 </div>
                 <span className="text-3xl font-bold text-[#153b60]">Diligince.ai</span>
               </div>
               <p className="text-[#828282] text-lg leading-relaxed mb-6 max-w-md">
                 Connecting industries, professionals, and vendors through intelligent AI-powered business solutions for accelerated growth and success.
               </p>
-              
+
               {/* Social Links */}
               <div className="flex space-x-3">
                 <a href="#" className="group w-11 h-11 bg-white rounded-xl flex items-center justify-center hover:-translate-y-1 transition-all duration-300"
-                   style={{
-                     boxShadow: '4px 4px 8px #d1d1d1, -4px -4px 8px #ffffff'
-                   }}>
+                  style={{
+                    boxShadow: '4px 4px 8px #d1d1d1, -4px -4px 8px #ffffff'
+                  }}>
                   <Globe className="w-5 h-5 text-[#828282] group-hover:text-[#153b60] transition-colors" />
                 </a>
                 <a href="#" className="group w-11 h-11 bg-white rounded-xl flex items-center justify-center hover:-translate-y-1 transition-all duration-300"
-                   style={{
-                     boxShadow: '4px 4px 8px #d1d1d1, -4px -4px 8px #ffffff'
-                   }}>
+                  style={{
+                    boxShadow: '4px 4px 8px #d1d1d1, -4px -4px 8px #ffffff'
+                  }}>
                   <MessageSquare className="w-5 h-5 text-[#828282] group-hover:text-[#153b60] transition-colors" />
                 </a>
               </div>
@@ -917,7 +926,7 @@ const Index: React.FC = () => {
                     boxShadow: 'inset 3px 3px 6px #d1d1d1, inset -3px -3px 6px #ffffff'
                   }}
                 />
-                <button 
+                <button
                   className="px-8 py-3 bg-gradient-to-r from-[#153b60] to-[#1e4976] text-white rounded-xl font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap"
                 >
                   Subscribe
