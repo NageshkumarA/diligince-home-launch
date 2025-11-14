@@ -614,6 +614,7 @@ const IndustrySettings = () => {
                   onUpload={handleDocumentUpload}
                   onDelete={handleDocumentDelete}
                   helperText="Upload company PAN card"
+                  isProfileLocked={isProfileLocked}
                 />
 
                 {/* GST Certificate */}
@@ -626,6 +627,7 @@ const IndustrySettings = () => {
                   onUpload={handleDocumentUpload}
                   onDelete={handleDocumentDelete}
                   helperText="Upload GST certificate"
+                  isProfileLocked={isProfileLocked}
                 />
 
                 {/* Registration Certificate */}
@@ -638,6 +640,7 @@ const IndustrySettings = () => {
                   onUpload={handleDocumentUpload}
                   onDelete={handleDocumentDelete}
                   helperText="Upload registration certificate"
+                  isProfileLocked={isProfileLocked}
                 />
               </div>
             </CardContent>
@@ -744,6 +747,7 @@ const IndustrySettings = () => {
                   onUpload={handleDocumentUpload}
                   onDelete={handleDocumentDelete}
                   helperText="Upload your company logo (JPG, PNG, or SVG)"
+                  isProfileLocked={isProfileLocked}
                 />
 
                 {/* Address Proof */}
@@ -756,6 +760,7 @@ const IndustrySettings = () => {
                   onUpload={handleDocumentUpload}
                   onDelete={handleDocumentDelete}
                   helperText="Utility bill, lease agreement, or property document"
+                  isProfileLocked={isProfileLocked}
                 />
 
                 {/* Authorization Letter */}
@@ -768,6 +773,7 @@ const IndustrySettings = () => {
                   onUpload={handleDocumentUpload}
                   onDelete={handleDocumentDelete}
                   helperText="Letter authorizing signatory (if applicable)"
+                  isProfileLocked={isProfileLocked}
                 />
               </div>
             </CardContent>

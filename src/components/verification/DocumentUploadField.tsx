@@ -17,6 +17,7 @@ interface DocumentUploadFieldProps {
   onUpload: (file: File, documentType: string) => Promise<VerificationDocument>;
   onDelete: (documentId: string) => Promise<void>;
   helperText?: string;
+  isProfileLocked?: boolean;
 }
 
 export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
@@ -28,7 +29,8 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
   currentDocument,
   onUpload,
   onDelete,
-  helperText
+  helperText,
+  isProfileLocked = false
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -37,7 +39,25 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  // Lock logic: Document is locked if profile is locked AND document status is pending or verified
+  const isDocumentLocked = isProfileLocked && currentDocument && 
+                          (currentDocument.status === 'pending' || currentDocument.status === 'verified');
+  
+  const canEdit = !isDocumentLocked;
+  const canDelete = !isDocumentLocked;
+  const showActions = !isProfileLocked || currentDocument?.status === 'rejected';
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Prevent file selection when locked
+    if (!canEdit) {
+      toast.warning('Document locked', {
+        description: currentDocument?.status === 'verified' 
+          ? 'This document has been verified and cannot be changed.'
+          : 'This document is pending verification and cannot be changed.',
+      });
+      return;
+    }
+
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -163,7 +183,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
       )}
 
       {/* Warning Alert - shown when replacing existing document */}
-      {showWarning && currentDocument && (
+      {showWarning && currentDocument && showActions && (
         <Alert className="border-amber-500 bg-amber-50 dark:bg-amber-950/20">
           <AlertCircle className="h-4 w-4 text-amber-600" />
           <AlertDescription className="text-sm">
@@ -196,7 +216,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
       )}
 
       {/* File Selection Confirmation - shown when file is selected but not uploaded */}
-      {selectedFile && !isUploading && !currentDocument && (
+      {selectedFile && !isUploading && !currentDocument && showActions && (
         <Alert className="border-blue-500 bg-blue-50 dark:bg-blue-950/20 animate-in fade-in slide-in-from-top-2 duration-300">
           <AlertDescription>
             <div className="flex items-center justify-between">
@@ -232,43 +252,105 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
       )}
 
       {currentDocument ? (
-        <div className="border-2 rounded-lg p-4 bg-green-50 border-green-500 dark:bg-green-950/20 dark:border-green-700 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className={`border-2 rounded-lg p-4 ${
+          currentDocument.status === 'verified' 
+            ? 'bg-green-50 border-green-500 dark:bg-green-950/20 dark:border-green-700'
+            : currentDocument.status === 'rejected'
+            ? 'bg-red-50 border-red-500 dark:bg-red-950/20 dark:border-red-700'
+            : currentDocument.status === 'pending'
+            ? 'bg-blue-50 border-blue-500 dark:bg-blue-950/20 dark:border-blue-700'
+            : 'bg-green-50 border-green-500 dark:bg-green-950/20 dark:border-green-700'
+        } animate-in fade-in slide-in-from-top-2 duration-300`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {/* <div className="bg-green-100 dark:bg-green-900/30 rounded-full p-2">
-                <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-500" />
-              </div> */}
               <div>
-                <p className="text-sm font-semibold text-green-900 dark:text-green-100">
-                  {currentDocument.name}
-                </p>
-                <p className="text-xs text-green-700 dark:text-green-400">
+                <div className="flex items-center gap-2">
+                  <p className={`text-sm font-semibold ${
+                    currentDocument.status === 'verified' 
+                      ? 'text-green-900 dark:text-green-100'
+                      : currentDocument.status === 'rejected'
+                      ? 'text-red-900 dark:text-red-100'
+                      : currentDocument.status === 'pending'
+                      ? 'text-blue-900 dark:text-blue-100'
+                      : 'text-green-900 dark:text-green-100'
+                  }`}>
+                    {currentDocument.name}
+                  </p>
+                  {/* Show verification status badge */}
+                  {currentDocument.status && (
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                      currentDocument.status === 'verified' 
+                        ? 'bg-green-200 text-green-800 dark:bg-green-900/50 dark:text-green-300'
+                        : currentDocument.status === 'rejected'
+                        ? 'bg-red-200 text-red-800 dark:bg-red-900/50 dark:text-red-300'
+                        : 'bg-blue-200 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300'
+                    }`}>
+                      {currentDocument.status === 'verified' ? '✓ Verified' : 
+                       currentDocument.status === 'rejected' ? '✗ Rejected' : 
+                       '⏳ Pending Review'}
+                    </span>
+                  )}
+                </div>
+                <p className={`text-xs ${
+                  currentDocument.status === 'verified' 
+                    ? 'text-green-700 dark:text-green-400'
+                    : currentDocument.status === 'rejected'
+                    ? 'text-red-700 dark:text-red-400'
+                    : currentDocument.status === 'pending'
+                    ? 'text-blue-700 dark:text-blue-400'
+                    : 'text-green-700 dark:text-green-400'
+                }`}>
                   {formatFileSize(currentDocument.size)} • Uploaded successfully
                 </p>
                 {currentDocument.uploadedAt && (
-                  <p className="text-xs text-green-600 dark:text-green-500 mt-0.5">
+                  <p className={`text-xs mt-0.5 ${
+                    currentDocument.status === 'verified' 
+                      ? 'text-green-600 dark:text-green-500'
+                      : currentDocument.status === 'rejected'
+                      ? 'text-red-600 dark:text-red-500'
+                      : currentDocument.status === 'pending'
+                      ? 'text-blue-600 dark:text-blue-500'
+                      : 'text-green-600 dark:text-green-500'
+                  }`}>
                     {new Date(currentDocument.uploadedAt).toLocaleDateString()} at {new Date(currentDocument.uploadedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                )}
+                {/* Show remarks if rejected */}
+                {currentDocument.status === 'rejected' && currentDocument.remarks && (
+                  <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                    <strong>Reason:</strong> {currentDocument.remarks}
+                  </p>
+                )}
+                {/* Show lock message when locked */}
+                {isDocumentLocked && (
+                  <p className="text-xs text-blue-600 dark:text-blue-400 mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    Locked during verification
                   </p>
                 )}
               </div>
             </div>
             <div className="flex items-center gap-2">
+              {/* Always show preview button */}
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={() => window.open(currentDocument.url, '_blank')}
-                className="hover:bg-green-100 dark:hover:bg-green-900/30"
+                className="hover:bg-muted"
               >
                 <Eye className="w-4 h-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleDelete}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
-              >
-                <X className="w-4 h-4" />
-              </Button>
+              {/* Only show delete button when can delete */}
+              {canDelete && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDelete}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -280,15 +362,17 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
             accept={accept}
             onChange={handleFileSelect}
             className="hidden"
-            disabled={isUploading}
+            disabled={isUploading || !canEdit}
           />
           <Button
             type="button"
             variant="outline"
             onClick={() => fileInputRef.current?.click()}
-            disabled={isUploading}
+            disabled={isUploading || !canEdit}
             className={`w-full ${
-              selectedFile 
+              !canEdit
+                ? 'opacity-50 cursor-not-allowed'
+                : selectedFile 
                 ? 'border-blue-400 bg-blue-50 dark:bg-blue-950/20' 
                 : required && !currentDocument 
                 ? 'border-red-300' 
@@ -296,12 +380,22 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
             }`}
           >
             <Upload className="w-4 h-4 mr-2" />
-            {isUploading 
+            {!canEdit 
+              ? 'Locked for Verification'
+              : isUploading 
               ? 'Uploading...' 
               : currentDocument 
               ? 'Replace Document' 
               : 'Upload Document'}
           </Button>
+
+          {/* Show lock explanation when profile is locked */}
+          {isProfileLocked && !currentDocument && (
+            <p className="text-xs text-blue-600 dark:text-blue-400 mt-2 flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" />
+              Upload disabled during verification process
+            </p>
+          )}
 
           {isUploading && (
             <div className="mt-2">
