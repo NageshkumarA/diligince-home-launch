@@ -288,7 +288,7 @@ const Index: React.FC = () => {
               {benefits.map((benefit, index) => (
                 <div
                   key={index}
-                  className="text-center group hover:transform hover:-translate-y-2 transition-all duration-300 bg-white rounded-3xl p-8"
+                  className="text-center group hover:transform hover:-translate-y-2 transition-all duration-300 rounded-3xl p-8"
                   
                 >
                   <div className="w-20 h-20 bg-gradient-to-br from-[#153b60]/10 to-[#1e4976]/10 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-xl transition-all duration-300">
