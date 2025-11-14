@@ -340,7 +340,7 @@ const IndustrySettings = () => {
               onClick={() => {
                 setProfile({
                   companyName: '',
-                  industryFocus: '',
+                  industryType: '',
                   companyDescription: '',
                   yearEstablished: '',
                   panNumber: '',
@@ -393,23 +393,23 @@ const IndustrySettings = () => {
                   )}
                 </div>
 
-                {/* Industry Focus */}
+                {/* Industry Type */}
                 <div className="space-y-2">
-                  <Label htmlFor="industryFocus" className="flex items-center gap-2">
-                    Industry Focus <span className="text-red-500">*</span>
-                    {getFieldStatus(profile.industryFocus) === 'filled' && (
+                  <Label htmlFor="industryType" className="flex items-center gap-2">
+                    Industry Type <span className="text-red-500">*</span>
+                    {getFieldStatus(profile.industryType) === 'filled' && (
                       <CheckCircle2 className="w-4 h-4 text-green-600" />
                     )}
-                    {getFieldStatus(profile.industryFocus) === 'empty' && (
+                    {getFieldStatus(profile.industryType) === 'empty' && (
                       <XCircle className="w-4 h-4 text-red-600" />
                     )}
                   </Label>
                   <Select
-                    value={profile.industryFocus || ''}
-                    onValueChange={(value) => handleChange('industryFocus', value)}
+                    value={profile.industryType || ''}
+                    onValueChange={(value) => handleChange('industryType', value)}
                     disabled={isProfileLocked}
                   >
-                    <SelectTrigger className={getFieldClassName(getFieldStatus(profile.industryFocus))}>
+                    <SelectTrigger className={getFieldClassName(getFieldStatus(profile.industryType))}>
                       <SelectValue placeholder="Select industry" />
                     </SelectTrigger>
                     <SelectContent>
@@ -423,7 +423,7 @@ const IndustrySettings = () => {
                       <SelectItem value="electronics">Electronics</SelectItem>
                     </SelectContent>
                   </Select>
-                  {getFieldStatus(profile.industryFocus) === 'empty' && (
+                  {getFieldStatus(profile.industryType) === 'empty' && (
                     <p className="text-xs text-red-600 mt-1">This field is required</p>
                   )}
                 </div>
@@ -886,37 +886,46 @@ const IndustrySettings = () => {
           </Card>
 
           {/* Action Buttons */}
-          <div className="flex gap-3">
-            {canSubmit ? (
+          <div className="flex flex-col gap-3">
+            <div className="flex gap-3">
+              {/* Save Button - Always visible until profile is locked */}
+              <Button
+                onClick={handleSave}
+                disabled={isSubmitting || isProfileLocked}
+                variant="outline"
+                size="lg"
+              >
+                {isSubmitting ? 'Saving...' : 'Save Profile'}
+              </Button>
+
+              {/* Submit for Verification - Only enabled when profile is complete */}
               <Button
                 onClick={handleSubmitForVerification}
-                disabled={isSubmitting || isProfileLocked}
-                className="bg-green-600 hover:bg-green-700"
+                disabled={isSubmitting || isProfileLocked || !canSubmit}
+                className={`${
+                  canSubmit && !isProfileLocked
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : ''
+                }`}
                 size="lg"
               >
                 <CheckCircle2 className="w-5 h-5 mr-2" />
                 {isSubmitting ? 'Submitting...' : 'Submit for Verification'}
               </Button>
-            ) : (
-              <>
-                <Button
-                  onClick={handleSave}
-                  disabled={isSubmitting || isProfileLocked}
-                  size="lg"
-                >
-                  {isSubmitting ? 'Saving...' : 'Save Progress'}
-                </Button>
-                {(missingFields.length > 0 || profile.companyDescription && profile.companyDescription.length < 50) && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <AlertCircle className="w-4 h-4" />
-                    <span>
-                      {missingFields.length > 0 
-                        ? `Complete ${missingFields.length} more field(s) to verify`
-                        : 'Complete description (minimum 50 characters)'}
-                    </span>
-                  </div>
-                )}
-              </>
+            </div>
+
+            {/* Helpful message when Submit is disabled */}
+            {!canSubmit && !isProfileLocked && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <AlertCircle className="w-4 h-4" />
+                <span>
+                  {missingFields.length > 0 
+                    ? `Complete ${missingFields.length} more field(s) and upload all required documents`
+                    : profile.companyDescription && profile.companyDescription.length < 50
+                    ? 'Complete description (minimum 50 characters)'
+                    : 'Complete all requirements to submit for verification'}
+                </span>
+              </div>
             )}
           </div>
         </TabsContent>

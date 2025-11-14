@@ -46,10 +46,15 @@ class CompanyProfileService {
    */
   async getProfile(): Promise<CompanyProfile> {
     try {
-      const response = await apiService.get<{ success: boolean; data: CompanyProfile }>(
-        companyProfileRoutes.get
-      );
-      return response.data;
+      const response = await apiService.get<{ 
+        success: boolean; 
+        data: { 
+          profile: CompanyProfile;
+          missingFields: string[];
+          missingDocuments: string[];
+        }
+      }>(companyProfileRoutes.get);
+      return response.data.profile;
     } catch (error) {
       errorHandler.handleApiError(error, 'Failed to load profile');
       throw error;
