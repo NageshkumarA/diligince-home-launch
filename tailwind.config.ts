@@ -358,7 +358,9 @@ export default {
 				'float-particle': 'float-particle 10s ease-in-out infinite',
 				'orb-pulse': 'orb-pulse 8s ease-in-out infinite',
 				'scanline': 'scanline 6s linear infinite',
-				'grid-pulse': 'grid-pulse 4s ease-in-out infinite',
+				'grid-pulse': 'grid-pulse 6s ease-in-out infinite',
+				'grid-breathe': 'grid-breathe 8s ease-in-out infinite',
+				'accent-pulse': 'accent-pulse 4s ease-in-out infinite',
 				'gradient-shift': 'gradient-shift 3s ease-in-out infinite',
 				'fade-up-stagger': 'fade-up-stagger 0.6s ease-out forwards'
 			}
