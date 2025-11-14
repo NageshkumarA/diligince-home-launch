@@ -21,7 +21,13 @@ export interface SubmitVerificationResponse {
 
 export interface UploadDocumentResponse {
   success: boolean;
-  data: VerificationDocument;
+  data: {
+    document: VerificationDocument;
+    replacedDocument?: {
+      id: string;
+      name: string;
+    };
+  };
   message?: string;
 }
 

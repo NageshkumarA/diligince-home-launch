@@ -226,7 +226,7 @@ const IndustrySettings = () => {
         file,
         documentType as VerificationDocument['documentType']
       );
-      const uploadedDoc = response.data;
+      const uploadedDoc = response.data.document;
       
       setProfile(prev => {
         const existingDocs = prev.documents || [];

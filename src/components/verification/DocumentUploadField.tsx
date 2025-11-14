@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Upload, File, X, CheckCircle2, Eye, AlertCircle } from 'lucide-react';
+import { Upload, File, X, CheckCircle2, Eye, AlertCircle, Clock } from 'lucide-react';
 import toast from '@/utils/toast.utils';
 import { VerificationDocument } from '@/types/verification';
 
@@ -35,6 +35,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showWarning, setShowWarning] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -54,8 +55,8 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
       return;
     }
 
-    // No existing document, upload directly
-    await performUpload(file);
+    // No existing document, show confirmation first
+    setSelectedFile(file);
   };
 
   const performUpload = async (file: File) => {
@@ -85,6 +86,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
       setIsUploading(false);
       setUploadProgress(0);
       setPendingFile(null);
+      setSelectedFile(null);
       setShowWarning(false);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -101,6 +103,20 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
   const handleCancelUpload = () => {
     setPendingFile(null);
     setShowWarning(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleConfirmSelection = async () => {
+    if (selectedFile) {
+      await performUpload(selectedFile);
+      setSelectedFile(null);
+    }
+  };
+
+  const handleCancelSelection = () => {
+    setSelectedFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -130,12 +146,15 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
         {label}
-        {required && <span className="text-red-500">*</span>}
+        {required && <span className="text-red-500 text-sm">*</span>}
         {currentDocument && (
-          <CheckCircle2 className="w-4 h-4 text-green-600" />
+          <CheckCircle2 className="w-5 h-5 text-green-600 animate-in zoom-in duration-300" />
         )}
-        {required && !currentDocument && (
-          <AlertCircle className="w-4 h-4 text-red-600" />
+        {required && !currentDocument && !selectedFile && (
+          <AlertCircle className="w-5 h-5 text-red-600" />
+        )}
+        {selectedFile && !currentDocument && (
+          <Clock className="w-5 h-5 text-blue-600 animate-pulse" />
         )}
       </Label>
 
@@ -176,23 +195,71 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
         </Alert>
       )}
 
+      {/* File Selection Confirmation - shown when file is selected but not uploaded */}
+      {selectedFile && !isUploading && !currentDocument && (
+        <Alert className="border-blue-500 bg-blue-50 dark:bg-blue-950/20 animate-in fade-in slide-in-from-top-2 duration-300">
+          <AlertDescription>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <File className="w-5 h-5 text-blue-600" />
+                <div>
+                  <p className="font-medium text-sm text-blue-900 dark:text-blue-100">{selectedFile.name}</p>
+                  <p className="text-xs text-blue-700 dark:text-blue-400">
+                    {formatFileSize(selectedFile.size)} • Ready to upload
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  size="sm" 
+                  onClick={handleConfirmSelection}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <CheckCircle2 className="w-4 h-4 mr-1" />
+                  Confirm
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={handleCancelSelection}
+                  className="border-blue-300"
+                >
+                  <X className="w-4 h-4 mr-1" />
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {currentDocument ? (
-        <div className="border rounded-lg p-3 bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-900">
+        <div className="border-2 rounded-lg p-4 bg-green-50 border-green-500 dark:bg-green-950/20 dark:border-green-700 animate-in fade-in slide-in-from-top-2 duration-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <File className="w-5 h-5 text-green-600" />
+              <div className="bg-green-100 dark:bg-green-900/30 rounded-full p-2">
+                <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-500" />
+              </div>
               <div>
-                <p className="text-sm font-medium">{currentDocument.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {formatFileSize(currentDocument.size)}
+                <p className="text-sm font-semibold text-green-900 dark:text-green-100">
+                  {currentDocument.name}
                 </p>
+                <p className="text-xs text-green-700 dark:text-green-400">
+                  {formatFileSize(currentDocument.size)} • Uploaded successfully
+                </p>
+                {currentDocument.uploadedAt && (
+                  <p className="text-xs text-green-600 dark:text-green-500 mt-0.5">
+                    {new Date(currentDocument.uploadedAt).toLocaleDateString()} at {new Date(currentDocument.uploadedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                )}
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
+              <Button 
+                variant="ghost" 
+                size="sm" 
                 onClick={() => window.open(currentDocument.url, '_blank')}
+                className="hover:bg-green-100 dark:hover:bg-green-900/30"
               >
                 <Eye className="w-4 h-4" />
               </Button>
@@ -222,7 +289,13 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
             variant="outline"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
-            className={`w-full ${required && !currentDocument ? 'border-red-300' : ''}`}
+            className={`w-full ${
+              selectedFile 
+                ? 'border-blue-400 bg-blue-50 dark:bg-blue-950/20' 
+                : required && !currentDocument 
+                ? 'border-red-300' 
+                : ''
+            }`}
           >
             <Upload className="w-4 h-4 mr-2" />
             {isUploading 
