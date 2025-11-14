@@ -261,11 +261,11 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
             ? 'bg-blue-50 border-blue-500 dark:bg-blue-950/20 dark:border-blue-700'
             : 'bg-green-50 border-green-500 dark:bg-green-950/20 dark:border-green-700'
         } animate-in fade-in slide-in-from-top-2 duration-300`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
               <div>
-                <div className="flex items-center gap-2">
-                  <p className={`text-sm font-semibold ${
+                <div>
+                  <p className={`text-sm font-semibold break-words ${
                     currentDocument.status === 'verified' 
                       ? 'text-green-900 dark:text-green-100'
                       : currentDocument.status === 'rejected'
@@ -278,7 +278,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
                   </p>
                   {/* Show verification status badge */}
                   {currentDocument.status && (
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                    <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full font-medium ${
                       currentDocument.status === 'verified' 
                         ? 'bg-green-200 text-green-800 dark:bg-green-900/50 dark:text-green-300'
                         : currentDocument.status === 'rejected'
@@ -330,7 +330,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
                 )}
               </div>
             </div>
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex items-center gap-2 self-start flex-shrink-0">
               {/* Always show preview button */}
               <Button 
                 variant="ghost" 
