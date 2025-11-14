@@ -12,8 +12,12 @@ export interface SubmitVendorVerificationResponse {
   success: boolean;
   data: {
     verificationId: string;
+    status: 'pending' | 'approved' | 'rejected';
+    submittedAt: string;
     estimatedCompletionAt: string;
-    profile: VendorProfile;
+    estimatedCompletionHours: number;
+    isLocked: boolean;
+    nextSteps: string[];
   };
   message?: string;
 }

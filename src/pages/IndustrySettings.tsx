@@ -182,7 +182,15 @@ const IndustrySettings = () => {
     
     try {
       const result = await companyProfileService.submitForVerification();
-      setProfile(result.data.profile);
+      
+      // Update profile locally with verification data from response
+      setProfile(prev => ({
+        ...prev,
+        verificationStatus: result.data.status === 'pending' 
+          ? VerificationStatus.PENDING 
+          : VerificationStatus.INCOMPLETE,
+        verificationSubmittedAt: result.data.submittedAt,
+      }));
       
       errorHandler.updateSuccess(
         loadingToast, 
@@ -198,7 +206,25 @@ const IndustrySettings = () => {
         });
       }, 500);
       
+      // Show next steps
+      if (result.data.nextSteps && result.data.nextSteps.length > 0) {
+        setTimeout(() => {
+          toast.info('Next Steps', {
+            description: result.data.nextSteps.join('\n'),
+            duration: 8000,
+          });
+        }, 1000);
+      }
+      
       await refreshVerificationStatus();
+      
+      // Refresh profile from server to get latest state
+      try {
+        const updatedProfile = await companyProfileService.getProfile();
+        setProfile(updatedProfile);
+      } catch (error) {
+        console.error('Failed to refresh profile:', error);
+      }
       
       setTimeout(() => {
         navigate('/verification-pending');

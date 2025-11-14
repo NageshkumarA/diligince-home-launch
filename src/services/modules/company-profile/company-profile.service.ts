@@ -13,8 +13,12 @@ export interface SubmitVerificationResponse {
   success: boolean;
   data: {
     verificationId: string;
+    status: 'pending' | 'approved' | 'rejected';
+    submittedAt: string;
     estimatedCompletionAt: string;
-    profile: CompanyProfile;
+    estimatedCompletionHours: number;
+    isLocked: boolean;
+    nextSteps: string[];
   };
   message?: string;
 }
