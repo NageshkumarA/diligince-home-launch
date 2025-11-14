@@ -138,12 +138,14 @@ const IndustrySettings = () => {
     
     try {
       const response = await companyProfileService.saveProfile(profile);
-      setProfile(response.data);
+      // Handle both flat and nested response structures
+      const savedProfile = 'profile' in response.data ? response.data.profile : response.data;
+      setProfile(savedProfile);
       
       errorHandler.updateSuccess(loadingToast, 'Profile saved successfully');
       
       // Show info about missing documents if any
-      if (response.data.documents && response.data.documents.length < 3) {
+      if (savedProfile.documents && savedProfile.documents.length < 3) {
         setTimeout(() => {
           toast.info('Documents needed', {
             description: 'Please upload all required documents to complete your profile.',
