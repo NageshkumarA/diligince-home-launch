@@ -51,7 +51,7 @@ export interface Address {
 export interface CompanyProfile {
   // Basic Info
   companyName: string;
-  industryFocus: string;
+  industryType: string;
   companyDescription: string;
   yearEstablished: string;
   
