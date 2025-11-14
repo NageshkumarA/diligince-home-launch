@@ -19,6 +19,7 @@ import { calculateProfileCompletion, getMissingFields, canSubmitForVerification 
 import { companyProfileService } from '@/services';
 import { ProfileCompletionBanner } from '@/components/verification/ProfileCompletionBanner';
 import { DocumentUploadField } from '@/components/verification/DocumentUploadField';
+import { industries } from '@/constants/Types';
 
 const IndustrySettings = () => {
   const navigate = useNavigate();
@@ -413,14 +414,11 @@ const IndustrySettings = () => {
                       <SelectValue placeholder="Select industry" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="manufacturing">Manufacturing</SelectItem>
-                      <SelectItem value="steel">Steel Industry</SelectItem>
-                      <SelectItem value="automotive">Automotive</SelectItem>
-                      <SelectItem value="construction">Construction</SelectItem>
-                      <SelectItem value="energy">Energy</SelectItem>
-                      <SelectItem value="mining">Mining</SelectItem>
-                      <SelectItem value="chemical">Chemical</SelectItem>
-                      <SelectItem value="electronics">Electronics</SelectItem>
+                      {industries.map((industry) => (
+                        <SelectItem key={industry} value={industry}>
+                          {industry}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   {getFieldStatus(profile.industryType) === 'empty' && (
