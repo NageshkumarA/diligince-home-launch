@@ -5,7 +5,7 @@ import errorHandler from '@/utils/errorHandler.utils';
 
 export interface SaveProfileResponse {
   success: boolean;
-  data: CompanyProfile;
+  data: CompanyProfile | { profile: CompanyProfile };
   message?: string;
 }
 

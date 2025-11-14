@@ -4,7 +4,7 @@ import { VendorProfile, VerificationDocument, VendorDocumentType } from '@/types
 
 export interface SaveVendorProfileResponse {
   success: boolean;
-  data: VendorProfile;
+  data: VendorProfile | { profile: VendorProfile };
   message?: string;
 }
 
