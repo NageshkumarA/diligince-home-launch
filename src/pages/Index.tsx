@@ -263,42 +263,143 @@ const Index: React.FC = () => {
 
           {/* Benefits Section */}
           <div
-            className=" rounded-3xl p-8 md:p-12 relative overflow-hidden"
+            className="relative overflow-hidden py-16 md:py-20"
             id="benefits"
-            style={{
-                    boxShadow: '6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff'
-                  }}
           >
-            {/* Animated Background Elements */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full blur-3xl animate-pulse"></div>
-              <div
-                className="absolute bottom-0 right-0 w-60 h-60 bg-[#1e4976] rounded-full blur-3xl animate-pulse"
-                style={{
-                  animationDelay: "1s",
-                }}
-              ></div>
+            {/* Multi-Layer Animated Background */}
+            {/* Layer 1 - Base Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#FAFAFA] via-white to-[#F5F5F5]"></div>
+            
+            {/* Layer 2 - Floating Geometric Shapes */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-10 left-10 w-20 h-20 bg-corporate-navy-500/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '0s' }}></div>
+              <div className="absolute top-32 right-20 w-16 h-16 bg-corporate-navy-400/5 rounded-2xl blur-2xl animate-float" style={{ animationDelay: '1s' }}></div>
+              <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-corporate-navy-500/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }}></div>
+              <div className="absolute top-1/2 right-1/3 w-20 h-20 bg-corporate-navy-300/5 rounded-2xl blur-2xl animate-float" style={{ animationDelay: '1.5s' }}></div>
+              <div className="absolute bottom-32 right-16 w-28 h-28 bg-corporate-navy-500/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '0.5s' }}></div>
             </div>
 
-            <div className="text-center mb-12">
-              <h3 className="text-4xl font-bold text-black mb-4">AI-Driven Results</h3>
-              <p className="text-black text-xl">See why thousands of businesses trust our intelligent platform</p>
+            {/* Layer 3 - Animated Dot Grid */}
+            <div 
+              className="absolute inset-0 opacity-[0.03] animate-grid-pulse"
+              style={{
+                backgroundImage: 'radial-gradient(circle at 1px 1px, hsl(210, 64%, 23%) 1px, transparent 0)',
+                backgroundSize: '40px 40px'
+              }}
+            ></div>
+
+            {/* Layer 4 - Gradient Orbs */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute -top-20 -left-20 w-[300px] h-[300px] bg-gradient-to-br from-corporate-navy-500/5 to-transparent rounded-full blur-3xl animate-orb-pulse" style={{ animationDelay: '0s' }}></div>
+              <div className="absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-gradient-to-tl from-corporate-navy-400/5 to-transparent rounded-full blur-3xl animate-orb-pulse" style={{ animationDelay: '2s' }}></div>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] bg-gradient-to-br from-corporate-navy-300/5 to-transparent rounded-full blur-3xl animate-orb-pulse" style={{ animationDelay: '4s' }}></div>
             </div>
-            <div className="grid md:grid-cols-3 gap-8 relative z-10">
-              {benefits.map((benefit, index) => (
+
+            {/* Layer 5 - Floating Particles */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {[...Array(15)].map((_, i) => (
                 <div
-                  key={index}
-                  className="text-center group hover:transform hover:-translate-y-2 transition-all duration-300 bg-white rounded-3xl p-8"
-                  
-                >
-                  <div className="w-20 h-20 bg-gradient-to-br from-[#153b60]/10 to-[#1e4976]/10 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-xl transition-all duration-300">
-                    <benefit.icon className="w-8 h-8 text-[#153b60]" />
-                  </div>
-                  <h4 className="text-3xl font-bold text-[#333333] mb-2">{benefit.title}</h4>
-                  <p className="text-[#153b60] font-semibold mb-3 text-lg">{benefit.subtitle}</p>
-                  <p className="text-[#828282] leading-relaxed">{benefit.description}</p>
-                </div>
+                  key={i}
+                  className="absolute w-1 h-1 bg-corporate-navy-500/20 rounded-full animate-float-particle"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 10}s`,
+                    animationDuration: `${10 + Math.random() * 5}s`
+                  }}
+                ></div>
               ))}
+            </div>
+
+            {/* Layer 6 - Scanline Effect */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+              <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-corporate-navy-500/10 to-transparent animate-scanline"></div>
+            </div>
+
+            {/* Content Wrapper */}
+            <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              {/* Section Header */}
+              <div className="text-center mb-12 md:mb-16">
+                {/* Badge */}
+                <div className="inline-flex items-center gap-2 px-5 py-2 mb-6 bg-white/90 backdrop-blur-sm border border-corporate-navy-500/20 rounded-full shadow-sm">
+                  <svg className="w-4 h-4 text-corporate-navy-500 animate-pulse-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span className="text-sm font-semibold text-corporate-navy-700">Proven Results</span>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-3xl md:text-5xl font-extrabold text-[#333333] mb-3 tracking-tight">
+                  AI-Driven{' '}
+                  <span className="bg-gradient-to-r from-corporate-navy-500 via-corporate-navy-400 to-corporate-navy-300 bg-clip-text text-transparent animate-gradient-shift bg-[length:200%_auto]">
+                    Results
+                  </span>
+                </h3>
+
+                {/* Description */}
+                <p className="text-base md:text-xl text-corporate-gray-500 max-w-2xl mx-auto leading-relaxed font-light">
+                  See why thousands of businesses trust our intelligent platform
+                </p>
+              </div>
+
+              {/* Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {benefits.map((benefit, index) => (
+                  <article
+                    key={index}
+                    className="group text-center bg-white/80 backdrop-blur-sm border border-corporate-navy-500/5 rounded-2xl p-6 md:p-8 hover:-translate-y-3 hover:scale-[1.02] hover:border-corporate-navy-500/20 hover:bg-white/95 transition-all duration-500 animate-fade-up-stagger"
+                    style={{
+                      boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08), -4px -4px 12px rgba(255, 255, 255, 0.9), inset 0 1px 2px rgba(255, 255, 255, 0.5)',
+                      animationDelay: `${index * 100}ms`,
+                      animationFillMode: 'backwards'
+                    }}
+                    aria-label={`Benefit card: ${benefit.title}`}
+                  >
+                    {/* Icon Container */}
+                    <div 
+                      className="w-16 h-16 bg-gradient-to-br from-corporate-navy-500/8 via-corporate-navy-400/8 to-corporate-navy-300/8 border-2 border-corporate-navy-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-lg transition-all duration-500 animate-gradient-shift bg-[length:200%_auto]"
+                      style={{
+                        boxShadow: 'inset 0 2px 8px rgba(21, 59, 96, 0.05)'
+                      }}
+                    >
+                      <benefit.icon className="w-7 h-7 text-corporate-navy-600" />
+                    </div>
+
+                    {/* Title */}
+                    <h4 
+                      className="text-xl md:text-2xl font-bold text-[#333333] mb-2 tracking-tight leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                      style={{
+                        animation: 'fade-up-stagger 0.4s ease-out forwards',
+                        animationDelay: `${index * 100}ms`
+                      }}
+                    >
+                      {benefit.title}
+                    </h4>
+
+                    {/* Subtitle */}
+                    <p 
+                      className="text-base text-corporate-navy-600 font-semibold mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                      style={{
+                        animation: 'fade-up-stagger 0.4s ease-out forwards',
+                        animationDelay: `${index * 100 + 100}ms`
+                      }}
+                    >
+                      {benefit.subtitle}
+                    </p>
+
+                    {/* Description */}
+                    <p 
+                      className="text-sm md:text-base text-corporate-gray-500 leading-relaxed font-normal opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                      style={{
+                        animation: 'fade-up-stagger 0.4s ease-out forwards',
+                        animationDelay: `${index * 100 + 200}ms`
+                      }}
+                    >
+                      {benefit.description}
+                    </p>
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
         </div>
