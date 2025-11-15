@@ -317,10 +317,25 @@ const IndustrySettings = () => {
         </Card>
       ) : (
         <Tabs defaultValue="company" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="company">Company Profile</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            <TabsTrigger value="security">Security</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-muted">
+            <TabsTrigger 
+              value="company"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              Company Profile
+            </TabsTrigger>
+            <TabsTrigger 
+              value="notifications"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              Notifications
+            </TabsTrigger>
+            <TabsTrigger 
+              value="security"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              Security
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="company" className="space-y-6">
