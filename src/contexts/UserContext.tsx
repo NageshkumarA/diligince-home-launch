@@ -4,6 +4,8 @@ import { UserProfile, UserRole, UserPreferences, getDashboardRoute } from '@/typ
 import { calculateProfileCompleteness, ProfileCompletion } from '@/utils/profileCompleteness';
 import { api } from '@/services/api.service';
 import { apiRoutes } from '@/services/api.routes';
+import { companyProfileRoutes } from '@/services/modules/company-profile/company-profile.routes';
+import { vendorProfileRoutes } from '@/services/modules/vendor-profile/vendor-profile.routes';
 import { mapApiRoleToUserRole } from '@/utils/roleMapper';
 import { VerificationStatus } from '@/types/verification';
 import { toast } from 'sonner';
@@ -82,10 +84,21 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           const completion = calculateProfileCompleteness(userData);
           setProfileCompletion(completion);
           
-          // Load verification status
+          // Load verification status from API
           try {
-            // TODO: Replace with real API call when available
-            setVerificationStatus(VerificationStatus.INCOMPLETE); // Default for now
+            let apiStatus: string | undefined;
+            
+            if (userData.role === 'industry') {
+              const profileResponse = await api.get(companyProfileRoutes.get);
+              apiStatus = profileResponse?.data?.data?.profile?.verificationStatus;
+            } else if (userData.role === 'vendor') {
+              const profileResponse = await api.get(vendorProfileRoutes.get);
+              apiStatus = profileResponse?.data?.data?.profile?.verificationStatus;
+            }
+            
+            const mappedStatus = apiStatus as VerificationStatus || VerificationStatus.INCOMPLETE;
+            setVerificationStatus(mappedStatus);
+            console.log('Loaded verification status:', mappedStatus);
           } catch (error) {
             console.error('Error loading verification status:', error);
             setVerificationStatus(VerificationStatus.INCOMPLETE);
@@ -188,6 +201,28 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         
         setUser(userProfile);
         setIsFirstTimeUser(!apiUser.profile?.isProfileComplete);
+        
+        // Fetch verification status for the logged-in user
+        setTimeout(async () => {
+          try {
+            let apiStatus: string | undefined;
+            
+            if (userProfile.role === 'industry') {
+              const response = await api.get(companyProfileRoutes.get);
+              apiStatus = response?.data?.data?.profile?.verificationStatus;
+            } else if (userProfile.role === 'vendor') {
+              const response = await api.get(vendorProfileRoutes.get);
+              apiStatus = response?.data?.data?.profile?.verificationStatus;
+            }
+            
+            const mappedStatus = apiStatus as VerificationStatus || VerificationStatus.INCOMPLETE;
+            setVerificationStatus(mappedStatus);
+            console.log('Loaded verification status after login:', mappedStatus);
+          } catch (error) {
+            console.error('Error loading verification status after login:', error);
+          }
+        }, 100);
+        
         return { success: true };
       }
       return { success: false, error: 'Invalid credentials' };
@@ -227,11 +262,28 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   
   const refreshVerificationStatus = async () => {
     try {
-      // TODO: Replace with real API call when available
-      setVerificationStatus(VerificationStatus.APPROVED);
-      toast.success('Profile verification completed!');
+      if (!user) return;
+      
+      let apiStatus: string | undefined;
+      
+      if (user.role === 'industry') {
+        const response = await api.get(companyProfileRoutes.get);
+        apiStatus = response?.data?.data?.profile?.verificationStatus;
+      } else if (user.role === 'vendor') {
+        const response = await api.get(vendorProfileRoutes.get);
+        apiStatus = response?.data?.data?.profile?.verificationStatus;
+      }
+      
+      const mappedStatus = apiStatus as VerificationStatus || VerificationStatus.INCOMPLETE;
+      setVerificationStatus(mappedStatus);
+      console.log('Refreshed verification status:', mappedStatus);
+      
+      if (mappedStatus === VerificationStatus.APPROVED) {
+        toast.success('Profile verification completed!');
+      }
     } catch (error) {
       console.error('Error refreshing verification status:', error);
+      toast.error('Failed to refresh verification status');
     }
   };
 
