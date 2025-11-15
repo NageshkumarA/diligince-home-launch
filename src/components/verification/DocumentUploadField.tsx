@@ -341,7 +341,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
                 <Eye className="w-4 h-4" />
               </Button>
               {/* Only show delete button when can delete */}
-              {/* {canDelete && ( */}
+              {canDelete && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -350,7 +350,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
                 >
                   <X className="w-4 h-4" />
                 </Button>
-              {/* )} */}
+              )}
             </div>
           </div>
         </div>
