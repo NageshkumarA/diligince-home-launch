@@ -73,6 +73,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       try {
         const savedUser = localStorage.getItem('user');
         const savedOnboarding = localStorage.getItem('hasCompletedOnboarding');
+        const savedVerificationStatus = localStorage.getItem('verificationStatus');
         
         if (savedUser) {
           const userData = JSON.parse(savedUser) as UserProfile;
@@ -86,6 +87,14 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           
           // Load verification status from API
           try {
+            // First, set the cached status if available (instant UI update)
+            if (savedVerificationStatus) {
+              const cachedStatus = savedVerificationStatus as VerificationStatus;
+              setVerificationStatus(cachedStatus);
+              console.log('Loaded cached verification status:', cachedStatus);
+            }
+            
+            // Then fetch fresh status from API
             let apiStatus: string | undefined;
             
             if (userData.role === 'industry') {
@@ -96,12 +105,18 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
               apiStatus = profileResponse?.data?.data?.profile?.verificationStatus;
             }
             
-            const mappedStatus = apiStatus as VerificationStatus || VerificationStatus.INCOMPLETE;
-            setVerificationStatus(mappedStatus);
-            console.log('Loaded verification status:', mappedStatus);
+            if (apiStatus) {
+              const mappedStatus = apiStatus as VerificationStatus;
+              setVerificationStatus(mappedStatus);
+              localStorage.setItem('verificationStatus', mappedStatus);
+              console.log('Updated verification status from API:', mappedStatus);
+            }
           } catch (error) {
             console.error('Error loading verification status:', error);
-            setVerificationStatus(VerificationStatus.INCOMPLETE);
+            // Don't override with INCOMPLETE if we have a cached status
+            if (!savedVerificationStatus) {
+              setVerificationStatus(VerificationStatus.INCOMPLETE);
+            }
           }
         }
       } catch (error) {
@@ -136,6 +151,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     // Save onboarding state
     localStorage.setItem('hasCompletedOnboarding', hasCompletedOnboarding.toString());
   }, [hasCompletedOnboarding]);
+
+  useEffect(() => {
+    // Save verification status to localStorage whenever it changes
+    if (verificationStatus) {
+      localStorage.setItem('verificationStatus', verificationStatus);
+    }
+  }, [verificationStatus]);
 
   const updateProfile = (updates: Partial<UserProfile>) => {
     if (!user) return;
@@ -215,9 +237,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
               apiStatus = response?.data?.data?.profile?.verificationStatus;
             }
             
-            const mappedStatus = apiStatus as VerificationStatus || VerificationStatus.INCOMPLETE;
-            setVerificationStatus(mappedStatus);
-            console.log('Loaded verification status after login:', mappedStatus);
+            if (apiStatus) {
+              const mappedStatus = apiStatus as VerificationStatus;
+              setVerificationStatus(mappedStatus);
+              localStorage.setItem('verificationStatus', mappedStatus);
+              console.log('Loaded verification status after login:', mappedStatus);
+            }
           } catch (error) {
             console.error('Error loading verification status after login:', error);
           }
@@ -242,6 +267,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     setHasCompletedOnboarding(false);
     localStorage.removeItem('user');
     localStorage.removeItem('hasCompletedOnboarding');
+    localStorage.removeItem('verificationStatus');
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('isMockAuth'); // Clear mock auth flag
@@ -274,12 +300,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         apiStatus = response?.data?.data?.profile?.verificationStatus;
       }
       
-      const mappedStatus = apiStatus as VerificationStatus || VerificationStatus.INCOMPLETE;
-      setVerificationStatus(mappedStatus);
-      console.log('Refreshed verification status:', mappedStatus);
-      
-      if (mappedStatus === VerificationStatus.APPROVED) {
-        toast.success('Profile verification completed!');
+      if (apiStatus) {
+        const mappedStatus = apiStatus as VerificationStatus;
+        setVerificationStatus(mappedStatus);
+        localStorage.setItem('verificationStatus', mappedStatus);
+        console.log('Refreshed verification status:', mappedStatus);
+        
+        if (mappedStatus === VerificationStatus.APPROVED) {
+          toast.success('Profile verification completed!');
+        }
       }
     } catch (error) {
       console.error('Error refreshing verification status:', error);
