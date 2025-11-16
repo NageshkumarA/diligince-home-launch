@@ -24,15 +24,16 @@ class RequirementListService {
       const response = await apiService.get<any>(url);
       
       // Transform API response to match frontend expectations
+      // Drafts API returns: { data: { drafts: [], pagination: {} } }
       return {
         success: response.success,
         data: {
-          requirements: response.data || [],
+          requirements: response.data?.drafts || [],
           pagination: {
-            currentPage: response.pagination?.page || 1,
-            pageSize: response.pagination?.limit || 10,
-            totalItems: response.pagination?.total || 0,
-            totalPages: response.pagination?.totalPages || 0,
+            currentPage: response.data?.pagination?.page || 1,
+            pageSize: response.data?.pagination?.limit || 10,
+            totalItems: response.data?.pagination?.total || 0,
+            totalPages: response.data?.pagination?.totalPages || 0,
           },
           filters: {
             applied: {},
