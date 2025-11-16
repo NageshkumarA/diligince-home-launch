@@ -1,12 +1,13 @@
-
 import React from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
+import { useRequirementDraft } from "@/hooks/useRequirementDraft";
 import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { Package, User, Wrench, Truck, Edit, File } from "lucide-react";
 import { StepType } from "@/pages/CreateRequirement";
+import { toast } from "sonner";
 
 interface PreviewStepProps {
   onNext: () => void;
@@ -19,7 +20,20 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
   onPrevious,
   onEdit 
 }) => {
-  const { formData } = useRequirement();
+  const { formData, draftId } = useRequirement();
+  const { forceSave } = useRequirementDraft();
+
+  const handleNext = async () => {
+    try {
+      if (draftId) {
+        await forceSave(formData);
+      }
+      onNext();
+    } catch (error) {
+      console.error("Failed to save:", error);
+      toast.error("Failed to save. Please try again.");
+    }
+  };
 
   const getCategoryIcon = () => {
     switch (formData.category) {
@@ -300,7 +314,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
         >
           Previous
         </Button>
-        <Button onClick={onNext}>
+        <Button onClick={handleNext}>
           Next
         </Button>
       </div>

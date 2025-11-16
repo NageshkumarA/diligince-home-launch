@@ -135,14 +135,7 @@ const getDefaultFormData = (): RequirementFormData => ({
 export const RequirementProvider = ({ children }: { children: React.ReactNode }) => {
   const [formData, setFormData] = useState<RequirementFormData>(getDefaultFormData());
   const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
-  const { draftId, isSaving, lastSaved, initializeDraft, saveDraft, forceSave } = useRequirementDraft();
-
-  // Auto-save on form data changes
-  useEffect(() => {
-    if (draftId) {
-      saveDraft(formData);
-    }
-  }, [formData, draftId, saveDraft]);
+  const { draftId, isSaving, lastSaved, initializeDraft, forceSave } = useRequirementDraft();
 
   const updateFormData = useCallback((data: Partial<RequirementFormData>) => {
     console.log("Updating form data:", data);
