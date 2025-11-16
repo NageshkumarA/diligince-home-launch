@@ -69,7 +69,18 @@ class RequirementListService {
       
       // Transform API response to match frontend expectations
       // Handle both nested and flat response structures
-      const requirements = response.data?.pending || response.data?.requirements || response.data || [];
+      let requirements: any[] = [];
+      
+      if (response.data) {
+        if (Array.isArray(response.data.pending)) {
+          requirements = response.data.pending;
+        } else if (Array.isArray(response.data.requirements)) {
+          requirements = response.data.requirements;
+        } else if (Array.isArray(response.data)) {
+          requirements = response.data;
+        }
+      }
+      
       const paginationData = response.data?.pagination || response.pagination || {};
       
       return {
@@ -90,7 +101,23 @@ class RequirementListService {
       };
     } catch (error) {
       console.error("Failed to get pending requirements:", error);
-      throw error;
+      // Return empty data structure on error instead of throwing
+      return {
+        success: false,
+        data: {
+          requirements: [],
+          pagination: {
+            currentPage: 1,
+            pageSize: 10,
+            totalItems: 0,
+            totalPages: 0,
+          },
+          filters: {
+            applied: {},
+            available: {}
+          }
+        }
+      };
     }
   }
 
@@ -101,9 +128,29 @@ class RequirementListService {
       const url = requirementListsRoutes.approved.list(params);
       const response = await apiService.get<any>(url);
       
+      // Debug logging in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Approved API Response:', {
+          hasData: !!response.data,
+          dataKeys: response.data ? Object.keys(response.data) : [],
+          dataType: Array.isArray(response.data) ? 'array' : typeof response.data,
+        });
+      }
+      
       // Transform API response to match frontend expectations
       // Handle both nested and flat response structures
-      const requirements = response.data?.approved || response.data?.requirements || response.data || [];
+      let requirements: any[] = [];
+      
+      if (response.data) {
+        if (Array.isArray(response.data.approved)) {
+          requirements = response.data.approved;
+        } else if (Array.isArray(response.data.requirements)) {
+          requirements = response.data.requirements;
+        } else if (Array.isArray(response.data)) {
+          requirements = response.data;
+        }
+      }
+      
       const paginationData = response.data?.pagination || response.pagination || {};
       
       return {
@@ -124,7 +171,23 @@ class RequirementListService {
       };
     } catch (error) {
       console.error("Failed to get approved requirements:", error);
-      throw error;
+      // Return empty data structure on error instead of throwing
+      return {
+        success: false,
+        data: {
+          requirements: [],
+          pagination: {
+            currentPage: 1,
+            pageSize: 10,
+            totalItems: 0,
+            totalPages: 0,
+          },
+          filters: {
+            applied: {},
+            available: {}
+          }
+        }
+      };
     }
   }
 
@@ -150,7 +213,18 @@ class RequirementListService {
       
       // Transform API response to match frontend expectations
       // Handle both nested and flat response structures
-      const requirements = response.data?.published || response.data?.requirements || response.data || [];
+      let requirements: any[] = [];
+      
+      if (response.data) {
+        if (Array.isArray(response.data.published)) {
+          requirements = response.data.published;
+        } else if (Array.isArray(response.data.requirements)) {
+          requirements = response.data.requirements;
+        } else if (Array.isArray(response.data)) {
+          requirements = response.data;
+        }
+      }
+      
       const paginationData = response.data?.pagination || response.pagination || {};
       
       return {
@@ -171,7 +245,23 @@ class RequirementListService {
       };
     } catch (error) {
       console.error("Failed to get published requirements:", error);
-      throw error;
+      // Return empty data structure on error instead of throwing
+      return {
+        success: false,
+        data: {
+          requirements: [],
+          pagination: {
+            currentPage: 1,
+            pageSize: 10,
+            totalItems: 0,
+            totalPages: 0,
+          },
+          filters: {
+            applied: {},
+            available: {}
+          }
+        }
+      };
     }
   }
 
@@ -184,7 +274,18 @@ class RequirementListService {
       
       // Transform API response to match frontend expectations
       // Handle both nested and flat response structures
-      const requirements = response.data?.archived || response.data?.requirements || response.data || [];
+      let requirements: any[] = [];
+      
+      if (response.data) {
+        if (Array.isArray(response.data.archived)) {
+          requirements = response.data.archived;
+        } else if (Array.isArray(response.data.requirements)) {
+          requirements = response.data.requirements;
+        } else if (Array.isArray(response.data)) {
+          requirements = response.data;
+        }
+      }
+      
       const paginationData = response.data?.pagination || response.pagination || {};
       
       return {
@@ -205,7 +306,23 @@ class RequirementListService {
       };
     } catch (error) {
       console.error("Failed to get archived requirements:", error);
-      throw error;
+      // Return empty data structure on error instead of throwing
+      return {
+        success: false,
+        data: {
+          requirements: [],
+          pagination: {
+            currentPage: 1,
+            pageSize: 10,
+            totalItems: 0,
+            totalPages: 0,
+          },
+          filters: {
+            applied: {},
+            available: {}
+          }
+        }
+      };
     }
   }
 
