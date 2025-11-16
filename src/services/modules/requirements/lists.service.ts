@@ -68,15 +68,19 @@ class RequirementListService {
       const response = await apiService.get<any>(url);
       
       // Transform API response to match frontend expectations
+      // Handle both nested and flat response structures
+      const requirements = response.data?.pending || response.data?.requirements || response.data || [];
+      const paginationData = response.data?.pagination || response.pagination || {};
+      
       return {
         success: response.success,
         data: {
-          requirements: response.data || [],
+          requirements,
           pagination: {
-            currentPage: response.pagination?.page || 1,
-            pageSize: response.pagination?.limit || 10,
-            totalItems: response.pagination?.total || 0,
-            totalPages: response.pagination?.totalPages || 0,
+            currentPage: paginationData.page || 1,
+            pageSize: paginationData.limit || 10,
+            totalItems: paginationData.total || 0,
+            totalPages: paginationData.totalPages || 0,
           },
           filters: {
             applied: {},
@@ -98,15 +102,19 @@ class RequirementListService {
       const response = await apiService.get<any>(url);
       
       // Transform API response to match frontend expectations
+      // Handle both nested and flat response structures
+      const requirements = response.data?.approved || response.data?.requirements || response.data || [];
+      const paginationData = response.data?.pagination || response.pagination || {};
+      
       return {
         success: response.success,
         data: {
-          requirements: response.data || [],
+          requirements,
           pagination: {
-            currentPage: response.pagination?.page || 1,
-            pageSize: response.pagination?.limit || 10,
-            totalItems: response.pagination?.total || 0,
-            totalPages: response.pagination?.totalPages || 0,
+            currentPage: paginationData.page || 1,
+            pageSize: paginationData.limit || 10,
+            totalItems: paginationData.total || 0,
+            totalPages: paginationData.totalPages || 0,
           },
           filters: {
             applied: {},
@@ -141,15 +149,19 @@ class RequirementListService {
       const response = await apiService.get<any>(url);
       
       // Transform API response to match frontend expectations
+      // Handle both nested and flat response structures
+      const requirements = response.data?.published || response.data?.requirements || response.data || [];
+      const paginationData = response.data?.pagination || response.pagination || {};
+      
       return {
         success: response.success,
         data: {
-          requirements: response.data || [],
+          requirements,
           pagination: {
-            currentPage: response.pagination?.page || 1,
-            pageSize: response.pagination?.limit || 10,
-            totalItems: response.pagination?.total || 0,
-            totalPages: response.pagination?.totalPages || 0,
+            currentPage: paginationData.page || 1,
+            pageSize: paginationData.limit || 10,
+            totalItems: paginationData.total || 0,
+            totalPages: paginationData.totalPages || 0,
           },
           filters: {
             applied: {},
@@ -171,15 +183,19 @@ class RequirementListService {
       const response = await apiService.get<any>(url);
       
       // Transform API response to match frontend expectations
+      // Handle both nested and flat response structures
+      const requirements = response.data?.archived || response.data?.requirements || response.data || [];
+      const paginationData = response.data?.pagination || response.pagination || {};
+      
       return {
         success: response.success,
         data: {
-          requirements: response.data || [],
+          requirements,
           pagination: {
-            currentPage: response.pagination?.page || 1,
-            pageSize: response.pagination?.limit || 10,
-            totalItems: response.pagination?.total || 0,
-            totalPages: response.pagination?.totalPages || 0,
+            currentPage: paginationData.page || 1,
+            pageSize: paginationData.limit || 10,
+            totalItems: paginationData.total || 0,
+            totalPages: paginationData.totalPages || 0,
           },
           filters: {
             applied: {},
