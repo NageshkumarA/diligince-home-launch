@@ -15,6 +15,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
+import { useRequirementDraft } from "@/hooks/useRequirementDraft";
 
 // Lazy load step components for better performance
 const EnhancedBasicInfoStep = lazy(() => import("@/components/requirement/steps/EnhancedBasicInfoStep"));
@@ -81,7 +82,8 @@ const CreateRequirement = () => {
   const [currentStep, setCurrentStep] = useState<StepType>(1);
   const [isInitializing, setIsInitializing] = useState(true);
   const navigate = useNavigate();
-  const { isSaving, lastSaved, draftId } = useRequirement();
+  const { isSaving, lastSaved, draftId, formData } = useRequirement();
+  const { initializeDraft, saveDraft } = useRequirementDraft();
 
   // Initialize or resume draft on mount
   useEffect(() => {
@@ -126,13 +128,39 @@ const CreateRequirement = () => {
     localStorage.setItem('requirement-current-step', currentStep.toString());
   }, [currentStep]);
 
-  const handleNext = useCallback(() => {
+  // Ensure draft is initialized when starting a new requirement
+  useEffect(() => {
+    const ensureDraftOnFormStart = async () => {
+      if (currentStep === 1 && !draftId && !isInitializing) {
+        console.log("Starting new requirement, initializing draft...");
+        try {
+          await initializeDraft(formData);
+        } catch (error) {
+          console.error("Failed to initialize draft:", error);
+        }
+      }
+    };
+    
+    ensureDraftOnFormStart();
+  }, [currentStep, draftId, isInitializing, formData, initializeDraft]);
+
+  const handleNext = useCallback(async () => {
     if (currentStep < 7) {
-      const nextStep = (currentStep + 1) as StepType;
-      setCurrentStep(nextStep);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Force save current step data before moving to next step
+      try {
+        await saveDraft(formData);
+        const nextStep = (currentStep + 1) as StepType;
+        setCurrentStep(nextStep);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (error) {
+        console.error("Failed to save draft:", error);
+        // Still allow navigation even if save fails (data is in localStorage)
+        const nextStep = (currentStep + 1) as StepType;
+        setCurrentStep(nextStep);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
-  }, [currentStep]);
+  }, [currentStep, formData, saveDraft]);
 
   const handlePrevious = useCallback(() => {
     if (currentStep > 1) {

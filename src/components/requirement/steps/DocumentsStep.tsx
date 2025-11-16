@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { useRequirementDraft } from "@/hooks/useRequirementDraft";
 import { steps } from "@/components/requirement/RequirementStepIndicator";
@@ -32,12 +32,30 @@ interface DocumentsStepProps {
 
 const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => {
   const { formData, updateFormData, draftId } = useRequirement();
-  const { uploadDocs, deleteDoc } = useRequirementDraft();
+  const { uploadDocs, deleteDoc, initializeDraft } = useRequirementDraft();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [newDocumentType, setNewDocumentType] = useState<"specification" | "drawing" | "reference" | "compliance" | "other">("specification");
+
+  // Auto-initialize draft if not available
+  useEffect(() => {
+    const ensureDraftExists = async () => {
+      if (!draftId) {
+        console.log("No draft ID found, initializing draft...");
+        try {
+          await initializeDraft(formData);
+          toast.success("Draft initialized for document uploads");
+        } catch (error) {
+          console.error("Failed to initialize draft:", error);
+          toast.error("Failed to initialize draft. Document uploads may not work.");
+        }
+      }
+    };
+    
+    ensureDraftExists();
+  }, [draftId, formData, initializeDraft]);
 
   const handleNext = () => {
     onNext();
@@ -73,7 +91,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
 
   const handleFiles = async (files: FileList) => {
     if (!draftId) {
-      toast.error("No draft available. Please start from Step 1.");
+      toast.error("Unable to upload. Please save your requirement first.");
       return;
     }
 

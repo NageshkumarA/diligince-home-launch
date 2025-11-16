@@ -21,8 +21,25 @@ class RequirementListService {
   async getDrafts(params?: ListQueryParams): Promise<RequirementListResponse> {
     try {
       const url = requirementListsRoutes.drafts.list(params);
-      const response = await apiService.get<RequirementListResponse>(url);
-      return response;
+      const response = await apiService.get<any>(url);
+      
+      // Transform API response to match frontend expectations
+      return {
+        success: response.success,
+        data: {
+          requirements: response.data || [],
+          pagination: {
+            currentPage: response.pagination?.page || 1,
+            pageSize: response.pagination?.limit || 10,
+            totalItems: response.pagination?.total || 0,
+            totalPages: response.pagination?.totalPages || 0,
+          },
+          filters: {
+            applied: {},
+            available: {}
+          }
+        }
+      };
     } catch (error) {
       console.error("Failed to get drafts:", error);
       throw error;
@@ -47,8 +64,25 @@ class RequirementListService {
   async getPending(params?: ListQueryParams): Promise<RequirementListResponse> {
     try {
       const url = requirementListsRoutes.pending.list(params);
-      const response = await apiService.get<RequirementListResponse>(url);
-      return response;
+      const response = await apiService.get<any>(url);
+      
+      // Transform API response to match frontend expectations
+      return {
+        success: response.success,
+        data: {
+          requirements: response.data || [],
+          pagination: {
+            currentPage: response.pagination?.page || 1,
+            pageSize: response.pagination?.limit || 10,
+            totalItems: response.pagination?.total || 0,
+            totalPages: response.pagination?.totalPages || 0,
+          },
+          filters: {
+            applied: {},
+            available: {}
+          }
+        }
+      };
     } catch (error) {
       console.error("Failed to get pending requirements:", error);
       throw error;
@@ -60,8 +94,25 @@ class RequirementListService {
   async getApproved(params?: ListQueryParams): Promise<RequirementListResponse> {
     try {
       const url = requirementListsRoutes.approved.list(params);
-      const response = await apiService.get<RequirementListResponse>(url);
-      return response;
+      const response = await apiService.get<any>(url);
+      
+      // Transform API response to match frontend expectations
+      return {
+        success: response.success,
+        data: {
+          requirements: response.data || [],
+          pagination: {
+            currentPage: response.pagination?.page || 1,
+            pageSize: response.pagination?.limit || 10,
+            totalItems: response.pagination?.total || 0,
+            totalPages: response.pagination?.totalPages || 0,
+          },
+          filters: {
+            applied: {},
+            available: {}
+          }
+        }
+      };
     } catch (error) {
       console.error("Failed to get approved requirements:", error);
       throw error;
@@ -86,8 +137,25 @@ class RequirementListService {
   async getPublished(params?: ListQueryParams): Promise<RequirementListResponse> {
     try {
       const url = requirementListsRoutes.published.list(params);
-      const response = await apiService.get<RequirementListResponse>(url);
-      return response;
+      const response = await apiService.get<any>(url);
+      
+      // Transform API response to match frontend expectations
+      return {
+        success: response.success,
+        data: {
+          requirements: response.data || [],
+          pagination: {
+            currentPage: response.pagination?.page || 1,
+            pageSize: response.pagination?.limit || 10,
+            totalItems: response.pagination?.total || 0,
+            totalPages: response.pagination?.totalPages || 0,
+          },
+          filters: {
+            applied: {},
+            available: {}
+          }
+        }
+      };
     } catch (error) {
       console.error("Failed to get published requirements:", error);
       throw error;
@@ -99,8 +167,25 @@ class RequirementListService {
   async getArchived(params?: ListQueryParams): Promise<RequirementListResponse> {
     try {
       const url = requirementListsRoutes.archived.list(params);
-      const response = await apiService.get<RequirementListResponse>(url);
-      return response;
+      const response = await apiService.get<any>(url);
+      
+      // Transform API response to match frontend expectations
+      return {
+        success: response.success,
+        data: {
+          requirements: response.data || [],
+          pagination: {
+            currentPage: response.pagination?.page || 1,
+            pageSize: response.pagination?.limit || 10,
+            totalItems: response.pagination?.total || 0,
+            totalPages: response.pagination?.totalPages || 0,
+          },
+          filters: {
+            applied: {},
+            available: {}
+          }
+        }
+      };
     } catch (error) {
       console.error("Failed to get archived requirements:", error);
       throw error;
