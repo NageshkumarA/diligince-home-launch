@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
+import { useRequirementDraft } from "@/hooks/useRequirementDraft";
 import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +34,7 @@ interface DetailsStepProps {
 
 const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
   const { formData, updateFormData, validateStep, stepErrors, draftId } = useRequirement();
+  const { forceSave } = useRequirementDraft();
   const [isValidating, setIsValidating] = useState(false);
 
   const handleNext = async () => {
@@ -42,31 +44,37 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
       return;
     }
 
-    // Server-side validation if draft exists
-    if (draftId) {
-      try {
-        setIsValidating(true);
-        const response = await requirementDraftService.validateStep(
-          draftId,
-          2,
-          formData
-        );
+    if (!draftId) {
+      toast.error("No draft found. Please go back to Step 1.");
+      return;
+    }
 
-        if (response.data.isValid) {
-          onNext();
-        } else {
-          response.data.errors?.forEach(error => {
-            toast.error(`${error.field}: ${error.message}`);
-          });
-        }
-      } catch (error: any) {
-        console.error("Validation failed:", error);
-        toast.error(error.message || "Validation failed");
-      } finally {
-        setIsValidating(false);
+    try {
+      setIsValidating(true);
+
+      // Save draft first
+      await forceSave(formData);
+
+      // Server-side validation
+      const response = await requirementDraftService.validateStep(
+        draftId,
+        2,
+        formData
+      );
+
+      if (response.data.isValid) {
+        toast.success("Progress saved");
+        onNext();
+      } else {
+        response.data.errors?.forEach(error => {
+          toast.error(`${error.field}: ${error.message}`);
+        });
       }
-    } else {
-      onNext();
+    } catch (error: any) {
+      console.error("Failed to save:", error);
+      toast.error(error.message || "Failed to save progress");
+    } finally {
+      setIsValidating(false);
     }
   };
 

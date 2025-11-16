@@ -11,8 +11,8 @@ interface DocumentsStepProps {
 }
 
 const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => {
-  const { formData, updateFormData } = useRequirement();
-  const { uploadDocs, deleteDoc, draftId, initializeDraft } = useRequirementDraft();
+  const { formData, updateFormData, draftId } = useRequirement();
+  const { uploadDocs, deleteDoc, initializeDraft, forceSave } = useRequirementDraft();
   const [isUploading, setIsUploading] = useState(false);
 
   // Ensure draft exists for document uploads
@@ -79,6 +79,19 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
     } catch (error: any) {
       console.error("Delete failed:", error);
       toast.error(error.message || "Failed to delete document");
+    }
+  };
+
+  const handleContinue = async () => {
+    try {
+      if (draftId) {
+        await forceSave(formData);
+      }
+      onNext();
+    } catch (error) {
+      console.error("Failed to save:", error);
+      // Don't block progression for document step
+      onNext();
     }
   };
 
