@@ -141,7 +141,7 @@ class RequirementDraftService {
   ): Promise<ValidationResponse> {
     try {
       const response = await apiService.post<ValidationResponse, { step: number; data: Partial<RequirementFormData> }>(
-        draftsRoutes.validate(draftId),
+        draftsRoutes.update(draftId),
         { step, data }
       );
       console.log("Step validation result:", response);

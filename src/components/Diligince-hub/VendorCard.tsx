@@ -50,15 +50,6 @@ export const VendorCard: React.FC<VendorCardProps> = ({ vendor }) => {
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       
-      {/* Verified Badge */}
-      {vendor.isVerified && (
-        <div className="absolute top-4 right-4 z-10">
-          <div className="p-2 rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
-            <CheckCircle2 className="w-4 h-4 text-white" />
-          </div>
-        </div>
-      )}
-
       <div className="relative p-6 space-y-5">
         {/* Header */}
         <div className="flex items-start gap-4">

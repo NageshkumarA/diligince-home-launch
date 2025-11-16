@@ -115,10 +115,10 @@ const FindProfessionals: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-accent/5 border-b">
+      <div className="relative overflow-hidden bg-[#fff] from-primary/5 via-primary/10 to-accent/5 border-b">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="relative max-w-7xl mx-auto px-6 py-16">
-          <div className="flex items-start gap-4 mb-6">
+        <div className="relative max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-start gap-4 mb-2">
             <div className="p-3 rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
               <UserCheck className="w-8 h-8 text-primary-foreground" />
             </div>
@@ -132,31 +132,6 @@ const FindProfessionals: React.FC = () => {
               <p className="text-lg text-muted-foreground max-w-2xl">
                 Connect with verified industry experts and specialists for your projects
               </p>
-            </div>
-          </div>
-
-          {/* Stats Bar */}
-          <div className="grid grid-cols-3 gap-4 mt-8">
-            <div className="bg-background/50 backdrop-blur-sm rounded-xl p-4 border">
-              <div className="flex items-center gap-2 text-primary mb-1">
-                <TrendingUp className="w-4 h-4" />
-                <span className="text-sm font-medium">Success Rate</span>
-              </div>
-              <p className="text-2xl font-bold">98%</p>
-            </div>
-            <div className="bg-background/50 backdrop-blur-sm rounded-xl p-4 border">
-              <div className="flex items-center gap-2 text-primary mb-1">
-                <Award className="w-4 h-4" />
-                <span className="text-sm font-medium">Verified Pros</span>
-              </div>
-              <p className="text-2xl font-bold">500+</p>
-            </div>
-            <div className="bg-background/50 backdrop-blur-sm rounded-xl p-4 border">
-              <div className="flex items-center gap-2 text-primary mb-1">
-                <UserCheck className="w-4 h-4" />
-                <span className="text-sm font-medium">Projects Done</span>
-              </div>
-              <p className="text-2xl font-bold">2.5K+</p>
             </div>
           </div>
         </div>

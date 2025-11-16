@@ -284,7 +284,7 @@ const CreateRequirement = () => {
               />
 
               {/* Main Content */}
-              <div className="flex-1 container mx-auto px-4 py-6 md:py-8 md:px-6 md:pt-20">
+              <div className="flex-1 container mx-auto px-4 py-6 md:py-8 md:px-6 md:pt-10">
                 {/* Desktop Header */}
                 <div className="hidden md:block mb-8">
                   <div className="flex items-center justify-between">

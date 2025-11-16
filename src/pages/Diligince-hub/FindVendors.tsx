@@ -102,10 +102,10 @@ const FindVendors: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-accent/5 border-b">
+      <div className="relative overflow-hidden bg-[#fff] from-primary/5 via-primary/10 to-accent/5 border-b">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="relative max-w-7xl mx-auto px-6 py-16">
-          <div className="flex items-start gap-4 mb-6">
+        <div className="relative max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-start gap-4 mb-2">
             <div className="p-3 rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
               <Building className="w-8 h-8 text-primary-foreground" />
             </div>
@@ -121,31 +121,7 @@ const FindVendors: React.FC = () => {
               </p>
             </div>
           </div>
-
-          {/* Stats Bar */}
-          <div className="grid grid-cols-3 gap-4 mt-8">
-            <div className="bg-background/50 backdrop-blur-sm rounded-xl p-4 border">
-              <div className="flex items-center gap-2 text-primary mb-1">
-                <TrendingUp className="w-4 h-4" />
-                <span className="text-sm font-medium">Satisfaction</span>
-              </div>
-              <p className="text-2xl font-bold">95%</p>
-            </div>
-            <div className="bg-background/50 backdrop-blur-sm rounded-xl p-4 border">
-              <div className="flex items-center gap-2 text-primary mb-1">
-                <Award className="w-4 h-4" />
-                <span className="text-sm font-medium">Verified</span>
-              </div>
-              <p className="text-2xl font-bold">800+</p>
-            </div>
-            <div className="bg-background/50 backdrop-blur-sm rounded-xl p-4 border">
-              <div className="flex items-center gap-2 text-primary mb-1">
-                <Building className="w-4 h-4" />
-                <span className="text-sm font-medium">Active Orders</span>
-              </div>
-              <p className="text-2xl font-bold">5K+</p>
-            </div>
-          </div>
+          
         </div>
       </div>
 

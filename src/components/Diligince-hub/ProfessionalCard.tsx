@@ -49,15 +49,6 @@ export const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional
     <Card className="group relative overflow-hidden border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-xl bg-gradient-to-br from-card to-card/80">
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      
-      {/* Verified Badge */}
-      {professional.isVerified && (
-        <div className="absolute top-4 right-4 z-10">
-          <div className="p-2 rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
-            <CheckCircle2 className="w-4 h-4 text-white" />
-          </div>
-        </div>
-      )}
 
       <div className="relative p-6 space-y-5">
         {/* Header */}

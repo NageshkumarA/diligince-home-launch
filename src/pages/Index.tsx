@@ -192,9 +192,9 @@ const Index: React.FC = () => {
                   <Link to="/about" className="text-[#333333] hover:text-[#153b60] transition-colors font-medium">
                     About
                   </Link>
-                  {/* <Link to="/pricing" className="text-[#333333] hover:text-[#153b60] transition-colors font-medium">
+                  <Link to="/pricing" className="text-[#333333] hover:text-[#153b60] transition-colors font-medium">
                     Pricing
-                  </Link> */}
+                  </Link>
                   <Link to="/contact" className="text-[#333333] hover:text-[#153b60] transition-colors font-medium">
                     Contact
                   </Link>
