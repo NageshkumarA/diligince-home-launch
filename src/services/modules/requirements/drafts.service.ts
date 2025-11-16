@@ -69,7 +69,7 @@ class RequirementDraftService {
   ): Promise<DraftResponse> {
     return this.retryRequest(async () => {
       try {
-        const response = await apiService.put<DraftResponse, Partial<RequirementFormData>>(
+        const response = await apiService.post<DraftResponse, Partial<RequirementFormData>>(
           draftsRoutes.update(draftId),
           data
         );

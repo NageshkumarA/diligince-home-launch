@@ -61,6 +61,8 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
         setIsValidating(false);
       }
     } else {
+      saveAsDraft();
+
       // No draft yet, proceed with client-side validation
       onNext();
     }
