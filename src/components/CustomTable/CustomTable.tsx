@@ -21,17 +21,21 @@ const CustomTable: React.FC<TableProps> = ({
   globalSearchPlaceholder,
   className = '',
 }) => {
+  // Ensure data is always an array
+  const safeData = Array.isArray(data) ? data : [];
+  
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [filters, setFilters] = useState<FilterConfig>({});
   const [globalSearch, setGlobalSearch] = useState('');
-  const [searchedData, setSearchedData] = useState(data);
+  const [searchedData, setSearchedData] = useState(safeData);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(pagination.currentPage || 1);
   const [pageSize, setPageSize] = useState(pagination.pageSize || 10);
 
   // Update searched data when data prop changes
   useEffect(() => {
-    setSearchedData(data);
+    const safe = Array.isArray(data) ? data : [];
+    setSearchedData(safe);
   }, [data]);
 
   // Filter and search data

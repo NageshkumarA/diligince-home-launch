@@ -36,10 +36,18 @@ const RequirementsDrafts = () => {
         filters,
       });
       
-      setData(response.data.requirements);
+      // Defensive check to ensure requirements is an array
+      const requirements = Array.isArray(response.data?.requirements) 
+        ? response.data.requirements 
+        : [];
+      
+      setData(requirements);
       setPagination(response.data.pagination);
     } catch (error: any) {
+      console.error("Failed to fetch drafts:", error);
       toast.error(error.message || "Failed to load drafts");
+      // Set empty array on error to prevent crash
+      setData([]);
     } finally {
       setLoading(false);
     }
