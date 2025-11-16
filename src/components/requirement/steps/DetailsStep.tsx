@@ -309,7 +309,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="productSpecifications" className="text-base font-medium text-gray-700">
-                Product Specifications <span className="text-red-500">*</span>
+                Product Specifications <span className="text-red-600 font-bold text-lg" title="Required field">*</span>
               </Label>
               <Textarea
                 id="productSpecifications"
@@ -317,15 +317,21 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
                 placeholder="Detailed specifications of the required product"
                 value={formData.productSpecifications || ""}
                 onChange={(e) => updateFormData({ productSpecifications: e.target.value })}
+                className={cn(
+                  stepErrors.productSpecifications && "border-red-500 focus-visible:ring-red-500"
+                )}
+                aria-required="true"
               />
               {stepErrors.productSpecifications && (
-                <p className="text-sm text-red-500">{stepErrors.productSpecifications}</p>
+                <p className="text-sm text-red-500 flex items-center gap-1">
+                  <span className="font-medium">!</span> {stepErrors.productSpecifications}
+                </p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label className="text-base font-medium text-gray-700">
-                Technical Standards <span className="text-red-500">*</span>
+                Technical Standards <span className="text-red-600 font-bold text-lg" title="Required field">*</span>
               </Label>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                 {technicalStandardsOptions.map((standard) => (
@@ -361,7 +367,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="quantity" className="text-base font-medium text-gray-700">
-                  Quantity <span className="text-red-500">*</span>
+                  Quantity <span className="text-red-600 font-bold text-lg" title="Required field">*</span>
                 </Label>
                 <Input
                   id="quantity"
@@ -369,9 +375,15 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
                   placeholder="Enter quantity required"
                   value={formData.quantity || ""}
                   onChange={(e) => updateFormData({ quantity: parseInt(e.target.value) || 0 })}
+                  className={cn(
+                    stepErrors.quantity && "border-red-500 focus-visible:ring-red-500"
+                  )}
+                  aria-required="true"
                 />
                 {stepErrors.quantity && (
-                  <p className="text-sm text-red-500">{stepErrors.quantity}</p>
+                  <p className="text-sm text-red-500 flex items-center gap-1">
+                    <span className="font-medium">!</span> {stepErrors.quantity}
+                  </p>
                 )}
               </div>
               
