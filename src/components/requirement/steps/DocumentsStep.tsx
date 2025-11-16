@@ -1,29 +1,9 @@
-
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { useRequirementDraft } from "@/hooks/useRequirementDraft";
-import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { 
-  File, 
-  X, 
-  Upload, 
-  FileText, 
-  Image as ImageIcon, 
-  FileArchive,
-  Loader2
-} from "lucide-react";
 import { toast } from "sonner";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { RequirementDocumentUploadField } from "@/components/requirement/RequirementDocumentUploadField";
 
 interface DocumentsStepProps {
   onNext: () => void;
