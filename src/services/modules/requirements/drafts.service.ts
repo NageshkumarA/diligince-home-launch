@@ -140,9 +140,15 @@ class RequirementDraftService {
     data: Partial<RequirementFormData>
   ): Promise<ValidationResponse> {
     try {
-      const response = await apiService.post<ValidationResponse, { step: number; data: Partial<RequirementFormData> }>(
+      // Flatten the payload: backend expects { currentStep, ...formData } not { step, data: {...} }
+      const payload = {
+        currentStep: step,
+        ...data
+      };
+      
+      const response = await apiService.post<ValidationResponse, any>(
         draftsRoutes.update(draftId),
-        { step, data }
+        payload
       );
       console.log("Step validation result:", response);
       return response;

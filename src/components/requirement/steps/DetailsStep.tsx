@@ -25,7 +25,6 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import requirementDraftService from "@/services/requirement-draft.service";
 
 interface DetailsStepProps {
   onNext: () => void;
@@ -52,24 +51,11 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
     try {
       setIsValidating(true);
 
-      // Save draft first
+      // Save draft
       await forceSave(formData);
-
-      // Server-side validation
-      const response = await requirementDraftService.validateStep(
-        draftId,
-        2,
-        formData
-      );
-
-      if (response.data.isValid) {
-        toast.success("Progress saved");
-        onNext();
-      } else {
-        response.data.errors?.forEach(error => {
-          toast.error(`${error.field}: ${error.message}`);
-        });
-      }
+      toast.success("Progress saved");
+      
+      onNext();
     } catch (error: any) {
       console.error("Failed to save:", error);
       toast.error(error.message || "Failed to save progress");
