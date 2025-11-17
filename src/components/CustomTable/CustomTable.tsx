@@ -266,7 +266,7 @@ const CustomTable: React.FC<TableProps> = ({
                   <tr
                     key={index}
                     onClick={() => onRowClick?.(row)}
-                    className={`hover:bg-gray-50 transition-colors duration-200 ${onRowClick ? 'cursor-pointer' : ''
+                    className={`hover:bg-blue-50/50 transition-colors duration-200 ${onRowClick ? 'cursor-pointer' : ''
                       }`}
                   >
                     {selectable && (

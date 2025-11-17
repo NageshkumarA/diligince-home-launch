@@ -5,7 +5,7 @@ import { ColumnConfig, FilterConfig } from "@/types/table";
 import requirementListService from "@/services/requirement-list.service";
 import { RequirementListItem } from "@/types/requirement-list";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const RequirementsDrafts = () => {
@@ -63,7 +63,11 @@ const RequirementsDrafts = () => {
       label: "Requirement ID",
       isSortable: true,
       isSearchable: true,
-      action: (row) => navigate(`/dashboard/requirements/${row.id}`),
+      render: (value, row) => (
+        <span className="font-mono text-blue-600 font-semibold">
+          {value || row.draftId || 'N/A'}
+        </span>
+      ),
       width: "150px",
     },
     {
@@ -105,6 +109,23 @@ const RequirementsDrafts = () => {
       name: "lastModified",
       label: "Last Modified",
       isSortable: true,
+    },
+    {
+      name: "actions",
+      label: "Actions",
+      render: (value, row) => (
+        <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+          <Button 
+            size="sm" 
+            variant="outline"
+            onClick={() => navigate(`/create-requirement?draftId=${row.draftId || row.id}`)}
+          >
+            <Edit className="h-4 w-4 mr-1" />
+            Edit
+          </Button>
+        </div>
+      ),
+      width: "120px",
     },
   ];
 
@@ -224,6 +245,7 @@ const RequirementsDrafts = () => {
       <CustomTable
         columns={columns}
         data={data}
+        onRowClick={(row) => navigate(`/dashboard/requirements/${row.id || row.draftId}`)}
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{
