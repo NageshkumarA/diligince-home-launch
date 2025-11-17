@@ -257,12 +257,13 @@ const RequirementDetails = () => {
     }
   };
 
-  const completedCompliance = requirement.complianceChecklist.filter(
+  // Safe compliance calculation with defensive checks
+  const completedCompliance = (requirement.complianceChecklist || []).filter(
     (item) => item.completed
   ).length;
-  const compliancePercentage = Math.round(
-    (completedCompliance / requirement.complianceChecklist.length) * 100
-  );
+  const compliancePercentage = requirement.complianceChecklist?.length 
+    ? Math.round((completedCompliance / requirement.complianceChecklist.length) * 100)
+    : 0;
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -286,8 +287,19 @@ const RequirementDetails = () => {
               <Button variant="outline" asChild>
                 <Link to={`/create-requirement?edit=${requirement.id}`}>
                   <Edit className="h-4 w-4 mr-2" />
-                  Edit Requirement
+                  Edit Draft
                 </Link>
+              </Button>
+            )}
+            {requirement.status === "published" && (
+              <Button variant="destructive">
+                Revoke Publication
+              </Button>
+            )}
+            {["published", "completed"].includes(requirement.status) && requirement.status !== "draft" && (
+              <Button variant="outline" disabled title="Published requirements cannot be edited">
+                <Edit className="h-4 w-4 mr-2" />
+                Edit (Locked)
               </Button>
             )}
             <Button variant="outline" asChild>
@@ -351,7 +363,7 @@ const RequirementDetails = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="specifications">Specifications</TabsTrigger>
             <TabsTrigger value="compliance">Compliance</TabsTrigger>
@@ -365,6 +377,7 @@ const RequirementDetails = () => {
                 </Badge>
               )}
             </TabsTrigger>
+            <TabsTrigger value="comments">Comments</TabsTrigger>
             <TabsTrigger value="audit">Audit Trail</TabsTrigger>
           </TabsList>
 
@@ -610,6 +623,24 @@ const RequirementDetails = () => {
                     </div>
                   </div>
                 ))}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Comments */}
+          <TabsContent value="comments" className="space-y-6">
+            {/* Comments are disabled for now - will be enabled when backend is ready */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Comments</CardTitle>
+                <CardDescription>
+                  Discussion and feedback on this requirement
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground text-center py-8">
+                  Comments feature will be enabled when backend integration is complete.
+                </p>
               </CardContent>
             </Card>
           </TabsContent>

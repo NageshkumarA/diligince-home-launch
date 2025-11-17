@@ -62,7 +62,11 @@ const RequirementsPending = () => {
       label: "Requirement ID",
       isSortable: true,
       isSearchable: true,
-      action: (row) => navigate(`/dashboard/requirements/${row.id}`),
+      render: (value, row) => (
+        <span className="font-mono text-blue-600 font-semibold">
+          {value || row.draftId || 'N/A'}
+        </span>
+      ),
       width: "150px",
     },
     {
@@ -185,6 +189,7 @@ const RequirementsPending = () => {
       <CustomTable
         columns={columns}
         data={data}
+        onRowClick={(row) => navigate(`/dashboard/requirements/${row.id}`)}
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{
