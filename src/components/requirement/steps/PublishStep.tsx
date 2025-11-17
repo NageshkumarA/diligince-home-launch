@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { useStakeholder } from "@/contexts/StakeholderContext";
 import { useApproval } from "@/contexts/ApprovalContext";
@@ -30,6 +31,7 @@ interface PublishStepProps {
 const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
   console.log("PublishStep rendering...");
   
+  const navigate = useNavigate();
   const { formData, updateFormData, validateStep, stepErrors, draftId } = useRequirement();
   const { publish } = useRequirementDraft();
   const stakeholderContext = useStakeholder();
@@ -207,11 +209,15 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
         termsAccepted: formData.termsAccepted!,
       });
 
-      // Display success message based on status
+      // Display success message and navigate based on status
       if (response.status === "published") {
         toast.success(`Requirement published! ${response.vendorsNotified} vendors notified.`);
+        // Navigate to success screen
+        onNext();
       } else if (response.status === "pending_approval") {
         toast.success("Requirement submitted for approval");
+        // Navigate to pending approvals page
+        navigate("/pending-approvals");
       }
       
       // Safely notify relevant stakeholders about the new requirement
@@ -222,8 +228,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext, onPrevious }) => {
         // Don't block the publish process for notification failures
       }
       
-      console.log("Publish successful, calling onNext...");
-      onNext();
+      console.log("Publish successful");
     } catch (error: any) {
       console.error("Error during publish:", error);
       

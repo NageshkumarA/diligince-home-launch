@@ -16,6 +16,8 @@ import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
 import { useRequirementDraft } from "@/hooks/useRequirementDraft";
+import { AutoSaveIndicator } from "@/components/requirement/AutoSaveIndicator";
+import { ExitDraftDialog } from "@/components/requirement/ExitDraftDialog";
 
 // Lazy load step components for better performance
 const EnhancedBasicInfoStep = lazy(() => import("@/components/requirement/steps/EnhancedBasicInfoStep"));
@@ -80,87 +82,35 @@ StepRenderer.displayName = "StepRenderer";
 
 const CreateRequirement = () => {
   const [currentStep, setCurrentStep] = useState<StepType>(1);
-  const [isInitializing, setIsInitializing] = useState(true);
+  const [showExitDialog, setShowExitDialog] = useState(false);
   const navigate = useNavigate();
-  const { isSaving, lastSaved, draftId, formData } = useRequirement();
-  const { initializeDraft, saveDraft } = useRequirementDraft();
+  const { isSaving, lastSaved, draftId } = useRequirement();
+  const { deleteDraft } = useRequirementDraft();
 
-  // Initialize or resume draft on mount
+  // Navigation protection
   useEffect(() => {
-    const initializeOrResumeDraft = async () => {
-      try {
-        setIsInitializing(true);
-        const savedDraftId = localStorage.getItem('requirement-draft-id');
-        const savedStep = localStorage.getItem('requirement-current-step');
-        
-        if (savedDraftId) {
-          const shouldResume = window.confirm(
-            "You have an unsaved draft. Would you like to resume where you left off?"
-          );
-          
-          if (shouldResume) {
-            if (savedStep) {
-              const step = parseInt(savedStep, 10);
-              if (step >= 1 && step <= 7) {
-                setCurrentStep(step as StepType);
-              }
-            }
-            toast.success("Draft resumed successfully");
-          } else {
-            localStorage.removeItem('requirement-draft-id');
-            localStorage.removeItem('requirement-draft');
-            localStorage.removeItem('requirement-current-step');
-          }
-        }
-      } catch (error) {
-        console.error("Draft initialization failed:", error);
-        toast.error("Failed to initialize draft");
-      } finally {
-        setIsInitializing(false);
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (draftId) {
+        e.preventDefault();
+        e.returnValue = '';
       }
     };
 
-    initializeOrResumeDraft();
-  }, []);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [draftId]);
 
-  // Save current step to localStorage
+  // Save current step to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('requirement-current-step', currentStep.toString());
   }, [currentStep]);
 
-  // Ensure draft is initialized when starting a new requirement
-  useEffect(() => {
-    const ensureDraftOnFormStart = async () => {
-      if (currentStep === 1 && !draftId && !isInitializing) {
-        console.log("Starting new requirement, initializing draft...");
-        try {
-          await initializeDraft(formData);
-        } catch (error) {
-          console.error("Failed to initialize draft:", error);
-        }
-      }
-    };
-    
-    ensureDraftOnFormStart();
-  }, [currentStep, draftId, isInitializing, formData, initializeDraft]);
-
-  const handleNext = useCallback(async () => {
-    if (currentStep < 7) {
-      // Force save current step data before moving to next step
-      try {
-        await saveDraft(formData);
-        const nextStep = (currentStep + 1) as StepType;
-        setCurrentStep(nextStep);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } catch (error) {
-        console.error("Failed to save draft:", error);
-        // Still allow navigation even if save fails (data is in localStorage)
-        const nextStep = (currentStep + 1) as StepType;
-        setCurrentStep(nextStep);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+  const handleNext = () => {
+    if (currentStep < 6) {
+      setCurrentStep((prev) => (prev + 1) as StepType);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [currentStep, formData, saveDraft]);
+  };
 
   const handlePrevious = useCallback(() => {
     if (currentStep > 1) {
@@ -172,8 +122,26 @@ const CreateRequirement = () => {
 
   const handleGoToStep = useCallback((step: StepType) => {
     setCurrentStep(step);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+
+  const handleDeleteDraft = async () => {
+    try {
+      if (draftId) {
+        await deleteDraft();
+        toast.success("Draft deleted successfully");
+      }
+      navigate("/industry");
+    } catch (error) {
+      console.error("Failed to delete draft:", error);
+      toast.error("Failed to delete draft");
+    }
+  };
+
+  const handleCloseExitDialog = () => {
+    setShowExitDialog(false);
+    navigate("/industry");
+  };
 
   // Swipe gestures for mobile
   const swipeHandlers = useSwipeable({
@@ -231,18 +199,6 @@ const CreateRequirement = () => {
 
   const currentStepConfig = steps.find(s => s.id === currentStep);
 
-  // Show loading while initializing
-  if (isInitializing) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Initializing requirement form...</p>
-        </div>
-      </div>
-    );
-  }
-
   // Success screen (Step 7)
   if (currentStep === 7) {
     return (
@@ -257,7 +213,7 @@ const CreateRequirement = () => {
                     localStorage.removeItem('requirement-current-step');
                   }}
                   onViewRequirement={() => navigate("/industry-requirements")} 
-                  onReturnToDashboard={handleReturnToDashboard} 
+                  onReturnToDashboard={() => navigate("/industry")} 
                 />
                 <Toaster richColors position="top-right"/>
               </div>

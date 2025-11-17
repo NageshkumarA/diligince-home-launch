@@ -32,36 +32,14 @@ interface DetailsStepProps {
 }
 
 const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
-  const { formData, updateFormData, validateStep, stepErrors, draftId } = useRequirement();
-  const { forceSave } = useRequirementDraft();
-  const [isValidating, setIsValidating] = useState(false);
+  const { formData, updateFormData, validateStep, stepErrors } = useRequirement();
 
-  const handleNext = async () => {
-    // Client-side validation first
+  const handleNext = () => {
     if (!validateStep(2)) {
       toast.error("Please fill in all required fields");
       return;
     }
-
-    if (!draftId) {
-      toast.error("No draft found. Please go back to Step 1.");
-      return;
-    }
-
-    try {
-      setIsValidating(true);
-
-      // Save draft
-      await forceSave(formData);
-      toast.success("Progress saved");
-      
-      onNext();
-    } catch (error: any) {
-      console.error("Failed to save:", error);
-      toast.error(error.message || "Failed to save progress");
-    } finally {
-      setIsValidating(false);
-    }
+    onNext();
   };
 
   const expertSpecializations = [

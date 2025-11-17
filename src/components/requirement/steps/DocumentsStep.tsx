@@ -12,25 +12,8 @@ interface DocumentsStepProps {
 
 const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => {
   const { formData, updateFormData, draftId } = useRequirement();
-  const { uploadDocs, deleteDoc, initializeDraft, forceSave } = useRequirementDraft();
+  const { uploadDocs, deleteDoc } = useRequirementDraft();
   const [isUploading, setIsUploading] = useState(false);
-
-  // Ensure draft exists for document uploads
-  useEffect(() => {
-    const ensureDraftExists = async () => {
-      if (!draftId) {
-        console.log("No draft ID found, initializing draft...");
-        try {
-          await initializeDraft(formData);
-          toast.success("Draft initialized for document uploads");
-        } catch (error) {
-          console.error("Failed to initialize draft:", error);
-          toast.error("Failed to initialize draft. Document uploads may not work.");
-        }
-      }
-    };
-    ensureDraftExists();
-  }, [draftId, formData, initializeDraft]);
 
   // Helper to get document by type
   const getDocumentByType = (type: string) => {
@@ -82,17 +65,8 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
     }
   };
 
-  const handleContinue = async () => {
-    try {
-      if (draftId) {
-        await forceSave(formData);
-      }
-      onNext();
-    } catch (error) {
-      console.error("Failed to save:", error);
-      // Don't block progression for document step
-      onNext();
-    }
+  const handleContinue = () => {
+    onNext();
   };
 
   return (

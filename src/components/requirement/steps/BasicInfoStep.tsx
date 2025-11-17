@@ -13,28 +13,14 @@ interface BasicInfoStepProps {
 }
 
 const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ onNext }) => {
-  const { formData, updateFormData, validateStep, stepErrors, draftId } = useRequirement();
-  const { initializeDraft, forceSave } = useRequirementDraft();
+  const { formData, updateFormData, validateStep, stepErrors } = useRequirement();
 
-  const handleNext = async () => {
+  const handleNext = () => {
     if (!validateStep(1)) {
       toast.error("Please fill in all required fields");
       return;
     }
-
-    try {
-      // Create draft if it doesn't exist, otherwise update it
-      if (!draftId) {
-        await initializeDraft(formData);
-        toast.success("Draft created successfully");
-      } else {
-        await forceSave(formData);
-      }
-      onNext();
-    } catch (error) {
-      console.error("Failed to save draft:", error);
-      toast.error("Failed to save. Please try again.");
-    }
+    onNext();
   };
 
   const categoryOptions = [
