@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { useRequirementDraft } from "@/hooks/useRequirementDraft";
 import { steps } from "@/components/requirement/RequirementStepIndicator";
@@ -20,19 +21,23 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
   onPrevious,
   onEdit 
 }) => {
-  const { formData, draftId } = useRequirement();
+  const { formData } = useRequirement();
   const { forceSave } = useRequirementDraft();
+  const navigate = useNavigate();
 
-  const handleNext = async () => {
+  const handleSendForApproval = async () => {
     try {
-      if (draftId) {
-        await forceSave(formData);
-      }
-      onNext();
+      // Auto-save will handle saving in background
+      onNext(); // Navigate to approval workflow step
+      toast.success("Proceeding to approval configuration");
     } catch (error) {
-      console.error("Failed to save:", error);
-      toast.error("Failed to save. Please try again.");
+      console.error("Failed to proceed:", error);
+      toast.error("Failed to proceed. Please try again.");
     }
+  };
+
+  const handleClose = () => {
+    navigate("/industry");
   };
 
   const getCategoryIcon = () => {
@@ -314,9 +319,14 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
         >
           Previous
         </Button>
-        <Button onClick={handleNext}>
-          Next
-        </Button>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={handleClose}>
+            Close
+          </Button>
+          <Button onClick={handleSendForApproval}>
+            Send for Approvals
+          </Button>
+        </div>
       </div>
     </div>
   );

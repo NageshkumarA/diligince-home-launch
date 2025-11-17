@@ -39,6 +39,7 @@ import TestPage from "@/pages/TestPage";
 import BlogArticle from "@/pages/BlogArticle";
 import StakeholderOnboarding from "@/pages/StakeholderOnboarding";
 import PendingApproval from "@/pages/PendingApproval";
+import PendingApprovals from "@/pages/PendingApprovals";
 import WorkCompletionPayment from "@/pages/WorkCompletionPayment";
 import VerificationPending from "@/pages/VerificationPending";
 import VendorSettings from "@/pages/VendorSettings";
@@ -294,6 +295,10 @@ function App() {
                               <Route
                                 path="create-requirement"
                                 element={<CreateRequirement />}
+                              />
+                              <Route
+                                path="pending-approvals"
+                                element={<PendingApprovals />}
                               />
                               <Route
                                 path="create-purchase-order"

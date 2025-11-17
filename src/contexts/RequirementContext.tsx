@@ -148,32 +148,67 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
     setStepErrors({});
   }, []);
 
+  // Check if form is empty (at least one field should be filled)
+  const isFormEmpty = useCallback(() => {
+    const hasData = 
+      formData.title?.trim() ||
+      formData.description?.trim() ||
+      formData.businessJustification?.trim() ||
+      formData.category ||
+      formData.priority;
+    
+    return !hasData;
+  }, [formData]);
+
+  // Auto-save every 30 seconds if form has data
+  useEffect(() => {
+    if (isFormEmpty()) {
+      return; // Don't auto-save empty forms
+    }
+
+    const autoSaveInterval = setInterval(async () => {
+      try {
+        if (!draftId) {
+          await initializeDraft(formData);
+        } else {
+          await forceSave(formData, false); // Silent save
+        }
+      } catch (error) {
+        console.error("Auto-save failed:", error);
+      }
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(autoSaveInterval);
+  }, [formData, draftId, initializeDraft, forceSave, isFormEmpty]);
+
   const saveAsDraft = useCallback(async () => {
+    if (isFormEmpty()) {
+      toast.error("Cannot save empty form. Please fill in at least one field.");
+      return;
+    }
+
     console.log("Saving draft:", formData);
     try {
       if (!draftId) {
-        // Create new draft if none exists
         await initializeDraft(formData);
+        toast.success("Draft created successfully");
       } else {
-        // Force save existing draft
-        await forceSave(formData);
+        await forceSave(formData, true); // Show toast
+        toast.success("Draft saved successfully");
       }
-      // Keep localStorage as backup
       localStorage.setItem('requirement-draft', JSON.stringify(formData));
     } catch (error: any) {
       console.error("Failed to save draft:", error);
       
-      // Check if network error
       if (!navigator.onLine) {
         toast.error("You're offline. Changes saved locally.");
       } else {
         toast.error("Failed to save to server. Retrying...");
       }
       
-      // Always fallback to localStorage
       localStorage.setItem('requirement-draft', JSON.stringify(formData));
     }
-  }, [formData, draftId, initializeDraft, forceSave]);
+  }, [formData, draftId, initializeDraft, forceSave, isFormEmpty]);
 
   const validateStep = useCallback((step: number) => {
     console.log("Validating step:", step, "with formData:", formData);
