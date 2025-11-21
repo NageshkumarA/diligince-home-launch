@@ -123,10 +123,9 @@ const RequirementDetails = () => {
         setLoading(true);
         
         if (isDraft) {
-          // Use draft service for draft requirements
-          const draftResponse = await requirementDraftService.getDraft(id);
-          const transformedRequirement = transformDraftToRequirement(draftResponse);
-          setRequirement(transformedRequirement);
+          // Redirect drafts to create-requirement page for editing
+          navigate(`/create-requirement?draftId=${id}`);
+          return;
         } else {
           // Use regular requirement service for published requirements
           const data = await requirementListService.getRequirementById(id);
@@ -472,14 +471,16 @@ const RequirementDetails = () => {
             <TabsTrigger value="compliance">Compliance</TabsTrigger>
             <TabsTrigger value="workflow">Workflow</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
-            <TabsTrigger value="quotations">
-              Quotations
-              {quotations && quotations.data.summary.totalQuotations > 0 && (
-                <Badge className="ml-2 bg-blue-600 text-white">
-                  {quotations.data.summary.totalQuotations}
-                </Badge>
-              )}
-            </TabsTrigger>
+            {!isDraft && (
+              <TabsTrigger value="quotations">
+                Quotations
+                {quotations && quotations.data.summary.totalQuotations > 0 && (
+                  <Badge className="ml-2 bg-blue-600 text-white">
+                    {quotations.data.summary.totalQuotations}
+                  </Badge>
+                )}
+              </TabsTrigger>
+            )}
             <TabsTrigger value="comments">Comments</TabsTrigger>
             <TabsTrigger value="audit">Audit Trail</TabsTrigger>
           </TabsList>
@@ -695,9 +696,11 @@ const RequirementDetails = () => {
           </TabsContent>
 
           {/* Quotations */}
-          <TabsContent value="quotations">
-            <QuotationsTab quotations={quotations} loading={quotationsLoading} />
-          </TabsContent>
+          {!isDraft && (
+            <TabsContent value="quotations">
+              <QuotationsTab quotations={quotations} loading={quotationsLoading} />
+            </TabsContent>
+          )}
 
           {/* Audit Trail */}
           <TabsContent value="audit">
