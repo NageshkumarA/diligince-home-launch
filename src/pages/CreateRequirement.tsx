@@ -1,6 +1,6 @@
 
 import React, { useState, lazy, Suspense, useCallback, useEffect, memo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useSwipeable } from "react-swipeable";
 import IndustryHeader from "@/components/industry/IndustryHeader";
 import RequirementStepIndicator from "@/components/requirement/RequirementStepIndicator";
@@ -13,11 +13,15 @@ import { StakeholderProvider } from "@/contexts/StakeholderContext";
 import { ApprovalProvider } from "@/contexts/ApprovalContext";
 import { Toaster } from "@/components/ui/sonner";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
-import { Save } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Save, MessageSquare, Info, X } from "lucide-react";
 import { toast } from "sonner";
 import { useRequirementDraft } from "@/hooks/useRequirementDraft";
 import { AutoSaveIndicator } from "@/components/requirement/AutoSaveIndicator";
 import { ExitDraftDialog } from "@/components/requirement/ExitDraftDialog";
+import { CommentsSection } from "@/components/requirement/CommentsSection";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { formatDistanceToNow } from "date-fns";
 
 // Lazy load step components for better performance
 const EnhancedBasicInfoStep = lazy(() => import("@/components/requirement/steps/EnhancedBasicInfoStep"));
@@ -83,9 +87,11 @@ StepRenderer.displayName = "StepRenderer";
 const CreateRequirement = () => {
   const [currentStep, setCurrentStep] = useState<StepType>(1);
   const [showExitDialog, setShowExitDialog] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { isSaving, lastSaved, draftId } = useRequirement();
-  const { deleteDraft } = useRequirementDraft();
+  const { deleteDraft, loadDraft } = useRequirementDraft();
 
   // Navigation protection
   useEffect(() => {
@@ -99,6 +105,33 @@ const CreateRequirement = () => {
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [draftId]);
+
+  // Load draft from URL parameter on mount
+  useEffect(() => {
+    const urlDraftId = searchParams.get('draftId');
+    
+    const loadDraftFromUrl = async () => {
+      if (urlDraftId && !draftId) {
+        try {
+          const draftData = await loadDraft(urlDraftId);
+          
+          // Load the saved step
+          const savedStep = localStorage.getItem('requirement-current-step');
+          if (savedStep) {
+            setCurrentStep(parseInt(savedStep) as StepType);
+          }
+          
+          toast.success("Draft loaded successfully");
+        } catch (error) {
+          console.error("Failed to load draft from URL:", error);
+          toast.error("Failed to load draft. Redirecting...");
+          setTimeout(() => navigate('/industry'), 2000);
+        }
+      }
+    };
+    
+    loadDraftFromUrl();
+  }, [searchParams, draftId, loadDraft, navigate]);
 
   // Save current step to localStorage whenever it changes
   useEffect(() => {
@@ -252,37 +285,86 @@ const CreateRequirement = () => {
                         Enterprise-grade requirement management system
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 text-right">
-                      <Save className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Auto-saving</p>
-                        <p className="text-xs text-muted-foreground/70">
-                          Last saved: {formatLastSaved()}
-                        </p>
+                    <div className="flex items-center gap-3">
+                      {draftId && (
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowComments(!showComments)}
+                          className="hidden md:flex items-center gap-2"
+                        >
+                          <MessageSquare className="h-4 w-4" />
+                          {showComments ? "Hide Comments" : "Show Comments"}
+                        </Button>
+                      )}
+                      <div className="flex items-center gap-2 text-right">
+                        <Save className="h-4 w-4 text-muted-foreground" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">Auto-saving</p>
+                          <p className="text-xs text-muted-foreground/70">
+                            Last saved: {formatLastSaved()}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Step Indicator */}
-                <RequirementStepIndicator 
-                  currentStep={currentStep} 
-                  onStepClick={handleGoToStep} 
-                />
+                {/* Draft Info Banner */}
+                {draftId && (
+                  <Alert className="mb-6 border-blue-200 bg-blue-50">
+                    <Info className="h-4 w-4 text-blue-600" />
+                    <AlertTitle className="text-blue-900 font-semibold">
+                      Editing Draft: {draftId}
+                    </AlertTitle>
+                    <AlertDescription className="text-blue-700 flex items-center gap-2">
+                      <span>Your changes are automatically saved.</span>
+                      {lastSaved && (
+                        <span className="text-xs text-blue-600">
+                          Last saved: {formatDistanceToNow(new Date(lastSaved), { addSuffix: true })}
+                        </span>
+                      )}
+                    </AlertDescription>
+                  </Alert>
+                )}
 
-                {/* Step Content with Swipe Support */}
-                <div 
-                  {...swipeHandlers}
-                  className="mt-6 md:mt-8 rounded-xl bg-white shadow-sm border border-corporate-gray-200 touch-pan-y"
-                >
-                  <div className="p-4 md:p-8">
-                    <StepRenderer
-                      currentStep={currentStep}
-                      handleNext={handleNext}
-                      handlePrevious={handlePrevious}
-                      handleGoToStep={handleGoToStep}
-                    />
+                {/* Main Content Area with Comments Sidebar */}
+                <div className="flex gap-6 relative">
+                  {/* Main Form Area */}
+                  <div className={showComments ? "w-2/3 transition-all" : "w-full"}>
+                    {/* Step Indicator */}
+                    <div className="hidden md:block">
+                      <RequirementStepIndicator 
+                        currentStep={currentStep} 
+                        onStepClick={handleGoToStep} 
+                      />
+                    </div>
+
+                    {/* Step Content with Swipe Support */}
+                    <div 
+                      {...swipeHandlers}
+                      className="mt-6 md:mt-8 rounded-xl bg-white shadow-sm border border-corporate-gray-200 touch-pan-y"
+                    >
+                      <div className="p-4 md:p-8">
+                        <StepRenderer
+                          currentStep={currentStep}
+                          handleNext={handleNext}
+                          handlePrevious={handlePrevious}
+                          handleGoToStep={handleGoToStep}
+                        />
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Comments Sidebar (Desktop) */}
+                  {showComments && draftId && (
+                    <div className="hidden md:block w-1/3 sticky top-6 h-fit">
+                      <CommentsSection
+                        requirementId={draftId}
+                        title="Draft Comments & Feedback"
+                        placeholder="Add notes, questions, or feedback about this draft..."
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Keyboard shortcuts hint (desktop only) */}
@@ -301,6 +383,47 @@ const CreateRequirement = () => {
                 nextLabel={currentStep === 6 ? "Publish" : "Next"}
                 isLastStep={currentStep === 6}
               />
+
+              {/* Floating Comments Button (Mobile) */}
+              {draftId && (
+                <button
+                  onClick={() => setShowComments(!showComments)}
+                  className="md:hidden fixed bottom-24 right-6 z-50 p-4 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all hover:scale-110"
+                >
+                  <MessageSquare className="h-5 w-5" />
+                </button>
+              )}
+
+              {/* Mobile Comments Drawer */}
+              {showComments && draftId && (
+                <div 
+                  className="md:hidden fixed inset-0 z-50 bg-black/50" 
+                  onClick={() => setShowComments(false)}
+                >
+                  <div 
+                    className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[75vh] overflow-auto"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+                      <h3 className="font-semibold">Comments & Feedback</h3>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowComments(false)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="p-4">
+                      <CommentsSection
+                        requirementId={draftId}
+                        title=""
+                        placeholder="Add notes, questions, or feedback..."
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <Toaster richColors position="top-right"/>
             </div>
