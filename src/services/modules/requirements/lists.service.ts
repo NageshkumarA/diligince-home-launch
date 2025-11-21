@@ -349,6 +349,17 @@ class RequirementListService {
       const response = await apiService.get<{ success: boolean; data: RequirementDetail }>(
         requirementsRoutes.getById(requirementId)
       );
+      
+      // Validate response structure
+      if (!response.data || typeof response.data !== 'object') {
+        throw new Error('Invalid response structure from API');
+      }
+      
+      // Check if it's an empty array (wrong response)
+      if (Array.isArray(response.data)) {
+        throw new Error('Requirement not found or invalid ID format. Use draft endpoint for draft requirements.');
+      }
+      
       return response.data;
     } catch (error) {
       console.error("Failed to get requirement detail:", error);
