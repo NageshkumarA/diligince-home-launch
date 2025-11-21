@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import requirementListService from "@/services/requirement-list.service";
+import requirementDraftService from "@/services/requirement-draft.service";
 import { quotationsService } from "@/services/modules/quotations";
 import { RequirementDetail } from "@/types/requirement-list";
 import { QuotationsByRequirementResponse } from "@/types/quotation";
+import { DraftDetailResponse } from "@/types/requirement-draft";
 import { toast } from "sonner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 import IndustryHeader from "@/components/industry/IndustryHeader";
 import {
@@ -41,6 +44,76 @@ const RequirementDetails = () => {
   const [quotations, setQuotations] = useState<QuotationsByRequirementResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [quotationsLoading, setQuotationsLoading] = useState(false);
+  const isDraft = id?.startsWith('draft-');
+
+  // Transform draft response to RequirementDetail format
+  const transformDraftToRequirement = (draftResponse: DraftDetailResponse): RequirementDetail => {
+    const { formData, metadata } = draftResponse.data;
+    
+    return {
+      id: metadata.draftId,
+      title: formData.title || 'Untitled Draft',
+      category: formData.category || 'N/A',
+      priority: (formData.priority as any) || 'medium',
+      status: 'draft' as any,
+      estimatedValue: formData.estimatedBudget || 0,
+      createdDate: metadata.lastSaved || new Date().toISOString(),
+      lastModified: metadata.lastSaved,
+      
+      // Full details
+      description: formData.description || '',
+      costCenter: formData.costCenter || '',
+      department: formData.department || '',
+      requestedBy: formData.requestedBy || '',
+      businessJustification: formData.businessJustification || '',
+      riskLevel: formData.riskLevel || 'medium',
+      complianceRequired: formData.complianceRequired || false,
+      
+      // Category-specific fields
+      productSpecifications: formData.productSpecifications,
+      quantity: formData.quantity,
+      technicalStandards: formData.technicalStandards || [],
+      qualityRequirements: formData.qualityRequirements,
+      productDeliveryDate: formData.productDeliveryDate ? (typeof formData.productDeliveryDate === 'string' ? formData.productDeliveryDate : formData.productDeliveryDate.toISOString()) : undefined,
+      
+      expertSkills: formData.certifications || [],
+      expertQualifications: formData.certifications || [],
+      expertDuration: String(formData.duration || ''),
+      
+      serviceDescription: formData.serviceDescription,
+      serviceSLA: formData.performanceMetrics,
+      
+      logisticsDetails: formData.specialHandling,
+      
+      // Workflow (empty for drafts)
+      approvalStatus: 'not_required' as any,
+      approvalSteps: [],
+      
+      // Compliance (empty for drafts)
+      complianceChecklist: [],
+      
+      // Documents
+      documents: (formData.documents || []).map((doc: any) => ({
+        id: doc.id || String(Math.random()),
+        name: doc.name || doc.fileName || 'Document',
+        type: doc.type || doc.documentType || 'other' as any,
+        url: doc.url || doc.fileUrl || '',
+        uploadedAt: doc.uploadedAt ? (typeof doc.uploadedAt === 'string' ? doc.uploadedAt : doc.uploadedAt.toISOString()) : new Date().toISOString(),
+        uploadedBy: doc.uploadedBy,
+        size: doc.size || doc.fileSize,
+      })),
+      
+      // Audit trail
+      auditTrail: [{
+        action: 'Draft Created',
+        timestamp: metadata.lastSaved || new Date().toISOString(),
+        user: formData.requestedBy || 'Current User',
+        details: 'Draft requirement created',
+      }],
+      
+      applicants: 0,
+    };
+  };
 
   useEffect(() => {
     const fetchRequirement = async () => {
@@ -48,12 +121,21 @@ const RequirementDetails = () => {
       
       try {
         setLoading(true);
-        const data = await requirementListService.getRequirementById(id);
-        setRequirement(data);
         
-        // Fetch quotations if published
-        if (data.status === 'published') {
-          fetchQuotations();
+        if (isDraft) {
+          // Use draft service for draft requirements
+          const draftResponse = await requirementDraftService.getDraft(id);
+          const transformedRequirement = transformDraftToRequirement(draftResponse);
+          setRequirement(transformedRequirement);
+        } else {
+          // Use regular requirement service for published requirements
+          const data = await requirementListService.getRequirementById(id);
+          setRequirement(data);
+          
+          // Fetch quotations if published
+          if (data.status === 'published') {
+            fetchQuotations();
+          }
         }
       } catch (error: any) {
         toast.error(error.message || "Failed to load requirement details");
@@ -63,7 +145,7 @@ const RequirementDetails = () => {
     };
 
     fetchRequirement();
-  }, [id]);
+  }, [id, isDraft]);
 
   const fetchQuotations = async () => {
     if (!id) return;
@@ -89,8 +171,15 @@ const RequirementDetails = () => {
 
   if (!requirement) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p>Requirement not found</p>
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <AlertTriangle className="h-12 w-12 text-yellow-500" />
+        <h2 className="text-2xl font-bold">Requirement Not Found</h2>
+        <p className="text-muted-foreground">
+          The requirement you're looking for doesn't exist or has been removed.
+        </p>
+        <Button asChild>
+          <Link to="/dashboard">Return to Dashboard</Link>
+        </Button>
       </div>
     );
   }
@@ -274,6 +363,17 @@ const RequirementDetails = () => {
       
 
       <main className="flex-1 container mx-auto px-4 py-8 pt-20">
+        {/* Draft Mode Alert */}
+        {isDraft && (
+          <Alert className="mb-6 border-blue-200 bg-blue-50">
+            <AlertTriangle className="h-4 w-4 text-blue-600" />
+            <AlertTitle className="text-blue-900">Draft Mode</AlertTitle>
+            <AlertDescription className="text-blue-700">
+              This is a draft requirement. Complete all sections and submit for approval.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Back and Actions */}
         <div className="flex items-center justify-between mb-4">
           <Link
@@ -283,35 +383,38 @@ const RequirementDetails = () => {
             ← Back to Requirements
           </Link>
           <div className="flex gap-2">
-            {requirement.status === "draft" && (
-              <Button variant="outline" asChild>
-                <Link to={`/create-requirement?edit=${requirement.id}`}>
+            {isDraft ? (
+              <Button asChild size="lg">
+                <Link to={`/create-requirement?draftId=${requirement.id}`}>
                   <Edit className="h-4 w-4 mr-2" />
-                  Edit Draft
+                  Continue Editing Draft
                 </Link>
               </Button>
+            ) : (
+              <>
+                {requirement.status === "published" && (
+                  <Button variant="destructive">
+                    Revoke Publication
+                  </Button>
+                )}
+                {["published", "completed"].includes(requirement.status) && (
+                  <Button variant="outline" disabled title="Published requirements cannot be edited">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit (Locked)
+                  </Button>
+                )}
+                <Button variant="outline" asChild>
+                  <Link to={`/industry-project-workflow/${requirement.id}`}>
+                    <Workflow className="h-4 w-4 mr-2" />
+                    View Workflow
+                  </Link>
+                </Button>
+                <Button variant="outline">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Contact Vendors
+                </Button>
+              </>
             )}
-            {requirement.status === "published" && (
-              <Button variant="destructive">
-                Revoke Publication
-              </Button>
-            )}
-            {["published", "completed"].includes(requirement.status) && requirement.status !== "draft" && (
-              <Button variant="outline" disabled title="Published requirements cannot be edited">
-                <Edit className="h-4 w-4 mr-2" />
-                Edit (Locked)
-              </Button>
-            )}
-            <Button variant="outline" asChild>
-              <Link to={`/industry-project-workflow/${requirement.id}`}>
-                <Workflow className="h-4 w-4 mr-2" />
-                View Workflow
-              </Link>
-            </Button>
-            <Button variant="outline">
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Contact Vendors
-            </Button>
           </div>
         </div>
 
