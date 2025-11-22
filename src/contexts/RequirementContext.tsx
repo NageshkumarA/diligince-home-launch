@@ -87,8 +87,6 @@ interface RequirementContextType {
   formData: RequirementFormData;
   updateFormData: (data: Partial<RequirementFormData>) => void;
   loadDraftData: (data: RequirementFormData) => void;
-  isLoadingDraft: boolean;
-  setIsLoadingDraft: (loading: boolean) => void;
   resetForm: () => void;
   validateStep: (step: number) => boolean;
   stepErrors: Record<string, string> | null;
@@ -137,7 +135,6 @@ const getDefaultFormData = (): RequirementFormData => ({
 
 export const RequirementProvider = ({ children }: { children: React.ReactNode }) => {
   const [formData, setFormData] = useState<RequirementFormData>(getDefaultFormData());
-  const [isLoadingDraft, setIsLoadingDraft] = useState(false);
   const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
   const { draftId, isSaving, lastSaved, initializeDraft, forceSave } = useRequirementDraft();
 
@@ -340,8 +337,6 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
       formData,
       updateFormData,
       loadDraftData,
-      isLoadingDraft,
-      setIsLoadingDraft,
       resetForm,
       validateStep,
       stepErrors,
@@ -351,7 +346,7 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
       isSaving,
       lastSaved
     }}>
-      {isLoadingDraft ? null : children}
+      {children}
     </RequirementContext.Provider>
   );
 };

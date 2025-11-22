@@ -85,9 +85,10 @@ const CreateRequirement = () => {
   const [currentStep, setCurrentStep] = useState<StepType>(1);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [isLoadingDraft, setIsLoadingDraft] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { isSaving, lastSaved, draftId, updateFormData, loadDraftData, isLoadingDraft, setIsLoadingDraft } = useRequirement();
+  const { isSaving, lastSaved, draftId, updateFormData, loadDraftData } = useRequirement();
   const { deleteDraft, loadDraft } = useRequirementDraft();
   
   // Determine if we're in edit mode based on URL
@@ -107,55 +108,29 @@ const CreateRequirement = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [draftId]);
 
-  // Load draft from URL parameter on mount (Always respect URL draftId)
+  // Load draft from URL parameter on mount
   useEffect(() => {
     const urlDraftId = searchParams.get('draftId');
     
     if (!urlDraftId) return;
 
     const loadDraftFromUrl = async () => {
+      setIsLoadingDraft(true);
+      
       try {
-        // Reload when there is no draft yet OR it's a different one
-        if (!draftId || draftId !== urlDraftId) {
-          console.log("🔵 CreateRequirement: Loading draft from URL:", urlDraftId);
-          
-          // Set loading state
-          setIsLoadingDraft(true);
-          
-          // Clear old draft data before loading new one
-          localStorage.removeItem('requirement-draft');
-          localStorage.removeItem('requirement-current-step');
-          
-          const draftData = await loadDraft(urlDraftId);
-          
-          console.log("🟢 CreateRequirement: Draft data loaded:", draftData);
-          console.log("🟢 CreateRequirement: Data keys:", Object.keys(draftData || {}));
-
-          // Use loadDraftData to replace entire form state
-          if (draftData && Object.keys(draftData).length > 0) {
-            loadDraftData(draftData as any);
-          } else {
-            console.warn("⚠️ Loaded draft is empty or invalid");
-            toast.error("Draft data is empty");
-          }
-          
-          // Sync localStorage AFTER loading
-          localStorage.setItem('requirement-draft', JSON.stringify(draftData || {}));
-
-          // Load the saved step
-          const savedStep = localStorage.getItem('requirement-current-step');
-          if (savedStep) {
-            const stepNum = parseInt(savedStep, 10);
-            if (stepNum >= 1 && stepNum <= 6) {
-              setCurrentStep(stepNum as StepType);
-            } else {
-              setCurrentStep(1);
-            }
-          } else {
-            setCurrentStep(1);
-          }
-          
-          toast.success("Draft loaded successfully");
+        console.log("🔵 CreateRequirement: Loading draft from URL:", urlDraftId);
+        
+        const draftData = await loadDraft(urlDraftId);
+        
+        console.log("🟢 CreateRequirement: Draft data loaded:", draftData);
+        
+        if (draftData && Object.keys(draftData).length > 0) {
+          loadDraftData(draftData as any);
+          localStorage.setItem('requirement-draft-id', urlDraftId);
+          localStorage.setItem('requirement-draft', JSON.stringify(draftData));
+          setCurrentStep(1);
+        } else {
+          toast.error("Draft data is empty");
         }
       } catch (error) {
         console.error("🔴 CreateRequirement: Failed to load draft from URL:", error);
@@ -167,7 +142,7 @@ const CreateRequirement = () => {
     };
     
     loadDraftFromUrl();
-  }, [searchParams, draftId, loadDraft, navigate, loadDraftData]);
+  }, [searchParams, loadDraft, loadDraftData, navigate]);
 
   // Save current step to localStorage whenever it changes
   useEffect(() => {
