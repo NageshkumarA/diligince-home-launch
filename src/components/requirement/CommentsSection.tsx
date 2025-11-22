@@ -37,25 +37,8 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
   const fetchComments = async () => {
     try {
       setLoading(true);
-      
-      let fetchedComments: Comment[];
-      
-      if (approvalStepId) {
-        fetchedComments = await commentService.getApprovalComments(
-          requirementId,
-          approvalStepId
-        );
-      } else {
-        const response = await commentService.getCommentsByRequirement(
-          requirementId,
-          { commentType }
-        );
-        fetchedComments = response.data.comments;
-      }
-      
-      setComments(fetchedComments);
-    } catch (error: any) {
-      // Use mock data for development/demo
+
+      // Use mock data only for now
       const mockComments: Comment[] = [
         {
           id: 'mock-1',
@@ -91,9 +74,11 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
           isEdited: false,
         },
       ];
-      
+
       setComments(mockComments);
-      console.warn('Using mock comments data:', error.message);
+    } catch (error: any) {
+      console.warn('Failed to set mock comments:', error?.message);
+      setComments([]);
     } finally {
       setLoading(false);
     }
@@ -149,6 +134,9 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
     }
   };
 
+  // Defensive guard for comments array
+  const commentList = Array.isArray(comments) ? comments : [];
+
   return (
     <Card>
       <CardHeader>
@@ -156,7 +144,7 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
           <MessageSquare className="h-5 w-5" />
           {title}
           <Badge variant="outline" className="ml-auto">
-            {comments.length}
+            {commentList.length}
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -183,10 +171,10 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
         <div className="space-y-3">
           {loading ? (
             <p className="text-center text-muted-foreground py-4">Loading comments...</p>
-          ) : comments.length === 0 ? (
+          ) : commentList.length === 0 ? (
             <p className="text-center text-muted-foreground py-4">No comments yet</p>
           ) : (
-            comments.map((comment) => (
+            commentList.map((comment) => (
               <div
                 key={comment.id}
                 className="flex gap-3 p-3 bg-muted/50 rounded-lg border"

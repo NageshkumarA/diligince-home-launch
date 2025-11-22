@@ -15,14 +15,12 @@ import { Toaster } from "@/components/ui/sonner";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Save, MessageSquare, Info, X } from "lucide-react";
+import { Save, MessageSquare, X } from "lucide-react";
 import { toast } from "sonner";
 import { useRequirementDraft } from "@/hooks/useRequirementDraft";
 import { AutoSaveIndicator } from "@/components/requirement/AutoSaveIndicator";
 import { ExitDraftDialog } from "@/components/requirement/ExitDraftDialog";
 import { CommentsSection } from "@/components/requirement/CommentsSection";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { formatDistanceToNow } from "date-fns";
 
 // Lazy load step components for better performance
 const EnhancedBasicInfoStep = lazy(() => import("@/components/requirement/steps/EnhancedBasicInfoStep"));
@@ -111,30 +109,40 @@ const CreateRequirement = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [draftId]);
 
-  // Load draft from URL parameter on mount
+  // Load draft from URL parameter on mount (Always respect URL draftId)
   useEffect(() => {
     const urlDraftId = searchParams.get('draftId');
     
+    if (!urlDraftId) return;
+
     const loadDraftFromUrl = async () => {
-      if (urlDraftId && !draftId) {
-        try {
+      try {
+        // Reload when there is no draft yet OR it's a different one
+        if (!draftId || draftId !== urlDraftId) {
           const draftData = await loadDraft(urlDraftId);
-          
-          // ✅ Update form context with loaded draft data
-          updateFormData(draftData);
-          
+
+          // Defensive: if API returns null/undefined, fall back to empty object
+          updateFormData(draftData || {});
+
           // Load the saved step
           const savedStep = localStorage.getItem('requirement-current-step');
           if (savedStep) {
-            setCurrentStep(parseInt(savedStep) as StepType);
+            const stepNum = parseInt(savedStep, 10);
+            if (stepNum >= 1 && stepNum <= 6) {
+              setCurrentStep(stepNum as StepType);
+            } else {
+              setCurrentStep(1);
+            }
+          } else {
+            setCurrentStep(1);
           }
           
           toast.success("Draft loaded successfully");
-        } catch (error) {
-          console.error("Failed to load draft from URL:", error);
-          toast.error("Failed to load draft. Redirecting...");
-          setTimeout(() => navigate('/dashboard/requirements/drafts'), 2000);
         }
+      } catch (error) {
+        console.error("Failed to load draft from URL:", error);
+        toast.error("Failed to load draft. Redirecting...");
+        setTimeout(() => navigate('/dashboard/requirements/drafts'), 2000);
       }
     };
     
