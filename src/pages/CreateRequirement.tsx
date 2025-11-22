@@ -14,6 +14,7 @@ import { ApprovalProvider } from "@/contexts/ApprovalContext";
 import { Toaster } from "@/components/ui/sonner";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Save, MessageSquare, Info, X } from "lucide-react";
 import { toast } from "sonner";
 import { useRequirementDraft } from "@/hooks/useRequirementDraft";
@@ -92,6 +93,10 @@ const CreateRequirement = () => {
   const [searchParams] = useSearchParams();
   const { isSaving, lastSaved, draftId, updateFormData } = useRequirement();
   const { deleteDraft, loadDraft } = useRequirementDraft();
+  
+  // Determine if we're in edit mode based on URL
+  const urlDraftId = searchParams.get('draftId');
+  const isEditMode = !!urlDraftId;
 
   // Navigation protection
   useEffect(() => {
@@ -280,23 +285,23 @@ const CreateRequirement = () => {
                 {/* Desktop Header */}
                 <div className="hidden md:block mb-8">
                   <div className="flex items-center justify-between">
-                    <div>
+                  <div>
                       <h1 className="text-3xl font-bold text-corporate-gray-900 md:text-4xl">
-                        Create Procurement Requirement
+                        {isEditMode ? 'Edit Procurement Requirement' : 'Create Procurement Requirement'}
                       </h1>
                       <p className="mt-2 text-lg text-corporate-gray-600">
-                        Enterprise-grade requirement management system
+                        {isEditMode ? 'Update your requirement details' : 'Enterprise-grade requirement management system'}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
                       {draftId && (
                         <Button
                           variant="outline"
-                          onClick={() => setShowComments(!showComments)}
+                          onClick={() => setShowComments(true)}
                           className="hidden md:flex items-center gap-2"
                         >
                           <MessageSquare className="h-4 w-4" />
-                          {showComments ? "Hide Comments" : "Show Comments"}
+                          Show Comments
                         </Button>
                       )}
                       <div className="flex items-center gap-2 text-right">
@@ -312,28 +317,11 @@ const CreateRequirement = () => {
                   </div>
                 </div>
 
-                {/* Draft Info Banner */}
-                {draftId && (
-                  <Alert className="mb-6 border-blue-200 bg-blue-50">
-                    <Info className="h-4 w-4 text-blue-600" />
-                    <AlertTitle className="text-blue-900 font-semibold">
-                      Editing Draft: {draftId}
-                    </AlertTitle>
-                    <AlertDescription className="text-blue-700 flex items-center gap-2">
-                      <span>Your changes are automatically saved.</span>
-                      {lastSaved && (
-                        <span className="text-xs text-blue-600">
-                          Last saved: {formatDistanceToNow(new Date(lastSaved), { addSuffix: true })}
-                        </span>
-                      )}
-                    </AlertDescription>
-                  </Alert>
-                )}
 
-                {/* Main Content Area with Comments Sidebar */}
+                {/* Main Content Area */}
                 <div className="flex gap-6 relative">
                   {/* Main Form Area */}
-                  <div className={showComments ? "w-2/3 transition-all" : "w-full"}>
+                  <div className="w-full">
                     {/* Step Indicator */}
                     <div className="hidden md:block">
                       <RequirementStepIndicator 
@@ -357,17 +345,6 @@ const CreateRequirement = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* Comments Sidebar (Desktop) */}
-                  {showComments && draftId && (
-                    <div className="hidden md:block w-1/3 sticky top-6 h-fit">
-                      <CommentsSection
-                        requirementId={draftId}
-                        title="Draft Comments & Feedback"
-                        placeholder="Add notes, questions, or feedback about this draft..."
-                      />
-                    </div>
-                  )}
                 </div>
 
                 {/* Keyboard shortcuts hint (desktop only) */}
@@ -390,43 +367,33 @@ const CreateRequirement = () => {
               {/* Floating Comments Button (Mobile) */}
               {draftId && (
                 <button
-                  onClick={() => setShowComments(!showComments)}
+                  onClick={() => setShowComments(true)}
                   className="md:hidden fixed bottom-24 right-6 z-50 p-4 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all hover:scale-110"
                 >
                   <MessageSquare className="h-5 w-5" />
                 </button>
               )}
 
-              {/* Mobile Comments Drawer */}
-              {showComments && draftId && (
-                <div 
-                  className="md:hidden fixed inset-0 z-50 bg-black/50" 
-                  onClick={() => setShowComments(false)}
-                >
-                  <div 
-                    className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[75vh] overflow-auto"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
-                      <h3 className="font-semibold">Comments & Feedback</h3>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowComments(false)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="p-4">
+              {/* Comments Dialog (Desktop & Mobile) */}
+              <Dialog open={showComments} onOpenChange={setShowComments}>
+                <DialogContent className="sm:max-w-[700px] max-h-[80vh]">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <MessageSquare className="h-5 w-5" />
+                      Comments & Feedback
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="overflow-y-auto max-h-[60vh]">
+                    {draftId && (
                       <CommentsSection
                         requirementId={draftId}
                         title=""
-                        placeholder="Add notes, questions, or feedback..."
+                        placeholder="Add notes, questions, or feedback about this requirement..."
                       />
-                    </div>
+                    )}
                   </div>
-                </div>
-              )}
+                </DialogContent>
+              </Dialog>
 
               <Toaster richColors position="top-right"/>
             </div>
