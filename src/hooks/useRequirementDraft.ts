@@ -148,10 +148,15 @@ export const useRequirementDraft = () => {
       setError(null);
 
       const response = await requirementDraftService.getDraft(draftIdToLoad);
+      const loadedFormData = response.data.formData;
+      
       setDraftId(draftIdToLoad);
       localStorage.setItem("requirement-draft-id", draftIdToLoad);
+      
+      // Sync the actual draft data to localStorage
+      localStorage.setItem("requirement-draft", JSON.stringify(loadedFormData || {}));
 
-      return response.data.formData;
+      return loadedFormData;
     } catch (err: any) {
       const errorMsg = err?.message || "Failed to load draft";
       setError(errorMsg);

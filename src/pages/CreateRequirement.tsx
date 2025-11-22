@@ -119,10 +119,17 @@ const CreateRequirement = () => {
       try {
         // Reload when there is no draft yet OR it's a different one
         if (!draftId || draftId !== urlDraftId) {
+          // Clear old draft data before loading new one
+          localStorage.removeItem('requirement-draft');
+          localStorage.removeItem('requirement-current-step');
+          
           const draftData = await loadDraft(urlDraftId);
 
           // Defensive: if API returns null/undefined, fall back to empty object
           updateFormData(draftData || {});
+          
+          // CRITICAL: Sync localStorage with the loaded draft data
+          localStorage.setItem('requirement-draft', JSON.stringify(draftData || {}));
 
           // Load the saved step
           const savedStep = localStorage.getItem('requirement-current-step');
