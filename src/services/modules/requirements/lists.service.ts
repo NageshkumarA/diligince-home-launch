@@ -28,7 +28,31 @@ class RequirementListService {
       return {
         success: response.success,
         data: {
-          requirements: response.data?.drafts || [],
+          requirements: (response.data?.drafts || []).map((draft: any) => ({
+            // Map draftId to id for table compatibility
+            id: draft.draftId,
+            draftId: draft.draftId, // Keep for backward compatibility
+            
+            // Map API field names to table expectations
+            title: draft.title || 'Untitled Draft',
+            category: draft.category || 'N/A',
+            priority: draft.priority || 'medium',
+            
+            // Financial: estimatedBudget → estimatedValue
+            estimatedValue: draft.estimatedBudget || 0,
+            
+            // Dates: lastSaved → lastModified
+            lastModified: draft.lastSaved,
+            createdDate: draft.lastSaved, // Use lastSaved as createdDate fallback
+            
+            // Draft-specific fields (pass through)
+            currentStep: draft.currentStep,
+            completedSteps: draft.completedSteps,
+            progress: draft.progress,
+            
+            // Required by RequirementListItem interface
+            status: 'draft' as const,
+          })),
           pagination: {
             currentPage: response.data?.pagination?.page || 1,
             pageSize: response.data?.pagination?.limit || 10,
