@@ -90,7 +90,7 @@ const CreateRequirement = () => {
   const [showComments, setShowComments] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { isSaving, lastSaved, draftId } = useRequirement();
+  const { isSaving, lastSaved, draftId, updateFormData } = useRequirement();
   const { deleteDraft, loadDraft } = useRequirementDraft();
 
   // Navigation protection
@@ -115,6 +115,9 @@ const CreateRequirement = () => {
         try {
           const draftData = await loadDraft(urlDraftId);
           
+          // ✅ Update form context with loaded draft data
+          updateFormData(draftData);
+          
           // Load the saved step
           const savedStep = localStorage.getItem('requirement-current-step');
           if (savedStep) {
@@ -125,13 +128,13 @@ const CreateRequirement = () => {
         } catch (error) {
           console.error("Failed to load draft from URL:", error);
           toast.error("Failed to load draft. Redirecting...");
-          setTimeout(() => navigate('/industry'), 2000);
+          setTimeout(() => navigate('/dashboard/requirements/drafts'), 2000);
         }
       }
     };
     
     loadDraftFromUrl();
-  }, [searchParams, draftId, loadDraft, navigate]);
+  }, [searchParams, draftId, loadDraft, navigate, updateFormData]);
 
   // Save current step to localStorage whenever it changes
   useEffect(() => {

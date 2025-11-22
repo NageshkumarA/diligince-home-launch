@@ -5,7 +5,7 @@ import { ColumnConfig, FilterConfig } from "@/types/table";
 import requirementListService from "@/services/requirement-list.service";
 import { RequirementListItem } from "@/types/requirement-list";
 import { toast } from "sonner";
-import { Loader2, Edit } from "lucide-react";
+import { Loader2, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const RequirementsDrafts = () => {
@@ -179,9 +179,26 @@ const RequirementsDrafts = () => {
             <Edit className="h-4 w-4 mr-1" />
             Edit
           </Button>
+          
+          <Button 
+            size="sm" 
+            variant="destructive"
+            onClick={() => {
+              const draftId = row.id || row.draftId;
+              if (!draftId || draftId === 'undefined') {
+                console.error('Invalid draft ID for delete:', row);
+                toast.error('Cannot delete draft: Invalid ID');
+                return;
+              }
+              handleDeleteSingle(draftId);
+            }}
+          >
+            <Trash2 className="h-4 w-4 mr-1" />
+            Delete
+          </Button>
         </div>
       ),
-      width: "120px",
+      width: "200px",
     },
   ];
 
@@ -268,6 +285,23 @@ const RequirementsDrafts = () => {
       fetchDrafts();
     } catch (error: any) {
       toast.error(error.message || "Failed to delete drafts");
+    }
+  };
+
+  const handleDeleteSingle = async (draftId: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this draft? This action cannot be undone."
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      await requirementListService.deleteDrafts([draftId]);
+      toast.success("Draft deleted successfully");
+      fetchDrafts();
+    } catch (error: any) {
+      console.error("Failed to delete draft:", error);
+      toast.error(error.message || "Failed to delete draft");
     }
   };
 

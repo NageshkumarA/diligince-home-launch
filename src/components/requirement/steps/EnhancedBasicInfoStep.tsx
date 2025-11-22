@@ -37,34 +37,20 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
       return;
     }
 
-    // Server-side validation if draft exists
-    if (draftId) {
-      try {
-        setIsValidating(true);
-        const response = await requirementDraftService.validateStep(
-          draftId,
-          1,
-          formData
-        );
-
-        if (response.data.isValid) {
-          onNext();
-        } else {
-          response.data.errors?.forEach(error => {
-            toast.error(`${error.field}: ${error.message}`);
-          });
-        }
-      } catch (error: any) {
-        console.error("Validation failed:", error);
-        toast.error(error.message || "Validation failed");
-      } finally {
-        setIsValidating(false);
-      }
-    } else {
-      saveAsDraft();
-
-      // No draft yet, proceed with client-side validation
+    // Save the draft before moving to next step
+    try {
+      setIsValidating(true);
+      
+      await saveAsDraft();
+      
+      // Move to next step after successful save
       onNext();
+      
+    } catch (error: any) {
+      console.error("Failed to save draft:", error);
+      toast.error("Failed to save changes. Please try again.");
+    } finally {
+      setIsValidating(false);
     }
   };
 
