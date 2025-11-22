@@ -8,9 +8,7 @@ import { StepLoadingSkeleton } from "@/components/requirement/StepLoadingSkeleto
 import { MobileStepHeader } from "@/components/requirement/MobileStepHeader";
 import { MobileStepFooter } from "@/components/requirement/MobileStepFooter";
 import SuccessScreen from "@/components/requirement/SuccessScreen";
-import { RequirementProvider, useRequirement } from "@/contexts/RequirementContext";
-import { StakeholderProvider } from "@/contexts/StakeholderContext";
-import { ApprovalProvider } from "@/contexts/ApprovalContext";
+import { useRequirement } from "@/contexts/RequirementContext";
 import { Toaster } from "@/components/ui/sonner";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
@@ -274,33 +272,24 @@ const CreateRequirement = () => {
   if (currentStep === 7) {
     return (
       <ErrorBoundary>
-        <ApprovalProvider>
-          <StakeholderProvider>
-            <RequirementProvider>
-              <div className="flex min-h-screen flex-col bg-background">
-                <SuccessScreen 
-                  onCreateAnother={() => {
-                    setCurrentStep(1);
-                    localStorage.removeItem('requirement-current-step');
-                  }}
-                  onViewRequirement={() => navigate("/industry-requirements")} 
-                  onReturnToDashboard={() => navigate("/industry")} 
-                />
-                <Toaster richColors position="top-right"/>
-              </div>
-            </RequirementProvider>
-          </StakeholderProvider>
-        </ApprovalProvider>
+        <div className="flex min-h-screen flex-col bg-background">
+          <SuccessScreen 
+            onCreateAnother={() => {
+              setCurrentStep(1);
+              localStorage.removeItem('requirement-current-step');
+            }}
+            onViewRequirement={() => navigate("/industry-requirements")} 
+            onReturnToDashboard={() => navigate("/industry")} 
+          />
+          <Toaster richColors position="top-right"/>
+        </div>
       </ErrorBoundary>
     );
   }
 
   return (
     <ErrorBoundary>
-      <ApprovalProvider>
-        <StakeholderProvider>
-          <RequirementProvider>
-            {isLoadingDraft ? (
+      {isLoadingDraft ? (
               <div className="flex min-h-screen items-center justify-center bg-corporate-gray-50">
                 <div className="max-w-3xl mx-auto space-y-6 w-full px-4">
                   <div className="animate-pulse space-y-4">
@@ -443,9 +432,6 @@ const CreateRequirement = () => {
               <Toaster richColors position="top-right"/>
             </div>
             )}
-          </RequirementProvider>
-        </StakeholderProvider>
-      </ApprovalProvider>
     </ErrorBoundary>
   );
 };
