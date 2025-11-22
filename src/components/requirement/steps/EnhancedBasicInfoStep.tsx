@@ -61,6 +61,12 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
 
   const departments = ["Engineering", "Procurement", "Operations", "Maintenance", "Quality", "Safety", "IT", "Finance", "HR", "Management"];
 
+  // Debug logging to track data flow
+  console.log("🟠 BasicInfoStep: Rendering with formData", formData);
+  console.log("🟠 BasicInfoStep: Title =", formData.title);
+  console.log("🟠 BasicInfoStep: Category =", formData.category);
+  console.log("🟠 BasicInfoStep: Priority =", formData.priority);
+
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in pb-6">
       {/* Section 1: Essential Information */}

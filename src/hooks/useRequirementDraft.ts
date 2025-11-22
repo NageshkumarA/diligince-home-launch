@@ -144,11 +144,15 @@ export const useRequirementDraft = () => {
    */
   const loadDraft = useCallback(async (draftIdToLoad: string) => {
     try {
+      console.log("🔵 loadDraft: Fetching draft", draftIdToLoad);
       setIsSaving(true);
       setError(null);
 
       const response = await requirementDraftService.getDraft(draftIdToLoad);
       const loadedFormData = response.data.formData;
+      
+      console.log("🟢 loadDraft: Received data", loadedFormData);
+      console.log("🟢 loadDraft: Data keys", Object.keys(loadedFormData || {}));
       
       setDraftId(draftIdToLoad);
       localStorage.setItem("requirement-draft-id", draftIdToLoad);
@@ -158,6 +162,7 @@ export const useRequirementDraft = () => {
 
       return loadedFormData;
     } catch (err: any) {
+      console.error("🔴 loadDraft: Error", err);
       const errorMsg = err?.message || "Failed to load draft";
       setError(errorMsg);
       toast.error(errorMsg);

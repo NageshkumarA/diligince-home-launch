@@ -89,7 +89,7 @@ const CreateRequirement = () => {
   const [showComments, setShowComments] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { isSaving, lastSaved, draftId, updateFormData } = useRequirement();
+  const { isSaving, lastSaved, draftId, updateFormData, loadDraftData, isLoadingDraft, setIsLoadingDraft } = useRequirement();
   const { deleteDraft, loadDraft } = useRequirementDraft();
   
   // Determine if we're in edit mode based on URL
@@ -119,16 +119,29 @@ const CreateRequirement = () => {
       try {
         // Reload when there is no draft yet OR it's a different one
         if (!draftId || draftId !== urlDraftId) {
+          console.log("🔵 CreateRequirement: Loading draft from URL:", urlDraftId);
+          
+          // Set loading state
+          setIsLoadingDraft(true);
+          
           // Clear old draft data before loading new one
           localStorage.removeItem('requirement-draft');
           localStorage.removeItem('requirement-current-step');
           
           const draftData = await loadDraft(urlDraftId);
-
-          // Defensive: if API returns null/undefined, fall back to empty object
-          updateFormData(draftData || {});
           
-          // CRITICAL: Sync localStorage with the loaded draft data
+          console.log("🟢 CreateRequirement: Draft data loaded:", draftData);
+          console.log("🟢 CreateRequirement: Data keys:", Object.keys(draftData || {}));
+
+          // Use loadDraftData to replace entire form state
+          if (draftData && Object.keys(draftData).length > 0) {
+            loadDraftData(draftData as any);
+          } else {
+            console.warn("⚠️ Loaded draft is empty or invalid");
+            toast.error("Draft data is empty");
+          }
+          
+          // Sync localStorage AFTER loading
           localStorage.setItem('requirement-draft', JSON.stringify(draftData || {}));
 
           // Load the saved step
@@ -147,14 +160,16 @@ const CreateRequirement = () => {
           toast.success("Draft loaded successfully");
         }
       } catch (error) {
-        console.error("Failed to load draft from URL:", error);
+        console.error("🔴 CreateRequirement: Failed to load draft from URL:", error);
         toast.error("Failed to load draft. Redirecting...");
         setTimeout(() => navigate('/dashboard/requirements/drafts'), 2000);
+      } finally {
+        setIsLoadingDraft(false);
       }
     };
     
     loadDraftFromUrl();
-  }, [searchParams, draftId, loadDraft, navigate, updateFormData]);
+  }, [searchParams, draftId, loadDraft, navigate, loadDraftData]);
 
   // Save current step to localStorage whenever it changes
   useEffect(() => {
@@ -285,7 +300,22 @@ const CreateRequirement = () => {
       <ApprovalProvider>
         <StakeholderProvider>
           <RequirementProvider>
-            <div className="flex min-h-screen flex-col bg-corporate-gray-50">
+            {isLoadingDraft ? (
+              <div className="flex min-h-screen items-center justify-center bg-corporate-gray-50">
+                <div className="max-w-3xl mx-auto space-y-6 w-full px-4">
+                  <div className="animate-pulse space-y-4">
+                    <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
+                    <div className="space-y-4 bg-white p-8 rounded-xl border">
+                      <div className="h-12 bg-gray-200 rounded"></div>
+                      <div className="h-12 bg-gray-200 rounded"></div>
+                      <div className="h-32 bg-gray-200 rounded"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex min-h-screen flex-col bg-corporate-gray-50">
               {/* Mobile Step Header */}
               <MobileStepHeader
                 currentStep={currentStep}
@@ -412,6 +442,7 @@ const CreateRequirement = () => {
 
               <Toaster richColors position="top-right"/>
             </div>
+            )}
           </RequirementProvider>
         </StakeholderProvider>
       </ApprovalProvider>
