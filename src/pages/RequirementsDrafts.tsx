@@ -173,7 +173,7 @@ const RequirementsDrafts = () => {
                 toast.error('Cannot edit draft: Invalid ID');
                 return;
               }
-              navigate(`/create-requirement?draftId=${draftId}`);
+              navigate(`/dashboard/create-requirement?draftId=${draftId}`);
             }}
           >
             <Edit className="h-4 w-4 mr-1" />
@@ -261,7 +261,7 @@ const RequirementsDrafts = () => {
   };
 
   const handleAdd = () => {
-    navigate('/create-requirement');
+    navigate('/dashboard/create-requirement');
   };
 
   const handleBulkDelete = async () => {

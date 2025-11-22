@@ -124,7 +124,7 @@ const RequirementDetails = () => {
         
         if (isDraft) {
           // Redirect drafts to create-requirement page for editing
-          navigate(`/create-requirement?draftId=${id}`);
+          navigate(`/dashboard/create-requirement?draftId=${id}`);
           return;
         } else {
           // Use regular requirement service for published requirements
