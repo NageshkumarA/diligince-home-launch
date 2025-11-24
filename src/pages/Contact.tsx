@@ -5,8 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { MapPin, Phone, Mail, Send, Clock } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { MapPin, Phone, Mail, Send } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
+
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
+  email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
+  subject: z.string().trim().min(1, "Subject is required").max(200, "Subject must be less than 200 characters"),
+  message: z.string().trim().min(1, "Message is required").max(2000, "Message must be less than 2000 characters")
+});
 
 const Contact = () => {
   const { toast } = useToast();
@@ -24,19 +32,30 @@ const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
     
-    toast({
-      title: "Message sent!",
-      description: "We will get back to you as soon as possible.",
-    });
-    
-    setFormData({
-      name: "",
-      email: "",
-      subject: "",
-      message: ""
-    });
+    try {
+      contactSchema.parse(formData);
+      
+      toast({
+        title: "Message sent!",
+        description: "We will get back to you as soon as possible.",
+      });
+      
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: ""
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      }
+    }
   };
 
   return (
@@ -221,24 +240,6 @@ const Contact = () => {
                 >
                   support@Diligince.ai
                 </a>
-              </div>
-
-              {/* Business Hours Card */}
-              <div className="bg-gradient-to-br from-corporate-navy-600 to-corporate-navy-500 rounded-2xl p-6"
-                style={{
-                  boxShadow: '6px 6px 12px #d1d1d1, -6px -6px 12px #ffffff'
-                }}>
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4 backdrop-blur-sm">
-                  <Clock className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-3">Business Hours</h3>
-                <div className="text-white/90 space-y-1 text-sm">
-                  <p>Monday - Friday</p>
-                  <p className="font-semibold">9:00 AM - 6:00 PM IST</p>
-                  <p className="mt-2">Saturday</p>
-                  <p className="font-semibold">10:00 AM - 2:00 PM IST</p>
-                  <p className="mt-2">Sunday: Closed</p>
-                </div>
               </div>
             </div>
           </div>
