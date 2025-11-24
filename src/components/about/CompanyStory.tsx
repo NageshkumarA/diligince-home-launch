@@ -71,12 +71,12 @@ const CompanyStory = () => {
                   }`}
                 >
                   <div className="flex-shrink-0">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-corporate-500 to-corporate-700 flex items-center justify-center shadow-lg">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-corporate-navy-500 to-corporate-navy-700 flex items-center justify-center shadow-lg">
                       <Icon className="w-7 h-7 text-white" />
                     </div>
                   </div>
                   <div className="flex-1 pt-1">
-                    <div className="text-sm font-semibold text-corporate-600 mb-1">{item.year}</div>
+                    <div className="text-sm font-semibold text-corporate-navy-600 mb-1">{item.year}</div>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
                     <p className="text-gray-600 leading-relaxed">{item.description}</p>
                   </div>
@@ -88,17 +88,17 @@ const CompanyStory = () => {
           {/* Mission & Stats */}
           <div className="space-y-8">
             {/* Mission Card */}
-            <div className="bg-gradient-to-br from-corporate-50 to-corporate-100 rounded-3xl p-8 md:p-10 border border-corporate-200 hover:shadow-xl transition-all duration-500">
-              <h3 className="text-2xl font-bold text-corporate-900 mb-4">Our Mission</h3>
-              <p className="text-lg text-corporate-700 leading-relaxed">
+            <div className="bg-gradient-to-br from-corporate-navy-50 to-corporate-navy-100 rounded-3xl p-8 md:p-10 border border-corporate-navy-200 hover:shadow-xl transition-all duration-500">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
+              <p className="text-lg text-gray-700 leading-relaxed">
                 To create seamless connections between industrial plants and service providers, driving efficiency and growth across the industrial ecosystem through innovative AI-powered solutions.
               </p>
             </div>
 
             {/* Vision Card */}
             <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-3xl p-8 md:p-10 border border-primary-200 hover:shadow-xl transition-all duration-500">
-              <h3 className="text-2xl font-bold text-primary-900 mb-4">Our Vision</h3>
-              <p className="text-lg text-primary-700 leading-relaxed">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Vision</h3>
+              <p className="text-lg text-gray-700 leading-relaxed">
                 To become the most intelligent and trusted industrial services marketplace in India, making it effortless for plant owners to find exactly the services they need.
               </p>
             </div>
@@ -108,9 +108,9 @@ const CompanyStory = () => {
               {stats.map((stat, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-2xl p-6 border border-gray-200 hover:border-corporate-400 hover:shadow-lg transition-all duration-300 text-center"
+                  className="bg-white rounded-2xl p-6 border border-gray-200 hover:border-corporate-navy-400 hover:shadow-lg transition-all duration-300 text-center"
                 >
-                  <div className="text-3xl font-bold text-corporate-600 mb-2">{stat.value}</div>
+                  <div className="text-3xl font-bold text-corporate-navy-600 mb-2">{stat.value}</div>
                   <div className="text-sm text-gray-600">{stat.label}</div>
                 </div>
               ))}

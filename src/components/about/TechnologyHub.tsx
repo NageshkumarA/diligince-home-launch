@@ -28,7 +28,7 @@ const TechnologyHub = () => {
   const { elementRef, visibleItems } = useStaggeredAnimation(technologies.length, 150);
 
   return (
-    <section className="py-20 md:py-32 bg-gradient-to-br from-gray-900 via-corporate-900 to-gray-900 relative overflow-hidden">
+    <section className="py-20 md:py-32 bg-gradient-to-br from-corporate-navy-900 via-corporate-navy-800 to-corporate-navy-700 relative overflow-hidden">
       {/* Animated Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{

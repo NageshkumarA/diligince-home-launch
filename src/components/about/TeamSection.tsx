@@ -5,7 +5,7 @@ const TeamSection = () => {
   const { elementRef, isVisible } = useScrollAnimation({ threshold: 0.2 });
 
   return (
-    <section className="py-20 md:py-32 bg-gradient-to-br from-corporate-50 via-white to-corporate-100 relative overflow-hidden">
+    <section className="py-20 md:py-32 bg-gradient-to-br from-gray-50 via-white to-primary-50 relative overflow-hidden">
       {/* Decorative Background */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute top-0 left-0 w-full h-full" style={{
@@ -33,7 +33,7 @@ const TeamSection = () => {
             {/* Key Highlights */}
             <div className="space-y-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-corporate-600 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-corporate-navy-600 flex items-center justify-center flex-shrink-0">
                   <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -78,7 +78,7 @@ const TeamSection = () => {
               {/* Main Card */}
               <div className="relative bg-white rounded-3xl p-10 shadow-2xl border border-gray-200">
                 <div className="text-center mb-8">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-corporate-500 to-corporate-700 mx-auto mb-6 flex items-center justify-center shadow-xl">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-corporate-navy-500 to-corporate-navy-700 mx-auto mb-6 flex items-center justify-center shadow-xl">
                     <Users className="w-12 h-12 text-white" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">Our Culture</h3>
@@ -89,8 +89,8 @@ const TeamSection = () => {
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-6">
-                  <div className="text-center p-6 bg-gradient-to-br from-corporate-50 to-corporate-100 rounded-2xl">
-                    <div className="text-3xl font-bold text-corporate-700 mb-2">100%</div>
+                  <div className="text-center p-6 bg-gradient-to-br from-corporate-navy-50 to-corporate-navy-100 rounded-2xl">
+                    <div className="text-3xl font-bold text-corporate-navy-700 mb-2">100%</div>
                     <div className="text-sm text-gray-600">Dedicated</div>
                   </div>
                   <div className="text-center p-6 bg-gradient-to-br from-primary-50 to-primary-100 rounded-2xl">
@@ -102,7 +102,7 @@ const TeamSection = () => {
                 {/* Location Badge */}
                 <div className="mt-8 p-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200">
                   <div className="flex items-center gap-3 mb-2">
-                    <MapPin className="w-5 h-5 text-corporate-600" />
+                    <MapPin className="w-5 h-5 text-corporate-navy-600" />
                     <span className="font-semibold text-gray-900">Headquarters</span>
                   </div>
                   <p className="text-gray-700">
@@ -113,7 +113,7 @@ const TeamSection = () => {
 
               {/* Floating Elements */}
               <div className="absolute -top-6 -right-6 w-32 h-32 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full blur-3xl opacity-20 animate-pulse" />
-              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-br from-corporate-400 to-corporate-600 rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: "1s" }} />
+              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-br from-corporate-navy-400 to-corporate-navy-600 rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: "1s" }} />
             </div>
           </div>
         </div>

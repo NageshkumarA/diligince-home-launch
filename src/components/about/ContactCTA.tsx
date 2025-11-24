@@ -31,11 +31,11 @@ const ContactCTA = () => {
   const { elementRef, isVisible } = useScrollAnimation({ threshold: 0.2 });
 
   return (
-    <section className="py-20 md:py-32 bg-gradient-to-br from-gray-50 via-white to-corporate-50 relative overflow-hidden">
+    <section className="py-20 md:py-32 bg-gradient-to-br from-primary-50 via-white to-corporate-navy-50 relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary-300/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-corporate-300/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-corporate-navy-300/20 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -69,7 +69,7 @@ const ContactCTA = () => {
                   onClick={() => navigate('/pricing')}
                   size="lg"
                   variant="outline"
-                  className="border-2 border-corporate-600 text-corporate-700 hover:bg-corporate-50"
+                  className="border-2 border-corporate-navy-600 text-corporate-navy-700 hover:bg-corporate-navy-50"
                 >
                   View Pricing
                 </Button>
