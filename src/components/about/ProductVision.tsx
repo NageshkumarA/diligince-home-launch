@@ -29,12 +29,12 @@ const ProductVision = () => {
     <section className="py-20 md:py-32 bg-gradient-to-br from-gray-50 via-white to-primary-50 relative overflow-hidden">
       {/* Decorative Elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary-300/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-corporate-300/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-corporate-navy-300/10 rounded-full blur-3xl" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center max-w-4xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600/10 rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-500/10 rounded-full mb-6">
             <span className="text-sm font-semibold text-primary-700">Product Innovation</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
@@ -61,7 +61,7 @@ const ProductVision = () => {
                 </p>
                 
                 {/* Mock Platform Preview */}
-                <div className="bg-gradient-to-br from-corporate-900 to-corporate-700 rounded-2xl p-8 text-white shadow-xl">
+                <div className="bg-gradient-to-br from-corporate-navy-900 to-corporate-navy-700 rounded-2xl p-8 text-white shadow-xl">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between pb-4 border-b border-white/20">
                       <div className="flex items-center gap-3">

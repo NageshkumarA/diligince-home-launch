@@ -6,7 +6,6 @@ import ProductVision from "@/components/about/ProductVision";
 import ValuesGrid from "@/components/about/ValuesGrid";
 import TeamSection from "@/components/about/TeamSection";
 import TechnologyHub from "@/components/about/TechnologyHub";
-import ImpactMetrics from "@/components/about/ImpactMetrics";
 import ContactCTA from "@/components/about/ContactCTA";
 
 const About = () => {
@@ -20,7 +19,6 @@ const About = () => {
         <ValuesGrid />
         <TeamSection />
         <TechnologyHub />
-        <ImpactMetrics />
         <ContactCTA />
       </main>
       <Footer />

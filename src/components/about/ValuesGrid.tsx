@@ -52,7 +52,7 @@ const ValuesGrid = () => {
   return (
     <section className="py-20 md:py-32 bg-white relative overflow-hidden">
       {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-corporate-50/30 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-50 to-transparent" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
