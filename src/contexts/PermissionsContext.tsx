@@ -34,13 +34,28 @@ export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({ childr
 
   // Initialize permissions on mount
   useEffect(() => {
-    // Currently using mock data
-    // TODO: Replace with actual API call when login endpoint is updated
     const initializePermissions = () => {
       setIsLoading(true);
       try {
-        const defaultPermissions = getDefaultPermissions();
-        setPermissionsState(defaultPermissions);
+        // Try to load cached roleConfiguration from localStorage
+        const cachedRoleConfig = localStorage.getItem('roleConfiguration');
+        
+        if (cachedRoleConfig) {
+          try {
+            const roleConfig = JSON.parse(cachedRoleConfig);
+            // Transform and set permissions from cached data
+            setPermissionsFromAPI(roleConfig);
+          } catch (parseError) {
+            console.error('Failed to parse cached permissions:', parseError);
+            // Fall back to default permissions
+            const defaultPermissions = getDefaultPermissions();
+            setPermissionsState(defaultPermissions);
+          }
+        } else {
+          // No cached data, use default mock permissions
+          const defaultPermissions = getDefaultPermissions();
+          setPermissionsState(defaultPermissions);
+        }
       } catch (error) {
         console.error('Failed to initialize permissions:', error);
       } finally {
@@ -51,8 +66,46 @@ export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({ childr
     initializePermissions();
   }, []);
 
+  // Listen for permissions update event from login
+  useEffect(() => {
+    const handlePermissionsUpdate = (event: CustomEvent) => {
+      setPermissionsFromAPI(event.detail);
+    };
+    
+    window.addEventListener('permissions:update', handlePermissionsUpdate as EventListener);
+    return () => window.removeEventListener('permissions:update', handlePermissionsUpdate as EventListener);
+  }, []);
+
   /**
-   * Update permissions - will be called after login with API response
+   * Set permissions from API roleConfiguration
+   * Transforms API response format to internal permission structures
+   */
+  const setPermissionsFromAPI = (roleConfig: any) => {
+    try {
+      // Import utilities dynamically to avoid circular dependency
+      const { flattenAPIPermissions, transformAPIToHierarchical } = require('@/utils/permissionUtils');
+      
+      // Transform API permissions to flat array for runtime checks
+      const flatPermissions = flattenAPIPermissions(roleConfig.permissions);
+      setPermissionsState({ permissions: flatPermissions });
+      
+      // Transform to hierarchical config for UI display
+      const hierarchicalConfig = transformAPIToHierarchical(roleConfig);
+      setHierarchicalConfig(hierarchicalConfig);
+      
+      // Cache the transformed permissions
+      try {
+        localStorage.setItem('userPermissions', JSON.stringify({ permissions: flatPermissions }));
+      } catch (error) {
+        console.error('Failed to cache permissions:', error);
+      }
+    } catch (error) {
+      console.error('Failed to transform API permissions:', error);
+    }
+  };
+
+  /**
+   * Update permissions - manual update method (backward compatibility)
    */
   const setPermissions = (newPermissions: UserPermissions) => {
     setPermissionsState(newPermissions);
