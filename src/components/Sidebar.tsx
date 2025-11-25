@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
-  const { isLoading, permissionsMap, pathToModuleMap } = usePermissions();
+  const { isLoading, permissionsMap, pathToModuleMap, hierarchicalConfig } = usePermissions();
   
   const canAccessFeature = verificationStatus === VerificationStatus.APPROVED;
 
@@ -23,38 +23,44 @@ const Sidebar: React.FC = () => {
   const menuKey = getMenuConfigKey(user) as keyof typeof menuConfig;
   const rawMenuItems = menuConfig[menuKey] || [];
 
-  // Filter menu items based on permissions using direct data maps
+  // Filter menu items based on permissions - strict filtering
   const menuItems = useMemo(() => {
-    // Don't filter if still loading permissions
-    if (isLoading) {
+    // If no hierarchical config, don't show any menu items
+    if (!hierarchicalConfig) {
       return [];
     }
 
     return rawMenuItems
       .map(item => {
-        // Filter submenus based on read permissions
+        // Filter submenus based on read permission
         const filteredSubmenu = item.submenu?.filter(subItem => {
           const moduleId = pathToModuleMap.get(subItem.path);
-          if (!moduleId) return true; // Show if not permission-controlled
+          if (!moduleId) {
+            // Hide if not in permission config
+            return false;
+          }
           const perm = permissionsMap.get(moduleId);
-          return perm?.permissions.read === true; // ✅ Explicit true check
+          // Only show if explicitly has read: true
+          return perm?.permissions.read === true;
         });
 
-        return {
-          ...item,
-          submenu: filteredSubmenu
-        };
+        return { ...item, submenu: filteredSubmenu };
       })
       .filter(item => {
-        // Show parent if it has read permission OR if it has accessible submenus
+        // Check if parent item should be shown
         const moduleId = pathToModuleMap.get(item.path);
-        if (!moduleId) return true; // Show if not permission-controlled
+        if (!moduleId) {
+          // Hide if not in permission config
+          return false;
+        }
         const perm = permissionsMap.get(moduleId);
-        const hasAccessToParent = perm?.permissions.read === true; // ✅ Explicit true check
+        const hasAccess = perm?.permissions.read === true;
+        
+        // Show if has access OR has accessible submenus
         const hasAccessibleSubmenus = item.submenu && item.submenu.length > 0;
-        return hasAccessToParent || hasAccessibleSubmenus;
+        return hasAccess || hasAccessibleSubmenus;
       });
-  }, [rawMenuItems, isLoading, permissionsMap, pathToModuleMap]);
+  }, [rawMenuItems, permissionsMap, pathToModuleMap, hierarchicalConfig]);
 
   const handleLogout = () => {
     logout();
@@ -128,6 +134,12 @@ const Sidebar: React.FC = () => {
                 <div className="h-10 bg-muted animate-pulse rounded-md"></div>
                 <div className="h-10 bg-muted animate-pulse rounded-md"></div>
                 <div className="h-10 bg-muted animate-pulse rounded-md"></div>
+                <div className="h-10 bg-muted animate-pulse rounded-md"></div>
+                <div className="h-10 bg-muted animate-pulse rounded-md"></div>
+              </div>
+            ) : !hierarchicalConfig || menuItems.length === 0 ? (
+              <div className="p-4 text-center text-muted-foreground">
+                <p className="text-sm">No menu access available</p>
               </div>
             ) : (
               menuItems.map((item) => {

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { PermissionAction } from '@/types/roleManagement';
+import { IndustryPermissionsConfig } from '@/types/permissions';
 import { usePermissionsContext } from '@/contexts/PermissionsContext';
 import { getModuleDefinition } from '@/config/permissionsConfig';
 import { getModuleHierarchy, getHierarchicalSubmodules } from '@/utils/permissionUtils';
@@ -143,8 +144,8 @@ export const usePermissions = () => {
    * Get complete hierarchical config
    * Used for role management and cloning
    */
-  const getHierarchicalConfigData = () => {
-    return getHierarchicalModules();
+  const getHierarchicalConfigData = (): IndustryPermissionsConfig | null => {
+    return hierarchicalConfig;
   };
 
   /**
