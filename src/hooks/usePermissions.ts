@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { PermissionAction } from '@/types/roleManagement';
 import { usePermissionsContext } from '@/contexts/PermissionsContext';
 import { getModuleDefinition } from '@/config/permissionsConfig';
+import { getModuleHierarchy, getHierarchicalSubmodules } from '@/utils/permissionUtils';
 
 /**
  * Hook for checking user permissions
@@ -21,7 +22,7 @@ import { getModuleDefinition } from '@/config/permissionsConfig';
  * const showInNav = canShowNavItem('industry-requirements');
  */
 export const usePermissions = () => {
-  const { permissions, getModulePermission, isLoading } = usePermissionsContext();
+  const { permissions, hierarchicalConfig, getModulePermission, getHierarchicalModules, isLoading } = usePermissionsContext();
 
   /**
    * Check if user has specific permission for a module
@@ -112,9 +113,34 @@ export const usePermissions = () => {
     };
   };
 
+  /**
+   * Get hierarchical module structure
+   * Used for role management UI and sidebar rendering
+   */
+  const getModuleHierarchyData = (moduleId: string) => {
+    return getModuleHierarchy(moduleId);
+  };
+
+  /**
+   * Get all submodules for a parent module
+   * Returns hierarchical submodule structure
+   */
+  const getSubmodules = (moduleId: string) => {
+    return getHierarchicalSubmodules(moduleId);
+  };
+
+  /**
+   * Get complete hierarchical config
+   * Used for role management and cloning
+   */
+  const getHierarchicalConfigData = () => {
+    return getHierarchicalModules();
+  };
+
   return useMemo(
     () => ({
       permissions,
+      hierarchicalConfig,
       isLoading,
       hasPermission,
       canAccessModule,
@@ -124,7 +150,10 @@ export const usePermissions = () => {
       hasAllPermissions,
       hasAnyPermission,
       getModuleWithPermissions,
+      getModuleHierarchyData,
+      getSubmodules,
+      getHierarchicalConfigData,
     }),
-    [permissions, isLoading]
+    [permissions, hierarchicalConfig, isLoading]
   );
 };

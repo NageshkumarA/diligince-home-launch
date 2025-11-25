@@ -1,5 +1,10 @@
-import { INDUSTRY_MODULES } from '@/config/permissionsConfig';
-import { ModulePermission } from '@/types/permissions';
+import { INDUSTRY_MODULES, INDUSTRY_PERMISSIONS_CONFIG } from '@/config/permissionsConfig';
+import { 
+  ModulePermission, 
+  IndustryPermissionsConfig,
+  ModulePermissionHierarchy,
+  PermissionFlags 
+} from '@/types/permissions';
 import { PermissionAction } from '@/types/roleManagement';
 
 /**
@@ -158,4 +163,99 @@ export const validatePermissions = (permissions: ModulePermission[]): boolean =>
       typeof perm.permissions.download === 'boolean'
     );
   });
+};
+
+/**
+ * Flatten hierarchical permissions config to flat array
+ * Used for backward compatibility with existing permission checks
+ */
+export const flattenPermissions = (config: IndustryPermissionsConfig): ModulePermission[] => {
+  const flattened: ModulePermission[] = [];
+  
+  config.modules.forEach((module) => {
+    // Add main module
+    flattened.push({
+      module: module.id,
+      permissions: { ...module.permissions },
+    });
+    
+    // Add submodules
+    if (module.submodules) {
+      module.submodules.forEach((submodule) => {
+        flattened.push({
+          module: submodule.id,
+          permissions: { ...submodule.permissions },
+        });
+      });
+    }
+  });
+  
+  return flattened;
+};
+
+/**
+ * Get module hierarchy from config
+ * Returns the hierarchical structure for a specific module
+ */
+export const getModuleHierarchy = (moduleId: string): ModulePermissionHierarchy | undefined => {
+  return INDUSTRY_PERMISSIONS_CONFIG.modules.find((m) => m.id === moduleId);
+};
+
+/**
+ * Clone hierarchical config for role creation
+ * Deep clones the entire config so it can be modified for a new role
+ */
+export const cloneConfigForRole = (
+  config: IndustryPermissionsConfig,
+  newRoleName: string
+): IndustryPermissionsConfig => {
+  return {
+    version: config.version,
+    roleName: newRoleName,
+    modules: config.modules.map((module) => ({
+      ...module,
+      permissions: { ...module.permissions },
+      submodules: module.submodules?.map((sub) => ({
+        ...sub,
+        permissions: { ...sub.permissions },
+      })),
+    })),
+  };
+};
+
+/**
+ * Set all permissions to a specific value
+ * Useful for "Select All" or "Deselect All" functionality
+ */
+export const setAllPermissions = (
+  config: IndustryPermissionsConfig,
+  value: boolean
+): IndustryPermissionsConfig => {
+  const allTrue: PermissionFlags = {
+    read: value,
+    write: value,
+    edit: value,
+    delete: value,
+    download: value,
+  };
+  
+  return {
+    ...config,
+    modules: config.modules.map((module) => ({
+      ...module,
+      permissions: { ...allTrue },
+      submodules: module.submodules?.map((sub) => ({
+        ...sub,
+        permissions: { ...allTrue },
+      })),
+    })),
+  };
+};
+
+/**
+ * Get all submodules for a parent module from hierarchical config
+ */
+export const getHierarchicalSubmodules = (moduleId: string): ModulePermissionHierarchy['submodules'] => {
+  const module = getModuleHierarchy(moduleId);
+  return module?.submodules || [];
 };
