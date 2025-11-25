@@ -1,11 +1,22 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Mail, Phone, UserCog, Ban, Trash2, RefreshCw } from 'lucide-react';
-import { TeamMember } from '@/services/modules/team-members';
-import { CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { TeamMember } from "@/services/modules/team-members/team-members.types";
+import { CheckCircle2, XCircle, Clock, Edit, Trash2, MoreVertical, RefreshCw, Ban, CheckCircle } from "lucide-react";
 
 interface TeamMembersTableProps {
   members: TeamMember[];
@@ -24,12 +35,18 @@ export const TeamMembersTable = ({
   onRemove,
   onResendVerification,
 }: TeamMembersTableProps) => {
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  const getInitials = (firstName?: string, lastName?: string, email?: string) => {
+    if (firstName && lastName) {
+      return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    }
+    if (email) {
+      return email.substring(0, 2).toUpperCase();
+    }
+    return "??";
   };
 
-  const getVerificationBadge = (member: TeamMember) => {
-    if (member.isEmailVerified && member.isPhoneVerified) {
+  const getVerificationBadge = (isEmailVerified: boolean, isPhoneVerified: boolean) => {
+    if (isEmailVerified && isPhoneVerified) {
       return (
         <Badge variant="outline" className="text-green-600 border-green-600">
           <CheckCircle2 className="h-3 w-3 mr-1" />
@@ -37,7 +54,7 @@ export const TeamMembersTable = ({
         </Badge>
       );
     }
-    if (!member.isEmailVerified && !member.isPhoneVerified) {
+    if (!isEmailVerified && !isPhoneVerified) {
       return (
         <Badge variant="outline" className="text-destructive border-destructive">
           <XCircle className="h-3 w-3 mr-1" />
@@ -47,7 +64,7 @@ export const TeamMembersTable = ({
     }
     return (
       <Badge variant="outline" className="text-amber-600 border-amber-600">
-        <AlertCircle className="h-3 w-3 mr-1" />
+        <Clock className="h-3 w-3 mr-1" />
         Partial
       </Badge>
     );
@@ -55,19 +72,30 @@ export const TeamMembersTable = ({
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active':
-        return <Badge variant="outline" className="text-green-600 border-green-600">Active</Badge>;
-      case 'suspended':
-        return <Badge variant="outline" className="text-amber-600 border-amber-600">Suspended</Badge>;
-      case 'inactive':
-        return <Badge variant="outline" className="text-muted-foreground">Inactive</Badge>;
+      case "active":
+        return <Badge variant="default">Active</Badge>;
+      case "suspended":
+        return <Badge variant="destructive">Suspended</Badge>;
+      case "inactive":
+        return <Badge variant="secondary">Inactive</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
   };
 
+  if (members.length === 0) {
+    return (
+      <div className="border rounded-lg p-12 text-center">
+        <p className="text-muted-foreground">No team members found</p>
+        <p className="text-sm text-muted-foreground mt-2">
+          Add your first team member to get started
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="border rounded-lg">
+    <div className="border rounded-lg overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
@@ -81,92 +109,134 @@ export const TeamMembersTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {members.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                No team members found. Invite your first member to get started.
+          {members.map((member) => (
+            <TableRow key={member.id}>
+              <TableCell>
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                      {getInitials(member.firstName, member.lastName, member.email)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">
+                      {member.firstName && member.lastName
+                        ? `${member.firstName} ${member.lastName}`
+                        : member.email}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{member.designation || "—"}</p>
+                  </div>
+                </div>
               </TableCell>
-            </TableRow>
-          ) : (
-            members.map((member) => (
-              <TableRow key={member.id}>
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="text-xs bg-primary/10">
-                        {getInitials(member.firstName, member.lastName)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-medium">{member.fullName}</div>
-                      <div className="text-xs text-muted-foreground">{member.designation || 'Member'}</div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-1 text-sm">
-                      <Mail className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-xs">{member.email}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-sm">
-                      <Phone className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-xs">{member.phone}</span>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">{member.department || '-'}</span>
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-col gap-1">
-                    <span className="text-sm font-medium">
-                      {member.assignedRole?.name || 'No role assigned'}
-                    </span>
-                    {member.assignedRole?.isDefault && (
-                      <Badge variant="outline" className="w-fit text-xs">Default</Badge>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>{getStatusBadge(member.status)}</TableCell>
-                <TableCell>{getVerificationBadge(member)}</TableCell>
-                <TableCell className="text-right">
+              <TableCell>
+                <div className="text-sm">
+                  <p>{member.email}</p>
+                  <p className="text-muted-foreground">{member.phone}</p>
+                </div>
+              </TableCell>
+              <TableCell>
+                <span className="text-sm">{member.department || "—"}</span>
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-medium">
+                    {member.assignedRole?.name || "—"}
+                  </span>
+                  {member.assignedRole?.isDefault && (
+                    <Badge variant="outline" className="w-fit text-xs">
+                      Default
+                    </Badge>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>{getStatusBadge(member.status)}</TableCell>
+              <TableCell>
+                {getVerificationBadge(member.isEmailVerified, member.isPhoneVerified)}
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center justify-end gap-1">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onEdit(member)}
+                          className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Edit Info</TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onChangeRole(member)}
+                          className="h-8 w-8 text-primary hover:bg-primary/10"
+                        >
+                          <RefreshCw className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Change Role</TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onRemove(member)}
+                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Remove Member</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                      >
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onEdit(member)}>
-                        <UserCog className="mr-2 h-4 w-4" />
-                        Edit Info
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onChangeRole(member)}>
-                        <RefreshCw className="mr-2 h-4 w-4" />
-                        Change Role
-                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onResendVerification(member)}>
-                        <Mail className="mr-2 h-4 w-4" />
+                        <RefreshCw className="h-4 w-4 mr-2" />
                         Resend Verification
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onSuspend(member)}>
-                        <Ban className="mr-2 h-4 w-4" />
-                        {member.status === 'suspended' ? 'Activate' : 'Suspend'}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={() => onRemove(member)}
-                        className="text-destructive"
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => onSuspend(member)}
+                        className={member.status === "suspended" ? "text-green-600" : "text-destructive"}
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Remove
+                        {member.status === "suspended" ? (
+                          <>
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Activate Member
+                          </>
+                        ) : (
+                          <>
+                            <Ban className="h-4 w-4 mr-2" />
+                            Suspend Member
+                          </>
+                        )}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))
-          )}
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>
