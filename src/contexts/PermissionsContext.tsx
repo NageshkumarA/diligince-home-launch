@@ -1,12 +1,18 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { UserPermissions, ModulePermission } from '@/types/permissions';
-import { getDefaultPermissions } from '@/config/permissionsConfig';
+import { 
+  UserPermissions, 
+  ModulePermission, 
+  IndustryPermissionsConfig 
+} from '@/types/permissions';
+import { getDefaultPermissions, getHierarchicalConfig } from '@/config/permissionsConfig';
 
 interface PermissionsContextType {
   permissions: UserPermissions;
+  hierarchicalConfig: IndustryPermissionsConfig;
   setPermissions: (permissions: UserPermissions) => void;
   isLoading: boolean;
   getModulePermission: (moduleId: string) => ModulePermission | undefined;
+  getHierarchicalModules: () => IndustryPermissionsConfig;
 }
 
 const PermissionsContext = createContext<PermissionsContextType | undefined>(undefined);
@@ -23,6 +29,7 @@ interface PermissionsProviderProps {
  */
 export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({ children }) => {
   const [permissions, setPermissionsState] = useState<UserPermissions>(getDefaultPermissions());
+  const [hierarchicalConfig, setHierarchicalConfig] = useState<IndustryPermissionsConfig>(getHierarchicalConfig());
   const [isLoading, setIsLoading] = useState(false);
 
   // Initialize permissions on mount
@@ -65,11 +72,21 @@ export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({ childr
     return permissions.permissions.find((p) => p.module === moduleId);
   };
 
+  /**
+   * Get hierarchical modules configuration
+   * Used for role management UI and sidebar rendering
+   */
+  const getHierarchicalModules = (): IndustryPermissionsConfig => {
+    return hierarchicalConfig;
+  };
+
   const value: PermissionsContextType = {
     permissions,
+    hierarchicalConfig,
     setPermissions,
     isLoading,
     getModulePermission,
+    getHierarchicalModules,
   };
 
   return (

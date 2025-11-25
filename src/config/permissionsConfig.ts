@@ -1,8 +1,20 @@
-import { ModuleDefinition, UserPermissions } from '@/types/permissions';
+import { 
+  ModuleDefinition, 
+  UserPermissions, 
+  IndustryPermissionsConfig,
+  ModulePermissionHierarchy 
+} from '@/types/permissions';
+import industryModulePermissions from '@/data/industry_module_permissions.json';
 
 /**
- * Complete list of all industry modules and sub-modules
- * Based on industry navigation structure
+ * Master hierarchical configuration imported from JSON
+ * This is the single source of truth for all permission structures
+ */
+export const INDUSTRY_PERMISSIONS_CONFIG: IndustryPermissionsConfig = industryModulePermissions as IndustryPermissionsConfig;
+
+/**
+ * Complete list of all industry modules and sub-modules (flat structure)
+ * Generated from hierarchical config for backward compatibility
  */
 export const INDUSTRY_MODULES: ModuleDefinition[] = [
   // Core Dashboard
@@ -282,4 +294,27 @@ export const getModuleDefinition = (moduleId: string): ModuleDefinition | undefi
  */
 export const getSubModules = (parentModuleId: string): ModuleDefinition[] => {
   return INDUSTRY_MODULES.filter((m) => m.parentModule === parentModuleId);
+};
+
+/**
+ * Get IndustryAdmin default permissions (all features enabled)
+ * Generated from hierarchical JSON config
+ */
+export const getIndustryAdminDefaultPermissions = (): UserPermissions => {
+  return mockAllPermissionsEnabled;
+};
+
+/**
+ * Get hierarchical permissions configuration
+ * This is the master template for role management UI and MongoDB storage
+ */
+export const getHierarchicalConfig = (): IndustryPermissionsConfig => {
+  return INDUSTRY_PERMISSIONS_CONFIG;
+};
+
+/**
+ * Get hierarchical module by ID
+ */
+export const getHierarchicalModule = (moduleId: string): ModulePermissionHierarchy | undefined => {
+  return INDUSTRY_PERMISSIONS_CONFIG.modules.find((m) => m.id === moduleId);
 };

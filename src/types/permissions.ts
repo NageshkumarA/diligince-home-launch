@@ -1,28 +1,68 @@
 import { PermissionAction } from './roleManagement';
 
 /**
- * Permission configuration for a specific module or sub-module
+ * Basic permission flags for all actions
  */
-export interface ModulePermission {
-  module: string; // e.g., "industry-dashboard", "create-requirement"
-  permissions: {
-    read: boolean;
-    write: boolean;
-    edit: boolean;
-    delete: boolean;
-    download: boolean;
-  };
+export interface PermissionFlags {
+  read: boolean;
+  write: boolean;
+  edit: boolean;
+  delete: boolean;
+  download: boolean;
 }
 
 /**
- * Complete user permissions configuration
+ * Sub-module permission with hierarchy
+ */
+export interface SubModulePermission {
+  id: string;
+  name: string;
+  path: string;
+  icon: string;
+  permissions: PermissionFlags;
+}
+
+/**
+ * Module permission with nested submodules
+ */
+export interface ModulePermissionHierarchy {
+  id: string;
+  name: string;
+  path: string;
+  icon: string;
+  permissions: PermissionFlags;
+  submodules?: SubModulePermission[];
+}
+
+/**
+ * Complete industry permissions configuration (hierarchical)
+ */
+export interface IndustryPermissionsConfig {
+  version: string;
+  roleName: string;
+  modules: ModulePermissionHierarchy[];
+}
+
+/**
+ * Permission configuration for a specific module or sub-module (flat structure)
+ * Used for backward compatibility with existing permission checks
+ */
+export interface ModulePermission {
+  module: string; // e.g., "industry-dashboard", "create-requirement"
+  permissions: PermissionFlags;
+}
+
+/**
+ * Complete user permissions configuration (flat structure)
+ * Used for backward compatibility with existing permission checks
  */
 export interface UserPermissions {
   permissions: ModulePermission[];
 }
 
 /**
- * Module definition with metadata
+ * Module definition with metadata (flat structure)
+ * Used for backward compatibility
  */
 export interface ModuleDefinition {
   id: string; // e.g., "industry-dashboard"
