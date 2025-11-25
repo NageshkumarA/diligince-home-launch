@@ -207,14 +207,30 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         localStorage.setItem('authToken', userData.access_token);
         localStorage.setItem('refreshToken', userData.refresh_token);
         
-        // Store roleConfiguration for permissions
-        if (userData.user.roleConfiguration) {
-          localStorage.setItem('roleConfiguration', JSON.stringify(userData.user.roleConfiguration));
-          // Dispatch event to update permissions context
-          window.dispatchEvent(new CustomEvent('permissions:update', { 
-            detail: userData.user.roleConfiguration 
-          }));
+        // Validate and store roleConfiguration for permissions
+        const roleConfig = userData.user.roleConfiguration;
+        if (!roleConfig || !roleConfig.permissions || roleConfig.permissions.length === 0) {
+          toast.error("Don't have any Module Access");
+          return { success: false, error: "No module access configured for this account" };
         }
+        
+        // Check if user has at least one readable module
+        const hasAnyAccess = roleConfig.permissions.some((m: any) => 
+          m.permissions?.read === true || 
+          m.submodules?.some((s: any) => s.permissions?.read === true)
+        );
+        
+        if (!hasAnyAccess) {
+          toast.error("Don't have any Module Access");
+          return { success: false, error: "No module access configured for this account" };
+        }
+        
+        // Store valid permissions
+        localStorage.setItem('roleConfiguration', JSON.stringify(roleConfig));
+        // Dispatch event to update permissions context
+        window.dispatchEvent(new CustomEvent('permissions:update', { 
+          detail: roleConfig 
+        }));
         
         const apiUser = userData.user;
         const userProfile: UserProfile = {
