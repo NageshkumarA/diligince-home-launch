@@ -140,12 +140,21 @@ export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({ childr
 
   // Create path-to-module mapping for quick lookups
   const pathToModuleMap = useMemo(() => {
-    return createPathToModuleMap(hierarchicalConfig);
+    const map = createPathToModuleMap(hierarchicalConfig);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Permissions] pathToModuleMap entries:', map.size);
+    }
+    return map;
   }, [hierarchicalConfig]);
 
   // Create permissions map for efficient lookups
   const permissionsMap = useMemo(() => {
-    return createPermissionsMap(permissions.permissions);
+    const map = createPermissionsMap(permissions.permissions);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Permissions] permissionsMap entries:', map.size);
+      console.log('[Permissions] Sample permission:', Array.from(map.entries())[0]);
+    }
+    return map;
   }, [permissions]);
 
   const getModuleIdByPath = (path: string): string | null => {

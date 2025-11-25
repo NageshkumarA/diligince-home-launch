@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
-  const { canAccessPath } = usePermissions();
+  const { isLoading, permissionsMap, pathToModuleMap } = usePermissions();
   
   const canAccessFeature = verificationStatus === VerificationStatus.APPROVED;
 
@@ -23,13 +23,21 @@ const Sidebar: React.FC = () => {
   const menuKey = getMenuConfigKey(user) as keyof typeof menuConfig;
   const rawMenuItems = menuConfig[menuKey] || [];
 
-  // Filter menu items based on permissions
+  // Filter menu items based on permissions using direct data maps
   const menuItems = useMemo(() => {
+    // Don't filter if still loading permissions
+    if (isLoading) {
+      return [];
+    }
+
     return rawMenuItems
       .map(item => {
         // Filter submenus based on read permissions
         const filteredSubmenu = item.submenu?.filter(subItem => {
-          return canAccessPath(subItem.path);
+          const moduleId = pathToModuleMap.get(subItem.path);
+          if (!moduleId) return true; // Show if not permission-controlled
+          const perm = permissionsMap.get(moduleId);
+          return perm?.permissions.read === true; // ✅ Explicit true check
         });
 
         return {
@@ -39,11 +47,14 @@ const Sidebar: React.FC = () => {
       })
       .filter(item => {
         // Show parent if it has read permission OR if it has accessible submenus
-        const hasAccessToParent = canAccessPath(item.path);
+        const moduleId = pathToModuleMap.get(item.path);
+        if (!moduleId) return true; // Show if not permission-controlled
+        const perm = permissionsMap.get(moduleId);
+        const hasAccessToParent = perm?.permissions.read === true; // ✅ Explicit true check
         const hasAccessibleSubmenus = item.submenu && item.submenu.length > 0;
         return hasAccessToParent || hasAccessibleSubmenus;
       });
-  }, [rawMenuItems, canAccessPath]);
+  }, [rawMenuItems, isLoading, permissionsMap, pathToModuleMap]);
 
   const handleLogout = () => {
     logout();
@@ -112,7 +123,14 @@ const Sidebar: React.FC = () => {
         {/* Navigation Menu */}
         <div className="flex-1 overflow-y-auto p-2 relative">
           <nav className="space-y-2 flex-1 overflow-y-auto">
-            {menuItems.map((item) => {
+            {isLoading ? (
+              <div className="space-y-2 p-4">
+                <div className="h-10 bg-muted animate-pulse rounded-md"></div>
+                <div className="h-10 bg-muted animate-pulse rounded-md"></div>
+                <div className="h-10 bg-muted animate-pulse rounded-md"></div>
+              </div>
+            ) : (
+              menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
               const isExpanded = expandedMenus.includes(item.path);
@@ -204,7 +222,8 @@ const Sidebar: React.FC = () => {
                   )}
                 </div>
               );
-            })}
+            })
+            )}
           </nav>
         </div>
 
