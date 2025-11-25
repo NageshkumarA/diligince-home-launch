@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PermissionGate } from "@/components/shared/PermissionGate";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -156,47 +157,53 @@ export const TeamMembersTable = ({
               <TableCell>
                 <div className="flex items-center justify-end gap-1">
                   <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onEdit(member)}
-                          className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Edit Info</TooltipContent>
-                    </Tooltip>
+                    <PermissionGate moduleId="settings-team-members" action="edit">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => onEdit(member)}
+                            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Edit Info</TooltipContent>
+                      </Tooltip>
+                    </PermissionGate>
 
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onChangeRole(member)}
-                          className="h-8 w-8 text-primary hover:bg-primary/10"
-                        >
-                          <RefreshCw className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Change Role</TooltipContent>
-                    </Tooltip>
+                    <PermissionGate moduleId="settings-team-members" action="edit">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => onChangeRole(member)}
+                            className="h-8 w-8 text-primary hover:bg-primary/10"
+                          >
+                            <RefreshCw className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Change Role</TooltipContent>
+                      </Tooltip>
+                    </PermissionGate>
 
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onRemove(member)}
-                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Remove Member</TooltipContent>
-                    </Tooltip>
+                    <PermissionGate moduleId="settings-team-members" action="delete">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => onRemove(member)}
+                            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Remove Member</TooltipContent>
+                      </Tooltip>
+                    </PermissionGate>
                   </TooltipProvider>
 
                   <DropdownMenu>
@@ -214,23 +221,25 @@ export const TeamMembersTable = ({
                         <RefreshCw className="h-4 w-4 mr-2" />
                         Resend Verification
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => onSuspend(member)}
-                        className={member.status === "suspended" ? "text-green-600" : "text-destructive"}
-                      >
-                        {member.status === "suspended" ? (
-                          <>
-                            <CheckCircle className="h-4 w-4 mr-2" />
-                            Activate Member
-                          </>
-                        ) : (
-                          <>
-                            <Ban className="h-4 w-4 mr-2" />
-                            Suspend Member
-                          </>
-                        )}
-                      </DropdownMenuItem>
+                      <PermissionGate moduleId="settings-team-members" action="edit">
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => onSuspend(member)}
+                          className={member.status === "suspended" ? "text-green-600" : "text-destructive"}
+                        >
+                          {member.status === "suspended" ? (
+                            <>
+                              <CheckCircle className="h-4 w-4 mr-2" />
+                              Activate Member
+                            </>
+                          ) : (
+                            <>
+                              <Ban className="h-4 w-4 mr-2" />
+                              Suspend Member
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                      </PermissionGate>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
