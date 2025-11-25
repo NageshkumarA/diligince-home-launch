@@ -285,6 +285,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     localStorage.removeItem('roleConfiguration');
     localStorage.removeItem('userPermissions');
     localStorage.removeItem('isMockAuth'); // Clear mock auth flag
+    localStorage.clear();
   }, []);
 
   const getDashboardUrl = (): string => {
