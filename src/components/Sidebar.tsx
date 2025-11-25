@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { menuConfig } from '@/config/menuConfig';
@@ -6,6 +6,7 @@ import { getMenuConfigKey } from '@/utils/roleMapper';
 import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, User, LogOut, Settings as SettingsIcon, Lock } from 'lucide-react';
 import { VerificationStatus } from '@/types/verification';
 import { toast } from 'sonner';
+import { usePermissions } from '@/hooks/usePermissions';
 
 const Sidebar: React.FC = () => {
   const { user, logout, verificationStatus } = useUser();
@@ -13,13 +14,36 @@ const Sidebar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
+  const { canAccessPath } = usePermissions();
   
   const canAccessFeature = verificationStatus === VerificationStatus.APPROVED;
 
   if (!user) return null;
 
   const menuKey = getMenuConfigKey(user) as keyof typeof menuConfig;
-  const menuItems = menuConfig[menuKey] || [];
+  const rawMenuItems = menuConfig[menuKey] || [];
+
+  // Filter menu items based on permissions
+  const menuItems = useMemo(() => {
+    return rawMenuItems
+      .map(item => {
+        // Filter submenus based on read permissions
+        const filteredSubmenu = item.submenu?.filter(subItem => {
+          return canAccessPath(subItem.path);
+        });
+
+        return {
+          ...item,
+          submenu: filteredSubmenu
+        };
+      })
+      .filter(item => {
+        // Show parent if it has read permission OR if it has accessible submenus
+        const hasAccessToParent = canAccessPath(item.path);
+        const hasAccessibleSubmenus = item.submenu && item.submenu.length > 0;
+        return hasAccessToParent || hasAccessibleSubmenus;
+      });
+  }, [rawMenuItems, canAccessPath]);
 
   const handleLogout = () => {
     logout();

@@ -312,3 +312,47 @@ export const transformAPIToHierarchical = (roleConfig: any): IndustryPermissions
     })),
   };
 };
+
+/**
+ * Create a map from paths to module IDs for quick lookups
+ */
+export const createPathToModuleMap = (config: IndustryPermissionsConfig): Map<string, string> => {
+  const map = new Map<string, string>();
+  
+  config.modules.forEach(module => {
+    map.set(module.path, module.id);
+    module.submodules?.forEach(sub => {
+      map.set(sub.path, sub.id);
+    });
+  });
+  
+  return map;
+};
+
+/**
+ * Get permissions by path from the flat permissions array
+ */
+export const getPermissionsByPath = (
+  path: string,
+  permissionsMap: Map<string, ModulePermission>,
+  pathToModuleMap: Map<string, string>
+): PermissionFlags | null => {
+  const moduleId = pathToModuleMap.get(path);
+  if (!moduleId) return null;
+  
+  const permission = permissionsMap.get(moduleId);
+  return permission?.permissions || null;
+};
+
+/**
+ * Check if a path can be accessed (has read permission)
+ */
+export const canAccessPath = (
+  path: string,
+  permissionsMap: Map<string, ModulePermission>,
+  pathToModuleMap: Map<string, string>
+): boolean => {
+  const permissions = getPermissionsByPath(path, permissionsMap, pathToModuleMap);
+  // Default to true if permission not found (graceful fallback)
+  return permissions?.read !== false;
+};

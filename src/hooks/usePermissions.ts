@@ -22,7 +22,17 @@ import { getModuleHierarchy, getHierarchicalSubmodules } from '@/utils/permissio
  * const showInNav = canShowNavItem('industry-requirements');
  */
 export const usePermissions = () => {
-  const { permissions, hierarchicalConfig, getModulePermission, getHierarchicalModules, isLoading } = usePermissionsContext();
+  const { 
+    permissions, 
+    hierarchicalConfig, 
+    getModulePermission, 
+    getHierarchicalModules, 
+    isLoading,
+    getModuleIdByPath,
+    getPermissionByPath,
+    permissionsMap,
+    pathToModuleMap
+  } = usePermissionsContext();
 
   /**
    * Check if user has specific permission for a module
@@ -137,6 +147,34 @@ export const usePermissions = () => {
     return getHierarchicalModules();
   };
 
+  /**
+   * Check if user has specific permission for a path
+   */
+  const hasPermissionByPath = (path: string, action: PermissionAction): boolean => {
+    const permission = getPermissionByPath(path);
+    if (!permission) {
+      return true; // Graceful fallback - allow access if permission not found
+    }
+    return permission.permissions[action] || false;
+  };
+
+  /**
+   * Check if user can access a path (has read permission)
+   */
+  const canAccessPath = (path: string): boolean => {
+    const permission = getPermissionByPath(path);
+    // Default to true if permission not found (graceful fallback)
+    return permission?.permissions.read !== false;
+  };
+
+  /**
+   * Get all permissions for a specific path
+   */
+  const getPermissionsByPath = (path: string) => {
+    const permission = getPermissionByPath(path);
+    return permission?.permissions || null;
+  };
+
   return useMemo(
     () => ({
       permissions,
@@ -153,7 +191,12 @@ export const usePermissions = () => {
       getModuleHierarchyData,
       getSubmodules,
       getHierarchicalConfigData,
+      hasPermissionByPath,
+      canAccessPath,
+      getPermissionsByPath,
+      permissionsMap,
+      pathToModuleMap,
     }),
-    [permissions, hierarchicalConfig, isLoading]
+    [permissions, hierarchicalConfig, isLoading, permissionsMap, pathToModuleMap]
   );
 };
