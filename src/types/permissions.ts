@@ -80,3 +80,45 @@ export interface PermissionCheckResult {
   hasAccess: boolean;
   allowedActions: PermissionAction[];
 }
+
+/**
+ * API Response types for roleConfiguration
+ */
+export interface RoleConfigurationResponse {
+  name: string;
+  displayName: string;
+  description: string;
+  projectType: string;
+  isDefault: boolean;
+  permissions: ModulePermissionFromAPI[];
+  permissionSummary: PermissionSummary;
+}
+
+export interface ModulePermissionFromAPI {
+  id: string;
+  name: string;
+  path: string;
+  icon: string;
+  permissions: PermissionFlags;
+  submodules?: SubModulePermissionFromAPI[];
+  _id?: string;
+}
+
+export interface SubModulePermissionFromAPI {
+  id: string;
+  name: string;
+  path: string;
+  icon: string;
+  permissions: PermissionFlags;
+  _id?: string;
+}
+
+export interface PermissionSummary {
+  totalModules: number;
+  totalPermissions: number;
+  canRead: number;
+  canWrite: number;
+  canEdit: number;
+  canDelete: number;
+  canDownload: number;
+}

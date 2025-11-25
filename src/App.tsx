@@ -6,6 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { UserProvider } from "@/contexts/UserContext";
+import { PermissionsProvider } from "@/contexts/PermissionsContext";
 import { NotificationStoreProvider } from "@/contexts/NotificationStoreContext";
 import { EnhancedApprovalProvider } from "@/contexts/EnhancedApprovalContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
@@ -151,14 +152,15 @@ function App() {
     <Router>
       <ErrorBoundary>
         <UserProvider>
-          <NotificationStoreProvider>
-            <NotificationProvider>
-              <EnhancedApprovalProvider>
-                <RequirementProvider>
-                  <ApprovalProvider>
-                    <StakeholderProvider>
-                      <VendorSpecializationProvider>
-                        <div className="App">
+          <PermissionsProvider>
+            <NotificationStoreProvider>
+              <NotificationProvider>
+                <EnhancedApprovalProvider>
+                  <RequirementProvider>
+                    <ApprovalProvider>
+                      <StakeholderProvider>
+                        <VendorSpecializationProvider>
+                          <div className="App">
                           <Routes>
                             {/* Public Routes */}
                             <Route path="/" element={<Index />} />
@@ -568,14 +570,15 @@ function App() {
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                           <Toaster richColors position="top-right"/>
-                        </div>
-                      </VendorSpecializationProvider>
-                    </StakeholderProvider>
-                  </ApprovalProvider>
-                </RequirementProvider>
-              </EnhancedApprovalProvider>
-            </NotificationProvider>
-          </NotificationStoreProvider>
+                          </div>
+                        </VendorSpecializationProvider>
+                      </StakeholderProvider>
+                    </ApprovalProvider>
+                  </RequirementProvider>
+                </EnhancedApprovalProvider>
+              </NotificationProvider>
+            </NotificationStoreProvider>
+          </PermissionsProvider>
         </UserProvider>
       </ErrorBoundary>
     </Router>

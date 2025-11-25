@@ -196,15 +196,27 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       console.log('[Auth] Attempting API login...');
       const response: any = await api.post(apiRoutes.auth.login, { email, password });
       
-      const { data, meta } = response?.data;
+      // Parse the response - handle API structure: response.data.data
+      const responseData = response?.data || response;
+      const userData = responseData?.data;
       
-      if (meta?.access_token && data?.user) {
+      if (userData?.access_token && userData?.user) {
         console.log('[Auth] API login successful');
         
-        localStorage.setItem('authToken', meta.access_token);
-        localStorage.setItem('refreshToken', meta.refresh_token);
+        // Store authentication tokens
+        localStorage.setItem('authToken', userData.access_token);
+        localStorage.setItem('refreshToken', userData.refresh_token);
         
-        const apiUser = data.user;
+        // Store roleConfiguration for permissions
+        if (userData.user.roleConfiguration) {
+          localStorage.setItem('roleConfiguration', JSON.stringify(userData.user.roleConfiguration));
+          // Dispatch event to update permissions context
+          window.dispatchEvent(new CustomEvent('permissions:update', { 
+            detail: userData.user.roleConfiguration 
+          }));
+        }
+        
+        const apiUser = userData.user;
         const userProfile: UserProfile = {
           id: apiUser.id,
           name: apiUser.profile ? `${apiUser.profile.firstName} ${apiUser.profile.lastName}` : apiUser.email,
@@ -270,6 +282,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     localStorage.removeItem('verificationStatus');
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('roleConfiguration');
+    localStorage.removeItem('userPermissions');
     localStorage.removeItem('isMockAuth'); // Clear mock auth flag
   }, []);
 

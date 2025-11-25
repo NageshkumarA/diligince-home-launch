@@ -259,3 +259,56 @@ export const getHierarchicalSubmodules = (moduleId: string): ModulePermissionHie
   const module = getModuleHierarchy(moduleId);
   return module?.submodules || [];
 };
+
+/**
+ * Transform API roleConfiguration permissions to flat array
+ * Used for backward compatibility with existing permission checks
+ */
+export const flattenAPIPermissions = (modules: any[]): ModulePermission[] => {
+  const flat: ModulePermission[] = [];
+  
+  modules.forEach((module) => {
+    // Add main module
+    flat.push({
+      module: module.id,
+      permissions: { ...module.permissions },
+    });
+    
+    // Add submodules
+    if (module.submodules && Array.isArray(module.submodules)) {
+      module.submodules.forEach((sub: any) => {
+        flat.push({
+          module: sub.id,
+          permissions: { ...sub.permissions },
+        });
+      });
+    }
+  });
+  
+  return flat;
+};
+
+/**
+ * Transform API roleConfiguration to hierarchical config
+ * Converts API response format to internal IndustryPermissionsConfig format
+ */
+export const transformAPIToHierarchical = (roleConfig: any): IndustryPermissionsConfig => {
+  return {
+    version: '1.0.0',
+    roleName: roleConfig.name || roleConfig.displayName,
+    modules: roleConfig.permissions.map((m: any) => ({
+      id: m.id,
+      name: m.name,
+      path: m.path,
+      icon: m.icon,
+      permissions: { ...m.permissions },
+      submodules: m.submodules?.map((s: any) => ({
+        id: s.id,
+        name: s.name,
+        path: s.path,
+        icon: s.icon,
+        permissions: { ...s.permissions },
+      })) || [],
+    })),
+  };
+};
