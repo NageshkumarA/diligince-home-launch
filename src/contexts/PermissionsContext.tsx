@@ -4,8 +4,13 @@ import {
   ModulePermission, 
   IndustryPermissionsConfig 
 } from '@/types/permissions';
-import { getDefaultPermissions, getHierarchicalConfig } from '@/config/permissionsConfig';
-import { createPathToModuleMap, createPermissionsMap } from '@/utils/permissionUtils';
+import { 
+  createPathToModuleMap, 
+  createPermissionsMap,
+  flattenAPIPermissions,
+  transformAPIToHierarchical 
+} from '@/utils/permissionUtils';
+import { toast } from 'sonner';
 
 interface PermissionsContextType {
   permissions: UserPermissions;
@@ -33,36 +38,80 @@ interface PermissionsProviderProps {
  * Future: Will integrate with login API response
  */
 export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({ children }) => {
-  const [permissions, setPermissionsState] = useState<UserPermissions>(getDefaultPermissions());
-  const [hierarchicalConfig, setHierarchicalConfig] = useState<IndustryPermissionsConfig>(getHierarchicalConfig());
-  const [isLoading, setIsLoading] = useState(false);
+  const [permissions, setPermissionsState] = useState<UserPermissions>({ permissions: [] });
+  const [hierarchicalConfig, setHierarchicalConfig] = useState<IndustryPermissionsConfig | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Handle no permissions case - logout and show toast
+  const handleNoPermissions = () => {
+    toast.error("Don't have any Module Access");
+    // Clear all auth data
+    localStorage.removeItem('roleConfiguration');
+    localStorage.removeItem('userPermissions');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('verificationStatus');
+    localStorage.removeItem('hasCompletedOnboarding');
+    // Redirect to login
+    setTimeout(() => {
+      window.location.href = '/signin';
+    }, 1000);
+  };
+
+  // Validate that permissions have at least one readable module
+  const validatePermissions = (roleConfig: any): boolean => {
+    if (!roleConfig?.permissions || roleConfig.permissions.length === 0) {
+      return false;
+    }
+    
+    // Check if user has at least one module with read access
+    const hasAnyAccess = roleConfig.permissions.some((m: any) => 
+      m.permissions?.read === true || 
+      m.submodules?.some((s: any) => s.permissions?.read === true)
+    );
+    
+    return hasAnyAccess;
+  };
 
   // Initialize permissions on mount
   useEffect(() => {
     const initializePermissions = () => {
-      setIsLoading(true);
       try {
-        // Try to load cached roleConfiguration from localStorage
         const cachedRoleConfig = localStorage.getItem('roleConfiguration');
         
         if (cachedRoleConfig) {
           try {
             const roleConfig = JSON.parse(cachedRoleConfig);
+            
+            // Validate permissions
+            if (!validatePermissions(roleConfig)) {
+              handleNoPermissions();
+              return;
+            }
+            
             // Transform and set permissions from cached data
-            setPermissionsFromAPI(roleConfig);
+            const flatPermissions = flattenAPIPermissions(roleConfig.permissions);
+            const hierarchical = transformAPIToHierarchical(roleConfig);
+            
+            setPermissionsState({ permissions: flatPermissions });
+            setHierarchicalConfig(hierarchical);
+            
+            if (process.env.NODE_ENV === 'development') {
+              console.log('[Permissions] Loaded from localStorage:', {
+                modules: roleConfig.permissions.length,
+                flatPermissions: flatPermissions.length
+              });
+            }
           } catch (parseError) {
             console.error('Failed to parse cached permissions:', parseError);
-            // Fall back to default permissions
-            const defaultPermissions = getDefaultPermissions();
-            setPermissionsState(defaultPermissions);
+            handleNoPermissions();
           }
-        } else {
-          // No cached data, use default mock permissions
-          const defaultPermissions = getDefaultPermissions();
-          setPermissionsState(defaultPermissions);
         }
+        // If no cached data, wait for login to provide permissions
       } catch (error) {
         console.error('Failed to initialize permissions:', error);
+        handleNoPermissions();
       } finally {
         setIsLoading(false);
       }
@@ -74,40 +123,38 @@ export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({ childr
   // Listen for permissions update event from login
   useEffect(() => {
     const handlePermissionsUpdate = (event: CustomEvent) => {
-      setPermissionsFromAPI(event.detail);
+      const roleConfig = event.detail;
+      
+      // Validate permissions
+      if (!validatePermissions(roleConfig)) {
+        handleNoPermissions();
+        return;
+      }
+      
+      // Transform and set permissions
+      try {
+        const flatPermissions = flattenAPIPermissions(roleConfig.permissions);
+        const hierarchical = transformAPIToHierarchical(roleConfig);
+        
+        setPermissionsState({ permissions: flatPermissions });
+        setHierarchicalConfig(hierarchical);
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[Permissions] Updated from login event:', {
+            modules: roleConfig.permissions.length,
+            flatPermissions: flatPermissions.length
+          });
+        }
+      } catch (error) {
+        console.error('Failed to transform permissions from event:', error);
+        handleNoPermissions();
+      }
     };
     
     window.addEventListener('permissions:update', handlePermissionsUpdate as EventListener);
     return () => window.removeEventListener('permissions:update', handlePermissionsUpdate as EventListener);
   }, []);
 
-  /**
-   * Set permissions from API roleConfiguration
-   * Transforms API response format to internal permission structures
-   */
-  const setPermissionsFromAPI = (roleConfig: any) => {
-    try {
-      // Import utilities dynamically to avoid circular dependency
-      const { flattenAPIPermissions, transformAPIToHierarchical } = require('@/utils/permissionUtils');
-      
-      // Transform API permissions to flat array for runtime checks
-      const flatPermissions = flattenAPIPermissions(roleConfig.permissions);
-      setPermissionsState({ permissions: flatPermissions });
-      
-      // Transform to hierarchical config for UI display
-      const hierarchicalConfig = transformAPIToHierarchical(roleConfig);
-      setHierarchicalConfig(hierarchicalConfig);
-      
-      // Cache the transformed permissions
-      try {
-        localStorage.setItem('userPermissions', JSON.stringify({ permissions: flatPermissions }));
-      } catch (error) {
-        console.error('Failed to cache permissions:', error);
-      }
-    } catch (error) {
-      console.error('Failed to transform API permissions:', error);
-    }
-  };
 
   /**
    * Update permissions - manual update method (backward compatibility)
@@ -134,15 +181,19 @@ export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({ childr
    * Get hierarchical modules configuration
    * Used for role management UI and sidebar rendering
    */
-  const getHierarchicalModules = (): IndustryPermissionsConfig => {
+  const getHierarchicalModules = (): IndustryPermissionsConfig | null => {
     return hierarchicalConfig;
   };
 
   // Create path-to-module mapping for quick lookups
   const pathToModuleMap = useMemo(() => {
+    if (!hierarchicalConfig) {
+      return new Map<string, string>();
+    }
     const map = createPathToModuleMap(hierarchicalConfig);
     if (process.env.NODE_ENV === 'development') {
       console.log('[Permissions] pathToModuleMap entries:', map.size);
+      console.log('[Permissions] Sample paths:', Array.from(map.entries()).slice(0, 3));
     }
     return map;
   }, [hierarchicalConfig]);

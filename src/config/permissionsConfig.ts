@@ -257,29 +257,13 @@ export const INDUSTRY_MODULES: ModuleDefinition[] = [
 ];
 
 /**
- * Mock configuration with ALL permissions enabled
- * Used as default until API integration is complete
- */
-export const mockAllPermissionsEnabled: UserPermissions = {
-  permissions: INDUSTRY_MODULES.map((module) => ({
-    module: module.id,
-    permissions: {
-      read: true,
-      write: true,
-      edit: true,
-      delete: true,
-      download: true,
-    },
-  })),
-};
-
-/**
- * Get default permissions configuration
- * Currently returns mock with all features enabled
- * Will be replaced with API response in the future
+ * Get default permissions - returns empty permissions
+ * Real permissions should come from API only
+ * @deprecated Use API permissions from login response
  */
 export const getDefaultPermissions = (): UserPermissions => {
-  return mockAllPermissionsEnabled;
+  console.warn('[DEPRECATED] getDefaultPermissions() should not be used - use API permissions only');
+  return { permissions: [] };
 };
 
 /**
@@ -297,11 +281,12 @@ export const getSubModules = (parentModuleId: string): ModuleDefinition[] => {
 };
 
 /**
- * Get IndustryAdmin default permissions (all features enabled)
- * Generated from hierarchical JSON config
+ * Get default permissions for IndustryAdmin role
+ * @deprecated Use API permissions from login response
  */
 export const getIndustryAdminDefaultPermissions = (): UserPermissions => {
-  return mockAllPermissionsEnabled;
+  console.warn('[DEPRECATED] getIndustryAdminDefaultPermissions() should not be used - use API permissions only');
+  return { permissions: [] };
 };
 
 /**
