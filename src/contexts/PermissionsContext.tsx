@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import { 
   UserPermissions, 
   ModulePermission, 
   IndustryPermissionsConfig 
 } from '@/types/permissions';
 import { getDefaultPermissions, getHierarchicalConfig } from '@/config/permissionsConfig';
+import { createPathToModuleMap, createPermissionsMap } from '@/utils/permissionUtils';
 
 interface PermissionsContextType {
   permissions: UserPermissions;
@@ -13,6 +14,10 @@ interface PermissionsContextType {
   isLoading: boolean;
   getModulePermission: (moduleId: string) => ModulePermission | undefined;
   getHierarchicalModules: () => IndustryPermissionsConfig;
+  getModuleIdByPath: (path: string) => string | null;
+  getPermissionByPath: (path: string) => ModulePermission | undefined;
+  permissionsMap: Map<string, ModulePermission>;
+  pathToModuleMap: Map<string, string>;
 }
 
 const PermissionsContext = createContext<PermissionsContextType | undefined>(undefined);
@@ -133,6 +138,26 @@ export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({ childr
     return hierarchicalConfig;
   };
 
+  // Create path-to-module mapping for quick lookups
+  const pathToModuleMap = useMemo(() => {
+    return createPathToModuleMap(hierarchicalConfig);
+  }, [hierarchicalConfig]);
+
+  // Create permissions map for efficient lookups
+  const permissionsMap = useMemo(() => {
+    return createPermissionsMap(permissions.permissions);
+  }, [permissions]);
+
+  const getModuleIdByPath = (path: string): string | null => {
+    return pathToModuleMap.get(path) || null;
+  };
+
+  const getPermissionByPath = (path: string): ModulePermission | undefined => {
+    const moduleId = getModuleIdByPath(path);
+    if (!moduleId) return undefined;
+    return getModulePermission(moduleId);
+  };
+
   const value: PermissionsContextType = {
     permissions,
     hierarchicalConfig,
@@ -140,6 +165,10 @@ export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({ childr
     isLoading,
     getModulePermission,
     getHierarchicalModules,
+    getModuleIdByPath,
+    getPermissionByPath,
+    permissionsMap,
+    pathToModuleMap,
   };
 
   return (
