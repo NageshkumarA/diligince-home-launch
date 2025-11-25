@@ -160,11 +160,18 @@ export const usePermissions = () => {
 
   /**
    * Check if user can access a path (has read permission)
+   * SECURITY: Explicitly checks for read === true
+   * Returns false for unknown paths or denied access
    */
   const canAccessPath = (path: string): boolean => {
     const permission = getPermissionByPath(path);
-    // Default to true if permission not found (graceful fallback)
-    return permission?.permissions.read !== false;
+    if (!permission) {
+      // Check if path is in the pathToModuleMap
+      const moduleId = pathToModuleMap.get(path);
+      // If not in map, it's not permission-controlled, so allow
+      return !moduleId;
+    }
+    return permission.permissions.read === true; // ✅ Explicit true check
   };
 
   /**

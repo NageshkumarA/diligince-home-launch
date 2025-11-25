@@ -8,6 +8,28 @@ import {
 import { PermissionAction } from '@/types/roleManagement';
 
 /**
+ * ============================================================================
+ * SECURITY NOTICE - IMPORTANT
+ * ============================================================================
+ * 
+ * All permission checks in this file are for CLIENT-SIDE UI ONLY.
+ * 
+ * NEVER trust client-side permission checks for security:
+ * - Users can modify localStorage and bypass client-side checks
+ * - All API endpoints MUST validate permissions server-side using JWT
+ * - Always verify user permissions on the backend before allowing actions
+ * - Client-side checks are for UX only (hiding buttons, menu items, etc.)
+ * 
+ * Server-side validation requirements:
+ * 1. Validate JWT token on every API request
+ * 2. Check user's role and permissions in the database
+ * 3. Reject requests if user lacks required permissions
+ * 4. Log all permission denials for audit purposes
+ * 
+ * ============================================================================
+ */
+
+/**
  * Convert a route path to module ID
  * 
  * Examples:
