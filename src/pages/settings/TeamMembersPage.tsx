@@ -3,6 +3,7 @@ import { useTeamMembers } from "@/hooks/useTeamMembers";
 import { TeamMember } from "@/services/modules/team-members/team-members.types";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PermissionGate } from "@/components/shared/PermissionGate";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -97,13 +98,15 @@ export default function TeamMembersPage() {
       </div>
 
       {/* Add Member Form */}
-      <AddMemberForm
-        roles={roles}
-        rolesLoading={rolesLoading}
-        onSubmit={async (data) => {
-          await actions.createMember(data);
-        }}
-      />
+      <PermissionGate moduleId="settings-team-members" action="write">
+        <AddMemberForm
+          roles={roles}
+          rolesLoading={rolesLoading}
+          onSubmit={async (data) => {
+            await actions.createMember(data);
+          }}
+        />
+      </PermissionGate>
 
       {/* Statistics */}
       <StatisticsCards statistics={statistics} />
