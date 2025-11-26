@@ -61,7 +61,7 @@ import IndustryDocuments from "@/pages/IndustryDocuments";
 import IndustryMessages from "@/pages/IndustryMessages";
 import IndustryApprovalMatrix from "@/pages/IndustryApprovalMatrix";
 import IndustryAnalytics from "@/pages/IndustryAnalytics";
-import IndustryTeam from "@/pages/IndustryTeam";
+import TeamMembersPage from "@/pages/settings/TeamMembersPage";
 import IndustryNotifications from "@/pages/IndustryNotifications";
 import CreateRequirement from "@/pages/CreateRequirement";
 import CreatePurchaseOrder from "@/pages/CreatePurchaseOrder";
@@ -288,7 +288,7 @@ function App() {
                               />
                               <Route
                                 path="industry-team"
-                                element={<IndustryTeam />}
+                                element={<TeamMembersPage />}
                               />
                               <Route
                                 path="industry-notifications"
