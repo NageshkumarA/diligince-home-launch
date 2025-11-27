@@ -128,7 +128,7 @@ export default function TeamMembersPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Roles</SelectItem>
-            {roles.map((role) => (
+            {roles?.map((role) => (
               <SelectItem key={role.id} value={role.id}>
                 {role.name}
               </SelectItem>

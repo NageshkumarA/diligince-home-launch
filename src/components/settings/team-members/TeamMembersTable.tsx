@@ -84,7 +84,7 @@ export const TeamMembersTable = ({
     }
   };
 
-  if (members.length === 0) {
+  if (members?.length === 0) {
     return (
       <div className="border rounded-lg p-12 text-center">
         <p className="text-muted-foreground">No team members found</p>
@@ -96,7 +96,7 @@ export const TeamMembersTable = ({
   }
 
   return (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="border rounded-lg overflow-hidden bg-[#fff]">
       <Table>
         <TableHeader>
           <TableRow>
@@ -110,7 +110,7 @@ export const TeamMembersTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {members.map((member) => (
+          {members?.map((member) => (
             <TableRow key={member.id}>
               <TableCell>
                 <div className="flex items-center gap-3">
@@ -141,7 +141,7 @@ export const TeamMembersTable = ({
               <TableCell>
                 <div className="flex flex-col gap-1">
                   <span className="text-sm font-medium">
-                    {member.assignedRole?.name || "—"}
+                    {member.role || "—"}
                   </span>
                   {member.assignedRole?.isDefault && (
                     <Badge variant="outline" className="w-fit text-xs">

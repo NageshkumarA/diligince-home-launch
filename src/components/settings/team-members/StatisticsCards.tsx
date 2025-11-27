@@ -20,7 +20,7 @@ export const StatisticsCards = ({ statistics }: StatisticsCardsProps) => {
           <Users className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{statistics.totalMembers}</div>
+          <div className="text-2xl font-bold">{statistics?.totalMembers}</div>
         </CardContent>
       </Card>
 
@@ -30,7 +30,7 @@ export const StatisticsCards = ({ statistics }: StatisticsCardsProps) => {
           <UserCheck className="h-4 w-4 text-green-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{statistics.activeMembers}</div>
+          <div className="text-2xl font-bold">{statistics?.activeMembers}</div>
         </CardContent>
       </Card>
 
@@ -40,7 +40,7 @@ export const StatisticsCards = ({ statistics }: StatisticsCardsProps) => {
           <AlertCircle className="h-4 w-4 text-amber-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{statistics.pendingVerification}</div>
+          <div className="text-2xl font-bold">{statistics?.pendingVerification}</div>
         </CardContent>
       </Card>
 
@@ -51,7 +51,7 @@ export const StatisticsCards = ({ statistics }: StatisticsCardsProps) => {
         </CardHeader>
         <CardContent>
           <div className="space-y-1">
-            {Object.entries(statistics.byRole).slice(0, 3).map(([role, count]) => (
+            {Object.entries(statistics?.byRole || {})?.slice(0, 3)?.map(([role, count]) => (
               <div key={role} className="flex justify-between text-xs">
                 <span className="text-muted-foreground truncate">{role}:</span>
                 <span className="font-medium">{count}</span>

@@ -21,14 +21,14 @@ export const RoleSelectionCombobox = ({
   const [selectedRole, setSelectedRole] = useState<RoleDetails | null>(null);
 
   useEffect(() => {
-    if (value && roles.length > 0) {
+    if (value && roles?.length > 0) {
       const role = roles.find(r => r.id === value);
       setSelectedRole(role || null);
     }
   }, [value, roles]);
 
-  const defaultRoles = roles.filter(r => r.isDefault);
-  const customRoles = roles.filter(r => !r.isDefault);
+  const defaultRoles = roles?.filter(r => r.isDefault);
+  const customRoles = roles?.filter(r => !r.isDefault);
 
   return (
     <div className="space-y-4">
@@ -37,7 +37,7 @@ export const RoleSelectionCombobox = ({
           <SelectValue placeholder="Select a role for this member" />
         </SelectTrigger>
         <SelectContent>
-          {defaultRoles.length > 0 && (
+          {defaultRoles?.length > 0 && (
             <>
               <div className="px-2 py-1.5">
                 <p className="text-xs font-semibold text-muted-foreground">
@@ -57,7 +57,7 @@ export const RoleSelectionCombobox = ({
             </>
           )}
 
-          {customRoles.length > 0 && (
+          {customRoles?.length > 0 && (
             <>
               <div className="px-2 py-1.5 mt-2">
                 <p className="text-xs font-semibold text-muted-foreground">
