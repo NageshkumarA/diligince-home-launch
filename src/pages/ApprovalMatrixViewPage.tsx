@@ -29,7 +29,9 @@ export const ApprovalMatrixViewPage: React.FC = () => {
   }, [matrixId, fetchMatrixById]);
 
   const handleEdit = () => {
-    navigate(`/dashboard/approval-matrix/${matrixId}/edit`);
+    if (matrixId) {
+      navigate(`/dashboard/approval-matrix/${matrixId}/edit`);
+    }
   };
 
   const handleDelete = async () => {
@@ -41,22 +43,22 @@ export const ApprovalMatrixViewPage: React.FC = () => {
   };
 
   const handleToggleStatus = async () => {
-    if (!matrixId || !selectedMatrix) return;
+    if (!matrixId || !selectedMatrix || selectedMatrix?.isActive === undefined) return;
     const result = await toggleStatus(matrixId, {
       isActive: !selectedMatrix.isActive,
     });
-    if (result) {
+    if (result && matrixId) {
       fetchMatrixById(matrixId);
     }
   };
 
   const handleDuplicate = async () => {
-    if (!matrixId || !selectedMatrix) return;
+    if (!matrixId || !selectedMatrix?.name) return;
     const result = await duplicateMatrix(matrixId, {
       name: `Copy of ${selectedMatrix.name}`,
       copyApprovers: true,
     });
-    if (result) {
+    if (result?.id) {
       navigate(`/dashboard/approval-matrix/${result.id}/edit`);
     }
   };

@@ -75,7 +75,7 @@ class ApprovalMatrixService {
     matrixId: string,
     data: ToggleStatusRequest
   ): Promise<MatrixResponse> {
-    return await api.put<MatrixResponse, ToggleStatusRequest>(
+    return await api.patch<MatrixResponse, ToggleStatusRequest>(
       approvalMatrixRoutes.toggleStatus(matrixId),
       data
     );

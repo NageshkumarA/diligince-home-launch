@@ -46,6 +46,7 @@ export const ApprovalMatrixListPage: React.FC = () => {
   };
 
   const handleDelete = async (matrixId: string) => {
+    if (!matrixId) return;
     const success = await deleteMatrix(matrixId);
     if (success) {
       fetchMatrices(filters);
@@ -53,6 +54,7 @@ export const ApprovalMatrixListPage: React.FC = () => {
   };
 
   const handleToggleStatus = async (matrixId: string, isActive: boolean) => {
+    if (!matrixId || isActive === undefined) return;
     const result = await toggleStatus(matrixId, { isActive });
     if (result) {
       fetchMatrices(filters);
@@ -60,6 +62,7 @@ export const ApprovalMatrixListPage: React.FC = () => {
   };
 
   const handleDuplicate = async (matrixId: string, name: string) => {
+    if (!matrixId || !name) return;
     const result = await duplicateMatrix(matrixId, { name, copyApprovers: true });
     if (result) {
       fetchMatrices(filters);
@@ -104,27 +107,27 @@ export const ApprovalMatrixListPage: React.FC = () => {
             </div>
 
             {/* Pagination */}
-            {pagination && pagination.totalPages > 1 && (
+            {pagination && (pagination?.totalPages || 0) > 1 && (
               <div className="flex items-center justify-between pt-4">
                 <p className="text-sm text-muted-foreground">
-                  Showing {((pagination.currentPage - 1) * pagination.pageSize) + 1} to{' '}
-                  {Math.min(pagination.currentPage * pagination.pageSize, pagination.totalItems)} of{' '}
-                  {pagination.totalItems} results
+                  Showing {((pagination?.currentPage || 1) - 1) * (pagination?.pageSize || 10) + 1} to{' '}
+                  {Math.min((pagination?.currentPage || 1) * (pagination?.pageSize || 10), pagination?.totalItems || 0)} of{' '}
+                  {pagination?.totalItems || 0} results
                 </p>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => handlePageChange(pagination.currentPage - 1)}
-                    disabled={!pagination.hasPreviousPage}
+                    onClick={() => handlePageChange((pagination?.currentPage || 1) - 1)}
+                    disabled={!(pagination?.hasPreviousPage)}
                     className="px-3 py-1 text-sm border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent"
                   >
                     Previous
                   </button>
                   <span className="text-sm">
-                    Page {pagination.currentPage} of {pagination.totalPages}
+                    Page {pagination?.currentPage || 1} of {pagination?.totalPages || 1}
                   </span>
                   <button
-                    onClick={() => handlePageChange(pagination.currentPage + 1)}
-                    disabled={!pagination.hasNextPage}
+                    onClick={() => handlePageChange((pagination?.currentPage || 1) + 1)}
+                    disabled={!(pagination?.hasNextPage)}
                     className="px-3 py-1 text-sm border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent"
                   >
                     Next

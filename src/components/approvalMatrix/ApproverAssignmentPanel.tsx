@@ -94,11 +94,13 @@ export const ApproverAssignmentPanel: React.FC<ApproverAssignmentPanelProps> = (
   };
 
   const handleSave = () => {
-    const approvers = Object.values(selectedMembers).map((item, index) => ({
-      memberId: item.member.id,
-      isMandatory: item.isMandatory,
-      sequence: index + 1,
-    }));
+    const approvers = Object.values(selectedMembers)
+      .filter((item) => item?.member?.id)
+      .map((item, index) => ({
+        memberId: item?.member?.id || '',
+        isMandatory: item?.isMandatory !== undefined ? item.isMandatory : true,
+        sequence: index + 1,
+      }));
     onUpdate({ ...level, approvers });
     onClose();
   };
