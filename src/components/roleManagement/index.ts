@@ -10,3 +10,8 @@ export { RoleListHeader } from './RoleListHeader';
 export { RoleStatisticsBar } from './RoleStatisticsBar';
 export { RoleCard } from './RoleCard';
 export { RoleFilters } from './RoleFilters';
+export { PermissionMatrixV2 } from './PermissionMatrixV2';
+export { ModulePermissionCard } from './ModulePermissionCard';
+export { PermissionToggleGroup } from './PermissionToggleGroup';
+export { RolePreviewPanel } from './RolePreviewPanel';
+export { PermissionOverview } from './PermissionOverview';
