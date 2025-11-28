@@ -1,27 +1,31 @@
 // Role Management API Routes
 
+import { API_BASE_PATH } from '../../core/api.config';
+
+const BASE_PATH = `${API_BASE_PATH}/auth/company/roles`;
+
 export const rolesRoutes = {
   // Get all roles with optional filters
-  getRoles: '/auth/company/roles',
+  getRoles: BASE_PATH,
   
   // Get single role by ID
-  getRoleById: (roleId: string) => `/auth/company/roles/${roleId}`,
+  getRoleById: (roleId: string) => `${BASE_PATH}/${roleId}`,
   
   // Get permission template for creating new roles
-  getPermissionTemplate: '/auth/company/roles/template',
+  getPermissionTemplate: `${BASE_PATH}/template`,
   
   // Create new role
-  createRole: '/auth/company/roles',
+  createRole: BASE_PATH,
   
   // Update existing role
-  updateRole: (roleId: string) => `/auth/company/roles/${roleId}`,
+  updateRole: (roleId: string) => `${BASE_PATH}/${roleId}`,
   
   // Delete role
-  deleteRole: (roleId: string) => `/auth/company/roles/${roleId}`,
+  deleteRole: (roleId: string) => `${BASE_PATH}/${roleId}`,
   
   // Duplicate role
-  duplicateRole: (roleId: string) => `/auth/company/roles/${roleId}/duplicate`,
+  duplicateRole: (roleId: string) => `${BASE_PATH}/${roleId}/duplicate`,
   
   // Toggle role active status
-  toggleRoleStatus: (roleId: string) => `/auth/company/roles/${roleId}/status`,
+  toggleRoleStatus: (roleId: string) => `${BASE_PATH}/${roleId}/status`,
 } as const;
