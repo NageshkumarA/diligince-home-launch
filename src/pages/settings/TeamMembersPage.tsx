@@ -16,16 +16,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   AddMemberForm,
-  EditMemberRoleModal,
-  EditMemberInfoModal,
+  EditMemberModal,
   StatisticsCards,
   TeamMembersTable,
 } from "@/components/settings/team-members";
 import { Loader2, Search } from "lucide-react";
 
 export default function TeamMembersPage() {
-  const [editRoleMember, setEditRoleMember] = useState<TeamMember | null>(null);
-  const [editInfoMember, setEditInfoMember] = useState<TeamMember | null>(null);
+  const [editMember, setEditMember] = useState<TeamMember | null>(null);
   const [memberToRemove, setMemberToRemove] = useState<TeamMember | null>(null);
 
   const [filters, setFilters] = useState({
@@ -36,12 +34,24 @@ export default function TeamMembersPage() {
 
   const { members, roles, loading, rolesLoading, pagination, statistics, actions } = useTeamMembers();
 
-  const handleEdit = (member: TeamMember) => {
-    setEditInfoMember(member);
-  };
-
-  const handleChangeRole = (member: TeamMember) => {
-    setEditRoleMember(member);
+  const handleEditSubmit = async (memberId: string, data: any) => {
+    // Update member info
+    if (data.firstName || data.lastName || data.department || data.designation) {
+      await actions.updateMember(memberId, {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        department: data.department,
+        designation: data.designation,
+      });
+    }
+    
+    // Update role if changed
+    if (data.roleId && data.roleId !== editMember?.assignedRole?.id) {
+      await actions.updateMemberRole(memberId, { 
+        roleId: data.roleId, 
+        reason: data.reason 
+      });
+    }
   };
 
   const handleSuspend = async (member: TeamMember) => {
@@ -151,34 +161,20 @@ export default function TeamMembersPage() {
       {/* Table */}
       <TeamMembersTable
         members={members}
-        onEdit={handleEdit}
-        onChangeRole={handleChangeRole}
+        onEdit={setEditMember}
         onSuspend={handleSuspend}
         onRemove={handleRemove}
         onResendVerification={handleResendVerification}
       />
 
-      {/* Edit Member Info Modal */}
-      <EditMemberInfoModal
-        isOpen={!!editInfoMember}
-        onClose={() => setEditInfoMember(null)}
-        onSubmit={async (memberId, data) => {
-          await actions.updateMember(memberId, data);
-        }}
-        member={editInfoMember}
-      />
-
-      {/* Edit Member Role Modal */}
-      <EditMemberRoleModal
-        isOpen={!!editRoleMember}
-        onClose={() => setEditRoleMember(null)}
-        onSubmit={async (roleId, reason) => {
-          if (editRoleMember) {
-            await actions.updateMemberRole(editRoleMember.id, { roleId, reason });
-          }
-        }}
-        member={editRoleMember}
+      {/* Edit Member Modal - Unified */}
+      <EditMemberModal
+        isOpen={!!editMember}
+        onClose={() => setEditMember(null)}
+        onSubmit={handleEditSubmit}
+        member={editMember}
         roles={roles}
+        rolesLoading={rolesLoading}
       />
 
       {/* Remove Confirmation Dialog */}

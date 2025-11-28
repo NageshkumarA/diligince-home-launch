@@ -10,19 +10,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { TeamMember } from "@/services/modules/team-members/team-members.types";
 import { CheckCircle2, XCircle, Clock, Edit, Trash2, MoreVertical, RefreshCw, Ban, CheckCircle } from "lucide-react";
 
 interface TeamMembersTableProps {
   members: TeamMember[];
   onEdit: (member: TeamMember) => void;
-  onChangeRole: (member: TeamMember) => void;
   onSuspend: (member: TeamMember) => void;
   onRemove: (member: TeamMember) => void;
   onResendVerification: (member: TeamMember) => void;
@@ -31,7 +24,6 @@ interface TeamMembersTableProps {
 export const TeamMembersTable = ({
   members,
   onEdit,
-  onChangeRole,
   onSuspend,
   onRemove,
   onResendVerification,
@@ -155,79 +147,34 @@ export const TeamMembersTable = ({
                 {getVerificationBadge(member.isEmailVerified, member.isPhoneVerified)}
               </TableCell>
               <TableCell>
-                <div className="flex items-center justify-end gap-1">
-                  <TooltipProvider>
-                    <PermissionGate moduleId="settings-team-members" action="edit">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => onEdit(member)}
-                            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Edit Info</TooltipContent>
-                      </Tooltip>
-                    </PermissionGate>
-
-                    <PermissionGate moduleId="settings-team-members" action="edit">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => onChangeRole(member)}
-                            className="h-8 w-8 text-primary hover:bg-primary/10"
-                          >
-                            <RefreshCw className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Change Role</TooltipContent>
-                      </Tooltip>
-                    </PermissionGate>
-
-                    <PermissionGate moduleId="settings-team-members" action="delete">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => onRemove(member)}
-                            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Remove Member</TooltipContent>
-                      </Tooltip>
-                    </PermissionGate>
-                  </TooltipProvider>
-
+                <div className="flex items-center justify-end">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                      >
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className="w-48 bg-background z-50">
+                      <PermissionGate moduleId="settings-team-members" action="edit">
+                        <DropdownMenuItem onClick={() => onEdit(member)}>
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit Member
+                        </DropdownMenuItem>
+                      </PermissionGate>
+                      
                       <DropdownMenuItem onClick={() => onResendVerification(member)}>
                         <RefreshCw className="h-4 w-4 mr-2" />
                         Resend Verification
                       </DropdownMenuItem>
+                      
+                      <DropdownMenuSeparator />
+                      
                       <PermissionGate moduleId="settings-team-members" action="edit">
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
+                        <DropdownMenuItem 
                           onClick={() => onSuspend(member)}
-                          className={member.status === "suspended" ? "text-green-600" : "text-destructive"}
+                          className={member.status === 'suspended' ? 'text-green-600' : 'text-amber-600'}
                         >
-                          {member.status === "suspended" ? (
+                          {member.status === 'suspended' ? (
                             <>
                               <CheckCircle className="h-4 w-4 mr-2" />
                               Activate Member
@@ -238,6 +185,16 @@ export const TeamMembersTable = ({
                               Suspend Member
                             </>
                           )}
+                        </DropdownMenuItem>
+                      </PermissionGate>
+
+                      <PermissionGate moduleId="settings-team-members" action="delete">
+                        <DropdownMenuItem 
+                          onClick={() => onRemove(member)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Remove Member
                         </DropdownMenuItem>
                       </PermissionGate>
                     </DropdownMenuContent>
