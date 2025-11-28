@@ -39,6 +39,7 @@ export interface RoleDetails {
   id: string;
   name: string;
   description: string;
+  role?: string; // Role code identifier (e.g., "IndustryMember", "IndustryAdmin")
   userType: string;
   isSystemRole: boolean;
   isDefault: boolean;
