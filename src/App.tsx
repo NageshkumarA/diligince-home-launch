@@ -68,6 +68,9 @@ import CreatePurchaseOrder from "@/pages/CreatePurchaseOrder";
 import CreateEditPurchaseOrder from "@/pages/CreateEditPurchaseOrder";
 import RoleManagement from "@/pages/RoleManagement";
 import RoleManagementPage from "@/pages/RoleManagementPage";
+import CreateRolePage from "@/pages/CreateRolePage";
+import EditRolePage from "@/pages/EditRolePage";
+import ViewRolePage from "@/pages/ViewRolePage";
 
 // Requirements sub-pages
 import RequirementsDrafts from "@/pages/RequirementsDrafts";
@@ -321,15 +324,15 @@ function App() {
                               />
                               <Route
                                 path="role-management/create"
-                                element={<div>Create Role Page - Coming Soon</div>}
+                                element={<CreateRolePage />}
                               />
                               <Route
                                 path="role-management/:roleId"
-                                element={<div>View Role Page - Coming Soon</div>}
+                                element={<ViewRolePage />}
                               />
                               <Route
                                 path="role-management/:roleId/edit"
-                                element={<div>Edit Role Page - Coming Soon</div>}
+                                element={<EditRolePage />}
                               />
 
                               {/* Requirements Sub-routes */}
