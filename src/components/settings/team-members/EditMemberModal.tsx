@@ -55,16 +55,24 @@ export const EditMemberModal = ({
 
   useEffect(() => {
     if (member) {
+      // Find role ID by matching member.role code with roles list
+      let roleId = member.assignedRole?.id || "";
+      
+      if (!roleId && member.role && roles.length > 0) {
+        const matchingRole = roles.find(r => r.role === member.role);
+        roleId = matchingRole?.id || "";
+      }
+      
       reset({
         firstName: member.firstName || "",
         lastName: member.lastName || "",
         department: member.department || "",
         designation: member.designation || "",
-        roleId: member.assignedRole?.id || "",
+        roleId: roleId,
         reason: "",
       });
     }
-  }, [member, reset]);
+  }, [member, roles, reset]);
 
   const handleFormSubmit = async (data: EditMemberFormData) => {
     if (!member) return;
