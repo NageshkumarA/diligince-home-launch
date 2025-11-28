@@ -45,8 +45,8 @@ export const LevelCard: React.FC<LevelCardProps> = ({
     return colors[(order - 1) % colors.length] || colors[0];
   };
 
-  const mandatoryCount = level?.approvers?.filter((a) => a.isMandatory).length || 0;
-  const optionalCount = level?.approvers?.length ? level.approvers.length - mandatoryCount : 0;
+  const mandatoryCount = level?.approvers?.filter((a) => a?.isMandatory).length || 0;
+  const optionalCount = (level?.approvers?.length || 0) - mandatoryCount;
 
   return (
     <>

@@ -72,7 +72,7 @@ export const ApprovalMatrixFormPage: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.name || !formData.levels || formData.levels.length === 0) {
+    if (!formData?.name || !formData?.levels || (formData?.levels?.length || 0) === 0) {
       return;
     }
 

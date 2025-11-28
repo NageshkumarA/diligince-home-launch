@@ -50,25 +50,35 @@ export const MatrixCard: React.FC<MatrixCardProps> = ({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleView = () => {
-    navigate(`/dashboard/approval-matrix/${matrix?.id}`);
+    if (matrix?.id) {
+      navigate(`/dashboard/approval-matrix/${matrix.id}`);
+    }
   };
 
   const handleEdit = () => {
-    navigate(`/dashboard/approval-matrix/${matrix?.id}/edit`);
+    if (matrix?.id) {
+      navigate(`/dashboard/approval-matrix/${matrix.id}/edit`);
+    }
   };
 
   const handleDuplicate = () => {
-    const newName = `Copy of ${matrix?.name || 'Matrix'}`;
-    onDuplicate(matrix?.id || '', newName);
+    if (matrix?.id && matrix?.name) {
+      const newName = `Copy of ${matrix.name}`;
+      onDuplicate(matrix.id, newName);
+    }
   };
 
   const handleToggleStatus = () => {
-    onToggleStatus(matrix?.id || '', !matrix?.isActive);
+    if (matrix?.id && matrix?.isActive !== undefined) {
+      onToggleStatus(matrix.id, !matrix.isActive);
+    }
   };
 
   const handleDeleteConfirm = () => {
-    onDelete(matrix?.id || '');
-    setShowDeleteDialog(false);
+    if (matrix?.id) {
+      onDelete(matrix.id);
+      setShowDeleteDialog(false);
+    }
   };
 
   return (

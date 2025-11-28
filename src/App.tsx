@@ -71,6 +71,9 @@ import RoleManagementPage from "@/pages/RoleManagementPage";
 import CreateRolePage from "@/pages/CreateRolePage";
 import EditRolePage from "@/pages/EditRolePage";
 import ViewRolePage from "@/pages/ViewRolePage";
+import { ApprovalMatrixListPage } from "@/pages/ApprovalMatrixListPage";
+import { ApprovalMatrixFormPage } from "@/pages/ApprovalMatrixFormPage";
+import { ApprovalMatrixViewPage } from "@/pages/ApprovalMatrixViewPage";
 
 // Requirements sub-pages
 import RequirementsDrafts from "@/pages/RequirementsDrafts";
@@ -333,6 +336,24 @@ function App() {
                               <Route
                                 path="role-management/:roleId/edit"
                                 element={<EditRolePage />}
+                              />
+
+                              {/* Approval Matrix Routes */}
+                              <Route
+                                path="approval-matrix"
+                                element={<ApprovalMatrixListPage />}
+                              />
+                              <Route
+                                path="approval-matrix/create"
+                                element={<ApprovalMatrixFormPage />}
+                              />
+                              <Route
+                                path="approval-matrix/:matrixId"
+                                element={<ApprovalMatrixViewPage />}
+                              />
+                              <Route
+                                path="approval-matrix/:matrixId/edit"
+                                element={<ApprovalMatrixFormPage />}
                               />
 
                               {/* Requirements Sub-routes */}
