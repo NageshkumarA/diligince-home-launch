@@ -226,14 +226,6 @@ function App() {
                               path="/stakeholder-onboarding/:token"
                               element={<StakeholderOnboarding />}
                             />
-                            <Route
-                              path="/settings/account-settings"
-                              element={
-                                <ProtectedRoute>
-                                  <UserAccountSettings />
-                                </ProtectedRoute>
-                              }
-                            />
 
                             {/* Dashboard Routes */}
                             <Route path="/dashboard/*" element={
@@ -611,6 +603,15 @@ function App() {
                                 path="work-completion-payment/:id"
                                 element={<WorkCompletionPayment />}
                               />
+                            </Route>
+
+                            {/* Settings Routes - with Layout wrapper */}
+                            <Route path="/settings/*" element={
+                              <ProtectedRoute>
+                                <Layout />
+                              </ProtectedRoute>
+                            }>
+                              <Route path="account-settings" element={<UserAccountSettings />} />
                             </Route>
 
                             {/* 404 */}
