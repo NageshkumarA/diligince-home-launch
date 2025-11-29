@@ -59,7 +59,7 @@ export const industryHeaderConfig: HeaderConfig = {
     },
     {
       label: "Approval Matrix",
-      href: "/dashboard/industry-approval-matrix",
+      href: "/dashboard/approval-matrix",
       icon: <Settings size={18} />,
     },
     {
