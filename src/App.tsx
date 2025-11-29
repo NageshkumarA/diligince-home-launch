@@ -226,6 +226,14 @@ function App() {
                               path="/stakeholder-onboarding/:token"
                               element={<StakeholderOnboarding />}
                             />
+                            <Route
+                              path="/settings/account-settings"
+                              element={
+                                <ProtectedRoute>
+                                  <UserAccountSettings />
+                                </ProtectedRoute>
+                              }
+                            />
 
                             {/* Dashboard Routes */}
                             <Route path="/dashboard/*" element={
