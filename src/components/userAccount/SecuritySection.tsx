@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { 
   Shield, 
   Lock, 
@@ -16,8 +18,10 @@ import {
   Monitor
 } from 'lucide-react';
 import toast from '@/utils/toast.utils';
+import { userAccountService, type ActiveSession } from '@/services/modules/user-account';
 
 const SecuritySection = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
@@ -26,24 +30,32 @@ const SecuritySection = () => {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [isToggling2FA, setIsToggling2FA] = useState(false);
+  const [activeSessions, setActiveSessions] = useState<ActiveSession[]>([]);
+  const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
+  const [showRecoveryCodes, setShowRecoveryCodes] = useState(false);
+  const [isGeneratingCodes, setIsGeneratingCodes] = useState(false);
 
-  // Mock active sessions
-  const [activeSessions] = useState([
-    {
-      id: '1',
-      device: 'Chrome on Windows',
-      location: 'Mumbai, India',
-      lastActive: '2 minutes ago',
-      isCurrent: true
-    },
-    {
-      id: '2',
-      device: 'Safari on iPhone',
-      location: 'Delhi, India',
-      lastActive: '3 hours ago',
-      isCurrent: false
+  useEffect(() => {
+    fetchSecurityData();
+  }, []);
+
+  const fetchSecurityData = async () => {
+    setIsLoading(true);
+    try {
+      const [twoFAStatus, sessions] = await Promise.all([
+        userAccountService.get2FAStatus(),
+        userAccountService.getActiveSessions()
+      ]);
+      
+      setTwoFactorEnabled(twoFAStatus.enabled);
+      setActiveSessions(sessions);
+    } catch (error) {
+      console.error('Failed to fetch security data:', error);
+      toast.error('Failed to load security information');
+    } finally {
+      setIsLoading(false);
     }
-  ]);
+  };
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,13 +74,16 @@ const SecuritySection = () => {
     const loadingToast = toast.loading('Changing password...');
 
     try {
-      // TODO: API integration
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await userAccountService.changePassword({
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      });
       
       toast.dismiss(loadingToast);
       toast.success('Password changed successfully');
       setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (error) {
+      console.error('Failed to change password:', error);
       toast.dismiss(loadingToast);
       toast.error('Failed to change password');
     } finally {
@@ -83,21 +98,57 @@ const SecuritySection = () => {
     );
 
     try {
-      // TODO: API integration
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const result = await userAccountService.toggle2FA({
+        enabled: !twoFactorEnabled
+      });
       
-      setTwoFactorEnabled(!twoFactorEnabled);
+      setTwoFactorEnabled(result.enabled);
       toast.dismiss(loadingToast);
       toast.success(
-        twoFactorEnabled 
-          ? 'Two-factor authentication disabled' 
-          : 'Two-factor authentication enabled'
+        result.enabled 
+          ? 'Two-factor authentication enabled' 
+          : 'Two-factor authentication disabled'
       );
     } catch (error) {
+      console.error('Failed to toggle 2FA:', error);
       toast.dismiss(loadingToast);
       toast.error('Failed to update 2FA settings');
     } finally {
       setIsToggling2FA(false);
+    }
+  };
+
+  const handleGenerateRecoveryCodes = async () => {
+    setIsGeneratingCodes(true);
+    const loadingToast = toast.loading('Generating recovery codes...');
+    
+    try {
+      const result = await userAccountService.generateRecoveryCodes();
+      setRecoveryCodes(result.codes);
+      setShowRecoveryCodes(true);
+      toast.dismiss(loadingToast);
+      toast.success('Recovery codes generated successfully');
+    } catch (error) {
+      console.error('Failed to generate recovery codes:', error);
+      toast.dismiss(loadingToast);
+      toast.error('Failed to generate recovery codes');
+    } finally {
+      setIsGeneratingCodes(false);
+    }
+  };
+
+  const handleRevokeSession = async (sessionId: string) => {
+    const loadingToast = toast.loading('Revoking session...');
+    
+    try {
+      await userAccountService.revokeSession(sessionId);
+      setActiveSessions(prev => prev.filter(s => s.id !== sessionId));
+      toast.dismiss(loadingToast);
+      toast.success('Session revoked successfully');
+    } catch (error) {
+      console.error('Failed to revoke session:', error);
+      toast.dismiss(loadingToast);
+      toast.error('Failed to revoke session');
     }
   };
 
@@ -110,6 +161,32 @@ const SecuritySection = () => {
   };
 
   const passwordStrength = getPasswordStrength(passwordForm.newPassword);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Card className="shadow-lg border-0">
+          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-primary/10">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-64 mt-2" />
+          </CardHeader>
+          <CardContent className="pt-6 space-y-4">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-12 w-full" />
+            ))}
+          </CardContent>
+        </Card>
+        <Card className="shadow-lg border-0">
+          <CardHeader className="border-b">
+            <Skeleton className="h-6 w-48" />
+          </CardHeader>
+          <CardContent className="pt-6 space-y-4">
+            <Skeleton className="h-24 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -233,9 +310,15 @@ const SecuritySection = () => {
               <p className="text-sm text-green-700 dark:text-green-400">
                 You'll be asked for a verification code when signing in from a new device.
               </p>
-              <Button variant="outline" size="sm" className="mt-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-2"
+                onClick={handleGenerateRecoveryCodes}
+                disabled={isGeneratingCodes}
+              >
                 <Key size={16} className="mr-2" />
-                View Recovery Codes
+                {isGeneratingCodes ? 'Generating...' : 'View Recovery Codes'}
               </Button>
             </div>
           )}
@@ -287,7 +370,11 @@ const SecuritySection = () => {
                 </div>
               </div>
               {!session.isCurrent && (
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleRevokeSession(session.id)}
+                >
                   Revoke
                 </Button>
               )}
@@ -295,6 +382,42 @@ const SecuritySection = () => {
           ))}
         </CardContent>
       </Card>
+
+      {/* Recovery Codes Dialog */}
+      <Dialog open={showRecoveryCodes} onOpenChange={setShowRecoveryCodes}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Key className="text-primary" size={24} />
+              Recovery Codes
+            </DialogTitle>
+            <DialogDescription>
+              Save these recovery codes in a safe place. You can use them to access your account if you lose your 2FA device.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-2 p-4 bg-muted rounded-lg font-mono text-sm">
+              {recoveryCodes.map((code, index) => (
+                <div key={index} className="p-2 bg-background rounded">
+                  {code}
+                </div>
+              ))}
+            </div>
+            <div className="flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+              <AlertTriangle size={18} className="text-amber-600 mt-0.5" />
+              <p className="text-sm text-amber-700 dark:text-amber-400">
+                Each code can only be used once. Store them securely - you won't be able to see them again.
+              </p>
+            </div>
+            <Button 
+              className="w-full" 
+              onClick={() => setShowRecoveryCodes(false)}
+            >
+              I've Saved My Codes
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
