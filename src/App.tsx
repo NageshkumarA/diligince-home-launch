@@ -285,6 +285,11 @@ function App() {
                                 path="industry-messages"
                                 element={<IndustryMessages />}
                               />
+                              {/* Redirect from old approval matrix path to new redesigned pages */}
+                              <Route
+                                path="industry-approval-matrix"
+                                element={<Navigate to="/dashboard/approval-matrix" replace />}
+                              />
                               <Route
                                 path="industry-analytics"
                                 element={<IndustryAnalytics />}
