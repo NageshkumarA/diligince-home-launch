@@ -59,6 +59,7 @@ import IndustryProjectWorkflow from "@/pages/IndustryProjectWorkflow";
 import IndustryStakeholders from "@/pages/IndustryStakeholders";
 import IndustryDocuments from "@/pages/IndustryDocuments";
 import IndustryMessages from "@/pages/IndustryMessages";
+import UserAccountSettings from "@/pages/settings/UserAccountSettings";
 
 import IndustryAnalytics from "@/pages/IndustryAnalytics";
 import TeamMembersPage from "@/pages/settings/TeamMembersPage";

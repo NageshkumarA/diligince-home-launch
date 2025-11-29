@@ -20,6 +20,7 @@ import { companyProfileService } from '@/services';
 import { ProfileCompletionBanner } from '@/components/verification/ProfileCompletionBanner';
 import { DocumentUploadField } from '@/components/verification/DocumentUploadField';
 import { industries } from '@/constants/Types';
+import PaymentSettingsTab from '@/components/companyProfile/PaymentSettingsTab';
 
 const IndustrySettings = () => {
   const navigate = useNavigate();
@@ -30,15 +31,6 @@ const IndustrySettings = () => {
   // Company Profile State (Tab 1)
   const [profile, setProfile] = useState<Partial<CompanyProfile>>({});
   
-  // Notifications State (Tab 3)
-  const [notifications, setNotifications] = useState({
-    email: true,
-    sms: false,
-    push: true,
-    requirements: true,
-    approvals: true,
-    payments: false
-  });
   
   // Calculate profile completion
   const profileCompletion = useMemo(() => {
@@ -237,9 +229,6 @@ const IndustrySettings = () => {
     }
   };
   
-  const handleNotificationChange = (key: string, value: boolean) => {
-    setNotifications(prev => ({ ...prev, [key]: value }));
-  };
 
   // Document handlers
   const handleDocumentUpload = async (file: File, documentType: string) => {
@@ -317,7 +306,7 @@ const IndustrySettings = () => {
         </Card>
       ) : (
         <Tabs defaultValue="company" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-muted">
+          <TabsList className="grid w-full grid-cols-2 bg-muted">
             <TabsTrigger 
               value="company"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
@@ -325,16 +314,10 @@ const IndustrySettings = () => {
               Company Profile
             </TabsTrigger>
             <TabsTrigger 
-              value="notifications"
+              value="payments"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
-              Notifications
-            </TabsTrigger>
-            <TabsTrigger 
-              value="security"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              Security
+              Payment Settings
             </TabsTrigger>
           </TabsList>
 
@@ -1010,115 +993,8 @@ const IndustrySettings = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="notifications" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Notification Preferences</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <h4 className="font-medium">Communication Methods</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="email-notifications">Email Notifications</Label>
-                    <Switch
-                      id="email-notifications"
-                      checked={notifications.email}
-                      onCheckedChange={(checked) => handleNotificationChange('email', checked)}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="sms-notifications">SMS Notifications</Label>
-                    <Switch
-                      id="sms-notifications"
-                      checked={notifications.sms}
-                      onCheckedChange={(checked) => handleNotificationChange('sms', checked)}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="push-notifications">Push Notifications</Label>
-                    <Switch
-                      id="push-notifications"
-                      checked={notifications.push}
-                      onCheckedChange={(checked) => handleNotificationChange('push', checked)}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-4">
-                <h4 className="font-medium">Event Notifications</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="requirements-notifications">New Requirements</Label>
-                    <Switch
-                      id="requirements-notifications"
-                      checked={notifications.requirements}
-                      onCheckedChange={(checked) => handleNotificationChange('requirements', checked)}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="approvals-notifications">Approval Requests</Label>
-                    <Switch
-                      id="approvals-notifications"
-                      checked={notifications.approvals}
-                      onCheckedChange={(checked) => handleNotificationChange('approvals', checked)}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="payments-notifications">Payment Updates</Label>
-                    <Switch
-                      id="payments-notifications"
-                      checked={notifications.payments}
-                      onCheckedChange={(checked) => handleNotificationChange('payments', checked)}
-                    />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="security" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="current-password">Current Password</Label>
-                  <Input id="current-password" type="password" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-password">New Password</Label>
-                  <Input id="new-password" type="password" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm New Password</Label>
-                  <Input id="confirm-password" type="password" />
-                </div>
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-                  Update Password
-                </Button>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-4">
-                <h4 className="font-medium">Two-Factor Authentication</h4>
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div>
-                    <h5 className="font-medium">Enable 2FA</h5>
-                    <p className="text-sm text-muted-foreground">Add an extra layer of security to your account</p>
-                  </div>
-                  <Switch />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="payments" className="space-y-6">
+          <PaymentSettingsTab />
         </TabsContent>
 
         <TabsContent value="integrations" className="space-y-6">
