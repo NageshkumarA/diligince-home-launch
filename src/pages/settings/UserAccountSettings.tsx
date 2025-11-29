@@ -10,16 +10,16 @@ const UserAccountSettings = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <div className="container mx-auto p-6 max-w-6xl space-y-6">
         {/* Hero Section */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary via-primary/90 to-primary/80 p-8 shadow-lg">
+        <div className="relative overflow-hidden rounded-2xl">
           <div className="relative z-10">
-            <h1 className="text-4xl font-bold text-white mb-2">Account Settings</h1>
-            <p className="text-primary-foreground/90 text-lg">
+            <h1 className="text-4xl font-bold text-foreground mb-2">Account Settings</h1>
+            <p className="text-foreground text-lg">
               Manage your personal account preferences and security
             </p>
           </div>
-          <div className="absolute -right-8 -bottom-8 opacity-10">
+          {/* <div className="absolute -right-8 -bottom-8 opacity-10">
             <User size={200} strokeWidth={1} />
-          </div>
+          </div> */}
         </div>
 
         {/* Tabs Section */}

@@ -125,7 +125,7 @@ export const ApprovalMatrixFormPage: React.FC = () => {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <Button variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
@@ -133,7 +133,7 @@ export const ApprovalMatrixFormPage: React.FC = () => {
               <Save className="h-4 w-4 mr-2" />
               {isEditMode ? 'Update Matrix' : 'Create Matrix'}
             </Button>
-          </div>
+          </div> */}
         </div>
 
         {/* Form Content */}
@@ -157,6 +157,15 @@ export const ApprovalMatrixFormPage: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-6">
               <MatrixPreviewPanel matrix={formData} />
+                        <div className="flex items-center gap-2 mt-6">
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit} disabled={loading}>
+              <Save className="h-4 w-4 mr-2" />
+              {isEditMode ? 'Update Matrix' : 'Create Matrix'}
+            </Button>
+          </div>
             </div>
           </div>
         </div>

@@ -68,11 +68,14 @@ export interface UpdateMemberRequest {
   lastName?: string;
   department?: string;
   designation?: string;
+  memberId?:string;
 }
 
 export interface UpdateRoleRequest {
   roleId: string;
   reason?: string;
+  memberId?:string;
+
 }
 
 export interface TeamMemberFilters {

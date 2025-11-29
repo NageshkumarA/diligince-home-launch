@@ -49,7 +49,7 @@ export default function TeamMembersPage() {
     if (data.roleId && data.roleId !== editMember?.assignedRole?.id) {
       await actions.updateMemberRole(memberId, { 
         roleId: data.roleId, 
-        reason: data.reason 
+        reason: data.reason || "-"
       });
     }
   };

@@ -255,7 +255,7 @@ const SecuritySection = () => {
       </Card>
 
       {/* Active Sessions */}
-      <Card className="shadow-lg border-0">
+      {/* <Card className="shadow-lg border-0">
         <CardHeader className="border-b bg-gradient-to-r from-blue/5 to-blue/10">
           <CardTitle className="flex items-center gap-2">
             <Monitor className="text-primary" size={24} />
@@ -294,7 +294,7 @@ const SecuritySection = () => {
             </div>
           ))}
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 };
