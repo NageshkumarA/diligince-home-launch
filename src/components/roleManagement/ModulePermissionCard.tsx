@@ -5,7 +5,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { PermissionToggleGroup } from "./PermissionToggleGroup";
+import { Badge } from "@/components/ui/badge";
 import * as LucideIcons from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { ModulePermissionV2, PermissionFlags } from "@/services/modules/roles/roles.types";
 
 interface ModulePermissionCardProps {
@@ -35,27 +37,56 @@ export function ModulePermissionCard({ module, onChange }: ModulePermissionCardP
   };
 
   const hasSubmodules = module.submodules && module.submodules.length > 0;
+  
+  // Calculate permission counts
+  const modulePerms = module.permissions || {};
+  const moduleEnabledCount = Object.values(modulePerms).filter(Boolean).length;
+  
+  // Get status color for left border
+  const getStatusColor = (count: number) => {
+    if (count === 0) return "border-l-muted";
+    if (count === 5) return "border-l-emerald-500";
+    return "border-l-amber-500";
+  };
 
   return (
     <AccordionItem
       value={module.id}
-      className="border border-border rounded-lg bg-card overflow-hidden"
+      className={cn(
+        "border border-border rounded-lg bg-card overflow-hidden transition-all duration-200",
+        "border-l-4",
+        getStatusColor(moduleEnabledCount)
+      )}
     >
-      <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-accent/50 transition-colors">
-        <div className="flex items-center gap-3 flex-1">
-          <div className="p-2 rounded-md bg-primary/10">
-            <IconComponent className="h-5 w-5 text-primary" />
+      <AccordionTrigger className="px-5 py-4 hover:no-underline hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent transition-all duration-200 group">
+        <div className="flex items-center justify-between flex-1 gap-4">
+          <div className="flex items-center gap-3 flex-1">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 group-hover:from-primary/15 group-hover:to-primary/10 transition-colors">
+              <IconComponent className="h-5 w-5 text-primary" />
+            </div>
+            <div className="text-left">
+              <div className="flex items-center gap-2">
+                <p className="text-base font-semibold text-foreground">{module.name || "Unnamed Module"}</p>
+              </div>
+              {module.path && (
+                <Badge variant="outline" className="mt-1 text-xs bg-muted/50">
+                  {module.path}
+                </Badge>
+              )}
+            </div>
           </div>
-          <div className="text-left">
-            <p className="font-semibold text-foreground">{module.name || "Unnamed Module"}</p>
-            <p className="text-xs text-muted-foreground">{module.path || ""}</p>
-          </div>
+          <Badge variant="secondary" className="text-xs">
+            {moduleEnabledCount}/5
+          </Badge>
         </div>
       </AccordionTrigger>
-      <AccordionContent className="px-4 pb-4 pt-2">
+      <AccordionContent className="px-5 pb-5 pt-2">
         {/* Module-level permissions */}
-        <div className="mb-4">
-          <p className="text-sm font-medium text-muted-foreground mb-2">Module Permissions</p>
+        <div className="mb-5">
+          <div className="h-px bg-gradient-to-r from-border via-border/50 to-transparent mb-3" />
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
+            Module Permissions
+          </p>
           <PermissionToggleGroup
             permissions={module.permissions || {
               read: false,
@@ -70,34 +101,56 @@ export function ModulePermissionCard({ module, onChange }: ModulePermissionCardP
 
         {/* Submodules */}
         {hasSubmodules && (
-          <div className="space-y-3 pl-4 border-l-2 border-border">
-            {module.submodules.map((submodule) => {
-              const SubIconComponent = (LucideIcons as any)[submodule.icon] || LucideIcons.Circle;
-              
-              return (
-                <div key={submodule.id} className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <SubIconComponent className="h-4 w-4 text-muted-foreground" />
-                    <p className="text-sm font-medium text-foreground">
-                      {submodule.name || "Unnamed Submodule"}
-                    </p>
+          <div className="mt-5 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                Submodules ({module.submodules.length})
+              </span>
+              <div className="h-px flex-1 bg-gradient-to-l from-border to-transparent" />
+            </div>
+            
+            <div className="grid gap-2.5">
+              {module.submodules.map((submodule) => {
+                const SubIconComponent = (LucideIcons as any)[submodule.icon] || LucideIcons.Circle;
+                const subPerms = submodule.permissions || {};
+                const subEnabledCount = Object.values(subPerms).filter(Boolean).length;
+                
+                return (
+                  <div 
+                    key={submodule.id} 
+                    className="bg-muted/30 rounded-lg p-4 border border-border/50 hover:border-primary/20 hover:bg-muted/50 transition-all duration-200"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-1.5 rounded-md bg-background shadow-sm">
+                          <SubIconComponent className="h-4 w-4 text-primary/70" />
+                        </div>
+                        <span className="text-sm font-medium text-foreground">
+                          {submodule.name || "Unnamed Submodule"}
+                        </span>
+                      </div>
+                      <Badge variant="outline" className="text-xs">
+                        {subEnabledCount}/5
+                      </Badge>
+                    </div>
+                    <PermissionToggleGroup
+                      permissions={submodule.permissions || {
+                        read: false,
+                        write: false,
+                        edit: false,
+                        delete: false,
+                        download: false,
+                      }}
+                      onChange={(permissions) =>
+                        handleSubmodulePermissionChange(submodule.id, permissions)
+                      }
+                      compact
+                    />
                   </div>
-                  <PermissionToggleGroup
-                    permissions={submodule.permissions || {
-                      read: false,
-                      write: false,
-                      edit: false,
-                      delete: false,
-                      download: false,
-                    }}
-                    onChange={(permissions) =>
-                      handleSubmodulePermissionChange(submodule.id, permissions)
-                    }
-                    compact
-                  />
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         )}
       </AccordionContent>
