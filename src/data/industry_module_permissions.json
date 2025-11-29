@@ -485,7 +485,7 @@
         {
           "id": "settings-approval-matrix",
           "name": "Approval Matrix",
-          "path": "/dashboard/industry-approval-matrix",
+          "path": "/dashboard/approval-matrix",
           "icon": "Shield",
           "permissions": {
             "read": true,

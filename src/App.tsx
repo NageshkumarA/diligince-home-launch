@@ -59,7 +59,7 @@ import IndustryProjectWorkflow from "@/pages/IndustryProjectWorkflow";
 import IndustryStakeholders from "@/pages/IndustryStakeholders";
 import IndustryDocuments from "@/pages/IndustryDocuments";
 import IndustryMessages from "@/pages/IndustryMessages";
-import IndustryApprovalMatrix from "@/pages/IndustryApprovalMatrix";
+
 import IndustryAnalytics from "@/pages/IndustryAnalytics";
 import TeamMembersPage from "@/pages/settings/TeamMembersPage";
 import IndustryNotifications from "@/pages/IndustryNotifications";
@@ -284,10 +284,6 @@ function App() {
                               <Route
                                 path="industry-messages"
                                 element={<IndustryMessages />}
-                              />
-                              <Route
-                                path="industry-approval-matrix"
-                                element={<IndustryApprovalMatrix />}
                               />
                               <Route
                                 path="industry-analytics"

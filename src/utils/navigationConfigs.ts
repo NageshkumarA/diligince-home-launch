@@ -46,7 +46,7 @@ export const industryHeaderConfig: HeaderConfig = {
     },
     {
       label: "Approval Matrix",
-      href: "/industry-approval-matrix",
+      href: "/dashboard/approval-matrix",
       icon: React.createElement(Settings, { size: 18 })
     },
     {

@@ -259,7 +259,7 @@ export const menuConfig: MenuConfig = {
         {
           icon: Shield,
           label: "Approval Matrix",
-          path: "/dashboard/industry-approval-matrix",
+          path: "/dashboard/approval-matrix",
         },
         {
           icon: Bell,
