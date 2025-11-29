@@ -7,6 +7,8 @@ import {
 import { PermissionToggleGroup } from "./PermissionToggleGroup";
 import { Badge } from "@/components/ui/badge";
 import * as LucideIcons from "lucide-react";
+import { CheckSquare, Square } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { ModulePermissionV2, PermissionFlags } from "@/services/modules/roles/roles.types";
 
@@ -29,6 +31,42 @@ export function ModulePermissionCard({ module, onChange }: ModulePermissionCardP
     const updatedSubmodules = (module.submodules || []).map((sub) =>
       sub.id === submoduleId ? { ...sub, permissions } : sub
     );
+
+    onChange({
+      ...module,
+      submodules: updatedSubmodules,
+    });
+  };
+
+  const handleSelectAllSubmodules = () => {
+    const updatedSubmodules = (module.submodules || []).map((sub) => ({
+      ...sub,
+      permissions: {
+        read: true,
+        write: true,
+        edit: true,
+        delete: true,
+        download: true,
+      },
+    }));
+
+    onChange({
+      ...module,
+      submodules: updatedSubmodules,
+    });
+  };
+
+  const handleClearAllSubmodules = () => {
+    const updatedSubmodules = (module.submodules || []).map((sub) => ({
+      ...sub,
+      permissions: {
+        read: false,
+        write: false,
+        edit: false,
+        delete: false,
+        download: false,
+      },
+    }));
 
     onChange({
       ...module,
@@ -102,15 +140,40 @@ export function ModulePermissionCard({ module, onChange }: ModulePermissionCardP
         {/* Submodules */}
         {hasSubmodules && (
           <div className="mt-5 space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                Submodules ({module.submodules.length})
-              </span>
-              <div className="h-px flex-1 bg-gradient-to-l from-border to-transparent" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="h-px w-8 bg-gradient-to-r from-border to-transparent" />
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Submodules ({module.submodules.length})
+                </span>
+              </div>
+              
+              {/* Quick Actions */}
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7 px-2 text-xs"
+                  onClick={handleSelectAllSubmodules}
+                  type="button"
+                >
+                  <CheckSquare className="h-3 w-3 mr-1" />
+                  All
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7 px-2 text-xs"
+                  onClick={handleClearAllSubmodules}
+                  type="button"
+                >
+                  <Square className="h-3 w-3 mr-1" />
+                  Clear
+                </Button>
+              </div>
             </div>
             
-            <div className="grid gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
               {module.submodules.map((submodule) => {
                 const SubIconComponent = (LucideIcons as any)[submodule.icon] || LucideIcons.Circle;
                 const subPerms = submodule.permissions || {};
@@ -119,18 +182,24 @@ export function ModulePermissionCard({ module, onChange }: ModulePermissionCardP
                 return (
                   <div 
                     key={submodule.id} 
-                    className="bg-muted/30 rounded-lg p-4 border border-border/50 hover:border-primary/20 hover:bg-muted/50 transition-all duration-200"
+                    className={cn(
+                      "bg-muted/30 rounded-lg p-3 border border-border/50",
+                      "hover:border-primary/20 hover:bg-muted/50 hover:shadow-sm",
+                      "transition-all duration-200",
+                      "border-l-4",
+                      getStatusColor(subEnabledCount)
+                    )}
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="p-1.5 rounded-md bg-background shadow-sm">
-                          <SubIconComponent className="h-4 w-4 text-primary/70" />
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="p-1 rounded-md bg-background shadow-sm shrink-0">
+                          <SubIconComponent className="h-3.5 w-3.5 text-primary/70" />
                         </div>
-                        <span className="text-sm font-medium text-foreground">
+                        <span className="text-sm font-medium text-foreground truncate">
                           {submodule.name || "Unnamed Submodule"}
                         </span>
                       </div>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-[10px] shrink-0 ml-2">
                         {subEnabledCount}/5
                       </Badge>
                     </div>
