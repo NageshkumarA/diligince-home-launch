@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Bell, Mail, Smartphone, MessageSquare, AlertCircle, DollarSign, FileText, Moon } from 'lucide-react';
 import toast from '@/utils/toast.utils';
+import { userAccountService } from '@/services/modules/user-account';
 
 const NotificationsSection = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [notifications, setNotifications] = useState({
     email: true,
     sms: false,
@@ -19,7 +22,7 @@ const NotificationsSection = () => {
     systemAlerts: true,
   });
 
-  const [digestFrequency, setDigestFrequency] = useState('daily');
+  const [digestFrequency, setDigestFrequency] = useState<'instant' | 'hourly' | 'daily' | 'weekly'>('daily');
   const [quietHours, setQuietHours] = useState({
     enabled: true,
     start: '22:00',
@@ -27,6 +30,36 @@ const NotificationsSection = () => {
   });
 
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    fetchNotificationPreferences();
+  }, []);
+
+  const fetchNotificationPreferences = async () => {
+    setIsLoading(true);
+    try {
+      const preferences = await userAccountService.getNotificationPreferences();
+      
+      setNotifications({
+        email: preferences.email,
+        sms: preferences.sms,
+        push: preferences.push,
+        requirements: preferences.channels.requirements,
+        approvals: preferences.channels.approvals,
+        payments: preferences.channels.payments,
+        messages: preferences.channels.messages,
+        systemAlerts: preferences.channels.systemAlerts,
+      });
+      
+      setDigestFrequency(preferences.digestFrequency);
+      setQuietHours(preferences.quietHours);
+    } catch (error) {
+      console.error('Failed to fetch notification preferences:', error);
+      toast.error('Failed to load notification preferences');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleToggle = (key: string, value: boolean) => {
     setNotifications(prev => ({ ...prev, [key]: value }));
@@ -37,18 +70,59 @@ const NotificationsSection = () => {
     const loadingToast = toast.loading('Saving preferences...');
     
     try {
-      // TODO: API integration
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await userAccountService.updateNotificationPreferences({
+        email: notifications.email,
+        sms: notifications.sms,
+        push: notifications.push,
+        channels: {
+          requirements: notifications.requirements,
+          approvals: notifications.approvals,
+          payments: notifications.payments,
+          messages: notifications.messages,
+          systemAlerts: notifications.systemAlerts,
+        },
+        digestFrequency,
+        quietHours,
+      });
       
       toast.dismiss(loadingToast);
       toast.success('Preferences saved successfully');
     } catch (error) {
+      console.error('Failed to save preferences:', error);
       toast.dismiss(loadingToast);
       toast.error('Failed to save preferences');
     } finally {
       setIsSaving(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Card className="shadow-lg border-0">
+          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-primary/10">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-64 mt-2" />
+          </CardHeader>
+          <CardContent className="pt-6 space-y-4">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-20 w-full" />
+            ))}
+          </CardContent>
+        </Card>
+        <Card className="shadow-lg border-0">
+          <CardHeader className="border-b">
+            <Skeleton className="h-6 w-48" />
+          </CardHeader>
+          <CardContent className="pt-6 space-y-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Skeleton key={i} className="h-16 w-full" />
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -205,7 +279,7 @@ const NotificationsSection = () => {
           {/* Digest Frequency */}
           <div className="space-y-3">
             <Label className="text-base font-semibold">Email Digest Frequency</Label>
-            <Select value={digestFrequency} onValueChange={setDigestFrequency}>
+            <Select value={digestFrequency} onValueChange={(value) => setDigestFrequency(value as 'instant' | 'hourly' | 'daily' | 'weekly')}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
