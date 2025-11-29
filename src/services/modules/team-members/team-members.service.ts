@@ -60,7 +60,7 @@ class TeamMembersService {
     memberId: string,
     data: UpdateMemberRequest
   ): Promise<{ success: boolean; data: TeamMember; message: string }> {
-    return await api.put<
+    return await api.patch<
       { success: boolean; data: TeamMember; message: string },
       UpdateMemberRequest
     >(teamMembersRoutes.updateMember(memberId), data);
@@ -73,7 +73,7 @@ class TeamMembersService {
     memberId: string,
     data: UpdateRoleRequest
   ): Promise<{ success: boolean; data: any; message: string }> {
-    return await api.put<
+    return await api.patch<
       { success: boolean; data: any; message: string },
       UpdateRoleRequest
     >(teamMembersRoutes.updateMemberRole(memberId), data);
@@ -87,7 +87,7 @@ class TeamMembersService {
     status: 'active' | 'suspended' | 'inactive',
     reason?: string
   ): Promise<{ success: boolean; message: string }> {
-    return await api.put<
+    return await api.patch<
       { success: boolean; message: string },
       { status: string; reason?: string }
     >(teamMembersRoutes.updateMemberStatus(memberId), {
