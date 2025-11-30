@@ -18,6 +18,7 @@ interface UserContextType {
   updateProfile: (updates: Partial<UserProfile>) => void;
   updatePreferences: (preferences: Partial<UserPreferences>) => void;
   login: (email: string, password: string) => Promise<{success: boolean, error?: string}>;
+  verify2FA: (twoFactorToken: string, code: string) => Promise<{success: boolean, error?: string}>;
   logout: () => void;
   getDashboardUrl: () => string;
   isUserType: (role: UserRole) => boolean;
@@ -288,6 +289,77 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   }, []);
 
+  const verify2FA = useCallback(async (twoFactorToken: string, code: string) => {
+    try {
+      console.log('[Auth] Attempting 2FA verification...');
+      const response: any = await api.post(apiRoutes.auth.verify2FA, { twoFactorToken, code });
+      
+      const responseData = response?.data || response;
+      const userData = responseData?.data;
+      
+      if (userData?.access_token && userData?.user) {
+        console.log('[Auth] 2FA verification successful');
+        
+        // Store authentication tokens
+        localStorage.setItem('authToken', userData.access_token);
+        localStorage.setItem('refreshToken', userData.refresh_token);
+        
+        // Validate and store roleConfiguration for permissions
+        const roleConfig = userData.user.roleConfiguration;
+        if (!roleConfig || !roleConfig.permissions || roleConfig.permissions.length === 0) {
+          toast.error("Don't have any Module Access");
+          return { success: false, error: "No module access configured for this account" };
+        }
+        
+        // Check if user has at least one readable module
+        const hasAnyAccess = roleConfig.permissions.some((m: any) => 
+          m.permissions?.read === true || 
+          m.submodules?.some((s: any) => s.permissions?.read === true)
+        );
+        
+        if (!hasAnyAccess) {
+          toast.error("Don't have any Module Access");
+          return { success: false, error: "No module access configured for this account" };
+        }
+        
+        // Store valid permissions
+        localStorage.setItem('roleConfiguration', JSON.stringify(roleConfig));
+        window.dispatchEvent(new CustomEvent('permissions:update', { 
+          detail: roleConfig 
+        }));
+        
+        const apiUser = userData.user;
+        const userProfile: UserProfile = {
+          id: apiUser.id,
+          name: apiUser.profile ? `${apiUser.profile.firstName} ${apiUser.profile.lastName}` : apiUser.email,
+          email: apiUser.email,
+          role: mapApiRoleToUserRole(apiUser.role),
+          profile: {
+            vendorCategory: apiUser.profile?.vendorCategory,
+            companyName: apiUser.profile?.companyName,
+            firstName: apiUser.profile?.firstName,
+            lastName: apiUser.profile?.lastName,
+          },
+          preferences: defaultPreferences,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        
+        setUser(userProfile);
+        setIsFirstTimeUser(!apiUser.profile?.isProfileComplete);
+        
+        return { success: true };
+      }
+      return { success: false, error: 'Verification failed' };
+    } catch (error: any) {
+      console.error('[Auth] 2FA verification failed:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Two-factor authentication failed.' 
+      };
+    }
+  }, []);
+
   const logout = useCallback(() => {
     console.log("Logging out user");
     setUser(null);
@@ -355,6 +427,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     updateProfile,
     updatePreferences,
     login,
+    verify2FA,
     logout,
     getDashboardUrl,
     isUserType,

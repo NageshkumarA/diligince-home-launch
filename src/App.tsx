@@ -32,6 +32,7 @@ import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
 import SignUp from "@/pages/SignUp";
 import SignIn from "@/pages/SignIn";
+import MultiStepLogin from "@/pages/MultiStepLogin";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
 import NotFound from "@/pages/NotFound";
@@ -187,6 +188,7 @@ function App() {
 
                             {/* Auth Routes */}
                             <Route path="/signup" element={<SignUp />} />
+                            <Route path="/login" element={<MultiStepLogin />} />
                             <Route path="/signin" element={<SignIn />} />
                             <Route
                               path="/forgot-password"
