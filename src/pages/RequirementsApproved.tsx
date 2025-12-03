@@ -5,8 +5,8 @@ import { ColumnConfig, FilterConfig } from "@/types/table";
 import requirementListService from "@/services/requirement-list.service";
 import { RequirementListItem } from "@/types/requirement-list";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TableSkeletonLoader } from "@/components/shared/loading";
 
 const RequirementsApproved = () => {
   const navigate = useNavigate();
@@ -193,8 +193,12 @@ const RequirementsApproved = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="p-6 bg-background min-h-screen">
+        <div className="mb-6">
+          <div className="h-8 w-56 bg-muted rounded animate-pulse mb-2" />
+          <div className="h-4 w-96 bg-muted rounded animate-pulse" />
+        </div>
+        <TableSkeletonLoader rows={5} columns={7} />
       </div>
     );
   }
