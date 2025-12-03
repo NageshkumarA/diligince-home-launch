@@ -388,16 +388,36 @@ export default {
 						transform: 'translateY(-20px) translateX(3px)'
 					}
 				},
-				'pulse-slow': {
-					'0%, 100%': {
-						opacity: '1'
-					},
-					'50%': {
-						opacity: '0.6'
-					}
+			'pulse-slow': {
+				'0%, 100%': {
+					opacity: '1'
+				},
+				'50%': {
+					opacity: '0.6'
 				}
 			},
-			animation: {
+			'slide-in-right': {
+				'0%': {
+					opacity: '0',
+					transform: 'translateX(20px)'
+				},
+				'100%': {
+					opacity: '1',
+					transform: 'translateX(0)'
+				}
+			},
+			'slide-in-left': {
+				'0%': {
+					opacity: '0',
+					transform: 'translateX(-20px)'
+				},
+				'100%': {
+					opacity: '1',
+					transform: 'translateX(0)'
+				}
+			}
+		},
+		animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.5s ease-out',
@@ -420,8 +440,10 @@ export default {
 				'grid-breathe': 'grid-breathe 8s ease-in-out infinite',
 				'accent-pulse': 'accent-pulse 4s ease-in-out infinite',
 				'gradient-shift': 'gradient-shift 3s ease-in-out infinite',
-				'fade-up-stagger': 'fade-up-stagger 0.6s ease-out forwards'
-			}
+			'fade-up-stagger': 'fade-up-stagger 0.6s ease-out forwards',
+			'slide-in-right': 'slide-in-right 0.3s ease-out',
+			'slide-in-left': 'slide-in-left 0.3s ease-out'
+		}
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
