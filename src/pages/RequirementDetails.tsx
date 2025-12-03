@@ -9,7 +9,7 @@ import { QuotationsByRequirementResponse } from "@/types/quotation";
 import { DraftDetailResponse } from "@/types/requirement-draft";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2 } from "lucide-react";
+import { DetailPageSkeleton } from "@/components/shared/loading";
 import IndustryHeader from "@/components/industry/IndustryHeader";
 import {
   Card,
@@ -161,11 +161,7 @@ const RequirementDetails = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+    return <DetailPageSkeleton showTabs={true} tabCount={8} sections={3} />;
   }
 
   if (!requirement) {
