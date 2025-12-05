@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { UserCheck, Search, Sparkles, TrendingUp, Award } from "lucide-react";
+import { UserCheck, Search, Sparkles } from "lucide-react";
 import { ProfessionalCard } from "@/components/Diligince-hub/ProfessionalCard";
 import { SearchFilterBar } from "@/components/Diligince-hub/SearchFilterBar";
 import { EmptyState } from "@/components/Diligince-hub/EmptyState";
+import { CardGridSkeletonLoader } from "@/components/shared/loading";
 import type { ProfessionalListItem, ProfessionalSearchFilters } from "@/types/professional";
 
 // Mock data for development
@@ -173,14 +174,7 @@ const FindProfessionals: React.FC = () => {
         )}
 
         {isLoading && (
-          <div className="flex justify-center items-center py-12">
-            <div className="relative">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary/20 border-t-primary"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Search className="w-5 h-5 text-primary" />
-              </div>
-            </div>
-          </div>
+          <CardGridSkeletonLoader count={6} columns={3} />
         )}
       </div>
     </div>

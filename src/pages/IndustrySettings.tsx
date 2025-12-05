@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CheckCircle2, XCircle, AlertCircle, Plus, Trash2 } from 'lucide-react';
+import { SettingsPageSkeleton } from '@/components/shared/loading';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import toast from '@/utils/toast.utils';
@@ -296,14 +297,7 @@ const IndustrySettings = () => {
       </div>
 
       {isLoadingProfile ? (
-        <Card>
-          <CardContent className="flex items-center justify-center py-12">
-            <div className="text-center space-y-2">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-              <p className="text-muted-foreground">Loading profile...</p>
-            </div>
-          </CardContent>
-        </Card>
+        <SettingsPageSkeleton showTabs tabCount={2} sections={3} />
       ) : (
         <Tabs defaultValue="company" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2 bg-muted">

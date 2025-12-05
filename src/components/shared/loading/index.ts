@@ -10,3 +10,5 @@ export { CardGridSkeletonLoader } from './CardGridSkeletonLoader';
 export { PageSkeletonLoader } from './PageSkeletonLoader';
 export { DetailPageSkeleton } from './DetailPageSkeleton';
 export { DashboardSkeleton } from './DashboardSkeleton';
+export { FormPageSkeleton } from './FormPageSkeleton';
+export { SettingsPageSkeleton } from './SettingsPageSkeleton';
