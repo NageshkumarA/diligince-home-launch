@@ -1,7 +1,7 @@
 // Custom hook for managing requirement drafts
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { RequirementFormData } from "@/contexts/RequirementContext";
+import { RequirementFormData } from "@/types/requirement-form.types";
 import requirementDraftService from "@/services/requirement-draft.service";
 import {
   ApprovalWorkflowRequest,

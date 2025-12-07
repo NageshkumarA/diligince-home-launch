@@ -1,7 +1,7 @@
 // Requirement Draft API Service
 
 import apiService from '../../core/api.service';
-import { RequirementFormData } from "@/contexts/RequirementContext";
+import { RequirementFormData } from "@/types/requirement-form.types";
 import {
   DraftResponse,
   DraftDetailResponse,
