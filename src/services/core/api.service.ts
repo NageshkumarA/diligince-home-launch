@@ -118,7 +118,18 @@ const get = async <T>(url: string, config?: AxiosRequestConfig): Promise<T> => {
 
 // Generic POST method
 const post = async <T, D>(url: string, data: D, config?: AxiosRequestConfig): Promise<T> => {
-  const response: AxiosResponse = await api.post(url, data, config);
+  // Create merged config
+  const mergedConfig: AxiosRequestConfig = { ...config };
+  
+  // If data is FormData, let axios set the Content-Type automatically (with boundary)
+  if (data instanceof FormData) {
+    mergedConfig.headers = {
+      ...mergedConfig.headers,
+      'Content-Type': undefined,
+    };
+  }
+  
+  const response: AxiosResponse = await api.post(url, data, mergedConfig);
 
   // Check if response has standardized envelope structure
   if (response.data &&
