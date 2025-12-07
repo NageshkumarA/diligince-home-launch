@@ -1,87 +1,10 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useRequirementDraft } from '@/hooks/useRequirementDraft';
 import { toast } from 'sonner';
+import { RequirementFormData } from '@/types/requirement-form.types';
 
-export interface RequirementFormData {
-  id?: string;
-  title?: string;
-  category?: "product" | "service" | "expert" | "logistics";
-  priority?: "low" | "medium" | "high" | "critical";
-  description?: string;
-  specialization?: string;
-  productSpecifications?: string;
-  quantity?: number;
-  serviceDescription?: string;
-  scopeOfWork?: string;
-  equipmentType?: string;
-  pickupLocation?: string;
-  deliveryLocation?: string;
-  documents?: { 
-    id: string;
-    name: string; 
-    url: string;
-    type: string;
-    size: number;
-    documentType: "specification" | "drawing" | "reference" | "compliance" | "other";
-    version: number;
-    uploadedAt: Date;
-    uploadedBy: string;
-  }[];
-  submissionDeadline?: Date;
-  evaluationCriteria?: string[];
-  visibility?: "all" | "selected";
-  selectedVendors?: string[];
-  notifyByEmail?: boolean;
-  notifyByApp?: boolean;
-  termsAccepted?: boolean;
-  budget?: number;
-  createdDate?: string;
-  deadline?: string;
-  applicants?: number;
-  complianceRequired?: boolean;
-  riskLevel?: "low" | "medium" | "high" | "critical";
-  
-  // Add new approval-related fields
-  isUrgent?: boolean;
-  approvalWorkflowId?: string;
-  approvalStatus?: 'not_required' | 'pending' | 'approved' | 'rejected';
-  emergencyPublished?: boolean;
-  approvalDeadline?: Date;
-  
-  // Expert-specific fields
-  certifications?: string[];
-  duration?: number;
-  startDate?: Date;
-  endDate?: Date;
-  
-  // Product-specific fields
-  technicalStandards?: string[];
-  productDeliveryDate?: Date;
-  qualityRequirements?: string;
-  
-  // Service-specific fields
-  performanceMetrics?: string;
-  serviceStartDate?: Date;
-  serviceEndDate?: Date;
-  serviceBudget?: number;
-  location?: string;
-  
-  // Logistics-specific fields
-  weight?: number;
-  dimensions?: string;
-  pickupDate?: Date;
-  deliveryDate?: Date;
-  specialHandling?: string;
-  
-  // Additional fields for EnhancedBasicInfoStep
-  businessJustification?: string;
-  department?: string;
-  costCenter?: string;
-  requestedBy?: string;
-  urgency?: boolean;
-  estimatedBudget?: number;
-  budgetApproved?: boolean;
-}
+// Re-export for backward compatibility
+export type { RequirementFormData } from '@/types/requirement-form.types';
 
 interface RequirementContextType {
   formData: RequirementFormData;
