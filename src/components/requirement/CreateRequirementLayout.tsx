@@ -11,6 +11,7 @@ import { StepLoadingSkeleton } from "./StepLoadingSkeleton";
 import VerticalStepper from "./VerticalStepper";
 import StepTransition from "./StepTransition";
 import { CommentsSection } from "./CommentsSection";
+import { toast } from "sonner";
 
 interface CreateRequirementLayoutProps {
   currentStep: StepType;
@@ -30,9 +31,18 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
   children,
 }) => {
   const navigate = useNavigate();
-  const { isSaving, lastSaved, draftId } = useRequirement();
+  const { isSaving, lastSaved, draftId, saveAsDraft } = useRequirement();
   const [showComments, setShowComments] = useState(false);
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
+
+  const handleSaveDraft = useCallback(async () => {
+    try {
+      await saveAsDraft();
+      toast.success("Draft saved successfully");
+    } catch (error) {
+      toast.error("Failed to save draft");
+    }
+  }, [saveAsDraft]);
 
   const stepTitles = [
     "Basic Information",
@@ -241,15 +251,27 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
           {/* Desktop Footer */}
           <footer className="flex-shrink-0 bg-background border-t border-border/50 px-8 py-4">
             <div className="flex items-center justify-between max-w-4xl mx-auto">
-              <Button
-                variant="outline"
-                onClick={handlePrevious}
-                disabled={currentStep === 1}
-                className="gap-2"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Previous
-              </Button>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  onClick={handlePrevious}
+                  disabled={currentStep === 1}
+                  className="gap-2"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  onClick={handleSaveDraft}
+                  disabled={isSaving}
+                  className="gap-2"
+                >
+                  <Save className="h-4 w-4" />
+                  {isSaving ? "Saving..." : "Save Draft"}
+                </Button>
+              </div>
 
               <p className="text-xs text-muted-foreground hidden md:block">
                 Use Alt + Arrow keys to navigate
@@ -287,12 +309,22 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
             <Button
               variant="outline"
               onClick={handlePrevious}
-              className="flex-1"
+              size="sm"
             >
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Previous
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Back
             </Button>
           )}
+
+          <Button
+            variant="ghost"
+            onClick={handleSaveDraft}
+            disabled={isSaving}
+            size="sm"
+          >
+            <Save className="h-4 w-4 mr-1" />
+            {isSaving ? "..." : "Save"}
+          </Button>
           
           {currentStep < 6 && (
             <Button
