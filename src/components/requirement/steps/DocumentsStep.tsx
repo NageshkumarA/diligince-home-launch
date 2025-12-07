@@ -31,13 +31,19 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
       setIsUploading(true);
       const uploadedDocs = await uploadDocs([file], [documentType]);
       
+      // Validate uploadedDocs before mapping
+      if (!uploadedDocs || !Array.isArray(uploadedDocs)) {
+        throw new Error("Invalid response from upload service");
+      }
+      
       const docsWithDateObjects = uploadedDocs.map(doc => ({
         ...doc,
         uploadedAt: new Date(doc.uploadedAt)
       }));
       
-      // Replace existing document of this type or add new
-      const updatedDocs = formData.documents.filter(d => d.type !== documentType);
+      // Ensure formData.documents is an array before filtering
+      const existingDocs = formData.documents || [];
+      const updatedDocs = existingDocs.filter(d => d.type !== documentType);
       updateFormData({
         documents: [...updatedDocs, ...docsWithDateObjects]
       });

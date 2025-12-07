@@ -220,7 +220,14 @@ export const useRequirementDraft = () => {
           files,
           types
         );
-        toast.success(`${response.data.uploadedCount} document(s) uploaded successfully`);
+        
+        // Validate response structure
+        if (!response?.success || !response?.data?.documents) {
+          console.error("Invalid upload response:", response);
+          throw new Error(response?.message || "Failed to upload documents");
+        }
+        
+        toast.success(`${response.data.uploadedCount || files.length} document(s) uploaded successfully`);
         return response.data.documents;
       } catch (err: any) {
         const errorMsg = err?.message || "Failed to upload documents";
