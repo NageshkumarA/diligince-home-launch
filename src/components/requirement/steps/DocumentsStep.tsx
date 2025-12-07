@@ -132,24 +132,6 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
         />
       </div>
 
-      {/* Navigation Buttons */}
-      <div className="flex justify-between pt-6 border-t">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onPrevious}
-          disabled={isUploading}
-        >
-          Previous
-        </Button>
-        <Button
-          type="button"
-          onClick={onNext}
-          disabled={isUploading}
-        >
-          Continue
-        </Button>
-      </div>
     </div>
   );
 };

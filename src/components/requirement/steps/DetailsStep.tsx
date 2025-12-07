@@ -739,17 +739,6 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
         </Card>
       )}
 
-      <div className="flex justify-between pt-6">
-        <Button 
-          variant="outline" 
-          onClick={onPrevious}
-        >
-          Previous
-        </Button>
-        <Button onClick={handleNext}>
-          Next
-        </Button>
-      </div>
     </div>
   );
 };
