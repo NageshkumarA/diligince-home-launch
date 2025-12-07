@@ -123,11 +123,12 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
 
     console.log("Saving draft:", formData);
     try {
-      if (!draftId) {
+      // Use draftIdRef for reliable synchronous check
+      if (!draftIdRef.current) {
         await initializeDraft(formData);
         toast.success("Draft created successfully");
       } else {
-        await forceSave(formData, true); // Show toast
+        await forceSave(formData, false); // Silent save, we show toast below
         toast.success("Draft saved successfully");
       }
       localStorage.setItem('requirement-draft', JSON.stringify(formData));
@@ -137,12 +138,12 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
       if (!navigator.onLine) {
         toast.error("You're offline. Changes saved locally.");
       } else {
-        toast.error("Failed to save to server. Retrying...");
+        toast.error("Failed to save draft");
       }
       
       localStorage.setItem('requirement-draft', JSON.stringify(formData));
     }
-  }, [formData, draftId, initializeDraft, forceSave, isFormEmpty]);
+  }, [formData, draftIdRef, initializeDraft, forceSave, isFormEmpty]);
 
   const validateStep = useCallback((step: number) => {
     console.log("Validating step:", step, "with formData:", formData);
