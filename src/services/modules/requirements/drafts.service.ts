@@ -67,6 +67,12 @@ class RequirementDraftService {
     draftId: string,
     data: Partial<RequirementFormData>
   ): Promise<DraftResponse> {
+    // Validate draftId to prevent invalid API calls
+    if (!draftId || draftId === 'undefined' || draftId === 'null') {
+      console.error('Invalid draftId provided to updateDraft:', draftId);
+      throw new Error('Valid draftId is required for update');
+    }
+
     return this.retryRequest(async () => {
       try {
         // Use POST instead of PUT to match backend implementation

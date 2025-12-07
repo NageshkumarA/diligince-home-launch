@@ -1,6 +1,6 @@
 // Custom hook for managing requirement drafts
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { RequirementFormData } from "@/contexts/RequirementContext";
 import requirementDraftService from "@/services/requirement-draft.service";
 import {
@@ -36,11 +36,21 @@ export const useRequirementDraft = () => {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Refs for immediate access (avoids stale closure issues)
+  const draftIdRef = useRef<string | null>(null);
+  const isCreatingDraftRef = useRef(false);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    draftIdRef.current = draftId;
+  }, [draftId]);
+
   // Load draft ID from localStorage on mount
   useEffect(() => {
     const savedDraftId = localStorage.getItem("requirement-draft-id");
     if (savedDraftId) {
       setDraftId(savedDraftId);
+      draftIdRef.current = savedDraftId; // Sync ref immediately
     }
   }, []);
 
@@ -49,17 +59,33 @@ export const useRequirementDraft = () => {
    */
   const initializeDraft = useCallback(
     async (data?: Partial<RequirementFormData>) => {
+      // Prevent concurrent draft creations
+      if (isCreatingDraftRef.current) {
+        console.log("Draft creation already in progress, skipping...");
+        return draftIdRef.current;
+      }
+
+      // If we already have a draft ID, don't create another
+      if (draftIdRef.current) {
+        console.log("Draft already exists:", draftIdRef.current);
+        return draftIdRef.current;
+      }
+
       try {
+        isCreatingDraftRef.current = true;
         setIsSaving(true);
         setError(null);
 
         const response = await requirementDraftService.createDraft(data);
         const newDraftId = response.data.draftId;
 
+        // Update both state and ref immediately
         setDraftId(newDraftId);
+        draftIdRef.current = newDraftId; // Immediate sync
         setLastSaved(new Date());
         localStorage.setItem("requirement-draft-id", newDraftId);
 
+        console.log("Draft created with ID:", newDraftId);
         return newDraftId;
       } catch (err: any) {
         const errorMsg = err?.message || "Failed to initialize draft";
@@ -68,6 +94,7 @@ export const useRequirementDraft = () => {
         throw err;
       } finally {
         setIsSaving(false);
+        isCreatingDraftRef.current = false;
       }
     },
     []
@@ -78,7 +105,9 @@ export const useRequirementDraft = () => {
    */
   const saveDraft = useDebouncedCallback(
     async (data: Partial<RequirementFormData>) => {
-      if (!draftId) {
+      const currentDraftId = draftIdRef.current;
+      
+      if (!currentDraftId) {
         console.warn("No draft ID available for save");
         return;
       }
@@ -87,7 +116,7 @@ export const useRequirementDraft = () => {
         setIsSaving(true);
         setError(null);
 
-        await requirementDraftService.updateDraft(draftId, data);
+        await requirementDraftService.updateDraft(currentDraftId, data);
         setLastSaved(new Date());
 
         // Also save to localStorage as backup
@@ -110,15 +139,18 @@ export const useRequirementDraft = () => {
    */
   const forceSave = useCallback(
     async (data: Partial<RequirementFormData>, showToast: boolean = false) => {
-      if (!draftId) {
-        throw new Error("No draft ID available");
+      const currentDraftId = draftIdRef.current || draftId;
+      
+      if (!currentDraftId) {
+        console.warn("No draft ID available for force save, skipping...");
+        return; // Return gracefully instead of throwing
       }
 
       try {
         setIsSaving(true);
         setError(null);
 
-        await requirementDraftService.updateDraft(draftId, data);
+        await requirementDraftService.updateDraft(currentDraftId, data);
         setLastSaved(new Date());
         localStorage.setItem("requirement-draft", JSON.stringify(data));
 
@@ -309,6 +341,7 @@ export const useRequirementDraft = () => {
 
   return {
     draftId,
+    draftIdRef, // Expose ref for immediate access
     isSaving,
     lastSaved,
     error,

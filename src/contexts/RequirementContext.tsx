@@ -136,7 +136,7 @@ const getDefaultFormData = (): RequirementFormData => ({
 export const RequirementProvider = ({ children }: { children: React.ReactNode }) => {
   const [formData, setFormData] = useState<RequirementFormData>(getDefaultFormData());
   const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
-  const { draftId, isSaving, lastSaved, initializeDraft, forceSave } = useRequirementDraft();
+  const { draftId, draftIdRef, isSaving, lastSaved, initializeDraft, forceSave } = useRequirementDraft();
 
   const updateFormData = useCallback((data: Partial<RequirementFormData>) => {
     console.log("Updating form data:", data);
@@ -176,9 +176,12 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
 
     const autoSaveInterval = setInterval(async () => {
       try {
-        if (!draftId) {
+        // Use ref for immediate value check to avoid stale closure
+        if (!draftIdRef.current) {
+          console.log("Auto-save: Creating new draft...");
           await initializeDraft(formData);
         } else {
+          console.log("Auto-save: Updating existing draft:", draftIdRef.current);
           await forceSave(formData, false); // Silent save
         }
       } catch (error) {
@@ -187,7 +190,7 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
     }, 30000); // 30 seconds
 
     return () => clearInterval(autoSaveInterval);
-  }, [formData, draftId, initializeDraft, forceSave, isFormEmpty]);
+  }, [formData, draftIdRef, initializeDraft, forceSave, isFormEmpty]);
 
   const saveAsDraft = useCallback(async () => {
     if (isFormEmpty()) {
