@@ -36,12 +36,7 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
 
   const handleSaveDraft = useCallback(async () => {
-    try {
-      await saveAsDraft();
-      toast.success("Draft saved successfully");
-    } catch (error) {
-      toast.error("Failed to save draft");
-    }
+    await saveAsDraft();
   }, [saveAsDraft]);
 
   const stepTitles = [
