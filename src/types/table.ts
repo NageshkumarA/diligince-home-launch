@@ -30,6 +30,8 @@ export interface PaginationConfig {
   enabled: boolean;
   pageSize: number;
   currentPage: number;
+  totalItems?: number;
+  serverSide?: boolean;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (size: number) => void;
 }

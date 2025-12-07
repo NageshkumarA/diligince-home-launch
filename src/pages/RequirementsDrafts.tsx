@@ -363,7 +363,10 @@ const RequirementsDrafts = () => {
           enabled: true,
           pageSize: pagination.pageSize,
           currentPage: pagination.currentPage,
+          totalItems: pagination.totalItems,
+          serverSide: true,
           onPageChange: (page) => setPagination(prev => ({ ...prev, currentPage: page })),
+          onPageSizeChange: (size) => setPagination(prev => ({ ...prev, pageSize: size, currentPage: 1 })),
         }}
       />
     </div>

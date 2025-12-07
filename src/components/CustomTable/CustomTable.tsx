@@ -82,11 +82,12 @@ const CustomTable: React.FC<TableProps> = ({
   // Paginate data
   const paginatedData = useMemo(() => {
     if (!pagination.enabled) return sortedData;
+    if (pagination.serverSide) return sortedData; // Skip client-side slicing for server-paginated data
 
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     return sortedData.slice(startIndex, endIndex);
-  }, [sortedData, currentPage, pageSize, pagination.enabled]);
+  }, [sortedData, currentPage, pageSize, pagination.enabled, pagination.serverSide]);
 
   // Handle sort
   const handleSort = (columnName: string) => {
@@ -298,7 +299,7 @@ const CustomTable: React.FC<TableProps> = ({
         {pagination.enabled && (
           <TablePagination
             currentPage={currentPage}
-            totalItems={sortedData.length}
+            totalItems={pagination.totalItems ?? sortedData.length}
             pageSize={pageSize}
             onPageChange={handlePageChange}
             onPageSizeChange={handlePageSizeChange}
