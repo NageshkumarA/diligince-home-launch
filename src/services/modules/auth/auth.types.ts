@@ -6,15 +6,16 @@ export interface LookupAccountsRequest {
 }
 
 export interface AvailableAccount {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  userType: 'industry' | 'professional' | 'vendor';
+  id?: string;
+  accountId?: string;  // Actual backend field
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  userType: string;  // 'industry' | 'professional' | 'vendor' | 'IndustryAdmin'
   role: string;
-  companyName?: string;
+  companyName?: string | null;
   avatar?: string;
-  isActive: boolean;
+  isActive?: boolean;
   lastLogin?: string;
 }
 
