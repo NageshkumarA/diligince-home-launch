@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { authService, type AvailableAccount } from '@/services/modules/auth';
+import { AuthLayout } from '@/components/auth/AuthLayout';
 import { EmailStep } from '@/components/auth/login-steps/EmailStep';
 import { AccountSelectionStep } from '@/components/auth/login-steps/AccountSelectionStep';
 import { PasswordStep } from '@/components/auth/login-steps/PasswordStep';
@@ -21,6 +22,9 @@ interface LoginState {
   twoFactorCode: string;
   expiresAt: string | null;
 }
+
+const STEPS: LoginStep[] = ['email', 'account-selection', 'password', '2fa'];
+const STEP_LABELS = ['Email', 'Account', 'Password', 'Verify'];
 
 const MultiStepLogin: React.FC = () => {
   const navigate = useNavigate();
@@ -209,97 +213,98 @@ const MultiStepLogin: React.FC = () => {
     }
   };
 
+  const currentStepIndex = STEPS.indexOf(state.step);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-800 to-purple-800 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
-        <div className="rounded-2xl shadow-xl p-8 bg-white/95 backdrop-blur-lg border border-white/20">
-          {/* Progress Indicator */}
-          <div className="mb-8">
-            <div className="flex items-center justify-center space-x-2">
-              {['email', 'account-selection', 'password', '2fa'].map((step, index) => {
-                const stepIndex = ['email', 'account-selection', 'password', '2fa'].indexOf(state.step);
-                const currentIndex = ['email', 'account-selection', 'password', '2fa'].indexOf(step);
-                const isActive = currentIndex <= stepIndex;
-                const isCurrent = step === state.step;
+    <AuthLayout title="Welcome Back" subtitle="Sign in to your account">
+      {/* Progress Indicator */}
+      <div className="mb-8">
+        <div className="flex items-center justify-center space-x-2">
+          {STEPS.map((step, index) => {
+            const isActive = index <= currentStepIndex;
+            const isCurrent = step === state.step;
 
-                return (
-                  <React.Fragment key={step}>
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
-                        isCurrent
-                          ? 'bg-primary text-primary-foreground'
-                          : isActive
-                          ? 'bg-primary/20 text-primary'
-                          : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {index + 1}
-                    </div>
-                    {index < 3 && (
-                      <div
-                        className={`w-12 h-1 rounded transition-all ${
-                          isActive ? 'bg-primary' : 'bg-muted'
-                        }`}
-                      />
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Step Content */}
-          {state.step === 'email' && (
-            <EmailStep
-              email={state.email}
-              onEmailChange={(email) => setState(prev => ({ ...prev, email }))}
-              onContinue={handleEmailContinue}
-              loading={loading}
-              error={error}
-            />
-          )}
-
-          {state.step === 'account-selection' && (
-            <AccountSelectionStep
-              accounts={state.accounts}
-              selectedAccount={state.selectedAccount}
-              onSelectAccount={handleAccountSelect}
-              onBack={handleBack}
-              email={state.email}
-            />
-          )}
-
-          {state.step === 'password' && state.selectedAccount && (
-            <PasswordStep
-              selectedAccount={state.selectedAccount}
-              password={state.password}
-              onPasswordChange={(password) => setState(prev => ({ ...prev, password }))}
-              onLogin={handleLogin}
-              onBack={handleBack}
-              loading={loading}
-              error={error}
-            />
-          )}
-
-          {state.step === '2fa' && state.selectedAccount && state.twoFactorMethod && (
-            <TwoFactorStep
-              selectedAccount={state.selectedAccount}
-              twoFactorMethod={state.twoFactorMethod}
-              code={state.twoFactorCode}
-              onCodeChange={(code) => setState(prev => ({ ...prev, twoFactorCode: code }))}
-              onVerify={handleVerify2FA}
-              onResend={handleResend2FA}
-              onBack={handleBack}
-              loading={loading}
-              resending={resending}
-              error={error}
-              attemptsRemaining={attemptsRemaining}
-              resendCooldown={resendCooldown}
-            />
-          )}
+            return (
+              <React.Fragment key={step}>
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
+                      isCurrent
+                        ? 'bg-primary text-primary-foreground'
+                        : isActive
+                        ? 'bg-primary/20 text-primary'
+                        : 'bg-muted text-muted-foreground'
+                    }`}
+                  >
+                    {index + 1}
+                  </div>
+                  <span className={`text-xs mt-1 ${isCurrent ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                    {STEP_LABELS[index]}
+                  </span>
+                </div>
+                {index < STEPS.length - 1 && (
+                  <div
+                    className={`w-12 h-1 rounded transition-all mb-5 ${
+                      isActive && index < currentStepIndex ? 'bg-primary' : 'bg-muted'
+                    }`}
+                  />
+                )}
+              </React.Fragment>
+            );
+          })}
         </div>
       </div>
-    </div>
+
+      {/* Step Content */}
+      {state.step === 'email' && (
+        <EmailStep
+          email={state.email}
+          onEmailChange={(email) => setState(prev => ({ ...prev, email }))}
+          onContinue={handleEmailContinue}
+          loading={loading}
+          error={error}
+        />
+      )}
+
+      {state.step === 'account-selection' && (
+        <AccountSelectionStep
+          accounts={state.accounts}
+          selectedAccount={state.selectedAccount}
+          onSelectAccount={handleAccountSelect}
+          onBack={handleBack}
+          email={state.email}
+        />
+      )}
+
+      {state.step === 'password' && state.selectedAccount && (
+        <PasswordStep
+          selectedAccount={state.selectedAccount}
+          password={state.password}
+          onPasswordChange={(password) => setState(prev => ({ ...prev, password }))}
+          onLogin={handleLogin}
+          onBack={handleBack}
+          loading={loading}
+          error={error}
+        />
+      )}
+
+      {state.step === '2fa' && state.selectedAccount && state.twoFactorMethod && (
+        <TwoFactorStep
+          selectedAccount={state.selectedAccount}
+          twoFactorMethod={state.twoFactorMethod}
+          code={state.twoFactorCode}
+          onCodeChange={(code) => setState(prev => ({ ...prev, twoFactorCode: code }))}
+          onVerify={handleVerify2FA}
+          onResend={handleResend2FA}
+          onBack={handleBack}
+          loading={loading}
+          resending={resending}
+          error={error}
+          attemptsRemaining={attemptsRemaining}
+          resendCooldown={resendCooldown}
+        />
+      )}
+    </AuthLayout>
   );
 };
 
