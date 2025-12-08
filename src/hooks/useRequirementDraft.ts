@@ -181,12 +181,24 @@ export const useRequirementDraft = () => {
       setError(null);
 
       const response = await requirementDraftService.getDraft(draftIdToLoad);
-      const loadedFormData = response.data.formData;
+      let loadedFormData = response.data.formData;
+      
+      // Transform document dates from strings to Date objects
+      if (loadedFormData?.documents && Array.isArray(loadedFormData.documents)) {
+        loadedFormData = {
+          ...loadedFormData,
+          documents: loadedFormData.documents.map((doc: any) => ({
+            ...doc,
+            uploadedAt: doc.uploadedAt ? new Date(doc.uploadedAt) : new Date()
+          }))
+        };
+      }
       
       console.log("🟢 loadDraft: Received data", loadedFormData);
       console.log("🟢 loadDraft: Data keys", Object.keys(loadedFormData || {}));
       
       setDraftId(draftIdToLoad);
+      draftIdRef.current = draftIdToLoad;
       localStorage.setItem("requirement-draft-id", draftIdToLoad);
       
       // Sync the actual draft data to localStorage

@@ -23,7 +23,7 @@ interface RequirementDocument {
   type: string;
   size: number;
   documentType: 'specification' | 'drawing' | 'reference' | 'compliance' | 'other';
-  uploadedAt: Date;
+  uploadedAt: Date | string;
 }
 
 interface RequirementDocumentUploadFieldProps {
@@ -80,9 +80,17 @@ export const RequirementDocumentUploadField: React.FC<RequirementDocumentUploadF
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
-  const formatUploadTime = (date: Date): string => {
+  const formatUploadTime = (date: Date | string | undefined): string => {
+    if (!date) return 'Just now';
+    
+    // Convert string to Date if needed (for data from API)
+    const dateObj = date instanceof Date ? date : new Date(date);
+    
+    // Validate the date is valid
+    if (isNaN(dateObj.getTime())) return 'Recently';
+
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
+    const diff = now.getTime() - dateObj.getTime();
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
