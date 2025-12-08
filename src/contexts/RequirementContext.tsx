@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useRequirementDraft } from '@/hooks/useRequirementDraft';
+import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { RequirementFormData } from '@/types/requirement-form.types';
 
@@ -59,7 +60,8 @@ const getDefaultFormData = (): RequirementFormData => ({
 export const RequirementProvider = ({ children }: { children: React.ReactNode }) => {
   const [formData, setFormData] = useState<RequirementFormData>(getDefaultFormData());
   const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
-  const { draftId, draftIdRef, isSaving, lastSaved, initializeDraft, forceSave } = useRequirementDraft();
+  const { draftId, draftIdRef, isSaving, lastSaved, initializeDraft, forceSave, clearDraftState } = useRequirementDraft();
+  const { isAuthenticated } = useUser();
 
   const updateFormData = useCallback((data: Partial<RequirementFormData>) => {
     console.log("Updating form data:", data);
@@ -91,13 +93,30 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
     return !hasData;
   }, [formData]);
 
-  // Auto-save every 30 seconds if form has data
+  // Cleanup on logout - reset form and clear draft state
   useEffect(() => {
-    if (isFormEmpty()) {
-      return; // Don't auto-save empty forms
+    if (!isAuthenticated) {
+      console.log("User logged out, resetting requirement form...");
+      resetForm();
+      clearDraftState();
+    }
+  }, [isAuthenticated, resetForm, clearDraftState]);
+
+  // Auto-save every 30 seconds if form has data and user is authenticated
+  useEffect(() => {
+    // Skip if not authenticated or form is empty
+    if (!isAuthenticated || isFormEmpty()) {
+      return;
     }
 
     const autoSaveInterval = setInterval(async () => {
+      // Double-check auth before each save attempt
+      if (!isAuthenticated) {
+        console.log("Auto-save: User not authenticated, skipping...");
+        clearInterval(autoSaveInterval);
+        return;
+      }
+
       try {
         // Use ref for immediate value check to avoid stale closure
         if (!draftIdRef.current) {
@@ -113,7 +132,7 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
     }, 30000); // 30 seconds
 
     return () => clearInterval(autoSaveInterval);
-  }, [formData, draftIdRef, initializeDraft, forceSave, isFormEmpty]);
+  }, [formData, draftIdRef, initializeDraft, forceSave, isFormEmpty, isAuthenticated, clearDraftState]);
 
   const saveAsDraft = useCallback(async () => {
     if (isFormEmpty()) {
