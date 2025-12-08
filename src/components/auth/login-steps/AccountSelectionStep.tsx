@@ -47,8 +47,21 @@ export const AccountSelectionStep: React.FC<AccountSelectionStepProps> = ({
     }
   };
 
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  const getInitials = (firstName?: string, lastName?: string) => {
+    const first = firstName?.charAt(0) || '';
+    const last = lastName?.charAt(0) || '';
+    return (first + last).toUpperCase() || '??';
+  };
+
+  const getDisplayName = (account: AvailableAccount) => {
+    if (account.firstName && account.lastName) {
+      return `${account.firstName} ${account.lastName}`;
+    }
+    return account.email || account.role || 'User';
+  };
+
+  const getAccountId = (account: AvailableAccount) => {
+    return account.id || account.accountId || account.role;
   };
 
   return (
@@ -72,11 +85,12 @@ export const AccountSelectionStep: React.FC<AccountSelectionStepProps> = ({
       <div className="grid gap-4">
         {accounts.map((account) => {
           const Icon = getUserTypeIcon(account.userType);
-          const isSelected = selectedAccount?.id === account.id;
+          const accountId = getAccountId(account);
+          const isSelected = selectedAccount?.id === account.id || selectedAccount?.accountId === account.accountId;
 
           return (
             <div
-              key={account.id}
+              key={accountId}
               onClick={() => onSelectAccount(account)}
               className={`p-6 rounded-xl border-2 cursor-pointer transition-all hover:shadow-md ${
                 isSelected
@@ -86,7 +100,7 @@ export const AccountSelectionStep: React.FC<AccountSelectionStepProps> = ({
             >
               <div className="flex items-start space-x-4">
                 <Avatar className="w-14 h-14">
-                  <AvatarImage src={account.avatar} alt={account.firstName} />
+                  <AvatarImage src={account.avatar} alt={getDisplayName(account)} />
                   <AvatarFallback className="text-lg">
                     {getInitials(account.firstName, account.lastName)}
                   </AvatarFallback>
@@ -96,7 +110,7 @@ export const AccountSelectionStep: React.FC<AccountSelectionStepProps> = ({
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <h3 className="text-lg font-semibold text-foreground">
-                        {account.firstName} {account.lastName}
+                        {getDisplayName(account)}
                       </h3>
                       {account.companyName && (
                         <p className="text-sm text-muted-foreground">{account.companyName}</p>

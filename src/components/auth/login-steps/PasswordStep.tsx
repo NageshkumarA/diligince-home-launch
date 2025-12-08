@@ -29,8 +29,17 @@ export const PasswordStep: React.FC<PasswordStepProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('');
 
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  const getInitials = (firstName?: string, lastName?: string) => {
+    const first = firstName?.charAt(0) || '';
+    const last = lastName?.charAt(0) || '';
+    return (first + last).toUpperCase() || '??';
+  };
+
+  const getDisplayName = () => {
+    if (selectedAccount.firstName && selectedAccount.lastName) {
+      return `${selectedAccount.firstName} ${selectedAccount.lastName}`;
+    }
+    return selectedAccount.email || selectedAccount.role || 'User';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,9 +79,11 @@ export const PasswordStep: React.FC<PasswordStepProps> = ({
           </Avatar>
         </div>
         <h2 className="text-2xl font-bold text-foreground mb-1">
-          {selectedAccount.firstName} {selectedAccount.lastName}
+          {getDisplayName()}
         </h2>
-        <p className="text-muted-foreground mb-2">{selectedAccount.email}</p>
+        {selectedAccount.email && (
+          <p className="text-muted-foreground mb-2">{selectedAccount.email}</p>
+        )}
         <Badge variant="secondary">{selectedAccount.role}</Badge>
       </div>
 
