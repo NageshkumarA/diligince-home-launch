@@ -17,7 +17,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
 
   // Helper to get document by type
   const getDocumentByType = (type: string) => {
-    return formData.documents?.find(doc => doc.type === type);
+    return formData.documents?.find(doc => doc.documentType === type);
   };
 
   // Upload handler
@@ -43,7 +43,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
       
       // Ensure formData.documents is an array before filtering
       const existingDocs = formData.documents || [];
-      const updatedDocs = existingDocs.filter(d => d.type !== documentType);
+      const updatedDocs = existingDocs.filter(d => d.documentType !== documentType);
       updateFormData({
         documents: [...updatedDocs, ...docsWithDateObjects]
       });
