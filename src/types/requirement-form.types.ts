@@ -1,4 +1,5 @@
 // RequirementFormData interface - separated to avoid circular dependencies
+import { ApprovalMatrix } from '@/services/modules/approval-matrix/approval-matrix.types';
 
 export interface RequirementFormData {
   id?: string;
@@ -46,6 +47,7 @@ export interface RequirementFormData {
   emergencyPublished?: boolean;
   approvalDeadline?: Date;
   selectedApprovalMatrixId?: string;
+  selectedApprovalMatrix?: ApprovalMatrix;
   approvalProgress?: {
     currentLevel: number;
     totalLevels: number;

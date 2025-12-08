@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 
 interface ApprovalMatrixSelectorProps {
   selectedMatrixId: string | null;
-  onSelect: (matrixId: string) => void;
+  onSelect: (matrix: ApprovalMatrix) => void;
 }
 
 export const ApprovalMatrixSelector: React.FC<ApprovalMatrixSelectorProps> = ({
@@ -21,6 +21,20 @@ export const ApprovalMatrixSelector: React.FC<ApprovalMatrixSelectorProps> = ({
 }) => {
   const navigate = useNavigate();
   const { matrices, isLoading, error } = useAvailableMatrices();
+
+  // Auto-select default matrix or first one when matrices load
+  const handleAutoSelect = useCallback(() => {
+    if (!isLoading && matrices && matrices.length > 0 && !selectedMatrixId) {
+      // Priority: default matrix first, then first available
+      const defaultMatrix = matrices.find(m => m.isDefault);
+      const matrixToSelect = defaultMatrix || matrices[0];
+      onSelect(matrixToSelect);
+    }
+  }, [isLoading, matrices, selectedMatrixId, onSelect]);
+
+  useEffect(() => {
+    handleAutoSelect();
+  }, [handleAutoSelect]);
 
   if (isLoading) {
     return (
@@ -75,7 +89,7 @@ export const ApprovalMatrixSelector: React.FC<ApprovalMatrixSelectorProps> = ({
           key={matrix.id}
           matrix={matrix}
           isSelected={selectedMatrixId === matrix.id}
-          onSelect={() => onSelect(matrix.id)}
+          onSelect={() => onSelect(matrix)}
         />
       ))}
     </div>

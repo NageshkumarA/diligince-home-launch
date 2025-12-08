@@ -1,10 +1,11 @@
 import React from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { ApprovalMatrixSelector } from "@/components/requirement/ApprovalMatrixSelector";
+import { ApprovalMatrix } from "@/services/modules/approval-matrix/approval-matrix.types";
 import { DollarSign, Flag, Clock, AlertTriangle } from "lucide-react";
 
 interface ApprovalWorkflowStepProps {
@@ -31,8 +32,11 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = () => {
     }
   };
 
-  const handleMatrixSelect = (matrixId: string) => {
-    updateFormData({ selectedApprovalMatrixId: matrixId });
+  const handleMatrixSelect = (matrix: ApprovalMatrix) => {
+    updateFormData({ 
+      selectedApprovalMatrixId: matrix.id,
+      selectedApprovalMatrix: matrix 
+    });
   };
 
   return (
