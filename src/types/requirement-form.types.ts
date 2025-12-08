@@ -45,6 +45,7 @@ export interface RequirementFormData {
   approvalStatus?: 'not_required' | 'pending' | 'approved' | 'rejected';
   emergencyPublished?: boolean;
   approvalDeadline?: Date;
+  selectedApprovalMatrixId?: string;
   
   // Expert-specific fields
   certifications?: string[];
