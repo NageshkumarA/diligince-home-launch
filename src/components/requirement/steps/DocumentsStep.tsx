@@ -85,12 +85,12 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
         </p>
       </div>
 
-      {/* Document Upload Fields */}
-      <div className="space-y-4">
+      {/* Document Upload Fields - Responsive Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         <RequirementDocumentUploadField
-          label="Technical Specifications"
+          label="Technical Specs"
           documentType="specification"
-          helperText="Upload technical requirements, product specs, or detailed specifications"
+          helperText="Technical requirements or product specs"
           currentDocument={getDocumentByType('specification')}
           onUpload={handleUpload}
           onDelete={handleDeleteDocument}
@@ -98,9 +98,9 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
         />
 
         <RequirementDocumentUploadField
-          label="Engineering Drawings"
+          label="Drawings"
           documentType="drawing"
-          helperText="Upload CAD files, blueprints, or technical drawings"
+          helperText="CAD files or blueprints"
           currentDocument={getDocumentByType('drawing')}
           onUpload={handleUpload}
           onDelete={handleDeleteDocument}
@@ -108,9 +108,9 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
         />
 
         <RequirementDocumentUploadField
-          label="Reference Documents"
+          label="Reference"
           documentType="reference"
-          helperText="Upload standards, guidelines, or reference materials"
+          helperText="Standards or guidelines"
           currentDocument={getDocumentByType('reference')}
           onUpload={handleUpload}
           onDelete={handleDeleteDocument}
@@ -118,9 +118,9 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
         />
 
         <RequirementDocumentUploadField
-          label="Compliance Documents"
+          label="Compliance"
           documentType="compliance"
-          helperText="Upload certifications, compliance requirements, or regulatory documents"
+          helperText="Certifications or regulatory docs"
           currentDocument={getDocumentByType('compliance')}
           onUpload={handleUpload}
           onDelete={handleDeleteDocument}
@@ -128,9 +128,9 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ onNext, onPrevious }) => 
         />
 
         <RequirementDocumentUploadField
-          label="Other Documents"
+          label="Other"
           documentType="other"
-          helperText="Upload any additional supporting documents"
+          helperText="Additional supporting documents"
           currentDocument={getDocumentByType('other')}
           onUpload={handleUpload}
           onDelete={handleDeleteDocument}
