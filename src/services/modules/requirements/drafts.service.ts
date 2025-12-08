@@ -175,11 +175,12 @@ class RequirementDraftService {
   ): Promise<DocumentUploadResponse> {
     try {
       const formData = new FormData();
-      files.forEach((file) => {
+      
+      // Append each file with its corresponding documentType
+      // Using singular 'documentType' key to match backend enum expectation
+      files.forEach((file, index) => {
         formData.append("files", file);
-      });
-      documentTypes.forEach((type) => {
-        formData.append("documentTypes", type);
+        formData.append("documentType", documentTypes[index] || 'other');
       });
 
       // Use axios directly for multipart/form-data
