@@ -46,6 +46,22 @@ export interface RequirementFormData {
   emergencyPublished?: boolean;
   approvalDeadline?: Date;
   selectedApprovalMatrixId?: string;
+  approvalProgress?: {
+    currentLevel: number;
+    totalLevels: number;
+    levels: Array<{
+      levelNumber: number;
+      name: string;
+      approvers: Array<{
+        userId: string;
+        name: string;
+        status: 'pending' | 'approved' | 'rejected';
+        approvedAt?: string;
+      }>;
+      status: 'pending' | 'approved' | 'rejected';
+    }>;
+    estimatedPublishDate?: string;
+  };
   
   // Expert-specific fields
   certifications?: string[];
