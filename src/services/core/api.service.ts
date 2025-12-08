@@ -118,18 +118,22 @@ const get = async <T>(url: string, config?: AxiosRequestConfig): Promise<T> => {
 
 // Generic POST method
 const post = async <T, D>(url: string, data: D, config?: AxiosRequestConfig): Promise<T> => {
-  // Create merged config
-  const mergedConfig: AxiosRequestConfig = { ...config };
+  let response: AxiosResponse;
   
-  // If data is FormData, let axios set the Content-Type automatically (with boundary)
+  // If data is FormData, use base axios directly without default JSON headers
   if (data instanceof FormData) {
-    mergedConfig.headers = {
-      ...mergedConfig.headers,
-      'Content-Type': undefined,
-    };
+    const token = localStorage.getItem('authToken');
+    response = await axios.post(`${BASE_URL}${url}`, data, {
+      ...config,
+      headers: {
+        ...config?.headers,
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+        // No Content-Type - let axios auto-detect multipart/form-data
+      },
+    });
+  } else {
+    response = await api.post(url, data, config);
   }
-  
-  const response: AxiosResponse = await api.post(url, data, mergedConfig);
 
   // Check if response has standardized envelope structure
   if (response.data &&
