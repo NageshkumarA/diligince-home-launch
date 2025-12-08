@@ -30,6 +30,12 @@ function useDebouncedCallback<T extends (...args: any[]) => any>(
   );
 }
 
+// Helper to check if auth token exists
+const isAuthValid = (): boolean => {
+  const token = localStorage.getItem('authToken');
+  return !!token;
+};
+
 export const useRequirementDraft = () => {
   const [draftId, setDraftId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -55,10 +61,29 @@ export const useRequirementDraft = () => {
   }, []);
 
   /**
+   * Clear draft state (called on logout)
+   */
+  const clearDraftState = useCallback(() => {
+    setDraftId(null);
+    draftIdRef.current = null;
+    setLastSaved(null);
+    setError(null);
+    localStorage.removeItem("requirement-draft");
+    localStorage.removeItem("requirement-draft-id");
+    console.log("Draft state cleared");
+  }, []);
+
+  /**
    * Initialize or resume draft
    */
   const initializeDraft = useCallback(
     async (data?: Partial<RequirementFormData>) => {
+      // Check auth before API call
+      if (!isAuthValid()) {
+        console.log("No auth token, skipping draft creation");
+        return null;
+      }
+
       // Prevent concurrent draft creations
       if (isCreatingDraftRef.current) {
         console.log("Draft creation already in progress, skipping...");
@@ -105,6 +130,12 @@ export const useRequirementDraft = () => {
    */
   const saveDraft = useDebouncedCallback(
     async (data: Partial<RequirementFormData>) => {
+      // Check auth before API call
+      if (!isAuthValid()) {
+        console.log("No auth token, skipping auto-save");
+        return;
+      }
+
       const currentDraftId = draftIdRef.current;
       
       if (!currentDraftId) {
@@ -139,6 +170,12 @@ export const useRequirementDraft = () => {
    */
   const forceSave = useCallback(
     async (data: Partial<RequirementFormData>, showToast: boolean = false) => {
+      // Check auth before API call
+      if (!isAuthValid()) {
+        console.log("No auth token, skipping force save");
+        return;
+      }
+
       const currentDraftId = draftIdRef.current || draftId;
       
       if (!currentDraftId) {
@@ -373,5 +410,6 @@ export const useRequirementDraft = () => {
     configureWorkflow,
     publish,
     deleteDraft,
+    clearDraftState, // Expose for logout cleanup
   };
 };
