@@ -220,7 +220,14 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
           break;
           
         case 4: // Approval Workflow
-          // Validation handled by approval context
+          const requiresApproval = (formData.estimatedBudget || 0) > 10000 || 
+                                  formData.priority === 'critical' || 
+                                  formData.priority === 'high' || 
+                                  formData.complianceRequired;
+          
+          if (requiresApproval && !formData.selectedApprovalMatrixId) {
+            errors.selectedApprovalMatrix = "Please select an approval matrix to proceed";
+          }
           break;
           
         case 5: // Preview
