@@ -19,6 +19,7 @@ interface RequirementContextType {
   draftId: string | null;
   isSaving: boolean;
   lastSaved: Date | null;
+  loadDraftById: (draftId: string) => Promise<RequirementFormData | null>;
 }
 
 const RequirementContext = createContext<RequirementContextType | undefined>(undefined);
@@ -60,8 +61,28 @@ const getDefaultFormData = (): RequirementFormData => ({
 export const RequirementProvider = ({ children }: { children: React.ReactNode }) => {
   const [formData, setFormData] = useState<RequirementFormData>(getDefaultFormData());
   const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
-  const { draftId, draftIdRef, isSaving, lastSaved, initializeDraft, forceSave, clearDraftState } = useRequirementDraft();
+  const { draftId, draftIdRef, isSaving, lastSaved, initializeDraft, forceSave, clearDraftState, loadDraft } = useRequirementDraft();
   const { isAuthenticated } = useUser();
+
+  // Load draft by ID and update form data (single source of truth)
+  const loadDraftById = useCallback(async (draftIdToLoad: string): Promise<RequirementFormData | null> => {
+    try {
+      console.log("🟡 Context: Loading draft by ID:", draftIdToLoad);
+      const draftData = await loadDraft(draftIdToLoad);
+      
+      if (draftData && Object.keys(draftData).length > 0) {
+        console.log("🟢 Context: Draft loaded, updating form data");
+        setFormData(draftData);
+        setStepErrors({});
+        return draftData;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error("🔴 Context: Failed to load draft:", error);
+      throw error;
+    }
+  }, [loadDraft]);
 
   const updateFormData = useCallback((data: Partial<RequirementFormData>) => {
     console.log("Updating form data:", data);
@@ -297,7 +318,8 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
       saveAsDraft,
       draftId,
       isSaving,
-      lastSaved
+      lastSaved,
+      loadDraftById
     }}>
       {children}
     </RequirementContext.Provider>
