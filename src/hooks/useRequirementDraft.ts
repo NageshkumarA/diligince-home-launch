@@ -177,7 +177,7 @@ export const useRequirementDraft = () => {
       }
 
       const currentDraftId = draftIdRef.current || draftId;
-      
+
       if (!currentDraftId) {
         console.warn("No draft ID available for force save, skipping...");
         return; // Return gracefully instead of throwing
@@ -195,7 +195,9 @@ export const useRequirementDraft = () => {
           toast.success("Draft saved successfully");
         }
       } catch (err: any) {
-        const errorMsg = err?.message || "Failed to save draft";
+        const errorMsg = err?.response?.status === 422 && err?.response?.data?.message
+          ? err.response.data.message
+          : err?.message || "Failed to save draft";
         setError(errorMsg);
         if (showToast) {
           toast.error(errorMsg);

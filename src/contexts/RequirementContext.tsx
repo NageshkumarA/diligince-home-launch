@@ -174,13 +174,18 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
       localStorage.setItem('requirement-draft', JSON.stringify(formData));
     } catch (error: any) {
       console.error("Failed to save draft:", error);
-      
+
       if (!navigator.onLine) {
         toast.error("You're offline. Changes saved locally.");
       } else {
-        toast.error("Failed to save draft");
+        // Check if it's a validation error (422) and show the specific message
+        if (error?.response?.status === 422 && error?.response?.data?.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error("Failed to save draft");
+        }
       }
-      
+
       localStorage.setItem('requirement-draft', JSON.stringify(formData));
     }
   }, [formData, draftIdRef, initializeDraft, forceSave, isFormEmpty]);
