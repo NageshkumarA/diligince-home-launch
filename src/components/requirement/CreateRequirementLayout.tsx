@@ -3,15 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useSwipeable } from "react-swipeable";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Save, MessageSquare, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Save, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { StepType } from "@/pages/CreateRequirement";
 import { useRequirement } from "@/contexts/RequirementContext";
 import { StepLoadingSkeleton } from "./StepLoadingSkeleton";
 import VerticalStepper from "./VerticalStepper";
 import StepTransition from "./StepTransition";
-import { CommentsSection } from "./CommentsSection";
-import { toast } from "sonner";
+import { CommentsDropdownPanel } from "./CommentsDropdownPanel";
+import { ApprovalInfoDropdownPanel } from "@/components/approval";
 
 interface CreateRequirementLayoutProps {
   currentStep: StepType;
@@ -31,8 +30,7 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
   children,
 }) => {
   const navigate = useNavigate();
-  const { isSaving, lastSaved, draftId, saveAsDraft } = useRequirement();
-  const [showComments, setShowComments] = useState(false);
+  const { isSaving, lastSaved, draftId, saveAsDraft, formData } = useRequirement();
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
 
   const handleSaveDraft = useCallback(async () => {
@@ -140,13 +138,13 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
           
           <div className="flex items-center gap-2">
             {draftId && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowComments(true)}
-              >
-                <MessageSquare className="h-4 w-4" />
-              </Button>
+              <>
+                <CommentsDropdownPanel requirementId={draftId} />
+                <ApprovalInfoDropdownPanel 
+                  approvalProgress={formData?.approvalProgress as any}
+                  status="draft"
+                />
+              </>
             )}
             <div className="text-right">
               <p className="text-[10px] text-muted-foreground">
@@ -209,15 +207,13 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
 
               <div className="flex items-center gap-3">
                 {draftId && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowComments(true)}
-                    className="gap-2"
-                  >
-                    <MessageSquare className="h-4 w-4" />
-                    Comments
-                  </Button>
+                  <>
+                    <CommentsDropdownPanel requirementId={draftId} />
+                    <ApprovalInfoDropdownPanel 
+                      approvalProgress={formData?.approvalProgress as any}
+                      status="draft"
+                    />
+                  </>
                 )}
                 <Button
                   variant="ghost"
@@ -332,37 +328,6 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
           )}
         </div>
       </div>
-
-      {/* Floating Comments Button (Mobile) */}
-      {draftId && (
-        <button
-          onClick={() => setShowComments(true)}
-          className="lg:hidden fixed bottom-24 right-4 z-50 p-3 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transition-all hover:scale-105"
-        >
-          <MessageSquare className="h-5 w-5" />
-        </button>
-      )}
-
-      {/* Comments Dialog */}
-      <Dialog open={showComments} onOpenChange={setShowComments}>
-        <DialogContent className="sm:max-w-[700px] max-h-[80vh]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5" />
-              Comments & Feedback
-            </DialogTitle>
-          </DialogHeader>
-          <div className="overflow-y-auto max-h-[60vh]">
-            {draftId && (
-              <CommentsSection
-                requirementId={draftId}
-                title=""
-                placeholder="Add notes, questions, or feedback about this requirement..."
-              />
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 });

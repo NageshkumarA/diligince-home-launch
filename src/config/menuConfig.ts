@@ -99,11 +99,6 @@ export const menuConfig: MenuConfig = {
           label: "Published",
           path: "/dashboard/requirements/published",
         },
-        {
-          icon: Archive,
-          label: "Archived",
-          path: "/dashboard/requirements/archived",
-        },
       ],
     },
     {

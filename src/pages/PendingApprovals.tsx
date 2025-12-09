@@ -10,7 +10,7 @@ import { usePendingApprovals } from "@/hooks/usePendingApprovals";
 import { useApproveRequirement } from "@/hooks/useApproveRequirement";
 import { useRejectRequirement } from "@/hooks/useRejectRequirement";
 import { useUser } from "@/contexts/UserContext";
-import { ApprovalProgressStepper, ApproveDialog, RejectDialog } from "@/components/approval";
+import { ApprovalProgressStepper, ApproveDialog, RejectDialog, ApprovalInfoDropdownPanel } from "@/components/approval";
 import type { PendingApproval } from "@/services/modules/approvals/approvals.types";
 import { format } from "date-fns";
 
@@ -207,7 +207,14 @@ const PendingApprovals = () => {
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <ApprovalProgressStepper progress={approval.approvalProgress} compact />
+                      <div className="flex items-center gap-2">
+                        <ApprovalProgressStepper progress={approval.approvalProgress} compact />
+                        <ApprovalInfoDropdownPanel 
+                          approvalProgress={approval.approvalProgress as any}
+                          status={approval.status}
+                          triggerVariant="icon"
+                        />
+                      </div>
                       {canUserApprove(approval) && (
                         <div className="flex gap-2">
                           <Button size="sm" variant="outline" className="text-destructive" onClick={() => handleReject(approval)}>
