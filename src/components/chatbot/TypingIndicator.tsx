@@ -1,28 +1,28 @@
 import React from 'react';
-import { Bot } from 'lucide-react';
+import { BrainCircuit } from 'lucide-react';
 
 export const TypingIndicator: React.FC = () => {
   return (
     <div className="flex items-start gap-2 animate-fade-in">
-      {/* Bot Avatar */}
-      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-brand-primary/10 flex items-center justify-center">
-        <Bot className="w-3.5 h-3.5 text-brand-primary" />
+      {/* Animated Brain Avatar */}
+      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center animate-think-glow">
+        <BrainCircuit className="w-4 h-4 text-purple-500 animate-think" />
       </div>
       
       {/* Thinking Text with Dots */}
-      <div className="bg-muted rounded-2xl rounded-tl-sm px-3 py-2.5 flex items-center gap-2">
+      <div className="bg-muted rounded-2xl rounded-tl-sm px-3 py-2 flex items-center gap-2">
         <span className="text-xs text-muted-foreground font-medium">Thinking</span>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           <span 
-            className="w-1.5 h-1.5 bg-muted-foreground/50 rounded-full animate-bounce"
+            className="w-1 h-1 bg-purple-500/70 rounded-full animate-bounce"
             style={{ animationDelay: '0ms', animationDuration: '600ms' }}
           />
           <span 
-            className="w-1.5 h-1.5 bg-muted-foreground/50 rounded-full animate-bounce"
+            className="w-1 h-1 bg-blue-500/70 rounded-full animate-bounce"
             style={{ animationDelay: '150ms', animationDuration: '600ms' }}
           />
           <span 
-            className="w-1.5 h-1.5 bg-muted-foreground/50 rounded-full animate-bounce"
+            className="w-1 h-1 bg-cyan-500/70 rounded-full animate-bounce"
             style={{ animationDelay: '300ms', animationDuration: '600ms' }}
           />
         </div>

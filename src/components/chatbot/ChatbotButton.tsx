@@ -29,16 +29,16 @@ export const ChatbotButton: React.FC<ChatbotButtonProps> = ({ isOpen, onClick })
         <>
           {/* Rotating gradient border */}
           <div 
-            className="absolute inset-[-3px] rounded-full animate-spin opacity-70"
+            className="absolute inset-[-3px] rounded-full opacity-80"
             style={{ 
               background: 'conic-gradient(from 0deg, hsl(270, 91%, 65%), hsl(217, 91%, 60%), hsl(187, 85%, 53%), hsl(217, 91%, 60%), hsl(270, 91%, 65%))',
-              animationDuration: '4s'
+              animation: 'spin 3s linear infinite'
             }}
           />
           {/* Inner background to create ring effect */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-primary to-brand-primary/90" />
+          <div className="absolute inset-[1px] rounded-full bg-gradient-to-br from-brand-primary to-brand-primary/90" />
           {/* Outer glow */}
-          <div className="absolute inset-[-6px] rounded-full animate-ai-glow opacity-60" />
+          <div className="absolute inset-[-8px] rounded-full animate-ai-glow opacity-70" />
         </>
       )}
       

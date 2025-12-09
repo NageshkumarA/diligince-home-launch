@@ -426,6 +426,24 @@ export default {
 				'66%': {
 					boxShadow: '0 0 20px hsl(187, 85%, 53%, 0.5), 0 0 40px hsl(270, 91%, 65%, 0.3)'
 				}
+			},
+			'think': {
+				'0%, 100%': {
+					transform: 'scale(1)',
+					opacity: '0.7'
+				},
+				'50%': {
+					transform: 'scale(1.15)',
+					opacity: '1'
+				}
+			},
+			'think-glow': {
+				'0%, 100%': {
+					boxShadow: '0 0 8px hsl(270, 91%, 65%, 0.4)'
+				},
+				'50%': {
+					boxShadow: '0 0 16px hsl(217, 91%, 60%, 0.6)'
+				}
 			}
 		},
 		animation: {
@@ -454,7 +472,9 @@ export default {
 			'fade-up-stagger': 'fade-up-stagger 0.6s ease-out forwards',
 			'slide-in-right': 'slide-in-right 0.3s ease-out',
 			'slide-in-left': 'slide-in-left 0.3s ease-out',
-			'ai-glow': 'ai-glow 3s ease-in-out infinite'
+			'ai-glow': 'ai-glow 3s ease-in-out infinite',
+			'think': 'think 1.5s ease-in-out infinite',
+			'think-glow': 'think-glow 1.5s ease-in-out infinite'
 		}
 		}
 	},
