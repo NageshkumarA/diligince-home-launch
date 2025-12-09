@@ -28,34 +28,21 @@ export const DiliginceChatbot: React.FC = () => {
     }
   }, [isOpen]);
   
-  // Attention animation cycle - runs until user opens chat
+  // Speech bubble animation - stops permanently after first open
   useEffect(() => {
-    // Don't run if chat is open or has been opened before
     if (isOpen || hasBeenOpened) {
       return;
     }
     
-    const runAnimationCycle = () => {
-      // Start shake animation
-      setIsShaking(true);
+    const runBubbleCycle = () => {
       setShowBubble(true);
-      
-      // Stop shake after animation completes (0.6s)
-      setTimeout(() => {
-        setIsShaking(false);
-      }, 600);
-      
-      // Hide bubble after 3 seconds
       animationTimeoutRef.current = setTimeout(() => {
         setShowBubble(false);
       }, 3000);
     };
     
-    // Run first cycle after 5 seconds (give user time to notice the page)
-    const initialDelay = setTimeout(runAnimationCycle, 5000);
-    
-    // Repeat every 8 seconds
-    const interval = setInterval(runAnimationCycle, 8000);
+    const initialDelay = setTimeout(runBubbleCycle, 5000);
+    const interval = setInterval(runBubbleCycle, 8000);
     
     return () => {
       clearTimeout(initialDelay);
@@ -65,6 +52,26 @@ export const DiliginceChatbot: React.FC = () => {
       }
     };
   }, [isOpen, hasBeenOpened]);
+  
+  // Shake animation - runs forever, only pauses while chat is open
+  useEffect(() => {
+    if (isOpen) {
+      return;
+    }
+    
+    const runShakeCycle = () => {
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 600);
+    };
+    
+    const initialDelay = setTimeout(runShakeCycle, 5000);
+    const interval = setInterval(runShakeCycle, 8000);
+    
+    return () => {
+      clearTimeout(initialDelay);
+      clearInterval(interval);
+    };
+  }, [isOpen]);
   
   const handleToggle = useCallback(() => {
     if (!isOpen) {
