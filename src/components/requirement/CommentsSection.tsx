@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, Send, Trash2, Paperclip } from 'lucide-react';
+import { MessageSquare, Send, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,8 +12,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 interface CommentsSectionProps {
   requirementId: string;
-  commentType?: 'general' | 'approval_rejection' | 'approval_request' | 'clarification';
-  approvalStepId?: string;
+  commentType?: 'general' | 'approval' | 'clarification' | 'feedback';
   title?: string;
   placeholder?: string;
 }
@@ -21,7 +20,6 @@ interface CommentsSectionProps {
 export const CommentsSection: React.FC<CommentsSectionProps> = ({
   requirementId,
   commentType = 'general',
-  approvalStepId,
   title = 'Comments',
   placeholder = 'Add a comment...',
 }) => {
@@ -94,7 +92,6 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
         requirementId,
         content: newComment,
         commentType,
-        relatedApprovalStepId: approvalStepId,
       };
 
       const createdComment = await commentService.createComment(commentData);
@@ -123,14 +120,14 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
 
   const getCommentTypeColor = (type: string) => {
     switch (type) {
-      case 'approval_rejection':
-        return 'bg-red-100 text-red-800';
-      case 'approval_request':
-        return 'bg-blue-100 text-blue-800';
+      case 'approval':
+        return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400';
       case 'clarification':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400';
+      case 'feedback':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -190,11 +187,12 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
                       <p className="font-semibold text-sm">{comment.userName}</p>
                       <p className="text-xs text-muted-foreground">
                         {comment.userRole} • {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                        {comment.isEdited && <span className="italic ml-1">(edited)</span>}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge className={getCommentTypeColor(comment.commentType)}>
-                        {comment.commentType.replace('_', ' ')}
+                        {comment.commentType}
                       </Badge>
                       <Button
                         variant="ghost"
@@ -208,22 +206,6 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
                   <p className="mt-2 text-sm text-foreground whitespace-pre-wrap">
                     {comment.content}
                   </p>
-                  {comment.attachments && comment.attachments.length > 0 && (
-                    <div className="mt-2 flex gap-2">
-                      {comment.attachments.map((attachment) => (
-                        <a
-                          key={attachment.id}
-                          href={attachment.fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-xs text-blue-600 hover:underline"
-                        >
-                          <Paperclip className="h-3 w-3" />
-                          {attachment.fileName}
-                        </a>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </div>
             ))
