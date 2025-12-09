@@ -18,27 +18,13 @@ export const ChatbotButton: React.FC<ChatbotButtonProps> = ({ isOpen, onClick })
         "text-white shadow-strong",
         "flex items-center justify-center",
         "transition-all duration-300 ease-out",
-        // Hover effects
         "hover:scale-105",
-        // Active state
         "active:scale-95",
-        // Mobile adjustments
         "max-sm:bottom-4 max-sm:right-4 max-sm:w-12 max-sm:h-12"
       )}
       aria-label={isOpen ? "Close chat" : "Open chat"}
     >
-      <div className={cn(
-        "transition-transform duration-300",
-        isOpen && "rotate-90"
-      )}>
-        {isOpen ? (
-          <X className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
-        ) : (
-          <Bot className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
-        )}
-      </div>
-      
-      {/* AI Gradient Glow Ring */}
+      {/* AI Gradient Glow Ring - only when closed */}
       {!isOpen && (
         <>
           {/* Rotating gradient border */}
@@ -52,15 +38,22 @@ export const ChatbotButton: React.FC<ChatbotButtonProps> = ({ isOpen, onClick })
           {/* Inner background to create ring effect */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-primary to-brand-primary/90" />
           {/* Outer glow */}
-          <div 
-            className="absolute inset-[-6px] rounded-full animate-ai-glow opacity-60"
-          />
-          {/* Icon container */}
-          <div className="relative z-10">
-            <Bot className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
-          </div>
+          <div className="absolute inset-[-6px] rounded-full animate-ai-glow opacity-60" />
         </>
       )}
+      
+      {/* Single centered icon */}
+      <div className={cn(
+        "relative z-10 flex items-center justify-center",
+        "transition-transform duration-300",
+        isOpen && "rotate-90"
+      )}>
+        {isOpen ? (
+          <X className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
+        ) : (
+          <Bot className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
+        )}
+      </div>
     </button>
   );
 };
