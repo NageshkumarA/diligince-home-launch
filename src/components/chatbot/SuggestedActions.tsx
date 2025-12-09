@@ -66,7 +66,7 @@ export const SuggestedActions: React.FC<SuggestedActionsProps> = ({ onActionClic
             key={action.id}
             onClick={() => onActionClick(action.message)}
             className="flex items-center gap-1.5 px-2.5 py-2 bg-muted/40 hover:bg-muted 
-                       rounded-lg text-left text-[11px] transition-all duration-200 
+                       rounded-lg text-left text-xs transition-all duration-200 
                        hover:shadow-sm border border-transparent hover:border-border/30
                        group"
           >

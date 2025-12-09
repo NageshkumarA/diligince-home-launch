@@ -53,7 +53,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled }) => {
           rows={1}
           className={cn(
             "w-full resize-none rounded-xl bg-background",
-            "pl-4 pr-12 py-2.5 text-[13px] text-foreground placeholder:text-muted-foreground",
+            "pl-4 pr-12 py-2.5 text-sm text-foreground placeholder:text-muted-foreground",
             "border border-border/50 focus:border-brand-primary/50",
             "focus:outline-none focus:ring-1 focus:ring-brand-primary/20",
             "transition-all duration-200",
