@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { DiliginceChatbot } from "@/components/chatbot";
 import { UserProvider } from "@/contexts/UserContext";
 import { PermissionsProvider } from "@/contexts/PermissionsContext";
 import { NotificationStoreProvider } from "@/contexts/NotificationStoreContext";
@@ -620,6 +621,7 @@ function App() {
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                           <Toaster richColors position="top-right"/>
+                          <DiliginceChatbot />
                           </div>
                         </VendorSpecializationProvider>
                       </StakeholderProvider>
