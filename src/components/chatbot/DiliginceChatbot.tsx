@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { ChatMessage } from './types';
-import { ChatbotButton } from './ChatbotButton';
+// Switch between button variants by changing the import:
+// import { ChatbotButton } from './ChatbotButton'; // Original solid button
+import { ChatbotButtonGlass as ChatbotButton } from './ChatbotButtonGlass'; // Glassy button
 import { ChatbotWindow } from './ChatbotWindow';
 import { sendChatMessage, generateMessageId } from './chatbotService';
 
