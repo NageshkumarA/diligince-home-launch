@@ -217,7 +217,8 @@ const MultiStepLogin: React.FC = () => {
 
   return (
     <AuthLayout title="Welcome Back" subtitle="Sign in to your account">
-      {/* Progress Indicator */}
+      {/* Progress Indicator - Commented out to hide multi-step display */}
+      {/*
       <div className="mb-8">
         <div className="flex items-center justify-center space-x-2">
           {STEPS.map((step, index) => {
@@ -254,6 +255,7 @@ const MultiStepLogin: React.FC = () => {
           })}
         </div>
       </div>
+      */}
 
       {/* Step Content */}
       {state.step === 'email' && (
