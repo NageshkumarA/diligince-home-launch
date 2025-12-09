@@ -14,51 +14,51 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   return (
     <div 
       className={cn(
-        "flex items-start gap-3 animate-fade-in",
+        "flex items-start gap-2 animate-fade-in",
         isUser && "flex-row-reverse"
       )}
     >
       {/* Avatar */}
       <div 
         className={cn(
-          "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center",
+          "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center",
           isUser 
             ? "bg-brand-primary text-white" 
             : "bg-brand-primary/10"
         )}
       >
         {isUser ? (
-          <User className="w-4 h-4" />
+          <User className="w-3.5 h-3.5" />
         ) : (
-          <Bot className="w-4 h-4 text-brand-primary" />
+          <Bot className="w-3.5 h-3.5 text-brand-primary" />
         )}
       </div>
       
       {/* Message Bubble */}
       <div 
         className={cn(
-          "max-w-[80%] rounded-2xl px-4 py-3",
+          "max-w-[80%] rounded-2xl px-3 py-2",
           isUser 
             ? "bg-brand-primary text-white rounded-tr-sm" 
             : "bg-muted text-foreground rounded-tl-sm"
         )}
       >
         {isUser ? (
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          <p className="text-[13px] leading-relaxed whitespace-pre-wrap">{message.content}</p>
         ) : (
           <div className="prose prose-sm max-w-none dark:prose-invert 
                           prose-headings:text-foreground prose-headings:font-semibold
-                          prose-h2:text-base prose-h2:mt-4 prose-h2:mb-2
-                          prose-h3:text-sm prose-h3:mt-3 prose-h3:mb-1
-                          prose-p:text-foreground/90 prose-p:my-2 prose-p:leading-relaxed
+                          prose-h2:text-sm prose-h2:mt-3 prose-h2:mb-1.5
+                          prose-h3:text-xs prose-h3:mt-2 prose-h3:mb-1
+                          prose-p:text-foreground/90 prose-p:my-1.5 prose-p:leading-relaxed prose-p:text-[13px]
                           prose-strong:text-foreground prose-strong:font-semibold
-                          prose-ul:my-2 prose-ul:pl-4 prose-li:my-0.5 prose-li:text-foreground/90
-                          prose-ol:my-2 prose-ol:pl-4
-                          prose-table:text-xs prose-th:px-2 prose-th:py-1 prose-td:px-2 prose-td:py-1
+                          prose-ul:my-1.5 prose-ul:pl-3.5 prose-li:my-0.5 prose-li:text-foreground/90 prose-li:text-[13px]
+                          prose-ol:my-1.5 prose-ol:pl-3.5
+                          prose-table:text-[11px] prose-th:px-1.5 prose-th:py-0.5 prose-td:px-1.5 prose-td:py-0.5
                           prose-blockquote:border-l-brand-primary prose-blockquote:bg-brand-primary/5 
-                          prose-blockquote:py-1 prose-blockquote:px-3 prose-blockquote:rounded-r
-                          prose-code:bg-brand-primary/10 prose-code:px-1 prose-code:rounded prose-code:text-brand-primary
-                          prose-pre:bg-foreground/5 prose-pre:rounded-lg">
+                          prose-blockquote:py-0.5 prose-blockquote:px-2 prose-blockquote:rounded-r prose-blockquote:text-[13px]
+                          prose-code:bg-brand-primary/10 prose-code:px-1 prose-code:rounded prose-code:text-brand-primary prose-code:text-[11px]
+                          prose-pre:bg-foreground/5 prose-pre:rounded-lg prose-pre:text-[11px]">
             <ReactMarkdown>{message.content}</ReactMarkdown>
           </div>
         )}
@@ -66,7 +66,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         {/* Timestamp */}
         <p 
           className={cn(
-            "text-[10px] mt-1 opacity-60",
+            "text-[9px] mt-1 opacity-50",
             isUser ? "text-right" : "text-left"
           )}
         >

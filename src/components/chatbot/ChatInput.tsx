@@ -16,7 +16,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled }) => {
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = 'auto';
-      textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`;
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 100)}px`;
     }
   }, [value]);
   
@@ -40,49 +40,43 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled }) => {
   };
   
   return (
-    <div className="border-t border-border bg-background/80 backdrop-blur-sm p-3">
-      <div className="flex items-end gap-2">
-        {/* Text Input */}
-        <div className="flex-1 relative">
-          <textarea
-            ref={textareaRef}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask me anything..."
-            disabled={disabled}
-            rows={1}
-            className={cn(
-              "w-full resize-none rounded-xl border border-border bg-muted/30",
-              "px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground",
-              "focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary",
-              "transition-all duration-200",
-              "disabled:opacity-50 disabled:cursor-not-allowed"
-            )}
-            style={{ maxHeight: '120px' }}
-          />
-        </div>
+    <div className="p-3 bg-muted/30">
+      {/* Unified Input Container */}
+      <div className="relative flex items-end">
+        <textarea
+          ref={textareaRef}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Ask me anything..."
+          disabled={disabled}
+          rows={1}
+          className={cn(
+            "w-full resize-none rounded-xl bg-background",
+            "pl-4 pr-12 py-2.5 text-[13px] text-foreground placeholder:text-muted-foreground",
+            "border border-border/50 focus:border-brand-primary/50",
+            "focus:outline-none focus:ring-1 focus:ring-brand-primary/20",
+            "transition-all duration-200",
+            "disabled:opacity-50 disabled:cursor-not-allowed"
+          )}
+          style={{ maxHeight: '100px' }}
+        />
         
-        {/* Send Button */}
+        {/* Send Button - Inside Input */}
         <button
           onClick={handleSend}
           disabled={disabled || !value.trim()}
           className={cn(
-            "flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center",
-            "bg-brand-primary text-white",
-            "hover:bg-brand-primary/90 active:scale-95",
+            "absolute right-2 bottom-1.5",
+            "w-8 h-8 rounded-lg flex items-center justify-center",
+            "text-brand-primary hover:bg-brand-primary hover:text-white",
             "transition-all duration-200",
-            "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-brand-primary"
+            "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-brand-primary"
           )}
         >
           <Send className="w-4 h-4" />
         </button>
       </div>
-      
-      {/* Hint */}
-      <p className="text-[10px] text-muted-foreground text-center mt-2">
-        Press Enter to send, Shift+Enter for new line
-      </p>
     </div>
   );
 };

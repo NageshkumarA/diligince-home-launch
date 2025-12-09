@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageCircle, X } from 'lucide-react';
+import { Bot, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ChatbotButtonProps {
@@ -15,18 +15,15 @@ export const ChatbotButton: React.FC<ChatbotButtonProps> = ({ isOpen, onClick })
         "fixed z-50 bottom-6 right-6",
         "w-14 h-14 rounded-full",
         "bg-gradient-to-br from-brand-primary to-brand-primary/90",
-        "text-white shadow-lg",
+        "text-white shadow-strong",
         "flex items-center justify-center",
         "transition-all duration-300 ease-out",
         // Hover effects
         "hover:scale-105",
-        "hover:shadow-[0_0_25px_rgba(21,59,96,0.5)]",
         // Active state
         "active:scale-95",
         // Mobile adjustments
-        "max-sm:bottom-4 max-sm:right-4 max-sm:w-12 max-sm:h-12",
-        // Pulse animation when closed
-        !isOpen && "animate-pulse-subtle"
+        "max-sm:bottom-4 max-sm:right-4 max-sm:w-12 max-sm:h-12"
       )}
       aria-label={isOpen ? "Close chat" : "Open chat"}
     >
@@ -37,14 +34,32 @@ export const ChatbotButton: React.FC<ChatbotButtonProps> = ({ isOpen, onClick })
         {isOpen ? (
           <X className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
         ) : (
-          <MessageCircle className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
+          <Bot className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
         )}
       </div>
       
-      {/* Glow Ring */}
+      {/* AI Gradient Glow Ring */}
       {!isOpen && (
-        <div className="absolute inset-0 rounded-full bg-brand-primary/30 animate-ping opacity-75" 
-             style={{ animationDuration: '3s' }} />
+        <>
+          {/* Rotating gradient border */}
+          <div 
+            className="absolute inset-[-3px] rounded-full animate-spin opacity-70"
+            style={{ 
+              background: 'conic-gradient(from 0deg, hsl(270, 91%, 65%), hsl(217, 91%, 60%), hsl(187, 85%, 53%), hsl(217, 91%, 60%), hsl(270, 91%, 65%))',
+              animationDuration: '4s'
+            }}
+          />
+          {/* Inner background to create ring effect */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-primary to-brand-primary/90" />
+          {/* Outer glow */}
+          <div 
+            className="absolute inset-[-6px] rounded-full animate-ai-glow opacity-60"
+          />
+          {/* Icon container */}
+          <div className="relative z-10">
+            <Bot className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
+          </div>
+        </>
       )}
     </button>
   );
