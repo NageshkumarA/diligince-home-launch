@@ -28,7 +28,7 @@ const STEP_LABELS = ['Email', 'Account', 'Password', 'Verify'];
 
 const MultiStepLogin: React.FC = () => {
   const navigate = useNavigate();
-  const { login: contextLogin, verify2FA: contextVerify2FA } = useUser();
+  const { login: contextLogin, verify2FA: contextVerify2FA, getDashboardUrl } = useUser();
 
   const [state, setState] = useState<LoginState>({
     step: 'email',
@@ -113,7 +113,7 @@ const MultiStepLogin: React.FC = () => {
           const result = await contextLogin(state.email, state.password);
           if (result.success) {
             toast.success('Login successful');
-            navigate('/dashboard');
+            navigate(getDashboardUrl());
           } else {
             setError(result.error || 'Login failed');
           }
@@ -144,7 +144,7 @@ const MultiStepLogin: React.FC = () => {
         const result = await contextVerify2FA(state.twoFactorToken, state.twoFactorCode);
         if (result.success) {
           toast.success('Authentication successful');
-          navigate('/dashboard');
+          navigate(getDashboardUrl());
         } else {
           setError(result.error || 'Verification failed');
         }
