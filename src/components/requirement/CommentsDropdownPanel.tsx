@@ -1,60 +1,23 @@
 import React, { useState } from 'react';
-import { MessageSquare, Send, User } from 'lucide-react';
+import { MessageSquare, Send, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownPanel } from '@/components/ui/dropdown-panel';
+import { Skeleton } from '@/components/ui/skeleton';
 import { formatDistanceToNow } from 'date-fns';
-
-interface Comment {
-  id: string;
-  userId: string;
-  userName: string;
-  userRole?: string;
-  content: string;
-  type: 'general' | 'approval' | 'clarification' | 'feedback';
-  createdAt: Date;
-}
+import { useComments } from '@/hooks/useComments';
+import { useAddComment } from '@/hooks/useAddComment';
+import { useUpdateComment } from '@/hooks/useUpdateComment';
+import { useDeleteComment } from '@/hooks/useDeleteComment';
+import { useUser } from '@/contexts/UserContext';
+import type { Comment } from '@/types/comment';
 
 interface CommentsDropdownPanelProps {
   requirementId: string;
-  comments?: Comment[];
-  onAddComment?: (content: string, type: string) => Promise<void>;
-  isLoading?: boolean;
 }
-
-// Mock comments for demo
-const mockComments: Comment[] = [
-  {
-    id: '1',
-    userId: 'u1',
-    userName: 'Sarah Johnson',
-    userRole: 'Procurement Manager',
-    content: 'This requirement looks good. I have reviewed the specifications and everything seems aligned with our procurement standards.',
-    type: 'approval',
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-  },
-  {
-    id: '2',
-    userId: 'u2',
-    userName: 'Michael Chen',
-    userRole: 'Finance Lead',
-    content: 'Budget allocation approved. Please proceed with the approval workflow.',
-    type: 'approval',
-    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
-  },
-  {
-    id: '3',
-    userId: 'u3',
-    userName: 'Emma Wilson',
-    userRole: 'Department Head',
-    content: 'Can we get more details on the delivery timeline?',
-    type: 'clarification',
-    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-  },
-];
 
 const getTypeColor = (type: string) => {
   switch (type) {
@@ -70,33 +33,44 @@ const getTypeColor = (type: string) => {
 };
 
 const getInitials = (name: string) => {
+  if (!name) return '??';
   return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+};
+
+// Check if comment is within 24-hour edit window
+const isWithinEditWindow = (createdAt: string): boolean => {
+  const created = new Date(createdAt);
+  const now = new Date();
+  const hoursDiff = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
+  return hoursDiff <= 24;
 };
 
 export const CommentsDropdownPanel: React.FC<CommentsDropdownPanelProps> = ({
   requirementId,
-  comments = mockComments,
-  onAddComment,
-  isLoading = false,
 }) => {
   const [open, setOpen] = useState(false);
   const [newComment, setNewComment] = useState('');
-  const [isSending, setIsSending] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState('');
+  
+  const { user } = useUser();
+  const currentUserId = user?.id;
+  
+  const { comments, isLoading } = useComments({ 
+    requirementId, 
+    enabled: open 
+  });
+  const { addComment, isAdding } = useAddComment(requirementId);
+  const { updateComment, isUpdating } = useUpdateComment(requirementId);
+  const { deleteComment, isDeleting } = useDeleteComment(requirementId);
 
-  const handleSendComment = async () => {
-    if (!newComment.trim() || isSending) return;
+  const handleSendComment = () => {
+    if (!newComment.trim() || isAdding) return;
     
-    setIsSending(true);
-    try {
-      if (onAddComment) {
-        await onAddComment(newComment, 'general');
-      }
-      setNewComment('');
-    } catch (error) {
-      console.error('Failed to send comment:', error);
-    } finally {
-      setIsSending(false);
-    }
+    addComment(
+      { content: newComment.trim(), commentType: 'general' },
+      { onSuccess: () => setNewComment('') }
+    );
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -104,6 +78,38 @@ export const CommentsDropdownPanel: React.FC<CommentsDropdownPanelProps> = ({
       e.preventDefault();
       handleSendComment();
     }
+  };
+
+  const handleStartEdit = (comment: Comment) => {
+    setEditingCommentId(comment.id);
+    setEditContent(comment.content);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditContent('');
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingCommentId || !editContent.trim() || isUpdating) return;
+    
+    updateComment(
+      { commentId: editingCommentId, content: editContent.trim() },
+      { onSuccess: () => handleCancelEdit() }
+    );
+  };
+
+  const handleDelete = (commentId: string) => {
+    if (isDeleting) return;
+    deleteComment(commentId);
+  };
+
+  const canEditComment = (comment: Comment): boolean => {
+    return comment.userId === currentUserId && isWithinEditWindow(comment.createdAt);
+  };
+
+  const canDeleteComment = (comment: Comment): boolean => {
+    return comment.userId === currentUserId;
   };
 
   return (
@@ -155,10 +161,14 @@ export const CommentsDropdownPanel: React.FC<CommentsDropdownPanelProps> = ({
                 "bg-primary hover:bg-primary/90",
                 "transition-transform hover:scale-105"
               )}
-              disabled={!newComment.trim() || isSending}
+              disabled={!newComment.trim() || isAdding}
               onClick={handleSendComment}
             >
-              <Send className="h-4 w-4" />
+              {isAdding ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
             </Button>
           </div>
           <p className="text-[10px] text-muted-foreground mt-1.5">
@@ -167,7 +177,20 @@ export const CommentsDropdownPanel: React.FC<CommentsDropdownPanelProps> = ({
         </div>
       }
     >
-      {comments.length === 0 ? (
+      {isLoading ? (
+        <div className="py-4 px-4 space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex gap-3">
+              <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-3 w-20" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : comments.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
           <MessageSquare className="h-10 w-10 mb-3 opacity-40" />
           <p className="text-sm font-medium">No comments yet</p>
@@ -185,6 +208,9 @@ export const CommentsDropdownPanel: React.FC<CommentsDropdownPanelProps> = ({
             >
               <div className="flex gap-3">
                 <Avatar className="h-8 w-8 shrink-0">
+                  {comment.userAvatar && (
+                    <AvatarImage src={comment.userAvatar} alt={comment.userName} />
+                  )}
                   <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
                     {getInitials(comment.userName)}
                   </AvatarFallback>
@@ -201,17 +227,83 @@ export const CommentsDropdownPanel: React.FC<CommentsDropdownPanelProps> = ({
                     )}
                     <Badge 
                       variant="outline" 
-                      className={cn("text-[10px] px-1.5 py-0 h-4 capitalize", getTypeColor(comment.type))}
+                      className={cn("text-[10px] px-1.5 py-0 h-4 capitalize", getTypeColor(comment.commentType))}
                     >
-                      {comment.type}
+                      {comment.commentType}
                     </Badge>
+                    {comment.isEdited && (
+                      <span className="text-[10px] text-muted-foreground italic">
+                        (edited)
+                      </span>
+                    )}
                   </div>
-                  <p className="text-sm text-foreground/90 mt-1 leading-relaxed">
-                    {comment.content}
-                  </p>
-                  <p className="text-[11px] text-muted-foreground mt-1.5">
-                    {formatDistanceToNow(comment.createdAt, { addSuffix: true })}
-                  </p>
+                  
+                  {editingCommentId === comment.id ? (
+                    <div className="mt-2">
+                      <Textarea
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        className="min-h-[60px] text-sm"
+                        autoFocus
+                      />
+                      <div className="flex gap-2 mt-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={handleCancelEdit}
+                          disabled={isUpdating}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={handleSaveEdit}
+                          disabled={!editContent.trim() || isUpdating}
+                        >
+                          {isUpdating ? (
+                            <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                          ) : null}
+                          Save
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-sm text-foreground/90 mt-1 leading-relaxed">
+                        {comment.content}
+                      </p>
+                      <div className="flex items-center gap-3 mt-1.5">
+                        <p className="text-[11px] text-muted-foreground">
+                          {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                        </p>
+                        {(canEditComment(comment) || canDeleteComment(comment)) && (
+                          <div className="flex items-center gap-1">
+                            {canEditComment(comment) && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                                onClick={() => handleStartEdit(comment)}
+                              >
+                                <Pencil className="h-3 w-3" />
+                              </Button>
+                            )}
+                            {canDeleteComment(comment) && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                                onClick={() => handleDelete(comment.id)}
+                                disabled={isDeleting}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
