@@ -5,7 +5,6 @@ import { useRequirement } from "@/contexts/RequirementContext";
 import { Toaster } from "@/components/ui/sonner";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { toast } from "sonner";
-import { useRequirementDraft } from "@/hooks/useRequirementDraft";
 import CreateRequirementLayout from "@/components/requirement/CreateRequirementLayout";
 import { StepLoadingSkeleton } from "@/components/requirement/StepLoadingSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -115,8 +114,7 @@ const CreateRequirement = () => {
   const [isLoadingDraft, setIsLoadingDraft] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { draftId, loadDraftData } = useRequirement();
-  const { loadDraft } = useRequirementDraft();
+  const { draftId, loadDraftById } = useRequirement();
   
   // Determine if we're in edit mode based on URL
   const urlDraftId = searchParams.get('draftId');
@@ -147,12 +145,12 @@ const CreateRequirement = () => {
       try {
         console.log("🔵 CreateRequirement: Loading draft from URL:", urlDraftId);
         
-        const draftData = await loadDraft(urlDraftId);
+        // Use context's loadDraftById which updates both draftId and formData
+        const draftData = await loadDraftById(urlDraftId);
         
         console.log("🟢 CreateRequirement: Draft data loaded:", draftData);
         
-        if (draftData && Object.keys(draftData).length > 0) {
-          loadDraftData(draftData as any);
+        if (draftData) {
           localStorage.setItem('requirement-draft-id', urlDraftId);
           localStorage.setItem('requirement-draft', JSON.stringify(draftData));
           setCurrentStep(1);
@@ -169,7 +167,7 @@ const CreateRequirement = () => {
     };
     
     loadDraftFromUrl();
-  }, [searchParams, loadDraft, loadDraftData, navigate]);
+  }, [searchParams, loadDraftById, navigate]);
 
   // Save current step to localStorage whenever it changes
   useEffect(() => {
