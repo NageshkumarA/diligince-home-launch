@@ -83,7 +83,6 @@ import RequirementsDrafts from "@/pages/RequirementsDrafts";
 import RequirementsPending from "@/pages/RequirementsPending";
 import RequirementsApproved from "@/pages/RequirementsApproved";
 import RequirementsPublished from "@/pages/RequirementsPublished";
-import RequirementsArchived from "@/pages/RequirementsArchived";
 import RequirementDetails from "@/pages/RequirementDetails";
 
 // Quotations sub-pages
@@ -377,10 +376,6 @@ function App() {
                               <Route
                                 path="requirements/published"
                                 element={<RequirementsPublished />}
-                              />
-                            <Route
-                                path="requirements/archived"
-                                element={<RequirementsArchived />}
                               />
                               {/* Requirement Details */}
                               <Route
