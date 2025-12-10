@@ -33,10 +33,10 @@ export const ChatbotWindow: React.FC<ChatbotWindowProps> = ({
     <div
       className={cn(
         "fixed z-50 flex flex-col",
-        // Position
-        "bottom-24 right-6",
-        // Mobile
-        "max-sm:bottom-20 max-sm:right-3 max-sm:left-3 max-sm:w-auto",
+        // Position - closer to FAB when minimized
+        isMinimized 
+          ? "bottom-[5.5rem] right-6 max-sm:bottom-[4.5rem] max-sm:right-4"
+          : "bottom-24 right-6 max-sm:bottom-20 max-sm:right-3 max-sm:left-3 max-sm:w-auto",
         // Smooth transition for minimize/expand
         "transition-all duration-300 ease-out",
         // Background, border, shadow ONLY when open (not minimized)
