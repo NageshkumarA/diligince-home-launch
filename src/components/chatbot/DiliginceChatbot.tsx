@@ -6,8 +6,10 @@ import { ChatbotButtonGlass as ChatbotButton } from './ChatbotButtonGlass'; // G
 import { ChatbotWindow } from './ChatbotWindow';
 import { sendChatMessage, generateMessageId } from './chatbotService';
 
+export type ChatWindowState = 'closed' | 'minimized' | 'open';
+
 export const DiliginceChatbot: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [windowState, setWindowState] = useState<ChatWindowState>('closed');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   
@@ -17,16 +19,18 @@ export const DiliginceChatbot: React.FC = () => {
   const [showBubble, setShowBubble] = useState(false);
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Clear messages when window closes
+  // Derived state for compatibility
+  const isOpen = windowState === 'open' || windowState === 'minimized';
+  
+  // Clear messages only when fully closing (not minimizing)
   useEffect(() => {
-    if (!isOpen) {
-      // Small delay before clearing to allow animation
+    if (windowState === 'closed') {
       const timer = setTimeout(() => {
         setMessages([]);
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [windowState]);
   
   // Speech bubble animation - stops permanently after first open
   useEffect(() => {
@@ -74,17 +78,28 @@ export const DiliginceChatbot: React.FC = () => {
   }, [isOpen]);
   
   const handleToggle = useCallback(() => {
-    if (!isOpen) {
+    if (windowState === 'closed') {
       // User is opening the chat - stop animation permanently
       setHasBeenOpened(true);
       setShowBubble(false);
       setIsShaking(false);
+      setWindowState('open');
+    } else {
+      // Close completely when clicking FAB while open/minimized
+      setWindowState('closed');
     }
-    setIsOpen(prev => !prev);
-  }, [isOpen]);
+  }, [windowState]);
   
   const handleClose = useCallback(() => {
-    setIsOpen(false);
+    setWindowState('closed');
+  }, []);
+  
+  const handleMinimize = useCallback(() => {
+    setWindowState('minimized');
+  }, []);
+  
+  const handleExpand = useCallback(() => {
+    setWindowState('open');
   }, []);
   
   const handleSendMessage = useCallback(async (content: string) => {
@@ -141,10 +156,12 @@ export const DiliginceChatbot: React.FC = () => {
       
       {/* Chat Window */}
       <ChatbotWindow
-        isOpen={isOpen}
+        windowState={windowState}
         messages={messages}
         isTyping={isTyping}
         onClose={handleClose}
+        onMinimize={handleMinimize}
+        onExpand={handleExpand}
         onSendMessage={handleSendMessage}
       />
     </>
