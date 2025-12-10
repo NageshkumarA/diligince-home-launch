@@ -35,7 +35,7 @@ export const ChatbotWindow: React.FC<ChatbotWindowProps> = ({
         "fixed z-50 flex flex-col",
         // Position - closer to FAB when minimized
         isMinimized 
-          ? "bottom-[88px] right-6 max-sm:bottom-[72px] max-sm:right-4"
+          ? "bottom-[88px] right-6 top-auto left-auto max-sm:bottom-[72px] max-sm:right-4"
           : "bottom-24 right-6 max-sm:bottom-20 max-sm:right-3 max-sm:left-3 max-sm:w-auto",
         // Smooth transition for minimize/expand
         "transition-all duration-300 ease-out",
