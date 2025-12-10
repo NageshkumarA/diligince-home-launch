@@ -1,13 +1,29 @@
 import React from 'react';
-import { X, Bot, Sparkles } from 'lucide-react';
+import { X, Bot, Sparkles, Minus, ChevronUp } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ChatbotHeaderProps {
+  isMinimized: boolean;
   onClose: () => void;
+  onMinimize: () => void;
+  onExpand: () => void;
 }
 
-export const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ onClose }) => {
+export const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ 
+  isMinimized,
+  onClose,
+  onMinimize,
+  onExpand,
+}) => {
   return (
-    <div className="relative overflow-hidden rounded-t-2xl">
+    <div 
+      className={cn(
+        "relative overflow-hidden",
+        isMinimized ? "rounded-2xl cursor-pointer" : "rounded-t-2xl",
+        isMinimized && "hover:opacity-95 transition-opacity"
+      )}
+      onClick={isMinimized ? onExpand : undefined}
+    >
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-r from-brand-primary via-brand-primary/95 to-brand-primary" />
       
@@ -35,18 +51,46 @@ export const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ onClose }) => {
               <h3 className="text-white font-semibold text-sm">Diligince AI</h3>
               <Sparkles className="w-3 h-3 text-amber-300" />
             </div>
-            <p className="text-white/60 text-[10px]">Procurement Assistant</p>
+            <p className="text-white/60 text-[10px]">
+              {isMinimized ? "Click to expand" : "Procurement Assistant"}
+            </p>
           </div>
         </div>
         
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 
-                     flex items-center justify-center transition-colors"
-        >
-          <X className="w-3.5 h-3.5 text-white" />
-        </button>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-1">
+          {isMinimized ? (
+            // Expand button when minimized
+            <button
+              onClick={(e) => { e.stopPropagation(); onExpand(); }}
+              className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 
+                         flex items-center justify-center transition-colors"
+              title="Expand"
+            >
+              <ChevronUp className="w-3.5 h-3.5 text-white" />
+            </button>
+          ) : (
+            // Minimize button when open
+            <button
+              onClick={onMinimize}
+              className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 
+                         flex items-center justify-center transition-colors"
+              title="Minimize"
+            >
+              <Minus className="w-3.5 h-3.5 text-white" />
+            </button>
+          )}
+          
+          {/* Close button - always visible */}
+          <button
+            onClick={(e) => { e.stopPropagation(); onClose(); }}
+            className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 
+                       flex items-center justify-center transition-colors"
+            title="Close"
+          >
+            <X className="w-3.5 h-3.5 text-white" />
+          </button>
+        </div>
       </div>
     </div>
   );
