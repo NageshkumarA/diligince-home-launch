@@ -102,8 +102,7 @@ export function VendorFormEnhanced() {
       vendorCategory: values.vendorCategory,
       specialization: values.specialization,
       termsAccepted: values.termsAccepted,
-      privacyAccepted: values.privacyAccepted,
-      verificationStatus: 'incomplete', // Set initial verification status
+      privacyAccepted: values.privacyAccepted
     };
 
     const result = await signUp(registrationData);
