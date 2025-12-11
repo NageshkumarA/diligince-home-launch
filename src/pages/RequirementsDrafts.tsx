@@ -5,12 +5,21 @@ import { ColumnConfig, FilterConfig } from "@/types/table";
 import requirementListService from "@/services/requirement-list.service";
 import { RequirementListItem } from "@/types/requirement-list";
 import { toast } from "sonner";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableSkeletonLoader } from "@/components/shared/loading";
+import { usePermissions } from "@/hooks/usePermissions";
+
+const MODULE_ID = 'requirements-drafts';
 
 const RequirementsDrafts = () => {
   const navigate = useNavigate();
+  const { hasPermission } = usePermissions();
+  
+  // Permission checks
+  const hasEditPermission = hasPermission(MODULE_ID, 'edit');
+  const hasDeletePermission = hasPermission(MODULE_ID, 'delete');
+  
   const [data, setData] = useState<RequirementListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRows, setSelectedRows] = useState<RequirementListItem[]>([]);
@@ -162,44 +171,73 @@ const RequirementsDrafts = () => {
     {
       name: "actions",
       label: "Actions",
-      render: (value, row) => (
-        <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-          <Button 
-            size="sm" 
-            variant="outline"
-            onClick={() => {
-              const draftId = row.id || row.draftId;
-              if (!draftId || draftId === 'undefined') {
-                console.error('Invalid draft ID for edit:', row);
-                toast.error('Cannot edit draft: Invalid ID');
-                return;
-              }
-              navigate(`/dashboard/create-requirement?draftId=${draftId}`);
-            }}
-          >
-            <Edit className="h-4 w-4 mr-1" />
-            Edit
-          </Button>
-          
-          <Button 
-            size="sm" 
-            variant="destructive"
-            onClick={() => {
-              const draftId = row.id || row.draftId;
-              if (!draftId || draftId === 'undefined') {
-                console.error('Invalid draft ID for delete:', row);
-                toast.error('Cannot delete draft: Invalid ID');
-                return;
-              }
-              handleDeleteSingle(draftId);
-            }}
-          >
-            <Trash2 className="h-4 w-4 mr-1" />
-            Delete
-          </Button>
-        </div>
-      ),
-      width: "200px",
+      render: (value, row) => {
+        // Status-based edit visibility (draft and rejected can be edited)
+        const status = row.status || 'draft';
+        const canEditByStatus = status === 'draft' || status === 'rejected';
+        
+        return (
+          <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+            {/* View - Always visible */}
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={() => {
+                const reqId = row.id || row.draftId;
+                if (!reqId || reqId === 'undefined') {
+                  toast.error('Cannot view: Invalid ID');
+                  return;
+                }
+                navigate(`/dashboard/requirements/${reqId}`);
+              }}
+            >
+              <Eye className="h-4 w-4 mr-1" />
+              View
+            </Button>
+            
+            {/* Edit - Only if status allows AND user has edit permission */}
+            {canEditByStatus && hasEditPermission && (
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => {
+                  const draftId = row.id || row.draftId;
+                  if (!draftId || draftId === 'undefined') {
+                    console.error('Invalid draft ID for edit:', row);
+                    toast.error('Cannot edit draft: Invalid ID');
+                    return;
+                  }
+                  navigate(`/dashboard/create-requirement?draftId=${draftId}`);
+                }}
+              >
+                <Edit className="h-4 w-4 mr-1" />
+                Edit
+              </Button>
+            )}
+            
+            {/* Delete - Only for drafts AND user has delete permission */}
+            {status === 'draft' && hasDeletePermission && (
+              <Button 
+                size="sm" 
+                variant="destructive"
+                onClick={() => {
+                  const draftId = row.id || row.draftId;
+                  if (!draftId || draftId === 'undefined') {
+                    console.error('Invalid draft ID for delete:', row);
+                    toast.error('Cannot delete draft: Invalid ID');
+                    return;
+                  }
+                  handleDeleteSingle(draftId);
+                }}
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Delete
+              </Button>
+            )}
+          </div>
+        );
+      },
+      width: "280px",
     },
   ];
 

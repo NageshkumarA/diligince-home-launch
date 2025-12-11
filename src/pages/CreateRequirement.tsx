@@ -114,11 +114,26 @@ const CreateRequirement = () => {
   const [isLoadingDraft, setIsLoadingDraft] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { draftId, loadDraftById } = useRequirement();
+  const { draftId, loadDraftById, startEditing, stopEditing, formData } = useRequirement();
   
   // Determine if we're in edit mode based on URL
   const urlDraftId = searchParams.get('draftId');
   const isEditMode = !!urlDraftId;
+
+  // Start/stop editing mode for auto-save control
+  useEffect(() => {
+    // Only start editing if status allows it
+    const status = formData.status || 'draft';
+    const canEdit = status === 'draft' || status === 'rejected';
+    
+    if (canEdit && !formData.isSentForApproval) {
+      startEditing();
+    }
+    
+    return () => {
+      stopEditing();
+    };
+  }, [startEditing, stopEditing, formData.status, formData.isSentForApproval]);
 
   // Navigation protection
   useEffect(() => {

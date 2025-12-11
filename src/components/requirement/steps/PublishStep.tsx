@@ -30,7 +30,7 @@ interface PublishStepProps {
 
 const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
   const navigate = useNavigate();
-  const { formData, updateFormData, draftId } = useRequirement();
+  const { formData, updateFormData, draftId, stopEditing } = useRequirement();
   const { sendForApproval, isLoading: isSending } = useSendForApproval();
   const { status: approvalStatus, progress: approvalProgress, isLoading: isLoadingStatus, refetch } = useApprovalStatus(draftId);
   const { publishRequirement, isLoading: isPublishing } = usePublishRequirement();
@@ -114,8 +114,12 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
       setLocalProgress(response.approvalProgress || null);
       updateFormData({ 
         approvalStatus: 'pending',
+        status: 'pending',
+        isSentForApproval: true,
         approvalProgress: response.approvalProgress,
       });
+      // Stop auto-save after sending for approval
+      stopEditing();
       // Refetch to get latest status
       setTimeout(() => refetch(), 1000);
     }
@@ -143,6 +147,9 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
     });
 
     if (response) {
+      // Stop auto-save after publishing
+      stopEditing();
+      updateFormData({ status: 'published' });
       onNext(); // Navigate to success screen
     }
   };
