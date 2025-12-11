@@ -372,7 +372,7 @@ const RequirementDetails = () => {
         {/* Back and Actions */}
         <div className="flex items-center justify-between mb-4">
           <Link
-            to={`/dashboard/requirements/${requirement.status === 'draft' ? 'drafts' : requirement.status === 'pending_approval' ? 'pending' : requirement.status === 'approved' ? 'approved' : requirement.status === 'published' ? 'published' : 'archived'}`}
+            to={`/dashboard/requirements/${requirement.status === 'draft' ? 'drafts' : requirement.status === 'pending' ? 'pending' : requirement.status === 'approved' ? 'approved' : requirement.status === 'published' ? 'published' : 'archived'}`}
             className="text-blue-600 hover:text-blue-700 text-sm"
           >
             ← Back to Requirements

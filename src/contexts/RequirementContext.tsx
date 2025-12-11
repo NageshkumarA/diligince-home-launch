@@ -20,6 +20,10 @@ interface RequirementContextType {
   isSaving: boolean;
   lastSaved: Date | null;
   loadDraftById: (draftId: string) => Promise<RequirementFormData | null>;
+  // Auto-save control
+  isActivelyEditing: boolean;
+  startEditing: () => void;
+  stopEditing: () => void;
 }
 
 const RequirementContext = createContext<RequirementContextType | undefined>(undefined);
@@ -61,8 +65,36 @@ const getDefaultFormData = (): RequirementFormData => ({
 export const RequirementProvider = ({ children }: { children: React.ReactNode }) => {
   const [formData, setFormData] = useState<RequirementFormData>(getDefaultFormData());
   const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
+  const [isActivelyEditing, setIsActivelyEditing] = useState(false);
   const { draftId, draftIdRef, isSaving, lastSaved, initializeDraft, forceSave, clearDraftState, loadDraft } = useRequirementDraft();
   const { isAuthenticated } = useUser();
+
+  // Start editing mode - enables auto-save
+  const startEditing = useCallback(() => {
+    console.log("🟢 Auto-save: Started editing mode");
+    setIsActivelyEditing(true);
+  }, []);
+
+  // Stop editing mode - disables auto-save
+  const stopEditing = useCallback(() => {
+    console.log("🔴 Auto-save: Stopped editing mode");
+    setIsActivelyEditing(false);
+  }, []);
+
+  // Check if auto-save should run
+  const shouldAutoSave = useCallback(() => {
+    if (!isAuthenticated) return false;
+    if (!isActivelyEditing) return false;
+    
+    // Only auto-save for editable statuses
+    const status = formData.status || 'draft';
+    if (status !== 'draft' && status !== 'rejected') return false;
+    
+    // Don't auto-save if already sent for approval
+    if (formData.isSentForApproval) return false;
+    
+    return true;
+  }, [isAuthenticated, isActivelyEditing, formData.status, formData.isSentForApproval]);
 
   // Load draft by ID and update form data (single source of truth)
   const loadDraftById = useCallback(async (draftIdToLoad: string): Promise<RequirementFormData | null> => {
@@ -123,18 +155,17 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
     }
   }, [isAuthenticated, resetForm, clearDraftState]);
 
-  // Auto-save every 30 seconds if form has data and user is authenticated
+  // Auto-save every 30 seconds only when actively editing
   useEffect(() => {
-    // Skip if not authenticated or form is empty
-    if (!isAuthenticated || isFormEmpty()) {
+    // Skip if auto-save conditions not met
+    if (!shouldAutoSave() || isFormEmpty()) {
       return;
     }
 
     const autoSaveInterval = setInterval(async () => {
-      // Double-check auth before each save attempt
-      if (!isAuthenticated) {
-        console.log("Auto-save: User not authenticated, skipping...");
-        clearInterval(autoSaveInterval);
+      // Double-check conditions before each save attempt
+      if (!shouldAutoSave()) {
+        console.log("Auto-save: Conditions not met, skipping...");
         return;
       }
 
@@ -153,7 +184,7 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
     }, 30000); // 30 seconds
 
     return () => clearInterval(autoSaveInterval);
-  }, [formData, draftIdRef, initializeDraft, forceSave, isFormEmpty, isAuthenticated, clearDraftState]);
+  }, [formData, draftIdRef, initializeDraft, forceSave, isFormEmpty, shouldAutoSave]);
 
   const saveAsDraft = useCallback(async () => {
     if (isFormEmpty()) {
@@ -324,7 +355,10 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
       draftId,
       isSaving,
       lastSaved,
-      loadDraftById
+      loadDraftById,
+      isActivelyEditing,
+      startEditing,
+      stopEditing,
     }}>
       {children}
     </RequirementContext.Provider>

@@ -7,9 +7,20 @@ import { RequirementListItem } from "@/types/requirement-list";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { TableSkeletonLoader } from "@/components/shared/loading";
+import { Eye, Rocket } from "lucide-react";
+import { usePermissions } from "@/hooks/usePermissions";
+import { useUser } from "@/contexts/UserContext";
+
+const MODULE_ID = 'requirements-approved';
 
 const RequirementsApproved = () => {
   const navigate = useNavigate();
+  const { hasPermission } = usePermissions();
+  const { user } = useUser();
+  
+  // Permission checks
+  const hasWritePermission = hasPermission(MODULE_ID, 'write');
+  
   const [data, setData] = useState<RequirementListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRows, setSelectedRows] = useState<RequirementListItem[]>([]);
@@ -120,6 +131,52 @@ const RequirementsApproved = () => {
       name: "publishDate",
       label: "Publish Date",
       isSortable: true,
+    },
+    {
+      name: "actions",
+      label: "Actions",
+      render: (value, row) => {
+        // Check if current user is the creator (can publish)
+        const isCreator = row.submittedBy === user?.email || 
+                          (row as any).createdBy?.id === user?.id ||
+                          (row as any).createdBy === user?.id;
+        
+        return (
+          <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+            {/* View - Always visible */}
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={() => {
+                const reqId = row.id;
+                if (!reqId) {
+                  toast.error('Cannot view: Invalid ID');
+                  return;
+                }
+                navigate(`/dashboard/requirements/${reqId}`);
+              }}
+            >
+              <Eye className="h-4 w-4 mr-1" />
+              View
+            </Button>
+            
+            {/* Publish - Only for creators with write permission */}
+            {isCreator && hasWritePermission && (
+              <Button 
+                size="sm" 
+                variant="default"
+                onClick={() => {
+                  navigate(`/dashboard/create-requirement?draftId=${row.id}`);
+                }}
+              >
+                <Rocket className="h-4 w-4 mr-1" />
+                Publish
+              </Button>
+            )}
+          </div>
+        );
+      },
+      width: "220px",
     },
   ];
 
