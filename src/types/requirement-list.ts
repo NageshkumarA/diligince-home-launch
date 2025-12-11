@@ -22,8 +22,9 @@ export interface RequirementListItem {
 
 export type RequirementStatus = 
   | 'draft' 
-  | 'pending_approval' 
+  | 'pending' 
   | 'approved' 
+  | 'rejected'
   | 'published' 
   | 'completed' 
   | 'cancelled' 

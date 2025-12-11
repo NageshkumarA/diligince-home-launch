@@ -1,7 +1,13 @@
 // RequirementFormData interface - separated to avoid circular dependencies
 import { ApprovalMatrix } from '@/services/modules/approval-matrix/approval-matrix.types';
 
+// Backend status enum for requirements
+export type RequirementStatusEnum = 'draft' | 'pending' | 'approved' | 'rejected' | 'published';
+
 export interface RequirementFormData {
+  // Status and approval tracking
+  status?: RequirementStatusEnum;
+  isSentForApproval?: boolean;
   id?: string;
   title?: string;
   category?: "product" | "service" | "expert" | "logistics";
