@@ -69,22 +69,20 @@ export const PasswordStep: React.FC<PasswordStepProps> = ({
         Back
       </Button>
 
-      <div className="text-center mb-8">
-        <div className="flex justify-center mb-4">
-          <Avatar className="w-20 h-20">
+      <div className="text-center mb-6">
+        <div className="flex justify-center mb-3">
+          <Avatar className="w-16 h-16">
             <AvatarImage src={selectedAccount.avatar} alt={selectedAccount.firstName} />
-            <AvatarFallback className="text-2xl">
+            <AvatarFallback className="text-xl">
               {getInitials(selectedAccount.firstName, selectedAccount.lastName)}
             </AvatarFallback>
           </Avatar>
         </div>
-        <h2 className="text-2xl font-bold text-foreground mb-1">
-          {getDisplayName()}
-        </h2>
+        <p className="font-medium text-foreground">{getDisplayName()}</p>
         {selectedAccount.email && (
-          <p className="text-muted-foreground mb-2">{selectedAccount.email}</p>
+          <p className="text-muted-foreground text-sm">{selectedAccount.email}</p>
         )}
-        <Badge variant="secondary">{selectedAccount.role}</Badge>
+        <Badge variant="secondary" className="mt-2">{selectedAccount.role}</Badge>
       </div>
 
       {error && (
