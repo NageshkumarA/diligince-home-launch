@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { authService, type AvailableAccount } from '@/services/modules/auth';
@@ -8,6 +8,7 @@ import { AccountSelectionStep } from '@/components/auth/login-steps/AccountSelec
 import { PasswordStep } from '@/components/auth/login-steps/PasswordStep';
 import { TwoFactorStep } from '@/components/auth/login-steps/TwoFactorStep';
 import { toast } from 'sonner';
+import { VerificationStatus } from '@/types/verification';
 
 type LoginStep = 'email' | 'account-selection' | 'password' | '2fa';
 
@@ -23,12 +24,9 @@ interface LoginState {
   expiresAt: string | null;
 }
 
-const STEPS: LoginStep[] = ['email', 'account-selection', 'password', '2fa'];
-const STEP_LABELS = ['Email', 'Account', 'Password', 'Verify'];
-
 const MultiStepLogin: React.FC = () => {
   const navigate = useNavigate();
-  const { login: contextLogin, verify2FA: contextVerify2FA, getDashboardUrl } = useUser();
+  const { login: contextLogin, verify2FA: contextVerify2FA, getDashboardUrl, verificationStatus } = useUser();
 
   const [state, setState] = useState<LoginState>({
     step: 'email',
@@ -48,6 +46,44 @@ const MultiStepLogin: React.FC = () => {
   const [attemptsRemaining, setAttemptsRemaining] = useState<number | undefined>();
   const [resendCooldown, setResendCooldown] = useState(60);
 
+  // Dynamic titles based on current step
+  const stepContent = useMemo(() => {
+    switch (state.step) {
+      case 'email':
+        return { title: 'Welcome Back', subtitle: 'Enter your email to continue' };
+      case 'account-selection':
+        return { title: 'Select Account', subtitle: 'Choose the account you want to sign in with' };
+      case 'password':
+        return { title: 'Enter Password', subtitle: 'Sign in to your selected account' };
+      case '2fa':
+        return { title: 'Verification Required', subtitle: 'Complete two-factor authentication' };
+      default:
+        return { title: 'Welcome Back', subtitle: 'Sign in to your account' };
+    }
+  }, [state.step]);
+
+  // Get redirect path based on verification status
+  const getRedirectPath = (userVerificationStatus?: string): string => {
+    const status = userVerificationStatus || verificationStatus;
+    
+    switch (status) {
+      case VerificationStatus.APPROVED:
+      case 'approved':
+        return getDashboardUrl();
+      case VerificationStatus.PENDING:
+      case 'pending':
+        return '/verification-pending';
+      case VerificationStatus.REJECTED:
+      case 'rejected':
+        toast.error('Your profile verification was rejected. Please update your profile.');
+        return '/dashboard/industry-settings';
+      case VerificationStatus.INCOMPLETE:
+      case 'incomplete':
+      default:
+        return '/dashboard/industry-settings';
+    }
+  };
+
   // Step 1: Email lookup
   const handleEmailContinue = async () => {
     setLoading(true);
@@ -57,11 +93,19 @@ const MultiStepLogin: React.FC = () => {
       const response = await authService.lookupAccounts(state.email);
 
       if (response.success && response.data.accounts.length > 0) {
+        // Filter out inactive accounts and check for active ones
+        const activeAccounts = response.data.accounts.filter(acc => acc.isActive !== false);
+        
+        if (activeAccounts.length === 0) {
+          setError('No active accounts found. Please contact support.');
+          return;
+        }
+
         setState(prev => ({
           ...prev,
-          accounts: response.data.accounts,
-          step: response.data.accounts.length === 1 ? 'password' : 'account-selection',
-          selectedAccount: response.data.accounts.length === 1 ? response.data.accounts[0] : null,
+          accounts: activeAccounts,
+          step: activeAccounts.length === 1 ? 'password' : 'account-selection',
+          selectedAccount: activeAccounts.length === 1 ? activeAccounts[0] : null,
         }));
       } else {
         setError('No accounts found with this email address');
@@ -75,6 +119,12 @@ const MultiStepLogin: React.FC = () => {
 
   // Step 2: Account selection
   const handleAccountSelect = (account: AvailableAccount) => {
+    // Check if account is active
+    if (account.isActive === false) {
+      setError('This account is currently inactive. Please contact support.');
+      return;
+    }
+
     setState(prev => ({
       ...prev,
       selectedAccount: account,
@@ -113,7 +163,10 @@ const MultiStepLogin: React.FC = () => {
           const result = await contextLogin(state.email, state.password);
           if (result.success) {
             toast.success('Login successful');
-            navigate(getDashboardUrl());
+            // Use verification status from selected account or fetch from context
+            const accountVerificationStatus = state.selectedAccount?.verificationStatus;
+            const redirectPath = getRedirectPath(accountVerificationStatus);
+            navigate(redirectPath);
           } else {
             setError(result.error || 'Login failed');
           }
@@ -144,7 +197,10 @@ const MultiStepLogin: React.FC = () => {
         const result = await contextVerify2FA(state.twoFactorToken, state.twoFactorCode);
         if (result.success) {
           toast.success('Authentication successful');
-          navigate(getDashboardUrl());
+          // Use verification status from selected account or fetch from context
+          const accountVerificationStatus = state.selectedAccount?.verificationStatus;
+          const redirectPath = getRedirectPath(accountVerificationStatus);
+          navigate(redirectPath);
         } else {
           setError(result.error || 'Verification failed');
         }
@@ -213,10 +269,10 @@ const MultiStepLogin: React.FC = () => {
     }
   };
 
-  const currentStepIndex = STEPS.indexOf(state.step);
+  // Removed unused STEPS constant reference
 
   return (
-    <AuthLayout title="Welcome Back" subtitle="Sign in to your account">
+    <AuthLayout title={stepContent.title} subtitle={stepContent.subtitle}>
       {/* Progress Indicator - Commented out to hide multi-step display */}
       {/*
       <div className="mb-8">

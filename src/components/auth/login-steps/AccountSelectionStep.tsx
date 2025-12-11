@@ -1,5 +1,5 @@
 import React from 'react';
-import { Building2, Users, Package, ArrowLeft, Clock } from 'lucide-react';
+import { Building2, Users, Package, ArrowLeft, Clock, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -75,27 +75,27 @@ export const AccountSelectionStep: React.FC<AccountSelectionStepProps> = ({
         Back
       </Button>
 
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-foreground mb-2">Select Account</h2>
-        <p className="text-muted-foreground">
-          Multiple accounts found for <span className="font-medium text-foreground">{email}</span>
-        </p>
-      </div>
+      <p className="text-center text-muted-foreground mb-6">
+        Multiple accounts found for <span className="font-medium text-foreground">{email}</span>
+      </p>
 
       <div className="grid gap-4">
         {accounts.map((account) => {
           const Icon = getUserTypeIcon(account.userType);
           const accountId = getAccountId(account);
           const isSelected = selectedAccount?.id === account.id || selectedAccount?.accountId === account.accountId;
+          const isInactive = account.isActive === false;
 
           return (
             <div
               key={accountId}
-              onClick={() => onSelectAccount(account)}
-              className={`p-6 rounded-xl border-2 cursor-pointer transition-all hover:shadow-md ${
-                isSelected
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border hover:border-primary/50'
+              onClick={() => !isInactive && onSelectAccount(account)}
+              className={`p-6 rounded-xl border-2 transition-all ${
+                isInactive
+                  ? 'border-muted bg-muted/30 cursor-not-allowed opacity-60'
+                  : isSelected
+                  ? 'border-primary bg-primary/5 cursor-pointer hover:shadow-md'
+                  : 'border-border hover:border-primary/50 cursor-pointer hover:shadow-md'
               }`}
             >
               <div className="flex items-start space-x-4">
@@ -116,13 +116,21 @@ export const AccountSelectionStep: React.FC<AccountSelectionStepProps> = ({
                         <p className="text-sm text-muted-foreground">{account.companyName}</p>
                       )}
                     </div>
-                    <Badge
-                      variant="outline"
-                      className={`${getUserTypeColor(account.userType)} flex items-center space-x-1`}
-                    >
-                      <Icon className="w-3 h-3" />
-                      <span className="capitalize">{account.userType}</span>
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      {isInactive && (
+                        <Badge variant="destructive" className="flex items-center gap-1">
+                          <AlertTriangle className="w-3 h-3" />
+                          Inactive
+                        </Badge>
+                      )}
+                      <Badge
+                        variant="outline"
+                        className={`${getUserTypeColor(account.userType)} flex items-center space-x-1`}
+                      >
+                        <Icon className="w-3 h-3" />
+                        <span className="capitalize">{account.userType}</span>
+                      </Badge>
+                    </div>
                   </div>
 
                   <div className="flex items-center space-x-4 text-sm">

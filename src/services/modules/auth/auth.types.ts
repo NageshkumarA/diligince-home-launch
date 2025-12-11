@@ -17,6 +17,9 @@ export interface AvailableAccount {
   avatar?: string;
   isActive?: boolean;
   lastLogin?: string;
+  verificationStatus?: 'incomplete' | 'pending' | 'approved' | 'rejected';
+  isEmailVerified?: boolean;
+  isPhoneVerified?: boolean;
 }
 
 export interface LookupAccountsResponse {
