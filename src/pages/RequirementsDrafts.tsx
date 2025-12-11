@@ -36,10 +36,10 @@ const RequirementsDrafts = () => {
         search: searchTerm,
         filters,
       });
-      
+      debugger
       // Defensive check to ensure requirements is an array
-      const requirements = Array.isArray(response.data?.requirements) 
-        ? response.data.requirements 
+      const requirements = Array.isArray(response.data?.requirements || response.data?.items) 
+        ? response.data.requirements || response.data?.items
         : [];
       
       setData(requirements);

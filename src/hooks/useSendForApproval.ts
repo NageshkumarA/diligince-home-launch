@@ -44,7 +44,7 @@ export const useSendForApproval = () => {
     
     try {
       const response = await apiService.post<ApprovalResponse, object>(
-        `${API_BASE_PATH}/industry/requirements/${payload.draftId}/send-for-approval`,
+        `${API_BASE_PATH}/industry/requirements/draft/${payload.draftId}/submit-approval`,
         {
           selectedApprovalMatrixId: payload.selectedApprovalMatrixId,
           submissionDeadline: payload.submissionDeadline,

@@ -28,7 +28,7 @@ class RequirementListService {
       return {
         success: response.success,
         data: {
-          requirements: (response.data?.drafts || []).map((draft: any) => ({
+          requirements: (response.data?.drafts || response.data?.items || []).map((draft: any) => ({
             // Map draftId to id for table compatibility
             id: draft.draftId,
             draftId: draft.draftId, // Keep for backward compatibility

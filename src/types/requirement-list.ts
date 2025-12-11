@@ -32,9 +32,10 @@ export type RequirementStatus =
 export interface RequirementListResponse {
   success: boolean;
   data: {
-    requirements: RequirementListItem[];
+    requirements?: RequirementListItem[];
+    items?:RequirementListItem[];
     pagination: PaginationData;
-    filters: {
+    filters?: {
       applied: Record<string, any>;
       available: Record<string, FilterOption[]>;
     };

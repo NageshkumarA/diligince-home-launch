@@ -282,7 +282,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
       {/* Publishing Options */}
       <div className="space-y-5">
         {/* Visibility */}
-        <div className="space-y-3">
+        {/* <div className="space-y-3">
           <Label className="text-sm font-medium">Requirement Visibility</Label>
           <RadioGroup
             value={formData.visibility || "all"}
@@ -302,7 +302,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
               </Label>
             </div>
           </RadioGroup>
-        </div>
+        </div> */}
 
         {/* Submission Deadline */}
         <div className="space-y-2">
@@ -359,7 +359,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
         </div>
 
         {/* Notifications */}
-        <div className="flex items-center gap-6">
+        {/* <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <Switch
               id="notify-email"
@@ -380,7 +380,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
               In-app notifications
             </Label>
           </div>
-        </div>
+        </div> */}
 
         {/* Terms */}
         <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/30">
