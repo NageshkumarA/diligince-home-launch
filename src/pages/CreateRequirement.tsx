@@ -44,7 +44,7 @@ const DraftLoadingSkeleton = () => (
           ))}
         </div>
       </aside>
-      
+
       {/* Main Content Skeleton */}
       <main className="flex-1 flex flex-col">
         <header className="px-8 py-4 border-b border-border/50">
@@ -61,7 +61,7 @@ const DraftLoadingSkeleton = () => (
         </div>
       </main>
     </div>
-    
+
     {/* Mobile Skeleton */}
     <div className="lg:hidden p-4 space-y-4 pt-16">
       <Skeleton className="h-12 w-full" />
@@ -72,18 +72,18 @@ const DraftLoadingSkeleton = () => (
 );
 
 // Memoized step renderer
-const StepRenderer = memo(({ 
-  currentStep, 
-  handleNext, 
-  handlePrevious, 
-  handleGoToStep 
+const StepRenderer = memo(({
+  currentStep,
+  handleNext,
+  handlePrevious,
+  handleGoToStep
 }: {
   currentStep: StepType;
   handleNext: () => void;
   handlePrevious: () => void;
   handleGoToStep: (step: StepType) => void;
 }) => {
-  switch(currentStep) {
+  switch (currentStep) {
     case 1:
       return <EnhancedBasicInfoStep onNext={handleNext} />;
     case 2:
@@ -94,10 +94,10 @@ const StepRenderer = memo(({
       return <ApprovalWorkflowStep onNext={handleNext} onPrevious={handlePrevious} />;
     case 5:
       return (
-        <PreviewStep 
-          onNext={handleNext} 
-          onPrevious={handlePrevious} 
-          onEdit={handleGoToStep} 
+        <PreviewStep
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          onEdit={handleGoToStep}
         />
       );
     case 6:
@@ -115,7 +115,7 @@ const CreateRequirement = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { draftId, loadDraftById, startEditing, stopEditing, formData } = useRequirement();
-  
+
   // Determine if we're in edit mode based on URL
   const urlDraftId = searchParams.get('draftId');
   const isEditMode = !!urlDraftId;
@@ -125,11 +125,11 @@ const CreateRequirement = () => {
     // Only start editing if status allows it
     const status = formData.status || 'draft';
     const canEdit = status === 'draft' || status === 'rejected';
-    
+
     if (canEdit && !formData.isSentForApproval) {
       startEditing();
     }
-    
+
     return () => {
       stopEditing();
     };
@@ -151,20 +151,20 @@ const CreateRequirement = () => {
   // Load draft from URL parameter on mount
   useEffect(() => {
     const urlDraftId = searchParams.get('draftId');
-    
+
     if (!urlDraftId) return;
 
     const loadDraftFromUrl = async () => {
       setIsLoadingDraft(true);
-      
+
       try {
         console.log("🔵 CreateRequirement: Loading draft from URL:", urlDraftId);
-        
+
         // Use context's loadDraftById which updates both draftId and formData
         const draftData = await loadDraftById(urlDraftId);
-        
+
         console.log("🟢 CreateRequirement: Draft data loaded:", draftData);
-        
+
         if (draftData) {
           localStorage.setItem('requirement-draft-id', urlDraftId);
           localStorage.setItem('requirement-draft', JSON.stringify(draftData));
@@ -180,20 +180,32 @@ const CreateRequirement = () => {
         setIsLoadingDraft(false);
       }
     };
-    
+
     loadDraftFromUrl();
   }, [searchParams, loadDraftById, navigate]);
 
-  // Save current step to localStorage whenever it changes
+  //Save current step to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('requirement-current-step', currentStep.toString());
   }, [currentStep]);
 
-  const handleNext = useCallback(() => {
+  const handleNext = useCallback(async () => {
     if (currentStep < 7) {
+      // Ensure draft is created before moving to next step (especially needed for step 3 - Documents)
+      // This prevents "No draft ID available" error when uploading documents
+      if (!draftId && formData) {
+        console.log("Creating draft before moving to next step...");
+        try {
+          await saveAsDraft();
+        } catch (error) {
+          console.error("Failed to create draft:", error);
+          // Continue anyway - draft creation might have failed but auto-save will retry
+        }
+      }
+
       setCurrentStep((prev) => (prev + 1) as StepType);
     }
-  }, [currentStep]);
+  }, [currentStep, draftId, formData, saveAsDraft]);
 
   const handlePrevious = useCallback(() => {
     if (currentStep > 1) {
@@ -210,15 +222,15 @@ const CreateRequirement = () => {
     return (
       <ErrorBoundary>
         <div className="flex min-h-screen flex-col bg-background">
-          <SuccessScreen 
+          <SuccessScreen
             onCreateAnother={() => {
               setCurrentStep(1);
               localStorage.removeItem('requirement-current-step');
             }}
-            onViewRequirement={() => navigate("/industry-requirements")} 
-            onReturnToDashboard={() => navigate("/industry")} 
+            onViewRequirement={() => navigate("/industry-requirements")}
+            onReturnToDashboard={() => navigate("/industry")}
           />
-          <Toaster richColors position="top-right"/>
+          <Toaster richColors position="top-right" />
         </div>
       </ErrorBoundary>
     );
@@ -229,7 +241,7 @@ const CreateRequirement = () => {
     return (
       <ErrorBoundary>
         <DraftLoadingSkeleton />
-        <Toaster richColors position="top-right"/>
+        <Toaster richColors position="top-right" />
       </ErrorBoundary>
     );
   }
@@ -252,7 +264,7 @@ const CreateRequirement = () => {
           />
         </Suspense>
       </CreateRequirementLayout>
-      <Toaster richColors position="top-right"/>
+      <Toaster richColors position="top-right" />
     </ErrorBoundary>
   );
 };
