@@ -82,18 +82,25 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
   }, []);
 
   // Check if auto-save should run
+  // IMPORTANT: Auto-save must work for ALL editable statuses per user requirement
+  // Only blocked when already sent for approval
   const shouldAutoSave = useCallback(() => {
     if (!isAuthenticated) return false;
     if (!isActivelyEditing) return false;
-    
-    // Only auto-save for editable statuses
-    const status = formData.status || 'draft';
-    if (status !== 'draft' && status !== 'rejected') return false;
-    
+
     // Don't auto-save if already sent for approval
+    // This is the ONLY blocker - user can edit at any status otherwise
     if (formData.isSentForApproval) return false;
-    
-    return true;
+
+    // Allow auto-save for all editable statuses
+    // Previously limited to 'draft' and 'rejected', now expanded per user requirement
+    const status = formData.status || 'draft';
+    const editableStatuses = ['draft', 'rejected', 'approved', 'published'];
+
+    // Don't auto-save archived requirements
+    if (status === 'archived') return false;
+
+    return editableStatuses.includes(status);
   }, [isAuthenticated, isActivelyEditing, formData.status, formData.isSentForApproval]);
 
   // Load draft by ID and update form data (single source of truth)
@@ -101,14 +108,14 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
     try {
       console.log("🟡 Context: Loading draft by ID:", draftIdToLoad);
       const draftData = await loadDraft(draftIdToLoad);
-      
+
       if (draftData && Object.keys(draftData).length > 0) {
         console.log("🟢 Context: Draft loaded, updating form data");
         setFormData(draftData);
         setStepErrors({});
         return draftData;
       }
-      
+
       return null;
     } catch (error) {
       console.error("🔴 Context: Failed to load draft:", error);
@@ -136,13 +143,13 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
 
   // Check if form is empty (at least one field should be filled)
   const isFormEmpty = useCallback(() => {
-    const hasData = 
+    const hasData =
       formData.title?.trim() ||
       formData.description?.trim() ||
       formData.businessJustification?.trim() ||
       formData.category ||
       formData.priority;
-    
+
     return !hasData;
   }, [formData]);
 
@@ -224,7 +231,7 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
   const validateStep = useCallback((step: number) => {
     console.log("Validating step:", step, "with formData:", formData);
     const errors: Record<string, string> = {};
-    
+
     try {
       switch (step) {
         case 1: // Basic Info
@@ -250,7 +257,7 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
             errors.estimatedBudget = "Valid estimated budget is required";
           }
           break;
-          
+
         case 2: // Details
           if (formData.category === "expert") {
             if (!formData.specialization || formData.specialization.trim() === '') {
@@ -291,24 +298,24 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
             }
           }
           break;
-          
+
         case 3: // Documents (optional)
           break;
-          
+
         case 4: // Approval Workflow
-          const requiresApproval = (formData.estimatedBudget || 0) > 10000 || 
-                                  formData.priority === 'critical' || 
-                                  formData.priority === 'high' || 
-                                  formData.complianceRequired;
-          
+          const requiresApproval = (formData.estimatedBudget || 0) > 10000 ||
+            formData.priority === 'critical' ||
+            formData.priority === 'high' ||
+            formData.complianceRequired;
+
           if (requiresApproval && !formData.selectedApprovalMatrixId) {
             errors.selectedApprovalMatrix = "Please select an approval matrix to proceed";
           }
           break;
-          
+
         case 5: // Preview
           break;
-          
+
         case 6: // Publish
           if (!formData.submissionDeadline) {
             errors.submissionDeadline = "Submission deadline is required";

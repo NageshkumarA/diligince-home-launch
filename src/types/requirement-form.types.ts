@@ -2,7 +2,7 @@
 import { ApprovalMatrix } from '@/services/modules/approval-matrix/approval-matrix.types';
 
 // Backend status enum for requirements
-export type RequirementStatusEnum = 'draft' | 'pending' | 'approved' | 'rejected' | 'published';
+export type RequirementStatusEnum = 'draft' | 'pending' | 'approved' | 'rejected' | 'published' | 'archived';
 
 export interface RequirementFormData {
   // Status and approval tracking
@@ -21,9 +21,9 @@ export interface RequirementFormData {
   equipmentType?: string;
   pickupLocation?: string;
   deliveryLocation?: string;
-  documents?: { 
+  documents?: {
     id: string;
-    name: string; 
+    name: string;
     url: string;
     type: string;
     size: number;
@@ -45,7 +45,7 @@ export interface RequirementFormData {
   applicants?: number;
   complianceRequired?: boolean;
   riskLevel?: "low" | "medium" | "high" | "critical";
-  
+
   // Approval-related fields
   isUrgent?: boolean;
   approvalWorkflowId?: string;
@@ -70,32 +70,32 @@ export interface RequirementFormData {
     }>;
     estimatedPublishDate?: string;
   };
-  
+
   // Expert-specific fields
   certifications?: string[];
   duration?: number;
   startDate?: Date;
   endDate?: Date;
-  
+
   // Product-specific fields
   technicalStandards?: string[];
   productDeliveryDate?: Date;
   qualityRequirements?: string;
-  
+
   // Service-specific fields
   performanceMetrics?: string;
   serviceStartDate?: Date;
   serviceEndDate?: Date;
   serviceBudget?: number;
   location?: string;
-  
+
   // Logistics-specific fields
   weight?: number;
   dimensions?: string;
   pickupDate?: Date;
   deliveryDate?: Date;
   specialHandling?: string;
-  
+
   // Additional fields for EnhancedBasicInfoStep
   businessJustification?: string;
   department?: string;
