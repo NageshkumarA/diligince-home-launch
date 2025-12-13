@@ -265,7 +265,7 @@ const RequirementsPending = () => {
       <CustomTable
         columns={columns}
         data={data}
-        onRowClick={(row) => navigate(`/dashboard/requirements/${row.id}`)}
+        onRowClick={(row) => navigate(`/dashboard/requirements/pending/${row.requirementId || row.id}`)}
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{

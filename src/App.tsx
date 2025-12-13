@@ -81,6 +81,7 @@ import { ApprovalMatrixViewPage } from "@/pages/ApprovalMatrixViewPage";
 // Requirements sub-pages
 import RequirementsDrafts from "@/pages/RequirementsDrafts";
 import RequirementsPending from "@/pages/RequirementsPending";
+import PendingRequirementView from "@/pages/PendingRequirementView";
 import RequirementsApproved from "@/pages/RequirementsApproved";
 import RequirementsPublished from "@/pages/RequirementsPublished";
 import RequirementDetails from "@/pages/RequirementDetails";
@@ -368,6 +369,10 @@ function App() {
                               <Route
                                 path="requirements/pending"
                                 element={<RequirementsPending />}
+                              />
+                              <Route
+                                path="requirements/pending/:id"
+                                element={<PendingRequirementView />}
                               />
                               <Route
                                 path="requirements/approved"
