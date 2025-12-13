@@ -2,104 +2,95 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import CustomTable from "@/components/CustomTable";
 import { ColumnConfig, FilterConfig } from "@/types/table";
-import requirementListService from "@/services/requirement-list.service";
-import { RequirementListItem } from "@/types/requirement-list";
+import requirementListService from "@/services/modules/requirements/lists.service";
+import { RequirementListItem, PaginationData } from "@/types/requirement-list";
 import { toast } from "sonner";
-import { Edit, Trash2, Eye } from "lucide-react";
+import { Edit, Trash2, Eye, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableSkeletonLoader } from "@/components/shared/loading";
 import { usePermissions } from "@/hooks/usePermissions";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { approvalMatrixService } from "@/services/modules/approval-matrix/approval-matrix.service";
+import { useUser } from "@/contexts/UserContext";
+import { CreatorFilterDropdown, Creator } from "@/components/shared/CreatorFilterDropdown";
+import { Input } from "@/components/ui/input";
 
 const MODULE_ID = 'requirements-drafts';
 
 const RequirementsDrafts = () => {
   const navigate = useNavigate();
   const { hasPermission } = usePermissions();
+  const { user } = useUser();
 
   // Permission checks
   const hasEditPermission = hasPermission(MODULE_ID, 'edit');
   const hasDeletePermission = hasPermission(MODULE_ID, 'delete');
 
-  const [data, setData] = useState<RequirementListItem[]>([]);
+  const [drafts, setDrafts] = useState<RequirementListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRows, setSelectedRows] = useState<RequirementListItem[]>([]);
-  const [pagination, setPagination] = useState({
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [pagination, setPagination] = useState<PaginationData>({
     currentPage: 1,
-    pageSize: 10,
+    totalPages: 1,
     totalItems: 0,
-    totalPages: 0,
+    pageSize: 10,
   });
   const [filters, setFilters] = useState<Record<string, any>>({});
-  const [sortBy, setSortBy] = useState<string>("lastModified");
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
+  // Sort state
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: 'asc' | 'desc';
+  }>({
+    key: 'updatedAt',
+    direction: 'desc'
+  });
+
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [createdBy, setCreatedBy] = useState<string>("me");
-  const [teamMembers, setTeamMembers] = useState<{ id: string, fullName: string }[]>([]);
-
-  useEffect(() => {
-    // Fetch team members for filter
-    const fetchMembers = async () => {
-      try {
-        const response = await approvalMatrixService.getAvailableMembers();
-        if (response?.success && response?.data?.members) {
-          setTeamMembers(response.data.members.map((m: any) => ({
-            id: m.id,
-            fullName: m.fullName || `${m.firstName || ''} ${m.lastName || ''}`.trim() || m.email
-          })));
-        }
-      } catch (error) {
-        console.error("Failed to fetch team members:", error);
-      }
-    };
-    fetchMembers();
-  }, []);
+  const [teamMembers, setTeamMembers] = useState<Creator[]>([]);
 
   const fetchDrafts = async () => {
     try {
+      setIsLoading(true);
       setLoading(true);
       const response = await requirementListService.getDrafts({
         page: pagination.currentPage,
         limit: pagination.pageSize,
-        sortBy,
-        order: sortOrder,
+        sortBy: sortConfig.key,
+        order: sortConfig.direction,
         search: searchTerm,
         filters,
-        createdBy,
+        createdById: createdBy,
       });
 
-      // Defensive check to ensure requirements is an array
-      const requirements = Array.isArray(response.data?.requirements || response.data?.items)
-        ? response.data.requirements || response.data?.items
-        : [];
+      const requirements = response.data?.requirements || response.data?.items || [];
 
-      setData(requirements);
+      setDrafts(Array.isArray(requirements) ? requirements : []);
 
-      // Debug logging in development
-      if (import.meta.env.DEV) {
-        console.group('📋 Draft Requirements Loaded');
-        console.log('Total:', requirements.length);
-        console.log('Sample:', requirements[0]);
-        console.log('All have IDs:', requirements.every(r => r.id));
-        console.log('Missing IDs:', requirements.filter(r => !r.id).length);
-        console.groupEnd();
+      setPagination(prev => ({
+        ...prev,
+        totalPages: response.data.pagination?.totalPages || 0,
+        totalItems: response.data.pagination?.totalItems || 0
+      }));
+
+      // Update creators from response filters
+      if (response.data.filters && response.data.filters.creators) {
+        setTeamMembers(response.data.filters.creators);
       }
 
-      setPagination(response.data.pagination);
     } catch (error: any) {
       console.error("Failed to fetch drafts:", error);
       toast.error(error.message || "Failed to load drafts");
-      // Set empty array on error to prevent crash
-      setData([]);
+      setDrafts([]);
     } finally {
       setLoading(false);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchDrafts();
-  }, [pagination.currentPage, pagination.pageSize, sortBy, sortOrder, searchTerm, filters, createdBy]);
+  }, [pagination.currentPage, pagination.pageSize, sortConfig, searchTerm, filters, createdBy]);
 
   const columns: ColumnConfig[] = [
     {
@@ -136,6 +127,7 @@ const RequirementsDrafts = () => {
       name: "createdBy",
       label: "Created By",
       render: (value, row) => {
+        // @ts-ignore - createdBy might be populated object or id
         return row.createdBy?.name || 'Unknown';
       }
     },
@@ -202,13 +194,11 @@ const RequirementsDrafts = () => {
       name: "actions",
       label: "Actions",
       render: (value, row) => {
-        // Status-based edit visibility (draft and rejected can be edited)
         const status = row.status || 'draft';
         const canEditByStatus = status === 'draft' || status === 'rejected';
 
         return (
           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-            {/* View - Always visible */}
             <Button
               size="sm"
               variant="outline"
@@ -225,7 +215,6 @@ const RequirementsDrafts = () => {
               View
             </Button>
 
-            {/* Edit - Only if status allows AND user has edit permission */}
             {canEditByStatus && hasEditPermission && (
               <Button
                 size="sm"
@@ -245,7 +234,6 @@ const RequirementsDrafts = () => {
               </Button>
             )}
 
-            {/* Delete - Only for drafts AND user has delete permission */}
             {status === 'draft' && hasDeletePermission && (
               <Button
                 size="sm"
@@ -285,9 +273,10 @@ const RequirementsDrafts = () => {
     try {
       const blob = await requirementListService.exportToXLSX('drafts', {
         filters,
-        sortBy,
-        order: sortOrder,
+        sortBy: sortConfig.key,
+        order: sortConfig.direction,
         search: searchTerm,
+        createdById: createdBy,
       });
 
       const url = window.URL.createObjectURL(blob);
@@ -309,9 +298,10 @@ const RequirementsDrafts = () => {
     try {
       const blob = await requirementListService.exportToCSV('drafts', {
         filters,
-        sortBy,
-        order: sortOrder,
+        sortBy: sortConfig.key,
+        order: sortConfig.direction,
         search: searchTerm,
+        createdById: createdBy,
       });
 
       const url = window.URL.createObjectURL(blob);
@@ -333,30 +323,6 @@ const RequirementsDrafts = () => {
     navigate('/dashboard/create-requirement');
   };
 
-  const handleBulkDelete = async () => {
-    if (selectedRows.length === 0) {
-      toast.error("Please select drafts to delete");
-      return;
-    }
-
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${selectedRows.length} draft(s)?`
-    );
-
-    if (!confirmed) return;
-
-    try {
-      const draftIds = selectedRows.map(row => row.id);
-      await requirementListService.deleteDrafts(draftIds);
-
-      toast.success(`${selectedRows.length} draft(s) deleted`);
-      setSelectedRows([]);
-      fetchDrafts();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to delete drafts");
-    }
-  };
-
   const handleDeleteSingle = async (draftId: string) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this draft? This action cannot be undone."
@@ -374,7 +340,29 @@ const RequirementsDrafts = () => {
     }
   };
 
-  if (loading) {
+  const handleBulkDelete = async () => {
+    if (selectedRows.length === 0) {
+      toast.error("Please select drafts to delete");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${selectedRows.length} draft(s)?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await requirementListService.deleteDrafts(selectedRows);
+      toast.success(`${selectedRows.length} draft(s) deleted`);
+      setSelectedRows([]);
+      fetchDrafts();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete drafts");
+    }
+  };
+
+  if (loading && drafts.length === 0) {
     return (
       <div className="p-6 bg-background min-h-screen">
         <div className="mb-6">
@@ -387,39 +375,40 @@ const RequirementsDrafts = () => {
   }
 
   return (
-    <div className="p-6 bg-background min-h-screen">
-      <div className="mb-6 flex justify-between items-end">
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Draft Requirements
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your draft requirements before submitting for approval
+          <h1 className="text-2xl font-bold tracking-tight">Draft Requirements</h1>
+          <p className="text-muted-foreground mt-1">
+            Manage and edit your draft requirements before submission.
           </p>
         </div>
+        <Button onClick={handleAdd}>
+          <Plus className="mr-2 h-4 w-4" />
+          Create Requirement
+        </Button>
+      </div>
 
-        <div className="w-[200px]">
-          <label className="text-sm font-medium mb-1 block">Created By</label>
-          <Select value={createdBy} onValueChange={setCreatedBy}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by creator" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="me">Me</SelectItem>
-              <SelectItem value="all">All</SelectItem>
-              {teamMembers.map(member => (
-                <SelectItem key={member.id} value={member.id}>
-                  {member.fullName}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Filters Section */}
+      <div className="flex items-end gap-4 bg-muted/30 p-4 rounded-lg border mb-6">
+        <div className="flex-1 max-w-sm">
+          <label className="text-sm font-medium mb-1 block">Search</label>
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search drafts..."
+              className="pl-8 bg-background"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
       {selectedRows.length > 0 && (
         <div className="mb-4">
           <Button variant="destructive" onClick={handleBulkDelete}>
+            <Trash2 className="mr-2 h-4 w-4" />
             Delete {selectedRows.length} selected
           </Button>
         </div>
@@ -427,7 +416,7 @@ const RequirementsDrafts = () => {
 
       <CustomTable
         columns={columns}
-        data={data}
+        data={drafts}
         onRowClick={(row) => {
           const draftId = row.id || row.draftId;
           if (!draftId || draftId === 'undefined') {
@@ -438,11 +427,23 @@ const RequirementsDrafts = () => {
           navigate(`/dashboard/requirements/${draftId}`);
         }}
         filterCallback={handleFilter}
-        searchCallback={handleSearch}
+        searchCallback={(term) => handleSearch(term, [])}
         onExport={{
           xlsx: handleExportXLSX,
           csv: handleExportCSV,
         }}
+        additionalFilters={
+          <CreatorFilterDropdown
+            creators={teamMembers}
+            selectedCreatorId={createdBy}
+            currentUserId={user?.id || ''}
+            onSelect={(val) => {
+              setCreatedBy(val || 'all');
+              setPagination(prev => ({ ...prev, currentPage: 1 }));
+            }}
+            isLoading={isLoading}
+          />
+        }
         onAdd={handleAdd}
         selectable={true}
         onSelectionChange={setSelectedRows}

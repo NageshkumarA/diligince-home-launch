@@ -14,6 +14,7 @@ const CustomTable: React.FC<TableProps> = ({
   onRowClick,
   onExport,
   onAdd,
+  additionalFilters,
   loading = false,
   pagination = { enabled: true, pageSize: 10, currentPage: 1 },
   selectable = false,
@@ -23,7 +24,7 @@ const CustomTable: React.FC<TableProps> = ({
 }) => {
   // Ensure data is always an array
   const safeData = Array.isArray(data) ? data : [];
-  
+
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [filters, setFilters] = useState<FilterConfig>({});
   const [globalSearch, setGlobalSearch] = useState('');
@@ -211,6 +212,7 @@ const CustomTable: React.FC<TableProps> = ({
           columns={columns}
           filters={filters}
           onFiltersChange={handleFiltersChange}
+          additionalFilters={additionalFilters}
         />
 
         <div className="overflow-x-auto">

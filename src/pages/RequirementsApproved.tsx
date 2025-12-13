@@ -11,16 +11,19 @@ import { Eye, Rocket } from "lucide-react";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useUser } from "@/contexts/UserContext";
 
+
+import { CreatorFilterDropdown, Creator } from "@/components/shared/CreatorFilterDropdown";
+
 const MODULE_ID = 'requirements-approved';
 
 const RequirementsApproved = () => {
   const navigate = useNavigate();
   const { hasPermission } = usePermissions();
   const { user } = useUser();
-  
+
   // Permission checks
   const hasWritePermission = hasPermission(MODULE_ID, 'write');
-  
+
   const [data, setData] = useState<RequirementListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRows, setSelectedRows] = useState<RequirementListItem[]>([]);
@@ -34,6 +37,8 @@ const RequirementsApproved = () => {
   const [sortBy, setSortBy] = useState<string>("approvedDate");
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [createdBy, setCreatedBy] = useState<string>("all");
+  const [teamMembers, setTeamMembers] = useState<Creator[]>([]);
 
   const fetchApproved = async () => {
     try {
@@ -45,15 +50,21 @@ const RequirementsApproved = () => {
         order: sortOrder,
         search: searchTerm,
         filters,
+        createdById: createdBy === 'me' ? user?.id : createdBy === 'all' ? undefined : createdBy,
       });
-      
+
       // Defensive check to ensure requirements is an array
-      const requirements = Array.isArray(response.data?.requirements) 
-        ? response.data.requirements 
+      const requirements = Array.isArray(response.data?.requirements)
+        ? response.data.requirements
         : [];
-      
+
       setData(requirements);
       setPagination(response.data.pagination);
+
+      // Update creators from response filters
+      if (response.data.filters && response.data.filters.creators) {
+        setTeamMembers(response.data.filters.creators);
+      }
     } catch (error: any) {
       console.error("Failed to fetch approved requirements:", error);
       toast.error(error.message || "Failed to load approved requirements");
@@ -66,7 +77,7 @@ const RequirementsApproved = () => {
 
   useEffect(() => {
     fetchApproved();
-  }, [pagination.currentPage, pagination.pageSize, sortBy, sortOrder, searchTerm, filters]);
+  }, [pagination.currentPage, pagination.pageSize, sortBy, sortOrder, searchTerm, filters, createdBy]);
 
   const columns: ColumnConfig[] = [
     {
@@ -137,15 +148,15 @@ const RequirementsApproved = () => {
       label: "Actions",
       render: (value, row) => {
         // Check if current user is the creator (can publish)
-        const isCreator = row.submittedBy === user?.email || 
-                          (row as any).createdBy?.id === user?.id ||
-                          (row as any).createdBy === user?.id;
-        
+        const isCreator = row.submittedBy === user?.email ||
+          (row as any).createdBy?.id === user?.id ||
+          (row as any).createdBy === user?.id;
+
         return (
           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
             {/* View - Always visible */}
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               variant="outline"
               onClick={() => {
                 const reqId = row.id;
@@ -159,11 +170,11 @@ const RequirementsApproved = () => {
               <Eye className="h-4 w-4 mr-1" />
               View
             </Button>
-            
+
             {/* Publish - Only for creators with write permission */}
             {isCreator && hasWritePermission && (
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 variant="default"
                 onClick={() => {
                   navigate(`/dashboard/create-requirement?draftId=${row.id}`);
@@ -233,13 +244,13 @@ const RequirementsApproved = () => {
     const confirmed = window.confirm(
       `Are you sure you want to publish ${selectedRows.length} requirement(s)?`
     );
-    
+
     if (!confirmed) return;
 
     try {
       const requirementIds = selectedRows.map(row => row.id);
       await requirementListService.publishApproved(requirementIds);
-      
+
       toast.success(`${selectedRows.length} requirement(s) published`);
       setSelectedRows([]);
       fetchApproved();
@@ -289,6 +300,17 @@ const RequirementsApproved = () => {
           xlsx: handleExportXLSX,
           csv: handleExportCSV,
         }}
+        additionalFilters={
+          <CreatorFilterDropdown
+            creators={teamMembers}
+            selectedCreatorId={createdBy}
+            currentUserId={user?.id || ''}
+            onSelect={(val) => {
+              setCreatedBy(val || 'all');
+              setPagination(prev => ({ ...prev, currentPage: 1 }));
+            }}
+          />
+        }
         selectable={true}
         onSelectionChange={setSelectedRows}
         globalSearchPlaceholder="Search approved requirements..."

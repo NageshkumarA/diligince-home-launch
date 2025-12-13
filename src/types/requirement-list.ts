@@ -20,25 +20,26 @@ export interface RequirementListItem {
   finalValue?: number;
 }
 
-export type RequirementStatus = 
-  | 'draft' 
-  | 'pending' 
-  | 'approved' 
+export type RequirementStatus =
+  | 'draft'
+  | 'pending'
+  | 'approved'
   | 'rejected'
-  | 'published' 
-  | 'completed' 
-  | 'cancelled' 
+  | 'published'
+  | 'completed'
+  | 'cancelled'
   | 'expired';
 
 export interface RequirementListResponse {
   success: boolean;
   data: {
     requirements?: RequirementListItem[];
-    items?:RequirementListItem[];
+    items?: RequirementListItem[];
     pagination: PaginationData;
     filters?: {
       applied: Record<string, any>;
       available: Record<string, FilterOption[]>;
+      creators?: { id: string; name: string; email: string; count: number }[]; // Added creators
     };
   };
 }
@@ -64,36 +65,36 @@ export interface RequirementDetail extends RequirementListItem {
   businessJustification: string;
   riskLevel: string;
   complianceRequired: boolean;
-  
+
   // Category-specific fields
   productSpecifications?: string;
   quantity?: number;
   technicalStandards?: string[];
   qualityRequirements?: string;
   productDeliveryDate?: string;
-  
+
   expertSkills?: string[];
   expertQualifications?: string[];
   expertDuration?: string;
-  
+
   serviceDescription?: string;
   serviceSLA?: string;
-  
+
   logisticsDetails?: string;
-  
+
   // Approval workflow
   approvalStatus: 'not_required' | 'pending' | 'approved' | 'rejected';
   approvalSteps: ApprovalStep[];
-  
+
   // Compliance
   complianceChecklist: ComplianceCheckItem[];
-  
+
   // Documents
   documents: DocumentItem[];
-  
+
   // Audit
   auditTrail: AuditEntry[];
-  
+
   // Applicants
   applicants: number;
 }

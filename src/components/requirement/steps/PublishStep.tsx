@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -80,6 +80,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
     if (!formData.category) errors.push('Category');
     if (!formData.estimatedBudget || formData.estimatedBudget <= 0) errors.push('Budget');
     if (!formData.submissionDeadline) errors.push('Submission Deadline');
+    if (!formData.evaluationCriteria || formData.evaluationCriteria.length === 0) errors.push('Evaluation Criteria (at least one)');
     if (!formData.termsAccepted) errors.push('Terms acceptance');
     return errors;
   };
@@ -112,7 +113,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
     if (response) {
       setLocalApprovalStatus('pending');
       setLocalProgress(response.approvalProgress || null);
-      updateFormData({ 
+      updateFormData({
         approvalStatus: 'pending',
         status: 'pending',
         isSentForApproval: true,
@@ -161,29 +162,29 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
     return (
       <div className="space-y-3">
         {localProgress.levels.map((level, index) => (
-          <div 
-            key={level.levelNumber} 
+          <div
+            key={level.levelNumber}
             className={cn(
               "flex items-center gap-3 p-3 rounded-lg border",
               level.status === 'approved' ? "bg-emerald-50 border-emerald-200" :
-              level.status === 'pending' && level.levelNumber === localProgress.currentLevel ? "bg-amber-50 border-amber-200" :
-              "bg-muted/30 border-border/50"
+                level.status === 'pending' && level.levelNumber === localProgress.currentLevel ? "bg-amber-50 border-amber-200" :
+                  "bg-muted/30 border-border/50"
             )}
           >
             <div className={cn(
               "flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium",
               level.status === 'approved' ? "bg-emerald-600 text-white" :
-              level.status === 'pending' && level.levelNumber === localProgress.currentLevel ? "bg-amber-500 text-white" :
-              "bg-muted text-muted-foreground"
+                level.status === 'pending' && level.levelNumber === localProgress.currentLevel ? "bg-amber-500 text-white" :
+                  "bg-muted text-muted-foreground"
             )}>
               {level.status === 'approved' ? <CheckCircle2 className="h-4 w-4" /> : index + 1}
             </div>
             <div className="flex-1">
               <p className="font-medium text-sm">{level.name || `Level ${level.levelNumber}`}</p>
               <p className="text-xs text-muted-foreground">
-                {level.approvers?.length || 0} approver(s) • 
-                {level.status === 'approved' ? ' Approved' : 
-                 level.status === 'pending' ? ' Awaiting approval' : ' Pending'}
+                {level.approvers?.length || 0} approver(s) •
+                {level.status === 'approved' ? ' Approved' :
+                  level.status === 'pending' ? ' Awaiting approval' : ' Pending'}
               </p>
             </div>
             {level.status === 'approved' && (
@@ -235,9 +236,9 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
         <Card className={cn(
           "border",
           uiState === 'approved' ? "border-emerald-200 bg-emerald-50/50" :
-          uiState === 'pending' ? "border-amber-200 bg-amber-50/50" :
-          uiState === 'no_approval' ? "border-emerald-200 bg-emerald-50/50" :
-          "border-border"
+            uiState === 'pending' ? "border-amber-200 bg-amber-50/50" :
+              uiState === 'no_approval' ? "border-emerald-200 bg-emerald-50/50" :
+                "border-border"
         )}>
           <CardHeader className="py-3 px-4">
             <div className="flex items-center gap-2">
@@ -250,15 +251,15 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
               )}
               <CardTitle className="text-base font-medium">
                 {uiState === 'approved' ? "All Approvals Complete" :
-                 uiState === 'pending' ? "Awaiting Approvals" :
-                 uiState === 'no_approval' ? "Ready to Publish" :
-                 "Approval Required"}
+                  uiState === 'pending' ? "Awaiting Approvals" :
+                    uiState === 'no_approval' ? "Ready to Publish" :
+                      "Approval Required"}
               </CardTitle>
             </div>
           </CardHeader>
           <CardContent className="px-4 pb-4 pt-0">
             {uiState === 'pending' && renderApprovalProgress()}
-            
+
             {uiState === 'pending' && localProgress?.estimatedPublishDate && (
               <p className="text-sm text-muted-foreground mt-3">
                 Estimated publish date: {format(new Date(localProgress.estimatedPublishDate), "PPP")}
@@ -347,7 +348,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
 
         {/* Evaluation Criteria */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Evaluation Criteria</Label>
+          <Label className="text-sm font-medium">Evaluation Criteria <span className="text-red-500">*</span></Label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             {availableEvaluationCriteria.map((criterion) => (
               <div key={criterion} className="flex items-center space-x-2">
@@ -411,7 +412,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
       <div className="pt-4 border-t">
         {/* Show Send for Approval button if approval is required and not yet sent */}
         {uiState === 'not_sent' && (
-          <Button 
+          <Button
             onClick={handleSendForApproval}
             disabled={isSending || !formData.termsAccepted}
             className="w-full sm:w-auto gap-2"
@@ -443,7 +444,7 @@ const PublishStep: React.FC<PublishStepProps> = ({ onNext }) => {
 
         {/* Show Publish button when approved or no approval required */}
         {(uiState === 'approved' || uiState === 'no_approval') && (
-          <Button 
+          <Button
             onClick={handlePublish}
             disabled={isPublishing || !formData.termsAccepted}
             className="w-full sm:w-auto gap-2"

@@ -7,8 +7,12 @@ import { RequirementListItem } from "@/types/requirement-list";
 import { toast } from "sonner";
 import { TableSkeletonLoader } from "@/components/shared/loading";
 
+import { useUser } from "@/contexts/UserContext";
+import { CreatorFilterDropdown, Creator } from "@/components/shared/CreatorFilterDropdown";
+
 const RequirementsPending = () => {
   const navigate = useNavigate();
+  const { user } = useUser();
   const [data, setData] = useState<RequirementListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRows, setSelectedRows] = useState<RequirementListItem[]>([]);
@@ -22,6 +26,8 @@ const RequirementsPending = () => {
   const [sortBy, setSortBy] = useState<string>("submittedDate");
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [createdBy, setCreatedBy] = useState<string>("all");
+  const [teamMembers, setTeamMembers] = useState<Creator[]>([]);
 
   const fetchPending = async () => {
     try {
@@ -33,15 +39,21 @@ const RequirementsPending = () => {
         order: sortOrder,
         search: searchTerm,
         filters,
+        createdById: createdBy === 'me' ? user?.id : createdBy === 'all' ? undefined : createdBy,
       });
-      
+
       // Defensive check to ensure requirements is an array
-      const requirements = Array.isArray(response.data?.requirements) 
-        ? response.data.requirements 
+      const requirements = Array.isArray(response.data?.requirements)
+        ? response.data.requirements
         : [];
-      
+
       setData(requirements);
       setPagination(response.data.pagination);
+
+      // Update creators from response filters
+      if (response.data.filters && response.data.filters.creators) {
+        setTeamMembers(response.data.filters.creators);
+      }
     } catch (error: any) {
       console.error("Failed to fetch pending requirements:", error);
       toast.error(error.message || "Failed to load pending requirements");
@@ -54,7 +66,7 @@ const RequirementsPending = () => {
 
   useEffect(() => {
     fetchPending();
-  }, [pagination.currentPage, pagination.pageSize, sortBy, sortOrder, searchTerm, filters]);
+  }, [pagination.currentPage, pagination.pageSize, sortBy, sortOrder, searchTerm, filters, createdBy]);
 
   const columns: ColumnConfig[] = [
     {
@@ -200,6 +212,17 @@ const RequirementsPending = () => {
           xlsx: handleExportXLSX,
           csv: handleExportCSV,
         }}
+        additionalFilters={
+          <CreatorFilterDropdown
+            creators={teamMembers}
+            selectedCreatorId={createdBy}
+            currentUserId={user?.id || ''}
+            onSelect={(val) => {
+              setCreatedBy(val || 'all');
+              setPagination(prev => ({ ...prev, currentPage: 1 }));
+            }}
+          />
+        }
         selectable={true}
         onSelectionChange={setSelectedRows}
         globalSearchPlaceholder="Search pending requirements..."

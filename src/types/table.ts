@@ -53,4 +53,5 @@ export interface TableProps {
   onSelectionChange?: (selectedRows: any[]) => void;
   globalSearchPlaceholder?: string;
   className?: string;
+  additionalFilters?: React.ReactNode;
 }

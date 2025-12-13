@@ -13,7 +13,7 @@ export interface ListQueryParams {
   order?: 'asc' | 'desc';
   search?: string;
   filters?: Record<string, any>;
-  createdBy?: string;
+  createdById?: string;
 }
 
 class RequirementListService {
