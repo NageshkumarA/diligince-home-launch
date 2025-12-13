@@ -216,7 +216,7 @@ const RequirementsPublished = () => {
             selectedCreatorId={createdBy}
             currentUserId={user?.id || ''}
             onSelect={(val) => {
-              setCreatedBy(val || 'all');
+              setCreatedBy(val);
               setPagination(prev => ({ ...prev, currentPage: 1 }));
             }}
           />
