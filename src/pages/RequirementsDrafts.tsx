@@ -9,17 +9,19 @@ import { Edit, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableSkeletonLoader } from "@/components/shared/loading";
 import { usePermissions } from "@/hooks/usePermissions";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { approvalMatrixService } from "@/services/modules/approval-matrix/approval-matrix.service";
 
 const MODULE_ID = 'requirements-drafts';
 
 const RequirementsDrafts = () => {
   const navigate = useNavigate();
   const { hasPermission } = usePermissions();
-  
+
   // Permission checks
   const hasEditPermission = hasPermission(MODULE_ID, 'edit');
   const hasDeletePermission = hasPermission(MODULE_ID, 'delete');
-  
+
   const [data, setData] = useState<RequirementListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRows, setSelectedRows] = useState<RequirementListItem[]>([]);
@@ -33,6 +35,26 @@ const RequirementsDrafts = () => {
   const [sortBy, setSortBy] = useState<string>("lastModified");
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [createdBy, setCreatedBy] = useState<string>("me");
+  const [teamMembers, setTeamMembers] = useState<{ id: string, fullName: string }[]>([]);
+
+  useEffect(() => {
+    // Fetch team members for filter
+    const fetchMembers = async () => {
+      try {
+        const response = await approvalMatrixService.getAvailableMembers();
+        if (response?.success && response?.data?.members) {
+          setTeamMembers(response.data.members.map((m: any) => ({
+            id: m.id,
+            fullName: m.fullName || `${m.firstName || ''} ${m.lastName || ''}`.trim() || m.email
+          })));
+        }
+      } catch (error) {
+        console.error("Failed to fetch team members:", error);
+      }
+    };
+    fetchMembers();
+  }, []);
 
   const fetchDrafts = async () => {
     try {
@@ -44,15 +66,16 @@ const RequirementsDrafts = () => {
         order: sortOrder,
         search: searchTerm,
         filters,
+        createdBy,
       });
-      debugger
+
       // Defensive check to ensure requirements is an array
-      const requirements = Array.isArray(response.data?.requirements || response.data?.items) 
+      const requirements = Array.isArray(response.data?.requirements || response.data?.items)
         ? response.data.requirements || response.data?.items
         : [];
-      
+
       setData(requirements);
-      
+
       // Debug logging in development
       if (import.meta.env.DEV) {
         console.group('📋 Draft Requirements Loaded');
@@ -62,7 +85,7 @@ const RequirementsDrafts = () => {
         console.log('Missing IDs:', requirements.filter(r => !r.id).length);
         console.groupEnd();
       }
-      
+
       setPagination(response.data.pagination);
     } catch (error: any) {
       console.error("Failed to fetch drafts:", error);
@@ -76,7 +99,7 @@ const RequirementsDrafts = () => {
 
   useEffect(() => {
     fetchDrafts();
-  }, [pagination.currentPage, pagination.pageSize, sortBy, sortOrder, searchTerm, filters]);
+  }, [pagination.currentPage, pagination.pageSize, sortBy, sortOrder, searchTerm, filters, createdBy]);
 
   const columns: ColumnConfig[] = [
     {
@@ -108,6 +131,13 @@ const RequirementsDrafts = () => {
         { key: "Construction", value: "Construction" },
         { key: "Logistics", value: "Logistics" },
       ],
+    },
+    {
+      name: "createdBy",
+      label: "Created By",
+      render: (value, row) => {
+        return row.createdBy?.name || 'Unknown';
+      }
     },
     {
       name: "priority",
@@ -143,8 +173,8 @@ const RequirementsDrafts = () => {
       align: "right",
       render: (value) => {
         const numValue = typeof value === 'number' ? value : 0;
-        return numValue > 0 
-          ? `$${numValue.toLocaleString()}` 
+        return numValue > 0
+          ? `$${numValue.toLocaleString()}`
           : 'Not Set';
       },
     },
@@ -175,12 +205,12 @@ const RequirementsDrafts = () => {
         // Status-based edit visibility (draft and rejected can be edited)
         const status = row.status || 'draft';
         const canEditByStatus = status === 'draft' || status === 'rejected';
-        
+
         return (
           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
             {/* View - Always visible */}
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               variant="outline"
               onClick={() => {
                 const reqId = row.id || row.draftId;
@@ -194,11 +224,11 @@ const RequirementsDrafts = () => {
               <Eye className="h-4 w-4 mr-1" />
               View
             </Button>
-            
+
             {/* Edit - Only if status allows AND user has edit permission */}
             {canEditByStatus && hasEditPermission && (
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 variant="outline"
                 onClick={() => {
                   const draftId = row.id || row.draftId;
@@ -214,11 +244,11 @@ const RequirementsDrafts = () => {
                 Edit
               </Button>
             )}
-            
+
             {/* Delete - Only for drafts AND user has delete permission */}
             {status === 'draft' && hasDeletePermission && (
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 variant="destructive"
                 onClick={() => {
                   const draftId = row.id || row.draftId;
@@ -259,7 +289,7 @@ const RequirementsDrafts = () => {
         order: sortOrder,
         search: searchTerm,
       });
-      
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -268,7 +298,7 @@ const RequirementsDrafts = () => {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      
+
       toast.success("Drafts exported to XLSX");
     } catch (error: any) {
       toast.error(error.message || "Failed to export drafts");
@@ -283,7 +313,7 @@ const RequirementsDrafts = () => {
         order: sortOrder,
         search: searchTerm,
       });
-      
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -292,7 +322,7 @@ const RequirementsDrafts = () => {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      
+
       toast.success("Drafts exported to CSV");
     } catch (error: any) {
       toast.error(error.message || "Failed to export drafts");
@@ -312,13 +342,13 @@ const RequirementsDrafts = () => {
     const confirmed = window.confirm(
       `Are you sure you want to delete ${selectedRows.length} draft(s)?`
     );
-    
+
     if (!confirmed) return;
 
     try {
       const draftIds = selectedRows.map(row => row.id);
       await requirementListService.deleteDrafts(draftIds);
-      
+
       toast.success(`${selectedRows.length} draft(s) deleted`);
       setSelectedRows([]);
       fetchDrafts();
@@ -331,7 +361,7 @@ const RequirementsDrafts = () => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this draft? This action cannot be undone."
     );
-    
+
     if (!confirmed) return;
 
     try {
@@ -358,13 +388,33 @@ const RequirementsDrafts = () => {
 
   return (
     <div className="p-6 bg-background min-h-screen">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          Draft Requirements
-        </h1>
-        <p className="text-muted-foreground">
-          Manage your draft requirements before submitting for approval
-        </p>
+      <div className="mb-6 flex justify-between items-end">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Draft Requirements
+          </h1>
+          <p className="text-muted-foreground">
+            Manage your draft requirements before submitting for approval
+          </p>
+        </div>
+
+        <div className="w-[200px]">
+          <label className="text-sm font-medium mb-1 block">Created By</label>
+          <Select value={createdBy} onValueChange={setCreatedBy}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by creator" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="me">Me</SelectItem>
+              <SelectItem value="all">All</SelectItem>
+              {teamMembers.map(member => (
+                <SelectItem key={member.id} value={member.id}>
+                  {member.fullName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {selectedRows.length > 0 && (

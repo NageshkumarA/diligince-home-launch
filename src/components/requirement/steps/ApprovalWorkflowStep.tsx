@@ -18,10 +18,10 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = () => {
 
   const budget = formData.estimatedBudget || 0;
   const priority = formData.priority || 'low';
-  const requiresApproval = budget > 10000 || 
-                          priority === 'critical' || 
-                          priority === 'high' || 
-                          formData.complianceRequired;
+  const requiresApproval = budget > 10000 ||
+    priority === 'critical' ||
+    priority === 'high' ||
+    formData.complianceRequired;
 
   const getPriorityColor = () => {
     switch (priority) {
@@ -33,9 +33,9 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = () => {
   };
 
   const handleMatrixSelect = (matrix: ApprovalMatrix) => {
-    updateFormData({ 
+    updateFormData({
       selectedApprovalMatrixId: matrix.id,
-      selectedApprovalMatrix: matrix 
+      selectedApprovalMatrix: matrix
     });
   };
 
@@ -73,9 +73,8 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = () => {
 
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-              requiresApproval ? 'bg-orange-100' : 'bg-emerald-100'
-            }`}>
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${requiresApproval ? 'bg-orange-100' : 'bg-emerald-100'
+              }`}>
               {requiresApproval ? (
                 <AlertTriangle className="h-5 w-5 text-orange-600" />
               ) : (
@@ -85,8 +84,8 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = () => {
             <div>
               <p className="text-xs text-muted-foreground">Status</p>
               <Badge variant="outline" className={
-                requiresApproval 
-                  ? 'bg-orange-100 text-orange-700 border-orange-200' 
+                requiresApproval
+                  ? 'bg-orange-100 text-orange-700 border-orange-200'
                   : 'bg-emerald-100 text-emerald-700 border-emerald-200'
               }>
                 {requiresApproval ? 'Approval Required' : 'No Approval'}
@@ -141,8 +140,8 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = () => {
         )}
       </Card>
 
-      {/* Compliance Toggle */}
-      <Card className="p-4">
+      {/* ISO 9001 Compliance - Hidden as requested */}
+      {/* <Card className="p-4">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="compliance-toggle" className="font-medium cursor-pointer">
@@ -158,7 +157,7 @@ const ApprovalWorkflowStep: React.FC<ApprovalWorkflowStepProps> = () => {
             onCheckedChange={(checked) => updateFormData({ complianceRequired: checked })}
           />
         </div>
-      </Card>
+      </Card> */}
     </div>
   );
 };

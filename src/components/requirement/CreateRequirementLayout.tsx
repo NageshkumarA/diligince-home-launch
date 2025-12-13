@@ -49,10 +49,10 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
   const formatLastSaved = () => {
     if (isSaving) return "Saving...";
     if (!lastSaved) return "Not saved yet";
-    
+
     const now = new Date();
     const diff = Math.floor((now.getTime() - lastSaved.getTime()) / 1000);
-    
+
     if (diff < 60) return "Just now";
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
     return lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -105,7 +105,7 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
       {/* Mobile Progress Bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50">
         <div className="h-1 bg-muted">
-          <div 
+          <div
             className="h-full bg-primary transition-all duration-500 ease-out"
             style={{ width: `${(currentStep / 6) * 100}%` }}
           />
@@ -135,12 +135,12 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
               </h2>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             {draftId && (
               <>
                 <CommentsDropdownPanel requirementId={draftId} />
-                <ApprovalInfoDropdownPanel 
+                <ApprovalInfoDropdownPanel
                   approvalProgress={formData?.approvalProgress as any}
                   status="draft"
                 />
@@ -171,8 +171,8 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
 
           {/* Stepper */}
           <div className="flex-1 overflow-y-auto p-4">
-            <VerticalStepper 
-              currentStep={currentStep} 
+            <VerticalStepper
+              currentStep={currentStep}
               onStepClick={handleStepClick}
             />
           </div>
@@ -209,7 +209,7 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
                 {draftId && (
                   <>
                     <CommentsDropdownPanel requirementId={draftId} />
-                    <ApprovalInfoDropdownPanel 
+                    <ApprovalInfoDropdownPanel
                       approvalProgress={formData?.approvalProgress as any}
                       status="draft"
                     />
@@ -282,7 +282,7 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
       </div>
 
       {/* Mobile Content */}
-      <div 
+      <div
         {...swipeHandlers}
         className="lg:hidden pt-2 pb-24 px-4 touch-pan-y"
       >
@@ -316,7 +316,7 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
             <Save className="h-4 w-4 mr-1" />
             {isSaving ? "..." : "Save"}
           </Button>
-          
+
           {currentStep < 6 && (
             <Button
               onClick={handleNext}

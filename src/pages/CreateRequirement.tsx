@@ -114,7 +114,7 @@ const CreateRequirement = () => {
   const [isLoadingDraft, setIsLoadingDraft] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { draftId, loadDraftById, startEditing, stopEditing, formData } = useRequirement();
+  const { draftId, loadDraftById, startEditing, stopEditing, formData, saveAsDraft } = useRequirement();
 
   // Determine if we're in edit mode based on URL
   const urlDraftId = searchParams.get('draftId');
@@ -190,6 +190,24 @@ const CreateRequirement = () => {
   }, [currentStep]);
 
   const handleNext = useCallback(async () => {
+    // Step 4 validation: Check if approval matrix is required but not selected
+    if (currentStep === 4) {
+      const budget = formData.estimatedBudget || 0;
+      const priority = formData.priority || 'low';
+      const requiresApproval = budget > 10000 ||
+        priority === 'critical' ||
+        priority === 'high' ||
+        formData.complianceRequired;
+
+      if (requiresApproval && !formData.selectedApprovalMatrixId) {
+        toast.error("Approval Matrix Required", {
+          description: "Can't proceed without selecting an approval matrix. Please configure one or select an existing matrix.",
+          duration: 5000,
+        });
+        return;
+      }
+    }
+
     if (currentStep < 7) {
       // Ensure draft is created before moving to next step (especially needed for step 3 - Documents)
       // This prevents "No draft ID available" error when uploading documents

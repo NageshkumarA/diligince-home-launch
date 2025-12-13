@@ -13,16 +13,17 @@ export interface ListQueryParams {
   order?: 'asc' | 'desc';
   search?: string;
   filters?: Record<string, any>;
+  createdBy?: string;
 }
 
 class RequirementListService {
   // ============= Draft Requirements =============
-  
+
   async getDrafts(params?: ListQueryParams): Promise<RequirementListResponse> {
     try {
       const url = requirementListsRoutes.drafts.list(params);
       const response = await apiService.get<any>(url);
-      
+
       // Transform API response to match frontend expectations
       // Drafts API returns: { data: { drafts: [], pagination: {} } }
       return {
@@ -32,24 +33,24 @@ class RequirementListService {
             // Map draftId to id for table compatibility
             id: draft.draftId,
             draftId: draft.draftId, // Keep for backward compatibility
-            
+
             // Map API field names to table expectations
             title: draft.title || 'Untitled Draft',
             category: draft.category || 'N/A',
             priority: draft.priority || 'medium',
-            
+
             // Financial: estimatedBudget → estimatedValue
             estimatedValue: draft.estimatedBudget || 0,
-            
+
             // Dates: lastSaved → lastModified
             lastModified: draft.lastSaved,
             createdDate: draft.lastSaved, // Use lastSaved as createdDate fallback
-            
+
             // Draft-specific fields (pass through)
             currentStep: draft.currentStep,
             completedSteps: draft.completedSteps,
             progress: draft.progress,
-            
+
             // Required by RequirementListItem interface
             status: 'draft' as const,
           })),
@@ -85,16 +86,16 @@ class RequirementListService {
   }
 
   // ============= Pending Requirements =============
-  
+
   async getPending(params?: ListQueryParams): Promise<RequirementListResponse> {
     try {
       const url = requirementListsRoutes.pending.list(params);
       const response = await apiService.get<any>(url);
-      
+
       // Transform API response to match frontend expectations
       // Handle both nested and flat response structures
       let requirements: any[] = [];
-      
+
       if (response.data) {
         if (Array.isArray(response.data.pending)) {
           requirements = response.data.pending;
@@ -104,9 +105,9 @@ class RequirementListService {
           requirements = response.data;
         }
       }
-      
+
       const paginationData = response.data?.pagination || response.pagination || {};
-      
+
       return {
         success: response.success,
         data: {
@@ -146,12 +147,12 @@ class RequirementListService {
   }
 
   // ============= Approved Requirements =============
-  
+
   async getApproved(params?: ListQueryParams): Promise<RequirementListResponse> {
     try {
       const url = requirementListsRoutes.approved.list(params);
       const response = await apiService.get<any>(url);
-      
+
       // Debug logging in development
       if (process.env.NODE_ENV === 'development') {
         console.log('Approved API Response:', {
@@ -160,11 +161,11 @@ class RequirementListService {
           dataType: Array.isArray(response.data) ? 'array' : typeof response.data,
         });
       }
-      
+
       // Transform API response to match frontend expectations
       // Handle both nested and flat response structures
       let requirements: any[] = [];
-      
+
       if (response.data) {
         if (Array.isArray(response.data.approved)) {
           requirements = response.data.approved;
@@ -174,9 +175,9 @@ class RequirementListService {
           requirements = response.data;
         }
       }
-      
+
       const paginationData = response.data?.pagination || response.pagination || {};
-      
+
       return {
         success: response.success,
         data: {
@@ -229,16 +230,16 @@ class RequirementListService {
   }
 
   // ============= Published Requirements =============
-  
+
   async getPublished(params?: ListQueryParams): Promise<RequirementListResponse> {
     try {
       const url = requirementListsRoutes.published.list(params);
       const response = await apiService.get<any>(url);
-      
+
       // Transform API response to match frontend expectations
       // Handle both nested and flat response structures
       let requirements: any[] = [];
-      
+
       if (response.data) {
         if (Array.isArray(response.data.published)) {
           requirements = response.data.published;
@@ -248,9 +249,9 @@ class RequirementListService {
           requirements = response.data;
         }
       }
-      
+
       const paginationData = response.data?.pagination || response.pagination || {};
-      
+
       return {
         success: response.success,
         data: {
@@ -290,16 +291,16 @@ class RequirementListService {
   }
 
   // ============= Archived Requirements =============
-  
+
   async getArchived(params?: ListQueryParams): Promise<RequirementListResponse> {
     try {
       const url = requirementListsRoutes.archived.list(params);
       const response = await apiService.get<any>(url);
-      
+
       // Transform API response to match frontend expectations
       // Handle both nested and flat response structures
       let requirements: any[] = [];
-      
+
       if (response.data) {
         if (Array.isArray(response.data.archived)) {
           requirements = response.data.archived;
@@ -309,9 +310,9 @@ class RequirementListService {
           requirements = response.data;
         }
       }
-      
+
       const paginationData = response.data?.pagination || response.pagination || {};
-      
+
       return {
         success: response.success,
         data: {
@@ -351,7 +352,7 @@ class RequirementListService {
   }
 
   async archiveRequirements(
-    requirementIds: string[], 
+    requirementIds: string[],
     reason: string
   ): Promise<{ success: boolean; archived: number }> {
     try {
@@ -367,23 +368,23 @@ class RequirementListService {
   }
 
   // ============= Requirement Details =============
-  
+
   async getRequirementById(requirementId: string): Promise<RequirementDetail> {
     try {
       const response = await apiService.get<{ success: boolean; data: RequirementDetail }>(
         requirementsRoutes.getById(requirementId)
       );
-      
+
       // Validate response structure
       if (!response.data || typeof response.data !== 'object') {
         throw new Error('Invalid response structure from API');
       }
-      
+
       // Check if it's an empty array (wrong response)
       if (Array.isArray(response.data)) {
         throw new Error('Requirement not found or invalid ID format. Use draft endpoint for draft requirements.');
       }
-      
+
       return response.data;
     } catch (error) {
       console.error("Failed to get requirement detail:", error);
@@ -392,7 +393,7 @@ class RequirementListService {
   }
 
   // ============= Export Functions =============
-  
+
   async exportToXLSX(type: 'drafts' | 'pending' | 'approved' | 'published' | 'archived', params?: ListQueryParams): Promise<Blob> {
     try {
       const url = requirementListsRoutes[type].export.xlsx(params);
