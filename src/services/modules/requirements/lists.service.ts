@@ -146,6 +146,28 @@ class RequirementListService {
     }
   }
 
+  async getPendingById(requirementId: string): Promise<RequirementDetail | null> {
+    try {
+      const url = requirementListsRoutes.pending.getById(requirementId);
+      const response = await apiService.get<any>(url);
+
+      // Handle different response structures
+      if (response.data && typeof response.data === 'object' && !Array.isArray(response.data)) {
+        return response.data as RequirementDetail;
+      }
+
+      // If API returns nested data
+      if (response.data?.requirement) {
+        return response.data.requirement as RequirementDetail;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Failed to get pending requirement by ID:", error);
+      throw error;
+    }
+  }
+
   // ============= Approved Requirements =============
 
   async getApproved(params?: ListQueryParams): Promise<RequirementListResponse> {
