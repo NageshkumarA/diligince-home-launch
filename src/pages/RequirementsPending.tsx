@@ -9,6 +9,13 @@ import { TableSkeletonLoader } from "@/components/shared/loading";
 
 import { useUser } from "@/contexts/UserContext";
 import { CreatorFilterDropdown, Creator } from "@/components/shared/CreatorFilterDropdown";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const RequirementsPending = () => {
   const navigate = useNavigate();
@@ -115,23 +122,76 @@ const RequirementsPending = () => {
       label: "Est. Value",
       isSortable: true,
       align: "right",
+      render: (value, row) => {
+        const amount = row.budget?.max || row.estimatedValue;
+        if (!amount) return "-";
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: row.budget?.currency || 'USD',
+          maximumFractionDigits: 0
+        }).format(amount);
+      }
     },
     {
       name: "submittedBy",
       label: "Submitted By",
       isSortable: true,
       isSearchable: true,
+      render: (value, row) => (
+        <div className="flex flex-col">
+          <span className="font-medium">{row.createdBy?.name || row.submittedBy || "Unknown"}</span>
+          <span className="text-xs text-muted-foreground">{row.createdBy?.department || "N/A"}</span>
+        </div>
+      )
     },
     {
       name: "approver",
       label: "Approver",
       isSortable: true,
       isSearchable: true,
+      render: (value, row) => {
+        const level = row.approvalProgress?.levels?.find((l: any) => l.levelNumber === row.currentApprovalLevel);
+        const approvers = level?.approvers || [];
+
+        return (
+          <div className="flex -space-x-2 overflow-hidden">
+            <TooltipProvider>
+              {approvers.map((approver: any, index: number) => {
+                const initials = approver.memberName
+                  ? approver.memberName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()
+                  : '??';
+
+                return (
+                  <Tooltip key={index}>
+                    <TooltipTrigger asChild>
+                      <Avatar className="h-8 w-8 border-2 border-background cursor-help">
+                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                          {initials}
+                        </AvatarFallback>
+                      </Avatar>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{approver.memberName}</p>
+                      <p className="text-xs text-muted-foreground">{approver.memberEmail}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+            </TooltipProvider>
+            {approvers.length === 0 && <span className="text-muted-foreground">-</span>}
+          </div>
+        );
+      }
     },
     {
       name: "submittedDate",
       label: "Submitted Date",
       isSortable: true,
+      render: (value, row) => {
+        const date = row.sentForApprovalAt || row.createdAt;
+        if (!date) return "-";
+        return new Date(date).toLocaleDateString();
+      }
     },
   ];
 

@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import CreateRequirementLayout from "@/components/requirement/CreateRequirementLayout";
 import { StepLoadingSkeleton } from "@/components/requirement/StepLoadingSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { RequirementApprovalActions } from "@/components/requirement/RequirementApprovalActions";
+import { useUser } from "@/contexts/UserContext";
 
 // Lazy load step components for better performance
 const EnhancedBasicInfoStep = lazy(() => import("@/components/requirement/steps/EnhancedBasicInfoStep"));
@@ -115,6 +117,19 @@ const CreateRequirement = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { draftId, loadDraftById, startEditing, stopEditing, formData, saveAsDraft } = useRequirement();
+  const { user } = useUser();
+
+  // Check if current user is an approver for the current level
+  const isPending = formData?.status === 'pending';
+  const currentLevel = formData?.currentApprovalLevel;
+  const approvalProgress = formData?.approvalProgress;
+
+  const currentLevelData = approvalProgress?.levels?.find((l: any) => l.levelNumber === currentLevel);
+  const isApprover = currentLevelData?.approvers?.some((a: any) => a.memberId === user?.id);
+
+  const showApprovalActions = isPending && isApprover && draftId;
+
+  // Determine if we're in edit mode based on URL
 
   // Determine if we're in edit mode based on URL
   const urlDraftId = searchParams.get('draftId');
@@ -272,6 +287,12 @@ const CreateRequirement = () => {
         onNext={handleNext}
         onPrevious={handlePrevious}
         isEditMode={isEditMode}
+        customFooterActions={showApprovalActions ? (
+          <RequirementApprovalActions
+            requirementId={draftId!}
+            onActionComplete={() => navigate('/dashboard/requirements/pending')}
+          />
+        ) : undefined}
       >
         <Suspense fallback={<StepLoadingSkeleton />}>
           <StepRenderer

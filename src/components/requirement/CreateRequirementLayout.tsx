@@ -18,6 +18,7 @@ interface CreateRequirementLayoutProps {
   onNext: () => void;
   onPrevious: () => void;
   isEditMode?: boolean;
+  customFooterActions?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -27,6 +28,7 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
   onNext,
   onPrevious,
   isEditMode = false,
+  customFooterActions,
   children,
 }) => {
   const navigate = useNavigate();
@@ -242,40 +244,48 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
           {/* Desktop Footer */}
           <footer className="flex-shrink-0 bg-background border-t border-border/50 px-8 py-4">
             <div className="flex items-center justify-between max-w-4xl mx-auto">
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="outline"
-                  onClick={handlePrevious}
-                  disabled={currentStep === 1}
-                  className="gap-2"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Previous
-                </Button>
+              {customFooterActions ? (
+                <div className="w-full">
+                  {customFooterActions}
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={handlePrevious}
+                      disabled={currentStep === 1}
+                      className="gap-2"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Previous
+                    </Button>
 
-                <Button
-                  variant="ghost"
-                  onClick={handleSaveDraft}
-                  disabled={isSaving}
-                  className="gap-2"
-                >
-                  <Save className="h-4 w-4" />
-                  {isSaving ? "Saving..." : "Save Draft"}
-                </Button>
-              </div>
+                    <Button
+                      variant="ghost"
+                      onClick={handleSaveDraft}
+                      disabled={isSaving}
+                      className="gap-2"
+                    >
+                      <Save className="h-4 w-4" />
+                      {isSaving ? "Saving..." : "Save Draft"}
+                    </Button>
+                  </div>
 
-              <p className="text-xs text-muted-foreground hidden md:block">
-                Use Alt + Arrow keys to navigate
-              </p>
+                  <p className="text-xs text-muted-foreground hidden md:block">
+                    Use Alt + Arrow keys to navigate
+                  </p>
 
-              <Button
-                onClick={handleNext}
-                disabled={currentStep === 6}
-                className="gap-2"
-              >
-                {currentStep === 5 ? 'Review & Publish' : 'Continue'}
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+                  <Button
+                    onClick={handleNext}
+                    disabled={currentStep === 6}
+                    className="gap-2"
+                  >
+                    {currentStep === 5 ? 'Review & Publish' : 'Continue'}
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
             </div>
           </footer>
         </main>
@@ -295,38 +305,44 @@ export const CreateRequirementLayout: React.FC<CreateRequirementLayoutProps> = m
 
       {/* Mobile Footer */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-t shadow-lg">
-        <div className="flex items-center gap-3 p-4">
-          {currentStep > 1 && (
+        {customFooterActions ? (
+          <div className="p-4">
+            {customFooterActions}
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 p-4">
+            {currentStep > 1 && (
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                size="sm"
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                Back
+              </Button>
+            )}
+
             <Button
-              variant="outline"
-              onClick={handlePrevious}
+              variant="ghost"
+              onClick={handleSaveDraft}
+              disabled={isSaving}
               size="sm"
             >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Back
+              <Save className="h-4 w-4 mr-1" />
+              {isSaving ? "..." : "Save"}
             </Button>
-          )}
 
-          <Button
-            variant="ghost"
-            onClick={handleSaveDraft}
-            disabled={isSaving}
-            size="sm"
-          >
-            <Save className="h-4 w-4 mr-1" />
-            {isSaving ? "..." : "Save"}
-          </Button>
-
-          {currentStep < 6 && (
-            <Button
-              onClick={handleNext}
-              className="flex-1"
-            >
-              {currentStep === 5 ? 'Review' : 'Continue'}
-              <ChevronRight className="h-4 w-4 ml-2" />
-            </Button>
-          )}
-        </div>
+            {currentStep < 6 && (
+              <Button
+                onClick={handleNext}
+                className="flex-1"
+              >
+                {currentStep === 5 ? 'Review' : 'Continue'}
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

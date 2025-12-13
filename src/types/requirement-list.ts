@@ -5,6 +5,28 @@ export interface RequirementListItem {
   priority: 'critical' | 'high' | 'medium' | 'low';
   estimatedValue: number;
   status: RequirementStatus;
+  createdAt?: string; // Mapped from backend
+  budget?: { min: number; max: number; currency: string };
+  approvalProgress?: {
+    currentLevel: number;
+    totalLevels: number;
+    levels: {
+      levelNumber: number;
+      name: string;
+      status: string;
+      approvers: {
+        memberId: string;
+        memberName: string;
+        memberEmail: string;
+        status: string;
+      }[];
+    }[];
+  };
+  currentApprovalLevel?: number;
+  sentForApprovalAt?: string;
+  createdBy?: { id: string; name: string; email: string };
+
+  // Legacy fields
   createdDate: string;
   lastModified?: string;
   submittedDate?: string;

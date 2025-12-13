@@ -54,6 +54,7 @@ export interface RequirementFormData {
   approvalDeadline?: Date;
   selectedApprovalMatrixId?: string;
   selectedApprovalMatrix?: ApprovalMatrix;
+  currentApprovalLevel?: number;
   approvalProgress?: {
     currentLevel: number;
     totalLevels: number;
