@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
-import { approvalsService } from '@/services/modules/approvals/approvals.service';
+import requirementListService from '@/services/modules/requirements/lists.service';
 import { RequirementApprovalActions } from '@/components/requirement/RequirementApprovalActions';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,18 +24,56 @@ import {
   Eye
 } from 'lucide-react';
 import { toast } from 'sonner';
-import type { PendingApproval, ApprovalProgressLevel, ApprovalApprover } from '@/services/modules/approvals/approvals.types';
+import type { RequirementDetail } from '@/types/requirement-list';
+
+// Extended type for pending requirement with approval progress
+interface ApprovalApprover {
+  memberId: string;
+  memberName: string;
+  memberEmail?: string;
+  memberRole?: string;
+  isMandatory?: boolean;
+  status: 'pending' | 'approved' | 'rejected';
+  approvedAt?: string;
+  comments?: string;
+}
+
+interface ApprovalProgressLevel {
+  levelNumber: number;
+  name: string;
+  status: 'waiting' | 'in_progress' | 'completed';
+  maxApprovalTimeHours?: number;
+  approvers: ApprovalApprover[];
+  completedAt?: string;
+}
+
+interface PendingRequirement extends Omit<RequirementDetail, 'approvalProgress'> {
+  draftId?: string;
+  requirementId?: string;
+  sentForApprovalAt?: string;
+  estimatedBudget?: number;
+  selectedApprovalMatrix?: {
+    id: string;
+    name: string;
+    totalLevels: number;
+  };
+  approvalProgress?: {
+    currentLevel: number;
+    totalLevels: number;
+    levels: ApprovalProgressLevel[];
+  };
+}
 
 const PendingRequirementView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useUser();
   
-  const [requirement, setRequirement] = useState<PendingApproval | null>(null);
+  const [requirement, setRequirement] = useState<PendingRequirement | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch requirement details
+  // Fetch requirement details using dedicated endpoint
   useEffect(() => {
     const fetchRequirement = async () => {
       if (!id) {
@@ -46,14 +84,11 @@ const PendingRequirementView: React.FC = () => {
 
       try {
         setLoading(true);
-        // Fetch from pending approvals and find the specific one
-        const response = await approvalsService.getPending({ limit: 100 });
-        const found = response.items?.find(
-          item => item.requirementId === id || item.draftId === id
-        );
+        // Use dedicated endpoint to get single requirement by ID
+        const data = await requirementListService.getPendingById(id);
         
-        if (found) {
-          setRequirement(found);
+        if (data) {
+          setRequirement(data as PendingRequirement);
         } else {
           setError('Requirement not found');
         }
