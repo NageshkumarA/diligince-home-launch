@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSwipeable } from 'react-swipeable';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
   ArrowLeft, 
+  ChevronLeft, 
+  ChevronRight,
   MessageSquare, 
   Shield,
-  ChevronDown
+  Eye
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { ReadOnlyVerticalStepper } from './ReadOnlyVerticalStepper';
 import { ViewBasicInfoSection } from './ViewBasicInfoSection';
 import { ViewDetailsSection } from './ViewDetailsSection';
@@ -25,6 +27,13 @@ interface RequirementViewLayoutProps {
   onActionComplete?: () => void;
 }
 
+const stepTitles = [
+  "Basic Information",
+  "Details & Specifications",
+  "Documents & Attachments",
+  "Approval Workflow",
+];
+
 export const RequirementViewLayout: React.FC<RequirementViewLayoutProps> = ({
   requirement,
   canShowApprovalActions,
@@ -32,7 +41,10 @@ export const RequirementViewLayout: React.FC<RequirementViewLayoutProps> = ({
 }) => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
+  const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const [activePanel, setActivePanel] = useState<'comments' | 'approval' | null>(null);
+
+  const requirementId = requirement?.id || requirement?.draftId || requirement?.requirementId || '';
 
   const togglePanel = (panel: 'comments' | 'approval') => {
     setActivePanel(current => current === panel ? null : panel);
@@ -40,23 +52,69 @@ export const RequirementViewLayout: React.FC<RequirementViewLayoutProps> = ({
 
   const getStatusColor = (status?: string) => {
     switch (status?.toLowerCase()) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'approved': return 'bg-green-100 text-green-800 border-green-200';
-      case 'rejected': return 'bg-red-100 text-red-800 border-red-200';
-      case 'published': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'pending': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20';
+      case 'approved': return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
+      case 'rejected': return 'bg-red-500/10 text-red-600 border-red-500/20';
+      case 'published': return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
       default: return 'bg-muted text-muted-foreground';
     }
   };
 
   const getPriorityColor = (priority?: string) => {
     switch (priority?.toLowerCase()) {
-      case 'critical': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
+      case 'critical': return 'bg-red-500/10 text-red-600';
+      case 'high': return 'bg-orange-500/10 text-orange-600';
+      case 'medium': return 'bg-yellow-500/10 text-yellow-600';
+      case 'low': return 'bg-emerald-500/10 text-emerald-600';
       default: return 'bg-muted text-muted-foreground';
     }
   };
+
+  const handleStepClick = useCallback((step: number) => {
+    setDirection(step > currentStep ? "forward" : "backward");
+    setCurrentStep(step);
+  }, [currentStep]);
+
+  const handleNext = useCallback(() => {
+    if (currentStep < 4) {
+      setDirection("forward");
+      setCurrentStep(prev => prev + 1);
+    }
+  }, [currentStep]);
+
+  const handlePrevious = useCallback(() => {
+    if (currentStep > 1) {
+      setDirection("backward");
+      setCurrentStep(prev => prev - 1);
+    }
+  }, [currentStep]);
+
+  // Swipe gestures for mobile
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => currentStep < 4 && handleNext(),
+    onSwipedRight: () => currentStep > 1 && handlePrevious(),
+    trackMouse: false,
+    trackTouch: true,
+    delta: 50,
+  });
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey) {
+        if (e.key === 'ArrowRight' && currentStep < 4) {
+          e.preventDefault();
+          handleNext();
+        } else if (e.key === 'ArrowLeft' && currentStep > 1) {
+          e.preventDefault();
+          handlePrevious();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentStep, handleNext, handlePrevious]);
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -65,7 +123,7 @@ export const RequirementViewLayout: React.FC<RequirementViewLayoutProps> = ({
       case 2:
         return <ViewDetailsSection requirement={requirement} />;
       case 3:
-        return <ViewDocumentsSection documents={requirement.documents} />;
+        return <ViewDocumentsSection documents={requirement?.documents} />;
       case 4:
         return <ViewApprovalSection requirement={requirement} />;
       default:
@@ -73,72 +131,71 @@ export const RequirementViewLayout: React.FC<RequirementViewLayoutProps> = ({
     }
   };
 
-  const requirementId = requirement?.id || requirement?.draftId || requirement?.requirementId || '';
-
   return (
-    <div className="flex flex-col h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-20 bg-background/95 backdrop-blur border-b px-4 py-3">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => navigate(-1)}
-              className="flex-shrink-0"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div className="min-w-0">
-              <h1 className="text-lg font-semibold truncate">
-                {requirement?.title || 'Requirement Details'}
-              </h1>
-              <div className="flex items-center gap-2 mt-0.5">
-                <Badge className={getStatusColor(requirement?.status)}>
-                  {requirement?.status || 'Draft'}
-                </Badge>
-                {requirement?.priority && (
-                  <Badge className={getPriorityColor(requirement.priority)}>
-                    {requirement.priority}
-                  </Badge>
-                )}
-              </div>
+    <div className="min-h-screen bg-muted/30">
+      {/* Mobile Progress Bar */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50">
+        <div className="h-1 bg-muted">
+          <div
+            className="h-full bg-primary transition-all duration-500 ease-out"
+            style={{ width: `${(currentStep / 4) * 100}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Mobile Header */}
+      <div className="lg:hidden sticky top-1 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            {currentStep > 1 ? (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handlePrevious}
+                className="shrink-0"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate(-1)}
+                className="shrink-0"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            )}
+            <div>
+              <p className="text-xs font-medium text-muted-foreground">
+                Step {currentStep} of 4
+              </p>
+              <h2 className="text-sm font-semibold truncate">
+                {stepTitles[currentStep - 1]}
+              </h2>
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex items-center gap-2">
             <Button
-              variant={activePanel === 'comments' ? 'secondary' : 'outline'}
-              size="sm"
+              variant={activePanel === 'comments' ? 'secondary' : 'ghost'}
+              size="icon"
               onClick={() => togglePanel('comments')}
-              className="gap-1.5"
             >
               <MessageSquare className="w-4 h-4" />
-              <span className="hidden sm:inline">Comments</span>
-              <ChevronDown className={cn(
-                "w-3 h-3 transition-transform",
-                activePanel === 'comments' && "rotate-180"
-              )} />
             </Button>
             <Button
-              variant={activePanel === 'approval' ? 'secondary' : 'outline'}
-              size="sm"
+              variant={activePanel === 'approval' ? 'secondary' : 'ghost'}
+              size="icon"
               onClick={() => togglePanel('approval')}
-              className="gap-1.5"
             >
               <Shield className="w-4 h-4" />
-              <span className="hidden sm:inline">Approval Status</span>
-              <ChevronDown className={cn(
-                "w-3 h-3 transition-transform",
-                activePanel === 'approval' && "rotate-180"
-              )} />
             </Button>
           </div>
         </div>
 
-        {/* Inline Panels */}
-        <div className="mt-3">
+        {/* Mobile Inline Panels */}
+        <div className="px-4 pb-3">
           <InlineCommentsPanel
             requirementId={requirementId}
             isOpen={activePanel === 'comments'}
@@ -151,78 +208,245 @@ export const RequirementViewLayout: React.FC<RequirementViewLayoutProps> = ({
             matrixName={requirement?.selectedApprovalMatrix?.name}
           />
         </div>
-      </header>
+      </div>
 
-      {/* Main Content */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Desktop Sidebar */}
-        <aside className="hidden lg:flex w-64 flex-col border-r bg-muted/30 p-4">
-          <ReadOnlyVerticalStepper
-            currentStep={currentStep}
-            onStepClick={setCurrentStep}
-          />
+      {/* Desktop Layout */}
+      <div className="hidden lg:flex h-screen">
+        {/* Left Panel - Vertical Stepper */}
+        <aside className="w-72 xl:w-80 flex-shrink-0 bg-card border-r border-border/50 flex flex-col">
+          {/* Header */}
+          <div className="p-6 border-b border-border/50">
+            <div className="flex items-center gap-2 mb-2">
+              <Eye className="h-5 w-5 text-primary" />
+              <h1 className="text-lg font-bold text-foreground">
+                View Requirement
+              </h1>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Read-only mode
+            </p>
+          </div>
+
+          {/* Stepper */}
+          <div className="flex-1 overflow-y-auto p-4">
+            <ReadOnlyVerticalStepper
+              currentStep={currentStep}
+              onStepClick={handleStepClick}
+            />
+          </div>
+
+          {/* Status Footer */}
+          <div className="p-4 border-t border-border/50 bg-muted/30 space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge className={getStatusColor(requirement?.status)}>
+                {requirement?.status || 'Draft'}
+              </Badge>
+              {requirement?.priority && (
+                <Badge className={getPriorityColor(requirement.priority)}>
+                  {requirement.priority}
+                </Badge>
+              )}
+            </div>
+            {requirement?.title && (
+              <p className="text-xs text-muted-foreground truncate">
+                {requirement.title}
+              </p>
+            )}
+          </div>
         </aside>
 
-        {/* Mobile Step Selector */}
-        <div className="lg:hidden fixed bottom-20 left-0 right-0 z-10 px-4">
-          <div className="bg-background/95 backdrop-blur border rounded-lg shadow-lg p-2 flex justify-around">
-            {[1, 2, 3, 4].map((step) => (
-              <button
-                key={step}
-                onClick={() => setCurrentStep(step)}
-                className={cn(
-                  "flex-1 py-2 px-3 text-xs font-medium rounded-md transition-colors",
-                  currentStep === step 
-                    ? "bg-primary text-primary-foreground" 
-                    : "text-muted-foreground hover:bg-muted"
-                )}
-              >
-                {step === 1 && 'Info'}
-                {step === 2 && 'Details'}
-                {step === 3 && 'Docs'}
-                {step === 4 && 'Approval'}
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* Main Content Area */}
+        <main className="flex-1 flex flex-col overflow-hidden">
+          {/* Desktop Header */}
+          <header className="flex-shrink-0 bg-background border-b border-border/50 px-8 py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-semibold text-foreground">
+                  {stepTitles[currentStep - 1]}
+                </h2>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  Step {currentStep} of 4
+                </p>
+              </div>
 
-        {/* Content Area */}
-        <main className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full">
-            <div className="p-6 pb-32 lg:pb-24 max-w-3xl mx-auto">
-              {renderStepContent()}
+              <div className="flex items-center gap-3">
+                <Button
+                  variant={activePanel === 'comments' ? 'secondary' : 'outline'}
+                  size="sm"
+                  onClick={() => togglePanel('comments')}
+                  className="gap-2"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Comments
+                </Button>
+                <Button
+                  variant={activePanel === 'approval' ? 'secondary' : 'outline'}
+                  size="sm"
+                  onClick={() => togglePanel('approval')}
+                  className="gap-2"
+                >
+                  <Shield className="w-4 h-4" />
+                  Approval Status
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/dashboard/requirements/pending')}
+                  className="gap-2 text-muted-foreground"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back
+                </Button>
+              </div>
             </div>
-          </ScrollArea>
+
+            {/* Desktop Inline Panels */}
+            <div className="mt-4">
+              <InlineCommentsPanel
+                requirementId={requirementId}
+                isOpen={activePanel === 'comments'}
+                onClose={() => setActivePanel(null)}
+              />
+              <InlineApprovalStatusPanel
+                isOpen={activePanel === 'approval'}
+                onClose={() => setActivePanel(null)}
+                approvalProgress={requirement?.approvalProgress}
+                matrixName={requirement?.selectedApprovalMatrix?.name}
+              />
+            </div>
+          </header>
+
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="max-w-4xl mx-auto p-6 lg:p-8">
+              <div
+                className={cn(
+                  "transition-all duration-300 ease-out",
+                  direction === "forward" ? "animate-in slide-in-from-right-4 fade-in" : "animate-in slide-in-from-left-4 fade-in"
+                )}
+                key={currentStep}
+              >
+                {renderStepContent()}
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Footer */}
+          <footer className="flex-shrink-0 bg-background border-t border-border/50 px-8 py-4">
+            <div className="flex items-center justify-between max-w-4xl mx-auto">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  onClick={handlePrevious}
+                  disabled={currentStep === 1}
+                  className="gap-2"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate('/dashboard/requirements/pending')}
+                  className="gap-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to List
+                </Button>
+              </div>
+
+              <p className="text-xs text-muted-foreground hidden md:block">
+                Use Alt + Arrow keys to navigate
+              </p>
+
+              <div className="flex items-center gap-3">
+                {canShowApprovalActions ? (
+                  <RequirementApprovalActions
+                    requirementId={requirementId}
+                    onActionComplete={onActionComplete}
+                  />
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    {requirement?.status === 'approved' 
+                      ? 'Approved'
+                      : requirement?.status === 'rejected'
+                      ? 'Rejected'
+                      : 'Not an approver'}
+                  </p>
+                )}
+
+                <Button
+                  onClick={handleNext}
+                  disabled={currentStep === 4}
+                  className="gap-2"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </footer>
         </main>
       </div>
 
-      {/* Footer */}
-      <footer className="sticky bottom-0 z-20 bg-background/95 backdrop-blur border-t px-4 py-3">
-        <div className="flex items-center justify-between max-w-3xl mx-auto">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/dashboard/requirements/pending')}
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to List
-          </Button>
+      {/* Mobile Content */}
+      <div
+        {...swipeHandlers}
+        className="lg:hidden pt-2 pb-32 px-4 touch-pan-y"
+      >
+        <div
+          className={cn(
+            "transition-all duration-300 ease-out",
+            direction === "forward" ? "animate-in slide-in-from-right-4 fade-in" : "animate-in slide-in-from-left-4 fade-in"
+          )}
+          key={currentStep}
+        >
+          {renderStepContent()}
+        </div>
+      </div>
+
+      {/* Mobile Footer */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-t shadow-lg">
+        <div className="flex items-center gap-3 p-4">
+          {currentStep > 1 && (
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              size="sm"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Back
+            </Button>
+          )}
 
           {canShowApprovalActions ? (
-            <RequirementApprovalActions
-              requirementId={requirementId}
-              onActionComplete={onActionComplete}
-            />
+            <div className="flex-1">
+              <RequirementApprovalActions
+                requirementId={requirementId}
+                onActionComplete={onActionComplete}
+              />
+            </div>
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <span className="flex-1 text-xs text-muted-foreground text-center">
               {requirement?.status === 'approved' 
-                ? 'This requirement has been approved'
+                ? 'Approved'
                 : requirement?.status === 'rejected'
-                ? 'This requirement was rejected'
-                : 'You are not an approver for the current level'}
-            </p>
+                ? 'Rejected'
+                : 'Not an approver for current level'}
+            </span>
+          )}
+
+          {currentStep < 4 && (
+            <Button
+              onClick={handleNext}
+              className="flex-1"
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </Button>
           )}
         </div>
-      </footer>
+      </div>
     </div>
   );
 };
