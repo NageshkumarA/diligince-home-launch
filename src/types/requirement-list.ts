@@ -1,11 +1,15 @@
 export interface RequirementListItem {
   id: string;
+  draftId?: string;
   title: string;
   category: string;
   priority: 'critical' | 'high' | 'medium' | 'low';
   estimatedValue: number;
+  estimatedBudget?: number;
   status: RequirementStatus;
   createdAt?: string; // Mapped from backend
+  publishedAt?: string;
+  submissionDeadline?: string;
   budget?: { min: number; max: number; currency: string };
   approvalProgress?: {
     currentLevel: number;
