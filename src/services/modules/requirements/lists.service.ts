@@ -414,6 +414,59 @@ class RequirementListService {
     }
   }
 
+  async getApprovedById(requirementId: string): Promise<RequirementDetail | null> {
+    try {
+      const response = await apiService.get<{ success: boolean; data: RequirementDetail }>(
+        requirementsRoutes.getById(requirementId)
+      );
+
+      if (response.data && response.data.status === 'approved') {
+        return response.data;
+      }
+      // If status doesn't match but data exists, still return it
+      if (response.data) {
+        return response.data;
+      }
+      return null;
+    } catch (error) {
+      console.error("Failed to get approved requirement:", error);
+      throw error;
+    }
+  }
+
+  async getPublishedById(requirementId: string): Promise<RequirementDetail | null> {
+    try {
+      const response = await apiService.get<{ success: boolean; data: RequirementDetail }>(
+        requirementsRoutes.getById(requirementId)
+      );
+
+      if (response.data && response.data.status === 'published') {
+        return response.data;
+      }
+      // If status doesn't match but data exists, still return it
+      if (response.data) {
+        return response.data;
+      }
+      return null;
+    } catch (error) {
+      console.error("Failed to get published requirement:", error);
+      throw error;
+    }
+  }
+
+  async publishRequirement(requirementId: string): Promise<{ success: boolean }> {
+    try {
+      const response = await apiService.post<{ success: boolean }, Record<string, never>>(
+        `/api/v1/industry/requirements/${requirementId}/publish`,
+        {}
+      );
+      return response;
+    } catch (error) {
+      console.error("Failed to publish requirement:", error);
+      throw error;
+    }
+  }
+
   // ============= Export Functions =============
 
   async exportToXLSX(type: 'drafts' | 'pending' | 'approved' | 'published' | 'archived', params?: ListQueryParams): Promise<Blob> {

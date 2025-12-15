@@ -126,22 +126,48 @@ const RequirementsApproved = () => {
       label: "Est. Value",
       isSortable: true,
       align: "right",
+      render: (value) => {
+        if (!value) return '-';
+        return `₹${Number(value).toLocaleString()}`;
+      },
     },
     {
       name: "approvedBy",
       label: "Approved By",
       isSortable: true,
       isSearchable: true,
+      render: (value, row) => {
+        // Handle object format: { id, name, email }
+        if (typeof value === 'object' && value?.name) {
+          return value.name;
+        }
+        // Fallback: get from last approval level
+        const lastLevel = (row as any).approvalProgress?.levels?.find(
+          (l: any) => l.levelNumber === (row as any).approvalProgress?.totalLevels
+        );
+        const lastApprover = lastLevel?.approvers?.find((a: any) => a.status === 'approved');
+        return lastApprover?.memberName || value || 'N/A';
+      },
     },
     {
       name: "approvedDate",
       label: "Approved Date",
       isSortable: true,
+      render: (value, row) => {
+        // Try direct field first, then fallback to last approval timestamp
+        const date = value || (row as any).approvalProgress?.levels?.[(row as any).approvalProgress?.totalLevels - 1]?.completedAt;
+        if (!date) return '-';
+        return new Date(date).toLocaleDateString();
+      },
     },
     {
       name: "publishDate",
-      label: "Publish Date",
+      label: "Scheduled Publish",
       isSortable: true,
+      render: (value) => {
+        if (!value) return <span className="text-muted-foreground">Not scheduled</span>;
+        return new Date(value).toLocaleDateString();
+      },
     },
     {
       name: "actions",
@@ -154,7 +180,7 @@ const RequirementsApproved = () => {
 
         return (
           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-            {/* View - Always visible */}
+            {/* View - Always visible - opens read-only approved view */}
             <Button
               size="sm"
               variant="outline"
@@ -164,20 +190,20 @@ const RequirementsApproved = () => {
                   toast.error('Cannot view: Invalid ID');
                   return;
                 }
-                navigate(`/dashboard/requirements/${reqId}`);
+                navigate(`/dashboard/requirements/approved/${reqId}`);
               }}
             >
               <Eye className="h-4 w-4 mr-1" />
               View
             </Button>
 
-            {/* Publish - Only for creators with write permission */}
+            {/* Publish - Only for creators with write permission - opens view with publish action */}
             {isCreator && hasWritePermission && (
               <Button
                 size="sm"
                 variant="default"
                 onClick={() => {
-                  navigate(`/dashboard/create-requirement?draftId=${row.id}`);
+                  navigate(`/dashboard/requirements/approved/${row.id}?action=publish`);
                 }}
               >
                 <Rocket className="h-4 w-4 mr-1" />
@@ -293,7 +319,7 @@ const RequirementsApproved = () => {
       <CustomTable
         columns={columns}
         data={data}
-        onRowClick={(row) => navigate(`/dashboard/requirements/${row.id}`)}
+        onRowClick={(row) => navigate(`/dashboard/requirements/approved/${row.id}`)}
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{
