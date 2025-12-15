@@ -112,27 +112,30 @@ const RequirementsPublished = () => {
       label: "Est. Value",
       isSortable: true,
       align: "right",
-      render: (value) => {
-        if (!value) return '-';
-        return `₹${Number(value).toLocaleString()}`;
+      render: (value, row) => {
+        const amount = row.estimatedBudget ?? row.estimatedValue ?? value;
+        if (!amount) return '-';
+        return `₹${Number(amount).toLocaleString()}`;
       },
     },
     {
       name: "publishedDate",
       label: "Published Date",
       isSortable: true,
-      render: (value) => {
-        if (!value) return '-';
-        return new Date(value).toLocaleDateString();
+      render: (value, row) => {
+        const date = row.publishedAt ?? row.publishedDate ?? value;
+        if (!date) return '-';
+        return new Date(date).toLocaleDateString();
       },
     },
     {
       name: "deadline",
       label: "Quote Deadline",
       isSortable: true,
-      render: (value) => {
-        if (!value) return '-';
-        return new Date(value).toLocaleDateString();
+      render: (value, row) => {
+        const date = row.submissionDeadline ?? row.deadline ?? value;
+        if (!date) return '-';
+        return new Date(date).toLocaleDateString();
       },
     },
     {
@@ -226,7 +229,7 @@ const RequirementsPublished = () => {
       <CustomTable
         columns={columns}
         data={data}
-        onRowClick={(row) => navigate(`/dashboard/requirements/published/${row.id}`)}
+        onRowClick={(row) => navigate(`/dashboard/requirements/published/${row.id || row.draftId}`)}
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{
