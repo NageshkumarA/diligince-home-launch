@@ -83,7 +83,9 @@ import RequirementsDrafts from "@/pages/RequirementsDrafts";
 import RequirementsPending from "@/pages/RequirementsPending";
 import PendingRequirementView from "@/pages/PendingRequirementView";
 import RequirementsApproved from "@/pages/RequirementsApproved";
+import ApprovedRequirementView from "@/pages/ApprovedRequirementView";
 import RequirementsPublished from "@/pages/RequirementsPublished";
+import PublishedRequirementView from "@/pages/PublishedRequirementView";
 import RequirementDetails from "@/pages/RequirementDetails";
 
 // Quotations sub-pages
@@ -379,8 +381,16 @@ function App() {
                                 element={<RequirementsApproved />}
                               />
                               <Route
+                                path="requirements/approved/:id"
+                                element={<ApprovedRequirementView />}
+                              />
+                              <Route
                                 path="requirements/published"
                                 element={<RequirementsPublished />}
+                              />
+                              <Route
+                                path="requirements/published/:id"
+                                element={<PublishedRequirementView />}
                               />
                               {/* Requirement Details */}
                               <Route

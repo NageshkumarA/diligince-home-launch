@@ -25,6 +25,8 @@ interface RequirementViewLayoutProps {
   requirement: any;
   canShowApprovalActions: boolean;
   onActionComplete?: () => void;
+  headerBadge?: React.ReactNode;
+  customFooterActions?: React.ReactNode;
 }
 
 const stepTitles = [
@@ -37,7 +39,9 @@ const stepTitles = [
 export const RequirementViewLayout: React.FC<RequirementViewLayoutProps> = ({
   requirement,
   canShowApprovalActions,
-  onActionComplete
+  onActionComplete,
+  headerBadge,
+  customFooterActions
 }) => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
@@ -260,13 +264,20 @@ export const RequirementViewLayout: React.FC<RequirementViewLayoutProps> = ({
           {/* Desktop Header */}
           <header className="flex-shrink-0 bg-background border-b border-border/50 px-8 py-4">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-semibold text-foreground">
-                  {stepTitles[currentStep - 1]}
-                </h2>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  Step {currentStep} of 4
-                </p>
+              <div className="flex items-center gap-3">
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground">
+                    {stepTitles[currentStep - 1]}
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-0.5">
+                    Step {currentStep} of 4
+                  </p>
+                </div>
+                {headerBadge && (
+                  <div className="ml-4">
+                    {headerBadge}
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-3">
@@ -291,7 +302,7 @@ export const RequirementViewLayout: React.FC<RequirementViewLayoutProps> = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate('/dashboard/requirements/pending')}
+                  onClick={() => navigate(-1)}
                   className="gap-2 text-muted-foreground"
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -344,15 +355,6 @@ export const RequirementViewLayout: React.FC<RequirementViewLayoutProps> = ({
                   <ChevronLeft className="h-4 w-4" />
                   Previous
                 </Button>
-
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate('/dashboard/requirements/pending')}
-                  className="gap-2"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to List
-                </Button>
               </div>
 
               <p className="text-xs text-muted-foreground hidden md:block">
@@ -360,7 +362,10 @@ export const RequirementViewLayout: React.FC<RequirementViewLayoutProps> = ({
               </p>
 
               <div className="flex items-center gap-3">
-                {canShowApprovalActions ? (
+                {/* Custom footer actions (for approved/published views) */}
+                {customFooterActions ? (
+                  customFooterActions
+                ) : canShowApprovalActions ? (
                   <RequirementApprovalActions
                     requirementId={requirementId}
                     onActionComplete={onActionComplete}
@@ -419,7 +424,10 @@ export const RequirementViewLayout: React.FC<RequirementViewLayoutProps> = ({
             </Button>
           )}
 
-          {canShowApprovalActions ? (
+          {/* Custom footer actions (for approved/published views) */}
+          {customFooterActions ? (
+            <div className="flex-1">{customFooterActions}</div>
+          ) : canShowApprovalActions ? (
             <div className="flex-1">
               <RequirementApprovalActions
                 requirementId={requirementId}

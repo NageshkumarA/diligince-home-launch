@@ -113,22 +113,46 @@ const RequirementsPublished = () => {
       label: "Est. Value",
       isSortable: true,
       align: "right",
+      render: (value) => {
+        if (!value) return '-';
+        return `₹${Number(value).toLocaleString()}`;
+      },
     },
     {
       name: "publishedDate",
       label: "Published Date",
       isSortable: true,
+      render: (value) => {
+        if (!value) return '-';
+        return new Date(value).toLocaleDateString();
+      },
     },
     {
       name: "deadline",
       label: "Quote Deadline",
       isSortable: true,
+      render: (value) => {
+        if (!value) return '-';
+        return new Date(value).toLocaleDateString();
+      },
     },
     {
       name: "quotesReceived",
       label: "Quotes",
       isSortable: true,
       align: "center",
+      render: (value) => {
+        const count = value ?? 0;
+        return (
+          <span className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            count > 0 
+              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' 
+              : 'bg-muted text-muted-foreground'
+          }`}>
+            {count}
+          </span>
+        );
+      },
     },
   ];
 
@@ -203,7 +227,7 @@ const RequirementsPublished = () => {
       <CustomTable
         columns={columns}
         data={data}
-        onRowClick={(row) => navigate(`/dashboard/requirements/${row.id}`)}
+        onRowClick={(row) => navigate(`/dashboard/requirements/published/${row.id}`)}
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{
