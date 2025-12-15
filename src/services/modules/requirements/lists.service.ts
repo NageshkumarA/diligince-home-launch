@@ -267,7 +267,10 @@ class RequirementListService {
           requirements = response.data.published;
         } else if (Array.isArray(response.data.requirements)) {
           requirements = response.data.requirements;
-        } else if (Array.isArray(response.data)) {
+        }else if (Array.isArray(response.data.items)) {
+          requirements = response.data.items;
+        }
+         else if (Array.isArray(response.data)) {
           requirements = response.data;
         }
       }

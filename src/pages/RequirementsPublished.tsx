@@ -39,7 +39,6 @@ const RequirementsPublished = () => {
         filters,
         createdById: createdBy === 'me' ? user?.id : createdBy === 'all' ? undefined : createdBy,
       });
-
       // Defensive check to ensure requirements is an array
       const requirements = Array.isArray(response.data?.requirements)
         ? response.data.requirements
