@@ -62,9 +62,12 @@ const MultiStepLogin: React.FC = () => {
     }
   }, [state.step]);
 
-  // Get redirect path based on verification status
-  const getRedirectPath = (userVerificationStatus?: string): string => {
+  // Get redirect path based on verification status and user role
+  const getRedirectPath = (userVerificationStatus?: string, selectedAccount?: AvailableAccount | null): string => {
     const status = userVerificationStatus || verificationStatus;
+    const account = selectedAccount || state.selectedAccount;
+    const userType = account?.userType?.toLowerCase() || '';
+    const isVendor = userType.includes('vendor') || userType === 'vendor';
     
     switch (status) {
       case VerificationStatus.APPROVED:
@@ -76,11 +79,11 @@ const MultiStepLogin: React.FC = () => {
       case VerificationStatus.REJECTED:
       case 'rejected':
         toast.error('Your profile verification was rejected. Please update your profile.');
-        return '/dashboard/industry-settings';
+        return isVendor ? '/vendor-settings' : '/dashboard/industry-settings';
       case VerificationStatus.INCOMPLETE:
       case 'incomplete':
       default:
-        return '/dashboard/industry-settings';
+        return isVendor ? '/vendor-settings' : '/dashboard/industry-settings';
     }
   };
 
@@ -165,7 +168,7 @@ const MultiStepLogin: React.FC = () => {
             toast.success('Login successful');
             // Use verification status from selected account or fetch from context
             const accountVerificationStatus = state.selectedAccount?.verificationStatus;
-            const redirectPath = getRedirectPath(accountVerificationStatus);
+            const redirectPath = getRedirectPath(accountVerificationStatus, state.selectedAccount);
             navigate(redirectPath);
           } else {
             setError(result.error || 'Login failed');
@@ -199,7 +202,7 @@ const MultiStepLogin: React.FC = () => {
           toast.success('Authentication successful');
           // Use verification status from selected account or fetch from context
           const accountVerificationStatus = state.selectedAccount?.verificationStatus;
-          const redirectPath = getRedirectPath(accountVerificationStatus);
+          const redirectPath = getRedirectPath(accountVerificationStatus, state.selectedAccount);
           navigate(redirectPath);
         } else {
           setError(result.error || 'Verification failed');
