@@ -96,3 +96,17 @@ export const getDashboardRoute = (user: UserProfile): string => {
       return '/signin';
   }
 };
+
+// Settings routing utility based on role
+export const getSettingsRoute = (role: UserRole | string): string => {
+  switch (role) {
+    case 'industry':
+      return '/dashboard/industry-settings';
+    case 'vendor':
+      return '/vendor-settings';
+    case 'professional':
+      return '/professional-settings';
+    default:
+      return '/dashboard/industry-settings';
+  }
+};

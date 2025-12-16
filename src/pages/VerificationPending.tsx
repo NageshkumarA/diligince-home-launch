@@ -8,10 +8,12 @@ import { useNavigate } from 'react-router-dom';
 import { VerificationStatus, VerificationStep } from '@/types/verification';
 import { toast } from 'sonner';
 import { companyProfileService } from '@/services';
+import { getSettingsRoute, getDashboardRoute } from '@/types/shared';
 
 const VerificationPending = () => {
-  const { verificationStatus, refreshVerificationStatus } = useUser();
+  const { verificationStatus, refreshVerificationStatus, user } = useUser();
   const navigate = useNavigate();
+  const userRole = user?.role || 'industry';
   const [timeRemaining, setTimeRemaining] = useState('24h 0m');
   const [verificationSteps, setVerificationSteps] = useState<Array<{
     label: string;
@@ -93,15 +95,19 @@ const VerificationPending = () => {
     }
   }, [refreshVerificationStatus]);
 
-  // Redirect if not pending
+  // Redirect if not pending - role-aware
   useEffect(() => {
     if (verificationStatus === VerificationStatus.APPROVED) {
-      navigate('/dashboard/industry');
+      // Redirect to role-specific dashboard
+      const dashboardPath = user ? getDashboardRoute(user) : '/dashboard/industry';
+      navigate(dashboardPath);
     } else if (verificationStatus === VerificationStatus.INCOMPLETE ||
       verificationStatus === VerificationStatus.REJECTED) {
-      navigate('/dashboard/industry-settings');
+      // Redirect to role-specific settings
+      const settingsPath = getSettingsRoute(userRole);
+      navigate(settingsPath);
     }
-  }, [verificationStatus, navigate]);
+  }, [verificationStatus, navigate, user, userRole]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4">
@@ -225,9 +231,10 @@ const VerificationPending = () => {
               // Show success message
               toast.success('✅ Verification approved! Redirecting to dashboard...');
 
-              // Redirect to dashboard after 1 second
+              // Redirect to role-specific dashboard after 1 second
               setTimeout(() => {
-                navigate('/dashboard/industry');
+                const dashboardPath = user ? getDashboardRoute(user) : '/dashboard/industry';
+                navigate(dashboardPath);
               }, 1000);
             }}
           >
