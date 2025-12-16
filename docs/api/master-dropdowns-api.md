@@ -847,3 +847,363 @@ const logisticsVendorSpecializations = [
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0.0 | 2024-12-16 | Initial specification |
+| 1.1.0 | 2024-12-16 | Added Backend Requirements from Frontend section |
+
+---
+
+## Backend Requirements from Frontend (CRITICAL)
+
+This section documents exactly what the frontend expects from the backend API. **Frontend implementation is complete** - backend team must implement these endpoints to match.
+
+### ✅ Frontend Implementation Status
+
+| Component | Status | Location |
+|-----------|--------|----------|
+| Service Layer | ✅ Complete | `src/services/modules/dropdowns/dropdown.service.ts` |
+| Type Definitions | ✅ Complete | `src/services/modules/dropdowns/dropdown.types.ts` |
+| React Query Hook | ✅ Complete | `src/hooks/useDropdownOptions.ts` |
+| MultiSelect Component | ✅ Complete | `src/components/ui/multi-select.tsx` |
+| ProfessionalForm | ✅ Updated | `src/components/signup/ProfessionalForm.tsx` |
+| VendorFormEnhanced | ✅ Updated | `src/components/signup/VendorFormEnhanced.tsx` |
+| Type: ProfessionalProfile | ✅ Updated | `src/types/professional.ts` (expertise: string[]) |
+| Type: RegisterRequest | ✅ Updated | `src/services/modules/auth/auth.types.ts` |
+
+---
+
+### 1. Public Dropdown Options Endpoint (REQUIRED)
+
+**Endpoint:** `GET /api/v1/public/dropdown-options`
+
+**Frontend Calls This With:**
+
+```
+GET /api/v1/public/dropdown-options?module=expert&category=expertise
+GET /api/v1/public/dropdown-options?module=serviceVendor&category=specialization
+GET /api/v1/public/dropdown-options?module=productVendor&category=specialization
+GET /api/v1/public/dropdown-options?module=logisticsVendor&category=specialization
+```
+
+**Expected Response Structure (MUST MATCH EXACTLY):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "options": [
+      {
+        "id": "opt_001",
+        "label": "Mechanical Engineering",
+        "value": "mechanical-engineering",
+        "description": "Optional description"
+      },
+      {
+        "id": "opt_002",
+        "label": "Electrical Engineering", 
+        "value": "electrical-engineering"
+      }
+    ],
+    "total": 15
+  },
+  "message": "Options fetched successfully"
+}
+```
+
+**Critical Requirements:**
+
+| Requirement | Details |
+|-------------|---------|
+| Response field `label` | Frontend displays this in dropdown (NOT `name`) |
+| Response field `value` | Frontend sends this in form submission |
+| Sort Order | MUST be sorted alphabetically by `label` (A-Z) |
+| Active Filter | MUST only return `isActive: true` options |
+| No Auth | This is a PUBLIC endpoint - no token required |
+| Empty Array | Return `{ options: [], total: 0 }` if no matches |
+
+---
+
+### 2. Registration Endpoint Update (REQUIRED)
+
+**Endpoint:** `POST /api/v1/auth/register`
+
+**Frontend Now Sends Arrays:**
+
+#### Professional Registration Payload:
+
+```json
+{
+  "email": "professional@example.com",
+  "password": "SecurePass123!",
+  "phone": "9876543210",
+  "userType": "Professional",
+  "firstName": "Rajesh",
+  "lastName": "Kumar",
+  "expertise": ["mechanical-engineering", "process-engineering", "quality-assurance"],
+  "termsAccepted": true,
+  "privacyAccepted": true
+}
+```
+
+#### Vendor Registration Payload:
+
+```json
+{
+  "email": "vendor@example.com",
+  "password": "SecurePass123!",
+  "phone": "9876543210",
+  "userType": "Vendor",
+  "userSubType": "ServiceVendor",
+  "firstName": "Priya",
+  "lastName": "Sharma",
+  "businessName": "Sharma Industrial Services",
+  "vendorCategory": "Service Vendor",
+  "specialization": ["equipment-maintenance", "calibration-services", "repair-services"],
+  "termsAccepted": true,
+  "privacyAccepted": true
+}
+```
+
+**Backend Must:**
+
+1. Accept `expertise` as `string[]` for Professional users
+2. Accept `specialization` as `string[]` for Vendor users
+3. Store these as arrays in the database
+4. Validate each value exists in `master_dropdowns` collection (optional but recommended)
+
+---
+
+### 3. Database Schema Updates (REQUIRED)
+
+#### Users Collection (Professionals):
+
+```javascript
+// BEFORE (old schema)
+{
+  expertise: "Mechanical Engineering"  // Single string
+}
+
+// AFTER (new schema)
+{
+  expertise: ["mechanical-engineering", "process-engineering"]  // Array of values
+}
+```
+
+#### Vendors Collection:
+
+```javascript
+// BEFORE (old schema)
+{
+  specialization: "Equipment Maintenance"  // Single string
+}
+
+// AFTER (new schema)
+{
+  specialization: ["equipment-maintenance", "calibration-services"]  // Array of values
+}
+```
+
+---
+
+### 4. Data Migration Script (REQUIRED)
+
+**Run this migration to convert existing string fields to arrays:**
+
+```javascript
+// Migration for users collection (professionals)
+db.users.updateMany(
+  { 
+    userType: 'Professional',
+    expertise: { $type: 'string' }
+  },
+  [
+    {
+      $set: {
+        expertise: {
+          $cond: {
+            if: { $eq: ['$expertise', ''] },
+            then: [],
+            else: ['$expertise']
+          }
+        }
+      }
+    }
+  ]
+);
+
+// Migration for vendors collection
+db.vendors.updateMany(
+  { 
+    specialization: { $type: 'string' }
+  },
+  [
+    {
+      $set: {
+        specialization: {
+          $cond: {
+            if: { $eq: ['$specialization', ''] },
+            then: [],
+            else: ['$specialization']
+          }
+        }
+      }
+    }
+  ]
+);
+```
+
+---
+
+### 5. Seed Data (REQUIRED)
+
+Backend must seed the `master_dropdowns` collection with initial options.
+
+**Minimum Required Data:**
+
+| Module | Category | Minimum Options |
+|--------|----------|-----------------|
+| `expert` | `expertise` | 15-20 options |
+| `serviceVendor` | `specialization` | 10-15 options |
+| `productVendor` | `specialization` | 10-15 options |
+| `logisticsVendor` | `specialization` | 10-15 options |
+
+**Sample Seed Document:**
+
+```javascript
+{
+  id: "opt_exp_001",
+  name: "Mechanical Engineering",  // Store as 'name' in DB
+  value: "mechanical-engineering",
+  module: "expert",
+  category: "expertise",
+  description: "Design and manufacturing of mechanical systems",
+  isActive: true,
+  sortOrder: 0,
+  createdAt: new Date(),
+  updatedAt: new Date()
+}
+```
+
+**NOTE:** Store as `name` in DB, but return as `label` in API response.
+
+---
+
+### 6. Testing Checklist for Backend
+
+| Test Case | Expected Result |
+|-----------|-----------------|
+| `GET /api/v1/public/dropdown-options?module=expert&category=expertise` | Returns array of expertise options sorted A-Z |
+| `GET /api/v1/public/dropdown-options?module=serviceVendor&category=specialization` | Returns service vendor specializations |
+| `GET /api/v1/public/dropdown-options?module=productVendor&category=specialization` | Returns product vendor specializations |
+| `GET /api/v1/public/dropdown-options?module=logisticsVendor&category=specialization` | Returns logistics vendor specializations |
+| `GET /api/v1/public/dropdown-options?module=invalid&category=expertise` | Returns 400 error with validation message |
+| `POST /api/v1/auth/register` with `expertise: ["value1", "value2"]` | Creates professional with array stored |
+| `POST /api/v1/auth/register` with `specialization: ["value1"]` | Creates vendor with array stored |
+
+---
+
+### 7. Implementation Priority Order
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│ STEP 1: Create master_dropdowns collection + indexes (2h)        │
+│ - Create collection with proper schema                           │
+│ - Add compound indexes for efficient querying                    │
+└──────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ STEP 2: Seed initial dropdown options (2h)                       │
+│ - Add 15-20 expert expertise options                             │
+│ - Add 10-15 specializations per vendor type                      │
+└──────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ STEP 3: Implement GET /api/v1/public/dropdown-options (2h)       │
+│ - Query by module + category                                     │
+│ - Sort alphabetically by name/label                              │
+│ - Return only isActive: true                                     │
+│ - Map 'name' → 'label' in response                               │
+└──────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ STEP 4: Update registration endpoint (2h)                        │
+│ - Accept expertise as string[]                                   │
+│ - Accept specialization as string[]                              │
+│ - Update Joi/validation schema                                   │
+└──────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ STEP 5: Run data migration (1h)                                  │
+│ - Convert existing string expertise to array                     │
+│ - Convert existing string specialization to array                │
+└──────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ STEP 6: Update schema validators (1h)                            │
+│ - Update Mongoose/MongoDB validators                             │
+│ - Ensure arrays are stored correctly                             │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+**Total Backend Effort: ~10 hours**
+
+---
+
+### 8. Common Issues & Solutions
+
+| Issue | Solution |
+|-------|----------|
+| Frontend shows "Loading options..." forever | Check API returns proper response structure with `success: true` |
+| Dropdown shows empty | Verify `data.options` is an array, not null |
+| Options not sorted | Add `.sort({ name: 1 })` to MongoDB query |
+| 404 error on endpoint | Ensure route is registered under `/api/v1/public/` |
+| Registration fails with array | Update Joi schema to accept `expertise: Joi.array().items(Joi.string())` |
+
+---
+
+### 9. Response Field Mapping
+
+**Important:** The database stores `name` but the API must return `label`:
+
+```javascript
+// MongoDB Document
+{
+  name: "Mechanical Engineering",
+  value: "mechanical-engineering"
+}
+
+// API Response (frontend expects this)
+{
+  label: "Mechanical Engineering",  // Mapped from 'name'
+  value: "mechanical-engineering"
+}
+```
+
+**Controller Code Example:**
+
+```javascript
+const options = await MasterDropdown.find({ 
+  module, 
+  category, 
+  isActive: true 
+}).sort({ name: 1 });
+
+const mappedOptions = options.map(opt => ({
+  id: opt.id,
+  label: opt.name,  // Map name → label
+  value: opt.value,
+  description: opt.description
+}));
+
+res.json({
+  success: true,
+  data: {
+    options: mappedOptions,
+    total: mappedOptions.length
+  },
+  message: 'Options fetched successfully'
+});
+```

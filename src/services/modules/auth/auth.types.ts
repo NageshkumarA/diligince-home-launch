@@ -90,6 +90,9 @@ export interface RegisterRequest {
   lastName: string;
   role: string;
   companyName?: string;
+  expertise?: string[];      // For professionals - array of expertise areas
+  specialization?: string[]; // For vendors - array of specializations
+  vendorCategory?: string;   // For vendors - Service/Product/Logistics
 }
 
 export interface AuthResponse {
