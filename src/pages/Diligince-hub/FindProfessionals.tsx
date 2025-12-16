@@ -11,7 +11,7 @@ const mockProfessionals: ProfessionalListItem[] = [
   {
     id: "prof_001",
     name: "Dr. Vikram Singh",
-    expertise: "Quality Control & Assurance",
+    expertise: ["Quality Control & Assurance", "Six Sigma"],
     experience: 15,
     location: "Pune, Maharashtra",
     city: "Pune",
@@ -32,7 +32,7 @@ const mockProfessionals: ProfessionalListItem[] = [
   {
     id: "prof_002",
     name: "Sneha Deshmukh",
-    expertise: "Manufacturing Quality Engineer",
+    expertise: ["Manufacturing Quality Engineer"],
     experience: 10,
     location: "Mumbai, Maharashtra",
     city: "Mumbai",
@@ -52,7 +52,7 @@ const mockProfessionals: ProfessionalListItem[] = [
   {
     id: "prof_003",
     name: "Arjun Mehta",
-    expertise: "Quality Control Specialist",
+    expertise: ["Quality Control Specialist"],
     experience: 8,
     location: "Bengaluru, Karnataka",
     city: "Bengaluru",
@@ -90,7 +90,7 @@ const FindProfessionals: React.FC = () => {
       const term = searchTerm.toLowerCase();
       result = result.filter(p =>
         p.name.toLowerCase().includes(term) ||
-        p.expertise.toLowerCase().includes(term) ||
+        p.expertise.some(e => e.toLowerCase().includes(term)) ||
         p.skills.some(s => s.toLowerCase().includes(term))
       );
     }
@@ -101,8 +101,12 @@ const FindProfessionals: React.FC = () => {
     }
 
     // Expertise filter
-    if (filters.expertise) {
-      result = result.filter(p => p.expertise === filters.expertise);
+    if (filters.expertise && filters.expertise.length > 0) {
+      result = result.filter(p => 
+        filters.expertise!.some(filterExp => 
+          p.expertise.some(pExp => pExp.toLowerCase().includes(filterExp.toLowerCase()))
+        )
+      );
     }
 
     // Location filter
