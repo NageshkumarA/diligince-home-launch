@@ -39,7 +39,7 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
           fill="none"
           stroke="hsl(var(--muted))"
           strokeWidth={strokeWidth}
-          className="opacity-30"
+          className="opacity-50"
         />
         {/* Progress circle */}
         <circle
