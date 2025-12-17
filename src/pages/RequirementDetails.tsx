@@ -553,7 +553,7 @@ const RequirementDetails = () => {
                 <div>
                   <h4 className="font-medium">Technical Standards</h4>
                   <div className="flex flex-wrap gap-2">
-                    {requirement.technicalStandards.map((std, i) => (
+                    {(requirement.technicalStandards || []).map((std, i) => (
                       <Badge key={i} variant="outline">
                         {std}
                       </Badge>
@@ -582,7 +582,7 @@ const RequirementDetails = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                {requirement.complianceChecklist.map((item, i) => (
+                {(requirement.complianceChecklist || []).map((item, i) => (
                   <div
                     key={i}
                     className="flex items-start gap-3 p-3 rounded-lg border"
@@ -622,7 +622,7 @@ const RequirementDetails = () => {
                 <CardTitle>Approval Workflow</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {requirement.approvalSteps.map((step, i) => (
+                {(requirement.approvalSteps || []).map((step, i) => (
                   <div
                     key={i}
                     className="flex items-start gap-3 p-4 rounded-lg border"
@@ -666,7 +666,7 @@ const RequirementDetails = () => {
                 <CardTitle>Attached Documents</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {requirement.documents.map((doc, i) => (
+                {(requirement.documents || []).map((doc, i) => (
                   <div
                     key={i}
                     className="flex items-center justify-between p-3 border rounded-lg"
@@ -709,7 +709,7 @@ const RequirementDetails = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
-                {requirement.auditTrail.map((entry, i) => (
+                {(requirement.auditTrail || []).map((entry, i) => (
                   <div
                     key={i}
                     className="flex gap-3 p-3 border-l-2 border-blue-200 bg-blue-50/50"
