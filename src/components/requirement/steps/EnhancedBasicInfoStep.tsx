@@ -101,8 +101,11 @@ const EnhancedBasicInfoStep: React.FC<EnhancedBasicInfoStepProps> = ({
             Category <span className="text-destructive">*</span>
           </Label>
           <CategorySelector
-            value={formData.category || ""}
-            onChange={(value) => updateFormData({ category: value as any })}
+            value={formData.category || []}
+            onChange={(values) => updateFormData({ 
+              category: values as any,
+              specialization: [] // Clear specialization when categories change
+            })}
             error={stepErrors.category}
           />
         </div>

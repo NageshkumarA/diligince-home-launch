@@ -1,24 +1,24 @@
-# Requirement Specialization Multi-Select API Documentation
+# Requirement Multi-Category & Specialization API Documentation
 
 ## Overview
 
-This document outlines the backend changes required to support multi-select specialization field in the Create Requirement form. The specialization dropdown now fetches options from the existing `/public/dropdown-options` API based on the selected requirement category.
+This document outlines the backend changes required to support:
+1. Multi-category selection in Create Requirement (category is now an array)
+2. Combined specialization dropdown fetching options from multiple modules
 
-## Frontend Changes (Already Implemented)
+## Frontend Changes (Implemented)
 
-1. **Type Update**: `specialization` field changed from `string` to `string[]`
-2. **UI Update**: Single-select dropdown replaced with multi-select searchable dropdown
-3. **API Integration**: Uses existing `useDropdownOptions` hook with category-to-module mapping
-4. **"Urgent Requirement" Toggle**: Hidden from Advanced Options
+1. **Type Updates**: 
+   - `category` field changed from `string` to `string[]`
+   - `specialization` field remains `string[]`
 
-### Category to Module Mapping
+2. **UI Updates**: 
+   - CategorySelector now supports multi-select (toggle behavior)
+   - Specialization MultiSelect fetches combined options from all selected categories
 
-| Requirement Category | Dropdown Module | API Call |
-|---------------------|-----------------|----------|
-| Expert Services | `expert` | `GET /api/v1/public/dropdown-options?module=expert&category=specialization` |
-| Products & Materials | `productVendor` | `GET /api/v1/public/dropdown-options?module=productVendor&category=specialization` |
-| Contract Services | `serviceVendor` | `GET /api/v1/public/dropdown-options?module=serviceVendor&category=specialization` |
-| Logistics & Transport | `logisticsVendor` | `GET /api/v1/public/dropdown-options?module=logisticsVendor&category=specialization` |
+3. **API Integration**: 
+   - New `useSpecializationOptions` hook sends comma-separated modules
+   - Example: `GET /api/v1/public/dropdown-options?module=expert,serviceVendor,productVendor`
 
 ---
 
@@ -29,10 +29,14 @@ This document outlines the backend changes required to support multi-select spec
 **Collection:** `requirements`
 
 ```javascript
-// Change from:
-specialization: { type: String }
+// Change category from string to array:
+category: { 
+  type: [String], 
+  enum: ['expert', 'product', 'service', 'logistics'],
+  default: [] 
+}
 
-// To:
+// Specialization remains array:
 specialization: { 
   type: [String], 
   default: [] 
@@ -41,16 +45,34 @@ specialization: {
 
 ### 2. Migration Script
 
-Run this migration to convert existing string values to arrays:
-
 ```javascript
-// MongoDB Migration Script
-
-// Step 1: Convert existing string specialization values to arrays
+// Convert existing category string to array
 db.requirements.updateMany(
-  { 
-    specialization: { $exists: true, $type: "string" } 
-  },
+  { category: { $exists: true, $type: "string" } },
+  [
+    {
+      $set: {
+        category: {
+          $cond: {
+            if: { $or: [{ $eq: ["$category", ""] }, { $eq: ["$category", null] }] },
+            then: [],
+            else: ["$category"]
+          }
+        }
+      }
+    }
+  ]
+);
+
+// Set empty array for missing category
+db.requirements.updateMany(
+  { category: { $exists: false } },
+  { $set: { category: [] } }
+);
+
+// Convert existing specialization string to array (if not already)
+db.requirements.updateMany(
+  { specialization: { $exists: true, $type: "string" } },
   [
     {
       $set: {
@@ -65,106 +87,70 @@ db.requirements.updateMany(
     }
   ]
 );
-
-// Step 2: Set empty array for documents without specialization field
-db.requirements.updateMany(
-  { specialization: { $exists: false } },
-  { $set: { specialization: [] } }
-);
-
-// Step 3: Verify migration
-print("Total requirements: " + db.requirements.countDocuments());
-print("Requirements with array specialization: " + db.requirements.countDocuments({ specialization: { $type: "array" } }));
-print("Requirements with non-empty specialization: " + db.requirements.countDocuments({ specialization: { $ne: [] } }));
 ```
 
-### 3. API Endpoint Updates
+### 3. Update Dropdown Options Endpoint
 
-#### Create/Update Requirement Endpoints
+**Endpoint:** `GET /api/v1/public/dropdown-options`
 
-**POST** `/api/v1/industry/requirements` (Create)
-**PATCH** `/api/v1/industry/requirements/:id` (Update)
+**New Parameter Format:**
+- `module`: Now accepts comma-separated values (e.g., `expert,serviceVendor,productVendor`)
+- `category`: Optional - defaults to `specialization` when modules are vendor types
 
-The `specialization` field in request body should now accept an array of strings:
-
-```json
-{
-  "title": "Requirement Title",
-  "category": "expert",
-  "specialization": ["mechanical-engineering", "automation-controls"],
-  ...
-}
-```
-
-#### Joi Validation Update
-
+**Backend Logic:**
 ```javascript
-// Update validation schema
-specialization: Joi.array().items(Joi.string()).default([])
+// Parse comma-separated modules
+const modules = req.query.module.split(',').map(m => m.trim());
+
+// Query master_dropdowns
+const options = await MasterDropdowns.find({
+  module: { $in: modules },
+  category: req.query.category || 'specialization',
+  isActive: true
+}).sort({ label: 1 });
+
+// Return combined, de-duplicated options
+return { success: true, data: { options, total: options.length } };
 ```
 
-### 4. Seed Data for `master_dropdowns` Collection
-
-Ensure specialization options exist for all modules:
-
-```javascript
-// Sample seed data structure
-const specializationSeeds = [
-  // Expert specializations
-  { module: "expert", category: "specialization", label: "Mechanical Engineering", value: "mechanical-engineering", isActive: true },
-  { module: "expert", category: "specialization", label: "Electrical Engineering", value: "electrical-engineering", isActive: true },
-  { module: "expert", category: "specialization", label: "Process Engineering", value: "process-engineering", isActive: true },
-  { module: "expert", category: "specialization", label: "Automation & Controls", value: "automation-controls", isActive: true },
-  { module: "expert", category: "specialization", label: "Safety Engineering", value: "safety-engineering", isActive: true },
-  
-  // Service Vendor specializations
-  { module: "serviceVendor", category: "specialization", label: "Maintenance Services", value: "maintenance-services", isActive: true },
-  { module: "serviceVendor", category: "specialization", label: "Construction Services", value: "construction-services", isActive: true },
-  { module: "serviceVendor", category: "specialization", label: "Installation Services", value: "installation-services", isActive: true },
-  { module: "serviceVendor", category: "specialization", label: "Calibration Services", value: "calibration-services", isActive: true },
-  
-  // Product Vendor specializations
-  { module: "productVendor", category: "specialization", label: "Industrial Equipment", value: "industrial-equipment", isActive: true },
-  { module: "productVendor", category: "specialization", label: "Spare Parts", value: "spare-parts", isActive: true },
-  { module: "productVendor", category: "specialization", label: "Raw Materials", value: "raw-materials", isActive: true },
-  { module: "productVendor", category: "specialization", label: "Chemicals", value: "chemicals", isActive: true },
-  
-  // Logistics Vendor specializations
-  { module: "logisticsVendor", category: "specialization", label: "Heavy Equipment Transport", value: "heavy-equipment-transport", isActive: true },
-  { module: "logisticsVendor", category: "specialization", label: "Hazardous Materials", value: "hazardous-materials", isActive: true },
-  { module: "logisticsVendor", category: "specialization", label: "Temperature Controlled", value: "temperature-controlled", isActive: true },
-  { module: "logisticsVendor", category: "specialization", label: "Express Delivery", value: "express-delivery", isActive: true },
-];
-```
-
----
-
-## Testing Checklist
-
-### Backend Testing
-- [ ] Migration script runs without errors
-- [ ] Existing requirements preserve their specialization data (as single-element arrays)
-- [ ] New requirements accept `specialization` as array
-- [ ] GET endpoints return `specialization` as array
-- [ ] `/public/dropdown-options` returns data for all 4 modules with `specialization` category
-
-### API Response Format
-
-**GET** `/api/v1/public/dropdown-options?module=expert&category=specialization`
-
+**Expected Response:**
 ```json
 {
   "success": true,
   "data": {
     "options": [
-      { "id": "1", "label": "Mechanical Engineering", "value": "mechanical-engineering" },
-      { "id": "2", "label": "Electrical Engineering", "value": "electrical-engineering" },
-      { "id": "3", "label": "Process Engineering", "value": "process-engineering" }
+      { "id": "1", "label": "Mechanical Engineering", "value": "mechanical-engineering", "module": "expert" },
+      { "id": "2", "label": "Maintenance Services", "value": "maintenance-services", "module": "serviceVendor" },
+      { "id": "3", "label": "Industrial Equipment", "value": "industrial-equipment", "module": "productVendor" }
     ],
     "total": 3
   }
 }
 ```
+
+### 4. API Validation Updates
+
+**Joi Schema:**
+```javascript
+category: Joi.array().items(
+  Joi.string().valid('expert', 'product', 'service', 'logistics')
+).default([]),
+
+specialization: Joi.array().items(Joi.string()).default([])
+```
+
+---
+
+## Category to Module Mapping
+
+| Category Selection | Module(s) for API |
+|-------------------|-------------------|
+| Expert only | `expert` |
+| Product only | `productVendor` |
+| Service only | `serviceVendor` |
+| Logistics only | `logisticsVendor` |
+| Expert + Product | `expert,productVendor` |
+| All four | `expert,productVendor,serviceVendor,logisticsVendor` |
 
 ---
 
@@ -172,18 +158,10 @@ const specializationSeeds = [
 
 | Task | Hours |
 |------|-------|
-| Schema update | 0.5h |
-| Migration script | 1h |
+| Schema update | 1h |
+| Migration script | 1.5h |
+| Dropdown endpoint update (comma-separated) | 1h |
 | Validation updates | 0.5h |
 | Seed data (if missing) | 1h |
-| Testing | 1h |
-| **Total** | **4h** |
-
----
-
-## Notes
-
-- The `/public/dropdown-options` API endpoint already exists and is used by vendor/professional signup forms
-- Frontend uses `useDropdownOptions` hook which handles caching (5 min stale time)
-- No breaking changes to existing API structure - only field type change from string to array
-- "Urgent Requirement" toggle has been hidden from the UI (no backend changes needed)
+| Testing | 2h |
+| **Total** | **7h** |

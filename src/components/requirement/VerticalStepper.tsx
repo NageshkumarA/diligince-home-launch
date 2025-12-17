@@ -35,16 +35,19 @@ export const VerticalStepper: React.FC<VerticalStepperProps> = ({
                  formData.businessJustification && formData.department && 
                  formData.costCenter && formData.estimatedBudget);
       case 2:
-        if (formData.category === "expert") {
-          return !!(formData.specialization?.length && formData.description);
-        } else if (formData.category === "product") {
-          return !!(formData.productSpecifications && formData.quantity);
-        } else if (formData.category === "service") {
-          return !!(formData.serviceDescription && formData.scopeOfWork);
-        } else if (formData.category === "logistics") {
-          return !!(formData.equipmentType && formData.pickupLocation && formData.deliveryLocation);
+        if (formData.category?.includes("expert")) {
+          if (!(formData.specialization?.length && formData.description)) return false;
         }
-        return false;
+        if (formData.category?.includes("product")) {
+          if (!(formData.productSpecifications && formData.quantity)) return false;
+        }
+        if (formData.category?.includes("service")) {
+          if (!(formData.serviceDescription && formData.scopeOfWork)) return false;
+        }
+        if (formData.category?.includes("logistics")) {
+          if (!(formData.equipmentType && formData.pickupLocation && formData.deliveryLocation)) return false;
+        }
+        return (formData.category?.length || 0) > 0;
       case 3:
       case 4:
       case 5:

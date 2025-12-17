@@ -53,7 +53,7 @@ const RequirementDetails = () => {
     return {
       id: metadata.draftId,
       title: formData.title || 'Untitled Draft',
-      category: formData.category || 'N/A',
+      category: Array.isArray(formData.category) ? formData.category.join(', ') : (formData.category || 'N/A'),
       priority: (formData.priority as any) || 'medium',
       status: 'draft' as any,
       estimatedValue: formData.estimatedBudget || 0,
