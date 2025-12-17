@@ -169,7 +169,12 @@ const Sidebar: React.FC = () => {
               );
               
               // Check if this item should be locked during verification
-              const isSettingsPage = item.path.includes('industry-settings');
+              // Allow access to settings pages for both industry and vendor users
+              const isSettingsPage = item.path.includes('industry-settings') || 
+                                     item.path.includes('vendor-settings') ||
+                                     item.path.includes('service-vendor-profile') ||
+                                     item.path.includes('product-vendor-profile') ||
+                                     item.path.includes('logistics-vendor-profile');
               const isLocked = !canAccessFeature && !isSettingsPage;
 
               return (
