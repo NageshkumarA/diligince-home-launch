@@ -110,5 +110,7 @@ export interface User {
   firstName: string;
   lastName: string;
   role: string;
+  userType?: 'Vendor' | 'Industry' | 'Professional';
+  userSubType?: 'ServiceVendor' | 'ProductVendor' | 'LogisticVendor';
   companyName?: string;
 }
