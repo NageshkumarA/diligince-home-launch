@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import { useRequirement } from "@/contexts/RequirementContext";
-import { useRequirementDraft } from "@/hooks/useRequirementDraft";
 import { steps } from "@/components/requirement/RequirementStepIndicator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,14 +24,41 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MultiSelect } from "@/components/ui/multi-select";
+import { useDropdownOptions } from "@/hooks/useDropdownOptions";
+import type { DropdownModule } from "@/services/modules/dropdowns/dropdown.types";
 
 interface DetailsStepProps {
   onNext: () => void;
   onPrevious: () => void;
 }
 
+// Map requirement category to dropdown module for API
+const getCategoryModule = (category: string | undefined): DropdownModule => {
+  switch (category) {
+    case 'expert': return 'expert';
+    case 'service': return 'serviceVendor';
+    case 'product': return 'productVendor';
+    case 'logistics': return 'logisticsVendor';
+    default: return 'expert';
+  }
+};
+
 const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
   const { formData, updateFormData, validateStep, stepErrors } = useRequirement();
+
+  // Fetch specializations from API based on selected category
+  const { options: specializationOptions, isLoading: isLoadingSpecializations } = useDropdownOptions(
+    getCategoryModule(formData.category),
+    'specialization',
+    { enabled: !!formData.category }
+  );
+
+  // Transform options for MultiSelect component
+  const multiSelectOptions = specializationOptions.map(opt => ({
+    label: opt.label,
+    value: opt.value
+  }));
 
   const handleNext = () => {
     if (!validateStep(2)) {
@@ -41,16 +67,6 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
     }
     onNext();
   };
-
-  const expertSpecializations = [
-    "Automation Engineer", 
-    "Electrical Engineer", 
-    "Mechanical Engineer",
-    "Process Engineer",
-    "Quality Control Engineer",
-    "Safety Engineer",
-    "Environmental Engineer"
-  ];
 
   const equipmentTypes = [
     "Crane",
@@ -108,26 +124,21 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
       {formData.category === "expert" && (
         <Card className="bg-white border border-gray-100 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg text-gray-900">Expert Services Details</CardTitle>
+            <CardTitle className="text-lg text-gray-900">Services Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="specialization" className="text-base font-medium text-gray-700">
                 Specialization <span className="text-red-500">*</span>
               </Label>
-              <Select
-                value={formData.specialization}
-                onValueChange={(value) => updateFormData({ specialization: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select specialization" />
-                </SelectTrigger>
-                <SelectContent>
-                  {expertSpecializations.map((spec) => (
-                    <SelectItem key={spec} value={spec}>{spec}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                options={multiSelectOptions}
+                selected={formData.specialization || []}
+                onChange={(values) => updateFormData({ specialization: values })}
+                placeholder="Search and select specialization(s)..."
+                isLoading={isLoadingSpecializations}
+                disabled={!formData.category}
+              />
               {stepErrors.specialization && (
                 <p className="text-sm text-red-500">{stepErrors.specialization}</p>
               )}

@@ -42,7 +42,7 @@ const getDefaultFormData = (): RequirementFormData => ({
   budgetApproved: false,
   isUrgent: false,
   urgency: false,
-  specialization: '',
+  specialization: [],
   productSpecifications: '',
   quantity: 0,
   serviceDescription: '',
@@ -260,8 +260,8 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
 
         case 2: // Details
           if (formData.category === "expert") {
-            if (!formData.specialization || formData.specialization.trim() === '') {
-              errors.specialization = "Specialization is required";
+            if (!formData.specialization || formData.specialization.length === 0) {
+              errors.specialization = "At least one specialization is required";
             }
             if (!formData.description || formData.description.trim() === '') {
               errors.description = "Description is required";

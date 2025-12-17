@@ -13,7 +13,7 @@ export interface RequirementFormData {
   category?: "product" | "service" | "expert" | "logistics";
   priority?: "low" | "medium" | "high" | "critical";
   description?: string;
-  specialization?: string;
+  specialization?: string[];
   productSpecifications?: string;
   quantity?: number;
   serviceDescription?: string;
