@@ -25,33 +25,20 @@ import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { useDropdownOptions } from "@/hooks/useDropdownOptions";
-import type { DropdownModule } from "@/services/modules/dropdowns/dropdown.types";
+import { useSpecializationOptions } from "@/hooks/useSpecializationOptions";
 
 interface DetailsStepProps {
   onNext: () => void;
   onPrevious: () => void;
 }
 
-// Map requirement category to dropdown module for API
-const getCategoryModule = (category: string | undefined): DropdownModule => {
-  switch (category) {
-    case 'expert': return 'expert';
-    case 'service': return 'serviceVendor';
-    case 'product': return 'productVendor';
-    case 'logistics': return 'logisticsVendor';
-    default: return 'expert';
-  }
-};
-
 const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
   const { formData, updateFormData, validateStep, stepErrors } = useRequirement();
 
-  // Fetch specializations from API based on selected category
-  const { options: specializationOptions, isLoading: isLoadingSpecializations } = useDropdownOptions(
-    getCategoryModule(formData.category),
-    'specialization',
-    { enabled: !!formData.category }
+  // Fetch specializations from API based on selected categories (comma-separated modules)
+  const { options: specializationOptions, isLoading: isLoadingSpecializations } = useSpecializationOptions(
+    formData.category,
+    { enabled: (formData.category?.length || 0) > 0 }
   );
 
   // Transform options for MultiSelect component
@@ -111,6 +98,9 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
     "Professional Engineer"
   ];
 
+  // Helper to check if a category is selected
+  const hasCategory = (cat: string) => formData.category?.includes(cat as any);
+
   return (
     <div className="space-y-8">
       <div className="space-y-4">
@@ -120,16 +110,16 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
         </p>
       </div>
 
-      {/* Expert Fields */}
-      {formData.category === "expert" && (
+      {/* Unified Specialization Section - Shows for all selected categories */}
+      {(formData.category?.length || 0) > 0 && (
         <Card className="bg-white border border-gray-100 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg text-gray-900">Services Details</CardTitle>
+            <CardTitle className="text-lg text-gray-900">Specialization</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="specialization" className="text-base font-medium text-gray-700">
-                Specialization <span className="text-red-500">*</span>
+                Select Specialization(s) <span className="text-red-500">*</span>
               </Label>
               <MultiSelect
                 options={multiSelectOptions}
@@ -137,13 +127,26 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
                 onChange={(values) => updateFormData({ specialization: values })}
                 placeholder="Search and select specialization(s)..."
                 isLoading={isLoadingSpecializations}
-                disabled={!formData.category}
+                disabled={(formData.category?.length || 0) === 0}
               />
+              <p className="text-xs text-muted-foreground">
+                Options shown are based on your selected categories: {formData.category?.join(', ')}
+              </p>
               {stepErrors.specialization && (
                 <p className="text-sm text-red-500">{stepErrors.specialization}</p>
               )}
             </div>
+          </CardContent>
+        </Card>
+      )}
 
+      {/* Expert Fields */}
+      {hasCategory("expert") && (
+        <Card className="bg-white border border-gray-100 shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-lg text-gray-900">Expert Services Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="description" className="text-base font-medium text-gray-700">
                 Detailed Description <span className="text-red-500">*</span>
@@ -284,7 +287,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
       )}
 
       {/* Product Fields */}
-      {formData.category === "product" && (
+      {hasCategory("product") && (
         <Card className="bg-white border border-gray-100 shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg text-gray-900">Product Details</CardTitle>
@@ -439,7 +442,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
       )}
 
       {/* Service Fields */}
-      {formData.category === "service" && (
+      {hasCategory("service") && (
         <Card className="bg-white border border-gray-100 shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg text-gray-900">Service Details</CardTitle>
@@ -591,7 +594,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ onNext, onPrevious }) => {
       )}
 
       {/* Logistics Fields */}
-      {formData.category === "logistics" && (
+      {hasCategory("logistics") && (
         <Card className="bg-white border border-gray-100 shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg text-gray-900">Logistics Details</CardTitle>

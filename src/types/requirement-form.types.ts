@@ -10,7 +10,7 @@ export interface RequirementFormData {
   isSentForApproval?: boolean;
   id?: string;
   title?: string;
-  category?: "product" | "service" | "expert" | "logistics";
+  category?: ("product" | "service" | "expert" | "logistics")[];
   priority?: "low" | "medium" | "high" | "critical";
   description?: string;
   specialization?: string[];

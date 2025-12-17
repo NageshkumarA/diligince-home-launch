@@ -238,8 +238,8 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
           if (!formData.title || formData.title.trim() === '') {
             errors.title = "Title is required";
           }
-          if (!formData.category) {
-            errors.category = "Category is required";
+          if (!formData.category || formData.category.length === 0) {
+            errors.category = "At least one category is required";
           }
           if (!formData.priority) {
             errors.priority = "Priority is required";
@@ -259,21 +259,23 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
           break;
 
         case 2: // Details
-          if (formData.category === "expert") {
+          if (formData.category?.includes("expert")) {
             if (!formData.specialization || formData.specialization.length === 0) {
               errors.specialization = "At least one specialization is required";
             }
             if (!formData.description || formData.description.trim() === '') {
               errors.description = "Description is required";
             }
-          } else if (formData.category === "product") {
+          }
+          if (formData.category?.includes("product")) {
             if (!formData.productSpecifications || formData.productSpecifications.trim() === '') {
               errors.productSpecifications = "Product specifications are required";
             }
             if (!formData.quantity || formData.quantity <= 0) {
               errors.quantity = "Valid quantity is required";
             }
-          } else if (formData.category === "service") {
+          }
+          if (formData.category?.includes("service")) {
             if (!formData.serviceDescription || formData.serviceDescription.trim() === '') {
               errors.serviceDescription = "Service description is required";
             }
@@ -286,7 +288,8 @@ export const RequirementProvider = ({ children }: { children: React.ReactNode })
             if (!formData.location || formData.location.trim() === '') {
               errors.location = "Location is required";
             }
-          } else if (formData.category === "logistics") {
+          }
+          if (formData.category?.includes("logistics")) {
             if (!formData.equipmentType || formData.equipmentType.trim() === '') {
               errors.equipmentType = "Equipment type is required";
             }

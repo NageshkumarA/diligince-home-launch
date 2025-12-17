@@ -19,18 +19,19 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
   const { formData } = useRequirement();
 
   const getCategoryIcon = () => {
-    switch (formData.category) {
-      case "expert":
-        return <User className="h-5 w-5 text-primary" />;
-      case "product":
-        return <Package className="h-5 w-5 text-emerald-600" />;
-      case "service":
-        return <Wrench className="h-5 w-5 text-purple-600" />;
-      case "logistics":
-        return <Truck className="h-5 w-5 text-orange-600" />;
-      default:
-        return null;
-    }
+    const categories = formData.category || [];
+    // Return icon for first category, or null if none
+    if (categories.includes("expert")) return <User className="h-5 w-5 text-primary" />;
+    if (categories.includes("product")) return <Package className="h-5 w-5 text-emerald-600" />;
+    if (categories.includes("service")) return <Wrench className="h-5 w-5 text-purple-600" />;
+    if (categories.includes("logistics")) return <Truck className="h-5 w-5 text-orange-600" />;
+    return null;
+  };
+
+  const formatCategories = () => {
+    const categories = formData.category || [];
+    if (categories.length === 0) return "No category";
+    return categories.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(", ");
   };
 
   const formatDate = (date: Date | null | undefined) => {
@@ -50,15 +51,17 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
 
   // Check completion status for each section
   const isSectionComplete = (section: 'basic' | 'details' | 'documents' | 'approval') => {
+    const categories = formData.category || [];
     switch (section) {
       case 'basic':
-        return !!(formData.title && formData.category && formData.priority);
+        return !!(formData.title && categories.length > 0 && formData.priority);
       case 'details':
-        if (formData.category === 'product') return !!(formData.productSpecifications && formData.quantity);
-        if (formData.category === 'expert') return !!(formData.specialization?.length && formData.description);
-        if (formData.category === 'service') return !!(formData.serviceDescription && formData.scopeOfWork);
-        if (formData.category === 'logistics') return !!(formData.equipmentType && formData.pickupLocation);
-        return false;
+        let detailsComplete = categories.length > 0;
+        if (categories.includes('product') && !(formData.productSpecifications && formData.quantity)) detailsComplete = false;
+        if (categories.includes('expert') && !(formData.specialization?.length && formData.description)) detailsComplete = false;
+        if (categories.includes('service') && !(formData.serviceDescription && formData.scopeOfWork)) detailsComplete = false;
+        if (categories.includes('logistics') && !(formData.equipmentType && formData.pickupLocation)) detailsComplete = false;
+        return detailsComplete;
       case 'documents':
         return (formData.documents?.length || 0) > 0;
       case 'approval':
@@ -113,7 +116,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
             <div className="flex flex-wrap items-center gap-3 text-sm">
               <div className="flex items-center gap-1.5">
                 {getCategoryIcon()}
-                <span className="capitalize text-muted-foreground">{formData.category || "No category"}</span>
+                <span className="text-muted-foreground">{formatCategories()}</span>
               </div>
               <div className="h-4 w-px bg-border" />
               <span className={`text-xs px-2 py-0.5 rounded-full ${
@@ -153,7 +156,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
         </CardHeader>
         <CardContent className="px-4 pb-4 pt-0">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-            {formData.category === "expert" && (
+            {formData.category?.includes("expert") && (
               <>
                 <div>
                   <p className="text-xs text-muted-foreground">Specialization</p>
@@ -170,7 +173,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
               </>
             )}
 
-            {formData.category === "product" && (
+            {formData.category?.includes("product") && (
               <>
                 <div>
                   <p className="text-xs text-muted-foreground">Quantity</p>
@@ -187,7 +190,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
               </>
             )}
 
-            {formData.category === "service" && (
+            {formData.category?.includes("service") && (
               <>
                 <div>
                   <p className="text-xs text-muted-foreground">Location</p>
@@ -204,7 +207,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
               </>
             )}
 
-            {formData.category === "logistics" && (
+            {formData.category?.includes("logistics") && (
               <>
                 <div>
                   <p className="text-xs text-muted-foreground">Equipment</p>

@@ -29,8 +29,8 @@ export interface DropdownOptionsResponse {
 }
 
 export interface GetDropdownOptionsParams {
-  module: DropdownModule;
-  category: DropdownCategory;
+  module: string; // Can be comma-separated: "expert,serviceVendor,productVendor"
+  category?: DropdownCategory; // Optional - defaults to 'specialization' for vendor modules
   parentCategory?: string;
   search?: string;
 }

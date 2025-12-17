@@ -25,9 +25,13 @@ export const dropdownService = {
    */
   async getOptions(params: GetDropdownOptionsParams): Promise<DropdownOption[]> {
     const queryParams: Record<string, string> = {
-      module: params.module,
-      category: params.category,
+      module: params.module, // Can be comma-separated: "expert,serviceVendor"
     };
+
+    // Category is optional - backend defaults to 'specialization' when modules are vendor types
+    if (params.category) {
+      queryParams.category = params.category;
+    }
 
     if (params.parentCategory) {
       queryParams.parentCategory = params.parentCategory;
