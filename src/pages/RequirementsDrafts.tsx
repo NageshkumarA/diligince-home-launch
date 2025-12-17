@@ -424,7 +424,7 @@ const RequirementsDrafts = () => {
             toast.error('Cannot open draft: Invalid ID');
             return;
           }
-          navigate(`/dashboard/requirements/${draftId}`);
+          navigate(`/dashboard/create-requirement?draftId=${draftId}`);
         }}
         filterCallback={handleFilter}
         searchCallback={(term) => handleSearch(term, [])}
