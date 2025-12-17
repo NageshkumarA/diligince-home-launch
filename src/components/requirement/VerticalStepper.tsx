@@ -36,7 +36,7 @@ export const VerticalStepper: React.FC<VerticalStepperProps> = ({
                  formData.costCenter && formData.estimatedBudget);
       case 2:
         if (formData.category === "expert") {
-          return !!(formData.specialization && formData.description);
+          return !!(formData.specialization?.length && formData.description);
         } else if (formData.category === "product") {
           return !!(formData.productSpecifications && formData.quantity);
         } else if (formData.category === "service") {

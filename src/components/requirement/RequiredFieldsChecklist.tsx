@@ -25,7 +25,7 @@ export const RequiredFieldsChecklist = ({ onNavigateToStep }: RequiredFieldsChec
       );
     } else if (formData.category === 'expert') {
       fields.push(
-        { name: 'Specialization', completed: !!formData.specialization?.trim(), step: 2 },
+        { name: 'Specialization', completed: !!formData.specialization?.length, step: 2 },
         { name: 'Description', completed: !!formData.description?.trim(), step: 2 }
       );
     } else if (formData.category === 'service') {

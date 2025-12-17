@@ -55,7 +55,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
         return !!(formData.title && formData.category && formData.priority);
       case 'details':
         if (formData.category === 'product') return !!(formData.productSpecifications && formData.quantity);
-        if (formData.category === 'expert') return !!(formData.specialization && formData.description);
+        if (formData.category === 'expert') return !!(formData.specialization?.length && formData.description);
         if (formData.category === 'service') return !!(formData.serviceDescription && formData.scopeOfWork);
         if (formData.category === 'logistics') return !!(formData.equipmentType && formData.pickupLocation);
         return false;
@@ -157,7 +157,7 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
               <>
                 <div>
                   <p className="text-xs text-muted-foreground">Specialization</p>
-                  <p className="font-medium">{formData.specialization || "Not specified"}</p>
+                  <p className="font-medium">{formatList(formData.specialization)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Duration</p>
