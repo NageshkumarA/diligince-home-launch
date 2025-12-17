@@ -478,13 +478,14 @@ const VendorSettings = () => {
               </CardContent>
             </Card>
 
-            {/* Legal Information Section */}
+            {/* Legal Information & Documents Section (Combined) */}
             <Card>
               <CardHeader>
                 <CardTitle>Legal Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="space-y-6">
+                {/* Input Fields Row */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* PAN Number */}
                   <div className="space-y-2">
                     <Label htmlFor="panNumber" className="flex items-center gap-2">
@@ -505,9 +506,6 @@ const VendorSettings = () => {
                       className={getFieldClassName(getFieldStatus(profile.panNumber))}
                       disabled={isProfileLocked}
                     />
-                    {getFieldStatus(profile.panNumber) === 'empty' && (
-                      <p className="text-xs text-red-600 mt-1">This field is required</p>
-                    )}
                   </div>
 
                   {/* GST Number */}
@@ -530,13 +528,10 @@ const VendorSettings = () => {
                       className={getFieldClassName(getFieldStatus(profile.gstNumber))}
                       disabled={isProfileLocked}
                     />
-                    {getFieldStatus(profile.gstNumber) === 'empty' && (
-                      <p className="text-xs text-red-600 mt-1">This field is required</p>
-                    )}
                   </div>
 
                   {/* Registration Number */}
-                  <div className="space-y-2 md:col-span-2">
+                  <div className="space-y-2">
                     <Label htmlFor="registrationNumber" className="flex items-center gap-2">
                       Registration Number <span className="text-red-500">*</span>
                       {getFieldStatus(profile.registrationNumber) === 'filled' && (
@@ -554,24 +549,11 @@ const VendorSettings = () => {
                       className={getFieldClassName(getFieldStatus(profile.registrationNumber))}
                       disabled={isProfileLocked}
                     />
-                    {getFieldStatus(profile.registrationNumber) === 'empty' && (
-                      <p className="text-xs text-red-600 mt-1">This field is required</p>
-                    )}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Required Documents Section */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Required Documents</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Upload all required documents for {profile.vendorCategory || 'Service Vendor'} verification
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Document Upload Row */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {requiredDocuments.map((docType) => (
                     <VendorDocumentUploadField
                       key={docType}
@@ -589,46 +571,29 @@ const VendorSettings = () => {
               </CardContent>
             </Card>
 
-            {/* Action Buttons */}
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div>
-                    <h3 className="font-semibold text-foreground">
-                      {completion.isComplete ? 'Ready to Submit!' : 'Complete Your Profile'}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {completion.isComplete
-                        ? 'All requirements met. Submit for verification to get started.'
-                        : `${completion.missingFields.length + completion.missingDocuments.length} item(s) remaining to complete your profile.`
-                      }
-                    </p>
-                  </div>
-                  <div className="flex gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={handleSave}
-                      disabled={isSubmitting || isProfileLocked}
-                      className="min-w-[120px]"
-                    >
-                      <Save className="w-4 h-4 mr-2" />
-                      {isSubmitting ? 'Saving...' : 'Save Profile'}
-                    </Button>
-                    <Button
-                      onClick={handleSubmitForVerification}
-                      disabled={isSubmitting || isProfileLocked || !completion.canSubmitForVerification}
-                      className={completion.canSubmitForVerification && !isProfileLocked
-                        ? 'bg-emerald-600 hover:bg-emerald-700 min-w-[180px]'
-                        : 'min-w-[180px]'
-                      }
-                    >
-                      <Send className="w-4 h-4 mr-2" />
-                      {isSubmitting ? 'Submitting...' : 'Submit for Verification'}
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Action Buttons - Simple row without card */}
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="outline"
+                onClick={handleSave}
+                disabled={isSubmitting || isProfileLocked}
+                className="min-w-[120px]"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {isSubmitting ? 'Saving...' : 'Save Profile'}
+              </Button>
+              <Button
+                onClick={handleSubmitForVerification}
+                disabled={isSubmitting || isProfileLocked || !completion.canSubmitForVerification}
+                className={completion.canSubmitForVerification && !isProfileLocked
+                  ? 'bg-emerald-600 hover:bg-emerald-700 min-w-[180px]'
+                  : 'min-w-[180px]'
+                }
+              >
+                <Send className="w-4 h-4 mr-2" />
+                {isSubmitting ? 'Submitting...' : 'Submit for Verification'}
+              </Button>
+            </div>
           </TabsContent>
 
           <TabsContent value="payments" className="space-y-6">
