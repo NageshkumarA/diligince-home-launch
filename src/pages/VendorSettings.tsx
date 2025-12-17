@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CheckCircle2, XCircle, AlertCircle, Save, Send } from 'lucide-react';
 import { SettingsPageSkeleton } from '@/components/shared/loading';
@@ -14,7 +13,6 @@ import errorHandler from '@/utils/errorHandler.utils';
 import { VendorProfile, VerificationStatus, VerificationDocument, VendorDocumentType } from '@/types/verification';
 import { VendorProfileCompletionBanner } from '@/components/vendor/shared/VendorProfileCompletionBanner';
 import { VendorDocumentUploadField } from '@/components/vendor/shared/VendorDocumentUploadField';
-import PaymentSettingsTab from '@/components/companyProfile/PaymentSettingsTab';
 import { 
   calculateVendorProfileCompletion, 
   canVendorSubmitForVerification,
@@ -236,35 +234,21 @@ const VendorSettings = () => {
     return profile.documents?.find(doc => doc.documentType === type);
   };
 
-  return (
+    return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Vendor Settings</h1>
-          <p className="text-muted-foreground">Manage your business profile and payment settings</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Business Profile</h1>
+          <p className="text-muted-foreground">Manage your business profile and company details</p>
         </div>
       </div>
 
       {isLoadingProfile ? (
-        <SettingsPageSkeleton showTabs tabCount={2} sections={3} />
+        <SettingsPageSkeleton showTabs={false} sections={4} />
       ) : (
-        <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 bg-muted">
-            <TabsTrigger
-              value="profile"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              Business Profile
-            </TabsTrigger>
-            <TabsTrigger
-              value="payments"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              Payment Settings
-            </TabsTrigger>
-          </TabsList>
+        <div className="space-y-6">
 
-          <TabsContent value="profile" className="space-y-6">
+          <>
             {/* Profile Lock Warning */}
             {isProfileLocked && (
               <Card className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20">
@@ -594,12 +578,8 @@ const VendorSettings = () => {
                 {isSubmitting ? 'Submitting...' : 'Submit for Verification'}
               </Button>
             </div>
-          </TabsContent>
-
-          <TabsContent value="payments" className="space-y-6">
-            <PaymentSettingsTab />
-          </TabsContent>
-        </Tabs>
+          </>
+        </div>
       )}
 
       {/* Consent Dialog */}

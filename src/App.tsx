@@ -46,6 +46,7 @@ import PendingApprovals from "@/pages/PendingApprovals";
 import WorkCompletionPayment from "@/pages/WorkCompletionPayment";
 import VerificationPending from "@/pages/VerificationPending";
 import VendorSettings from "@/pages/VendorSettings";
+import VendorPaymentSettings from "@/pages/VendorPaymentSettings";
 
 // Industry pages
 import IndustryDashboard from "@/pages/IndustryDashboard";
@@ -503,6 +504,10 @@ function App() {
                                 element={<ServiceVendorProfile />}
                               />
                               <Route
+                                path="service-vendor-profile/payment"
+                                element={<VendorPaymentSettings />}
+                              />
+                              <Route
                                 path="service-vendor-services"
                                 element={<ServiceVendorServices />}
                               />
@@ -528,6 +533,10 @@ function App() {
                                 path="product-vendor-profile"
                                 element={<ProductVendorProfile />}
                               />
+                              <Route
+                                path="product-vendor-profile/payment"
+                                element={<VendorPaymentSettings />}
+                              />
 
                               {/* Logistics Vendor Routes */}
                               <Route
@@ -549,6 +558,10 @@ function App() {
                               <Route
                                 path="logistics-vendor-profile"
                                 element={<LogisticsVendorProfile />}
+                              />
+                              <Route
+                                path="logistics-vendor-profile/payment"
+                                element={<VendorPaymentSettings />}
                               />
 
                               {/* Professional Routes */}
