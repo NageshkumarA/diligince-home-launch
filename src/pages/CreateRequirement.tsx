@@ -116,7 +116,7 @@ const CreateRequirement = () => {
   const [isLoadingDraft, setIsLoadingDraft] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { draftId, loadDraftById, startEditing, stopEditing, formData, saveAsDraft } = useRequirement();
+  const { draftId, loadDraftById, startEditing, stopEditing, formData, saveAsDraft, validateStep } = useRequirement();
   const { user } = useUser();
 
   // Check if current user is an approver for the current level
@@ -205,6 +205,17 @@ const CreateRequirement = () => {
   }, [currentStep]);
 
   const handleNext = useCallback(async () => {
+    // Validate current step before proceeding
+    const isValid = validateStep(currentStep);
+    
+    if (!isValid) {
+      toast.error("Please fill in all required fields", {
+        description: "Complete the required fields before proceeding to the next step.",
+        duration: 4000,
+      });
+      return;
+    }
+
     // Step 4 validation: Check if approval matrix is required but not selected
     if (currentStep === 4) {
       const budget = formData.estimatedBudget || 0;
@@ -238,7 +249,7 @@ const CreateRequirement = () => {
 
       setCurrentStep((prev) => (prev + 1) as StepType);
     }
-  }, [currentStep, draftId, formData, saveAsDraft]);
+  }, [currentStep, draftId, formData, saveAsDraft, validateStep]);
 
   const handlePrevious = useCallback(() => {
     if (currentStep > 1) {

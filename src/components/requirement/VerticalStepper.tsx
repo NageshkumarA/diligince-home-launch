@@ -73,8 +73,47 @@ export const VerticalStepper: React.FC<VerticalStepperProps> = ({
   };
 
   const getOverallProgress = () => {
-    const completedSteps = steps.filter(step => isStepCompleted(step.id)).length;
-    return Math.round((completedSteps / steps.length) * 100);
+    let filledFields = 0;
+    let totalRequiredFields = 7; // Base required fields for Step 1
+    
+    // Step 1 required fields
+    if (formData.title) filledFields++;
+    if (formData.category?.length) filledFields++;
+    if (formData.priority) filledFields++;
+    if (formData.businessJustification) filledFields++;
+    if (formData.department) filledFields++;
+    if (formData.costCenter) filledFields++;
+    if (formData.estimatedBudget && formData.estimatedBudget > 0) filledFields++;
+    
+    // Step 2 category-specific fields
+    if (formData.category?.includes("expert")) {
+      totalRequiredFields += 2;
+      if (formData.specialization?.length) filledFields++;
+      if (formData.description) filledFields++;
+    }
+    if (formData.category?.includes("product")) {
+      totalRequiredFields += 2;
+      if (formData.productSpecifications) filledFields++;
+      if (formData.quantity) filledFields++;
+    }
+    if (formData.category?.includes("service")) {
+      totalRequiredFields += 2;
+      if (formData.serviceDescription) filledFields++;
+      if (formData.scopeOfWork) filledFields++;
+    }
+    if (formData.category?.includes("logistics")) {
+      totalRequiredFields += 3;
+      if (formData.equipmentType) filledFields++;
+      if (formData.pickupLocation) filledFields++;
+      if (formData.deliveryLocation) filledFields++;
+    }
+    
+    // Step 6 required fields
+    totalRequiredFields += 2;
+    if (formData.submissionDeadline) filledFields++;
+    if (formData.termsAccepted) filledFields++;
+    
+    return Math.round((filledFields / totalRequiredFields) * 100);
   };
 
   return (
@@ -104,18 +143,6 @@ export const VerticalStepper: React.FC<VerticalStepperProps> = ({
 
             return (
               <div key={step.id} className="relative">
-                {/* Connecting line */}
-                {!isLast && (
-                  <div className="absolute left-5 top-12 w-0.5 h-8 -ml-px">
-                    <div 
-                      className={cn(
-                        "h-full w-full transition-colors duration-300",
-                        status === "completed" ? "bg-primary" : "bg-border"
-                      )}
-                    />
-                  </div>
-                )}
-
                 <button
                   type="button"
                   onClick={() => isAccessible && onStepClick(step.id as StepType)}
