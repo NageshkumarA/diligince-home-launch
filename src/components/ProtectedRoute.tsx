@@ -55,7 +55,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       // Only redirect if not already on vendor-settings or verification pages
       if (!location.pathname.includes('vendor-settings') && 
           !location.pathname.includes('verification-pending')) {
-        return <Navigate to="/vendor-settings" replace />;
+        return <Navigate to="/dashboard/vendor-settings" replace />;
       }
     }
 

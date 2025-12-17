@@ -213,13 +213,10 @@ function App() {
                                 </ProtectedRoute>
                               }
                             />
+                            {/* Legacy vendor-settings route - redirect to dashboard path */}
                             <Route
                               path="/vendor-settings"
-                              element={
-                                <ProtectedRoute>
-                                  <VendorSettings />
-                                </ProtectedRoute>
-                              }
+                              element={<Navigate to="/dashboard/vendor-settings" replace />}
                             />
 
                             {/* Profile & Onboarding */}
@@ -238,6 +235,12 @@ function App() {
                                 <Layout />
                               </ProtectedRoute>
                             }>
+                              {/* Vendor Settings (inside dashboard for sidebar visibility) */}
+                              <Route
+                                path="vendor-settings"
+                                element={<VendorSettings />}
+                              />
+                              
                               {/* Industry */}
                               <Route
                                 path="industry"
