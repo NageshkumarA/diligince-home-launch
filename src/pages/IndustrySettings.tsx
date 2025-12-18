@@ -32,7 +32,6 @@ const IndustrySettings = () => {
   // Company Profile State (Tab 1)
   const [profile, setProfile] = useState<Partial<CompanyProfile>>({});
 
-
   // Calculate profile completion
   const profileCompletion = useMemo(() => {
     return calculateProfileCompletion(profile);
