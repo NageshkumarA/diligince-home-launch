@@ -20,6 +20,7 @@ import {
   getDocumentDisplayName
 } from '@/utils/vendorProfileValidation';
 import { ConsentDialog } from '@/components/verification/ConsentDialog';
+import { vendorProfileService } from '@/services';
 
 const VENDOR_CATEGORIES = ['Service Vendor', 'Product Vendor', 'Logistics Vendor'] as const;
 
@@ -57,27 +58,30 @@ const VendorSettings = () => {
     const fetchProfile = async () => {
       try {
         setIsLoadingProfile(true);
-        // TODO: Replace with actual vendorProfileService.getProfile()
-        await new Promise(resolve => setTimeout(resolve, 800));
+        const existingProfile = await vendorProfileService.getProfile();
         
-        // Mock profile from user context
-        setProfile({
-          businessName: user?.profile?.businessName || '',
-          vendorCategory: user?.profile?.vendorCategory || 'Service Vendor',
-          specialization: user?.profile?.specialization || '',
-          panNumber: '',
-          gstNumber: '',
-          registrationNumber: '',
-          email: user?.email || '',
-          mobile: user?.profile?.mobile || '',
-          telephone: '',
-          website: '',
-          primaryIndustry: '',
-          yearsInBusiness: '',
-          businessLocation: '',
-          documents: [],
-          verificationStatus: VerificationStatus.INCOMPLETE,
-        });
+        if (existingProfile) {
+          setProfile(existingProfile);
+        } else {
+          // New user - initialize with defaults from user context
+          setProfile({
+            businessName: user?.profile?.businessName || '',
+            vendorCategory: user?.profile?.vendorCategory || 'Service Vendor',
+            specialization: user?.profile?.specialization || '',
+            panNumber: '',
+            gstNumber: '',
+            registrationNumber: '',
+            email: user?.email || '',
+            mobile: user?.profile?.mobile || '',
+            telephone: '',
+            website: '',
+            primaryIndustry: '',
+            yearsInBusiness: '',
+            businessLocation: '',
+            documents: [],
+            verificationStatus: VerificationStatus.INCOMPLETE,
+          });
+        }
       } catch (error: any) {
         console.error('Error fetching profile:', error);
         toast.error('Failed to load profile');
@@ -119,10 +123,16 @@ const VendorSettings = () => {
     const loadingToast = errorHandler.showLoading('Saving profile...');
 
     try {
-      // TODO: Replace with actual vendorProfileService.saveProfile(profile)
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await vendorProfileService.saveProfile(profile);
       
-      errorHandler.updateSuccess(loadingToast, 'Profile saved successfully');
+      if (response.success) {
+        // Update local state with response data
+        const savedProfile = 'profile' in response.data ? response.data.profile : response.data;
+        setProfile(savedProfile);
+        errorHandler.updateSuccess(loadingToast, 'Profile saved successfully');
+      } else {
+        errorHandler.updateError(loadingToast, response.message || 'Failed to save profile');
+      }
     } catch (error) {
       errorHandler.updateError(loadingToast, 'Failed to save profile');
     } finally {
@@ -154,23 +164,27 @@ const VendorSettings = () => {
     const loadingToast = errorHandler.showLoading('Submitting for verification...');
 
     try {
-      // TODO: Replace with actual vendorProfileService.submitForVerification()
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const consentTimestamp = new Date().toISOString();
+      const response = await vendorProfileService.submitForVerification(true, consentTimestamp);
 
-      setProfile(prev => ({
-        ...prev,
-        verificationStatus: VerificationStatus.PENDING,
-        verificationSubmittedAt: new Date().toISOString(),
-      }));
+      if (response.success) {
+        setProfile(prev => ({
+          ...prev,
+          verificationStatus: VerificationStatus.PENDING,
+          verificationSubmittedAt: response.data.submittedAt,
+        }));
 
-      errorHandler.updateSuccess(loadingToast, 'Profile submitted for verification!');
-      setIsConsentOpen(false);
+        errorHandler.updateSuccess(loadingToast, 'Profile submitted for verification!');
+        setIsConsentOpen(false);
 
-      await refreshVerificationStatus();
+        await refreshVerificationStatus();
 
-      setTimeout(() => {
-        navigate('/verification-pending');
-      }, 1500);
+        setTimeout(() => {
+          navigate('/verification-pending');
+        }, 1500);
+      } else {
+        errorHandler.updateError(loadingToast, response.message || 'Failed to submit for verification');
+      }
     } catch (error) {
       errorHandler.updateError(loadingToast, 'Failed to submit for verification');
     } finally {
@@ -187,30 +201,24 @@ const VendorSettings = () => {
       throw new Error('Profile locked');
     }
 
-    // TODO: Replace with actual vendorProfileService.uploadDocument()
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const response = await vendorProfileService.uploadDocument(file, documentType as VendorDocumentType);
 
-    const uploadedDoc: VerificationDocument = {
-      id: Date.now().toString(),
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      url: URL.createObjectURL(file),
-      documentType: documentType as VerificationDocument['documentType'],
-      uploadedAt: new Date(),
-      status: 'pending',
-    };
+    if (response.success) {
+      const uploadedDoc = response.data;
 
-    setProfile(prev => {
-      const existingDocs = prev.documents || [];
-      const filteredDocs = existingDocs.filter(doc => doc.documentType !== documentType);
-      return {
-        ...prev,
-        documents: [...filteredDocs, uploadedDoc]
-      };
-    });
+      setProfile(prev => {
+        const existingDocs = prev.documents || [];
+        const filteredDocs = existingDocs.filter(doc => doc.documentType !== documentType);
+        return {
+          ...prev,
+          documents: [...filteredDocs, uploadedDoc]
+        };
+      });
 
-    return uploadedDoc;
+      return uploadedDoc;
+    } else {
+      throw new Error(response.message || 'Failed to upload document');
+    }
   };
 
   const handleDocumentDelete = async (documentId: string): Promise<void> => {
@@ -221,13 +229,14 @@ const VendorSettings = () => {
       return;
     }
 
-    // TODO: Replace with actual vendorProfileService.deleteDocument()
-    await new Promise(resolve => setTimeout(resolve, 500));
+    const response = await vendorProfileService.deleteDocument(documentId);
 
-    setProfile(prev => ({
-      ...prev,
-      documents: (prev.documents || []).filter(doc => doc.id !== documentId)
-    }));
+    if (response.success) {
+      setProfile(prev => ({
+        ...prev,
+        documents: (prev.documents || []).filter(doc => doc.id !== documentId)
+      }));
+    }
   };
 
   const getDocumentByType = (type: VendorDocumentType) => {
