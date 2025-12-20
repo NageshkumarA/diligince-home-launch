@@ -47,6 +47,8 @@ import WorkCompletionPayment from "@/pages/WorkCompletionPayment";
 import VerificationPending from "@/pages/VerificationPending";
 import VendorSettings from "@/pages/VendorSettings";
 import VendorPaymentSettings from "@/pages/VendorPaymentSettings";
+import VendorCertifications from "@/pages/VendorCertifications";
+import VendorProjectsPortfolio from "@/pages/VendorProjectsPortfolio";
 
 // Industry pages
 import IndustryDashboard from "@/pages/IndustryDashboard";
