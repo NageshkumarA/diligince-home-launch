@@ -21,6 +21,7 @@ import {
 } from '@/utils/vendorProfileValidation';
 import { ConsentDialog } from '@/components/verification/ConsentDialog';
 import { vendorProfileService } from '@/services';
+import ServicesSkillsForm from '@/components/vendor/forms/ServicesSkillsForm';
 
 const VENDOR_CATEGORIES = ['Service Vendor', 'Product Vendor', 'Logistics Vendor'] as const;
 
@@ -563,6 +564,14 @@ const VendorSettings = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Services & Skills Section - Only for Service Vendors */}
+            {profile.vendorCategory === 'Service Vendor' && (
+              <ServicesSkillsForm 
+                isProfileLocked={isProfileLocked}
+                onSaveSuccess={() => toast.success('Services updated')}
+              />
+            )}
 
             {/* Action Buttons - Simple row without card */}
             <div className="flex gap-3 justify-end">
