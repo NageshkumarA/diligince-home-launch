@@ -23,41 +23,64 @@ const Sidebar: React.FC = () => {
   const menuKey = getMenuConfigKey(user) as keyof typeof menuConfig;
   const rawMenuItems = menuConfig[menuKey] || [];
 
-  // Filter menu items based on permissions - strict filtering
+  // Filter menu items based on permissions - strict filtering (with Settings-path fallback)
   const menuItems = useMemo(() => {
     // If no hierarchical config, don't show any menu items
     if (!hierarchicalConfig) {
       return [];
     }
 
-    return rawMenuItems
-      .map(item => {
-        // Filter submenus based on read permission
-        const filteredSubmenu = item.submenu?.filter(subItem => {
-          const moduleId = pathToModuleMap.get(subItem.path);
-          if (!moduleId) {
-            // Hide if not in permission config
-            return false;
-          }
-          const perm = permissionsMap.get(moduleId);
-          // Only show if explicitly has read: true
-          return perm?.permissions.read === true;
-        });
+    const resolveModuleId = (path: string): string | undefined => {
+      const direct = pathToModuleMap.get(path);
+      if (direct) return direct;
 
+      // Fallback: when cached permissions still use legacy vendor profile paths,
+      // keep the Settings nav visible by mapping the new Settings route to the old ones.
+      const isVendorSettingsRoot =
+        path === '/dashboard/vendor-settings' || path === '/vendor-settings';
+
+      if (!isVendorSettingsRoot) return undefined;
+
+      const legacyRoots = [
+        '/dashboard/service-vendor-profile',
+        '/dashboard/product-vendor-profile',
+        '/dashboard/logistics-vendor-profile',
+      ];
+
+      for (const legacy of legacyRoots) {
+        const legacyId = pathToModuleMap.get(legacy);
+        if (legacyId) return legacyId;
+      }
+
+      return undefined;
+    };
+
+    const hasReadAccess = (path: string): boolean => {
+      const moduleId = resolveModuleId(path);
+      if (!moduleId) return false;
+      const perm = permissionsMap.get(moduleId);
+      return perm?.permissions.read === true;
+    };
+
+    return rawMenuItems
+      .map((item) => {
+        // Filter submenus based on read permission
+        const filteredSubmenu = item.submenu?.filter((subItem) => hasReadAccess(subItem.path));
         return { ...item, submenu: filteredSubmenu };
       })
-      .filter(item => {
-        // Check if parent item should be shown
-        const moduleId = pathToModuleMap.get(item.path);
-        if (!moduleId) {
-          // Hide if not in permission config
-          return false;
-        }
-        const perm = permissionsMap.get(moduleId);
-        const hasAccess = perm?.permissions.read === true;
-        
-        // Show if has access OR has accessible submenus
-        const hasAccessibleSubmenus = item.submenu && item.submenu.length > 0;
+      .filter((item) => {
+        const hasAccessibleSubmenus = !!(item.submenu && item.submenu.length > 0);
+
+        // Prefer the item's own permission entry, but don't hide Settings if only submenus are accessible.
+        const hasAccess = hasReadAccess(item.path);
+
+        const isSettingsItem =
+          item.path === '/dashboard/vendor-settings' || item.path === '/vendor-settings';
+
+        if (!hasAccess && !hasAccessibleSubmenus) return false;
+        if (isSettingsItem) return hasAccess || hasAccessibleSubmenus;
+
+        // For non-settings items, require either explicit access or accessible submenus.
         return hasAccess || hasAccessibleSubmenus;
       });
   }, [rawMenuItems, permissionsMap, pathToModuleMap, hierarchicalConfig]);
