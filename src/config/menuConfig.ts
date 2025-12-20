@@ -429,12 +429,12 @@ export const menuConfig: MenuConfig = {
     {
       icon: Settings,
       label: "Settings",
-      path: "/dashboard/service-vendor-profile",
+      path: "/dashboard/vendor-settings",
       submenu: [
         {
           icon: Building,
           label: "Company Profile",
-          path: "/dashboard/service-vendor-profile",
+          path: "/dashboard/vendor-settings",
         },
         {
           icon: Award,
@@ -563,12 +563,12 @@ export const menuConfig: MenuConfig = {
     {
       icon: Settings,
       label: "Settings",
-      path: "/dashboard/product-vendor-profile",
+      path: "/dashboard/vendor-settings",
       submenu: [
         {
           icon: Building,
           label: "Company Profile",
-          path: "/dashboard/product-vendor-profile",
+          path: "/dashboard/vendor-settings",
         },
         {
           icon: Award,
@@ -714,12 +714,12 @@ export const menuConfig: MenuConfig = {
     {
       icon: Settings,
       label: "Settings",
-      path: "/dashboard/logistics-vendor-profile",
+      path: "/dashboard/vendor-settings",
       submenu: [
         {
           icon: Building,
           label: "Company Profile",
-          path: "/dashboard/logistics-vendor-profile",
+          path: "/dashboard/vendor-settings",
         },
         {
           icon: MapPin,

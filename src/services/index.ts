@@ -18,6 +18,7 @@ export * from './modules/vendors';
 export * from './modules/bank-account';
 export * from './modules/user-account';
 export * from './modules/vendor-profile';
+export { vendorServicesService } from './modules/vendor-profile/vendor-services.service';
 
 // ============= Convenience Aggregations =============
 import { authRoutes } from './modules/auth';
