@@ -1,6 +1,7 @@
 import apiService from '../../core/api.service';
 import { vendorProfileRoutes } from './vendor-profile.routes';
 import { VendorProfile, VerificationDocument, VendorDocumentType } from '@/types/verification';
+import { errorHandler } from '@/utils/errorHandler.utils';
 
 export interface SaveVendorProfileResponse {
   success: boolean;
@@ -40,22 +41,38 @@ export interface DeleteVendorDocumentResponse {
 class VendorProfileService {
   /**
    * Get vendor profile
+   * Returns null for new users (404)
    */
-  async getProfile(): Promise<VendorProfile> {
-    const response = await apiService.get<{ success: boolean; data: VendorProfile }>(
-      vendorProfileRoutes.get
-    );
-    return response.data;
+  async getProfile(): Promise<VendorProfile | null> {
+    try {
+      const response = await apiService.get<{ success: boolean; data: VendorProfile }>(
+        vendorProfileRoutes.get
+      );
+      return response.data;
+    } catch (error: any) {
+      // 404 means new user with no profile yet - return null gracefully
+      if (error?.response?.status === 404) {
+        return null;
+      }
+      errorHandler.handleApiError(error, 'Failed to fetch vendor profile');
+      throw error;
+    }
   }
 
   /**
    * Save or update vendor profile
    */
   async saveProfile(profile: Partial<VendorProfile>): Promise<SaveVendorProfileResponse> {
-    return await apiService.post<SaveVendorProfileResponse, Partial<VendorProfile>>(
-      vendorProfileRoutes.save,
-      profile
-    );
+    try {
+      const response = await apiService.post<SaveVendorProfileResponse, Partial<VendorProfile>>(
+        vendorProfileRoutes.save,
+        profile
+      );
+      return response;
+    } catch (error: any) {
+      errorHandler.handleApiError(error, 'Failed to save vendor profile');
+      throw error;
+    }
   }
 
   /**
@@ -65,28 +82,40 @@ class VendorProfileService {
     file: File,
     documentType: VendorDocumentType
   ): Promise<UploadVendorDocumentResponse> {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('documentType', documentType);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('documentType', documentType);
 
-    return await apiService.post<UploadVendorDocumentResponse, FormData>(
-      vendorProfileRoutes.uploadDocument,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
+      const response = await apiService.post<UploadVendorDocumentResponse, FormData>(
+        vendorProfileRoutes.uploadDocument,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      return response;
+    } catch (error: any) {
+      errorHandler.handleApiError(error, 'Failed to upload document');
+      throw error;
+    }
   }
 
   /**
    * Delete a verification document
    */
   async deleteDocument(documentId: string): Promise<DeleteVendorDocumentResponse> {
-    return await apiService.remove<DeleteVendorDocumentResponse>(
-      vendorProfileRoutes.deleteDocument(documentId)
-    );
+    try {
+      const response = await apiService.remove<DeleteVendorDocumentResponse>(
+        vendorProfileRoutes.deleteDocument(documentId)
+      );
+      return response;
+    } catch (error: any) {
+      errorHandler.handleApiError(error, 'Failed to delete document');
+      throw error;
+    }
   }
 
   /**
@@ -96,10 +125,16 @@ class VendorProfileService {
     consentGiven: boolean,
     consentTimestamp: string
   ): Promise<SubmitVendorVerificationResponse> {
-    return await apiService.post<SubmitVendorVerificationResponse, { consentGiven: boolean; consentTimestamp: string }>(
-      vendorProfileRoutes.submitVerification,
-      { consentGiven, consentTimestamp }
-    );
+    try {
+      const response = await apiService.post<SubmitVendorVerificationResponse, { consentGiven: boolean; consentTimestamp: string }>(
+        vendorProfileRoutes.submitVerification,
+        { consentGiven, consentTimestamp }
+      );
+      return response;
+    } catch (error: any) {
+      errorHandler.handleApiError(error, 'Failed to submit for verification');
+      throw error;
+    }
   }
 }
 
