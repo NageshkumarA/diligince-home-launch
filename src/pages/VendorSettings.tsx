@@ -565,13 +565,11 @@ const VendorSettings = () => {
               </CardContent>
             </Card>
 
-            {/* Services & Skills Section - Only for Service Vendors */}
-            {profile.vendorCategory === 'Service Vendor' && (
-              <ServicesSkillsForm 
-                isProfileLocked={isProfileLocked}
-                onSaveSuccess={() => toast.success('Services updated')}
-              />
-            )}
+            {/* Services & Skills Section - All Vendor Types */}
+            <ServicesSkillsForm 
+              isProfileLocked={isProfileLocked}
+              onSaveSuccess={() => toast.success('Services updated')}
+            />
 
             {/* Action Buttons - Simple row without card */}
             <div className="flex gap-3 justify-end">
