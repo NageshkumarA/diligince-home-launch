@@ -136,6 +136,48 @@ class VendorProfileService {
       throw error;
     }
   }
+
+  /**
+   * Get profile completion status and missing items
+   */
+  async getCompletionStatus(): Promise<{
+    vendorCategory: string;
+    completionPercentage: number;
+    isProfileComplete: boolean;
+    canSubmit: boolean;
+    missingFields: string[];
+    missingDocuments: string[];
+    requiredDocuments: {
+      mandatory: string[];
+      categorySpecific: string[];
+    };
+    optionalDocuments: string[];
+    uploadedDocuments: string[];
+  }> {
+    try {
+      const response = await apiService.get<{
+        success: boolean;
+        data: {
+          vendorCategory: string;
+          completionPercentage: number;
+          isProfileComplete: boolean;
+          canSubmit: boolean;
+          missingFields: string[];
+          missingDocuments: string[];
+          requiredDocuments: {
+            mandatory: string[];
+            categorySpecific: string[];
+          };
+          optionalDocuments: string[];
+          uploadedDocuments: string[];
+        };
+      }>(vendorProfileRoutes.completionStatus);
+      return response.data;
+    } catch (error: any) {
+      errorHandler.handleApiError(error, 'Failed to fetch completion status');
+      throw error;
+    }
+  }
 }
 
 export const vendorProfileService = new VendorProfileService();
