@@ -205,7 +205,8 @@ const VendorSettings = () => {
     const response = await vendorProfileService.uploadDocument(file, documentType as VendorDocumentType);
 
     if (response.success) {
-      const uploadedDoc = response.data;
+      // Handle both response structures: {document: {...}} or direct document object
+      const uploadedDoc = (response.data as any).document || response.data;
 
       setProfile(prev => {
         const existingDocs = prev.documents || [];
