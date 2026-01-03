@@ -10,9 +10,10 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import toast from '@/utils/toast.utils';
 import errorHandler from '@/utils/errorHandler.utils';
-import { VendorProfile, VerificationStatus, VerificationDocument, VendorDocumentType } from '@/types/verification';
+import { VendorProfile, VerificationStatus, VerificationDocument, VendorDocumentType, Address } from '@/types/verification';
 import { VendorProfileCompletionBanner } from '@/components/vendor/shared/VendorProfileCompletionBanner';
 import { VendorDocumentUploadField } from '@/components/vendor/shared/VendorDocumentUploadField';
+import { VendorAddressSection } from '@/components/vendor/shared/VendorAddressSection';
 import { 
   calculateVendorProfileCompletion, 
   canVendorSubmitForVerification,
@@ -76,6 +77,7 @@ const VendorSettings = () => {
             mobile: user?.profile?.mobile || '',
             telephone: '',
             website: '',
+            addresses: [{ line1: '', city: '', state: '', pincode: '', isPrimary: true }],
             primaryIndustry: '',
             yearsInBusiness: '',
             businessLocation: '',
@@ -110,6 +112,10 @@ const VendorSettings = () => {
   // Form handlers
   const handleChange = (field: keyof VendorProfile, value: any) => {
     setProfile(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleAddressChange = (addresses: Address[]) => {
+    setProfile(prev => ({ ...prev, addresses }));
   };
 
   const handleSave = async () => {
@@ -472,6 +478,13 @@ const VendorSettings = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Business Address Section */}
+            <VendorAddressSection
+              addresses={profile.addresses || []}
+              onChange={handleAddressChange}
+              isProfileLocked={isProfileLocked}
+            />
 
             {/* Legal Information & Documents Section (Combined) */}
             <Card>
