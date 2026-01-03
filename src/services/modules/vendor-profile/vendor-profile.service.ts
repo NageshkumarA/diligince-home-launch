@@ -96,6 +96,20 @@ class VendorProfileService {
   }
 
   /**
+   * Normalize addresses from backend
+   */
+  private normalizeAddresses(addresses: any[]): any[] {
+    if (!addresses || !Array.isArray(addresses)) return [];
+    return addresses.map((addr, index) => ({
+      line1: addr.line1 || addr.address || addr.street || '',
+      city: addr.city || '',
+      state: addr.state || '',
+      pincode: addr.pincode || addr.postalCode || addr.zip || '',
+      isPrimary: addr.isPrimary ?? index === 0,
+    }));
+  }
+
+  /**
    * Normalize backend profile response to frontend VendorProfile interface
    * Handles multiple backend structures for backward compatibility
    */
@@ -117,6 +131,11 @@ class VendorProfileService {
     // Extract documents - handle verificationDocuments or documents
     const rawDocs = data.documents || data.verificationDocuments || [];
 
+    // Extract addresses - handle nested contactInfo.address or flat addresses array
+    const rawAddresses = data.addresses || 
+      (data.contactInfo?.address ? [data.contactInfo.address] : []) ||
+      (data.address ? [{ line1: data.address, city: data.city, state: data.state, pincode: data.pincode }] : []);
+
     return {
       // Basic Info
       businessName: data.businessName || data.companyName || '',
@@ -134,11 +153,18 @@ class VendorProfileService {
       telephone: telephone || undefined,
       website: website || undefined,
 
+      // Address
+      addresses: this.normalizeAddresses(rawAddresses),
+
       // Business Details
       primaryIndustry: data.primaryIndustry || data.industry || undefined,
       yearsInBusiness: data.yearsInBusiness || data.experience || undefined,
       businessLocation: data.businessLocation || data.location || undefined,
       serviceAreas: data.serviceAreas || data.areas || undefined,
+
+      // Additional verification fields
+      paymentTerms: data.paymentTerms || [],
+      qualityStandards: data.qualityStandards || [],
 
       // Documents
       documents: this.normalizeDocuments(rawDocs),
@@ -157,6 +183,56 @@ class VendorProfileService {
       // Completion
       isProfileComplete: data.isProfileComplete || false,
       profileCompletionPercentage: data.profileCompletionPercentage || 0,
+    };
+  }
+
+  /**
+   * Transform frontend profile to backend expected structure
+   */
+  private denormalizeProfile(profile: Partial<VendorProfile>): any {
+    const primaryAddress = profile.addresses?.[0];
+    
+    return {
+      businessName: profile.businessName,
+      vendorCategory: profile.vendorCategory,
+      specialization: profile.specialization,
+
+      // Nested structure for backend
+      contactInfo: {
+        email: profile.email,
+        phone: profile.mobile,
+        telephone: profile.telephone,
+        website: profile.website,
+        address: primaryAddress ? {
+          line1: primaryAddress.line1,
+          city: primaryAddress.city,
+          state: primaryAddress.state,
+          pincode: primaryAddress.pincode,
+        } : null,
+      },
+
+      businessRegistration: {
+        taxId: profile.panNumber,
+        gstNumber: profile.gstNumber,
+        registrationNumber: profile.registrationNumber,
+      },
+
+      // Also send flat fields for backward compatibility
+      email: profile.email,
+      mobile: profile.mobile,
+      telephone: profile.telephone,
+      website: profile.website,
+      panNumber: profile.panNumber,
+      gstNumber: profile.gstNumber,
+      registrationNumber: profile.registrationNumber,
+
+      addresses: profile.addresses,
+      paymentTerms: profile.paymentTerms,
+      qualityStandards: profile.qualityStandards,
+      primaryIndustry: profile.primaryIndustry,
+      yearsInBusiness: profile.yearsInBusiness,
+      businessLocation: profile.businessLocation,
+      serviceAreas: profile.serviceAreas,
     };
   }
 
@@ -187,9 +263,12 @@ class VendorProfileService {
    */
   async saveProfile(profile: Partial<VendorProfile>): Promise<SaveVendorProfileResponse> {
     try {
-      const response = await apiService.post<SaveVendorProfileResponse, Partial<VendorProfile>>(
+      // Transform to backend expected structure
+      const backendPayload = this.denormalizeProfile(profile);
+      
+      const response = await apiService.post<SaveVendorProfileResponse, any>(
         vendorProfileRoutes.save,
-        profile
+        backendPayload
       );
 
       // Normalize the response data

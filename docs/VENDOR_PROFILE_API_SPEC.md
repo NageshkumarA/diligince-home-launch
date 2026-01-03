@@ -185,28 +185,80 @@ Returns the updated profile in the same format as GET `/profile`.
 
 ## Field Mapping Reference
 
-| Frontend Field | Expected Backend Path | Notes |
+### Frontend to Backend Field Mapping
+
+When saving a profile, the frontend transforms data to match the backend's expected nested structure:
+
+| Frontend Field | Backend Expected Path | Notes |
 |----------------|----------------------|-------|
-| `email` | `email` | Flatten from `contactInfo.email` |
-| `mobile` | `mobile` | Flatten from `contactInfo.mobile` |
-| `panNumber` | `panNumber` | Flatten from `businessRegistration.panNumber` |
-| `gstNumber` | `gstNumber` | Flatten from `businessRegistration.gstNumber` |
+| `email` | `contactInfo.email` | Also sent flat for compatibility |
+| `mobile` | `contactInfo.phone` | Also sent flat for compatibility |
+| `telephone` | `contactInfo.telephone` | Optional |
+| `website` | `contactInfo.website` | Optional |
+| `panNumber` | `businessRegistration.taxId` | Also sent flat for compatibility |
+| `gstNumber` | `businessRegistration.gstNumber` | Also sent flat for compatibility |
+| `registrationNumber` | `businessRegistration.registrationNumber` | Also sent flat for compatibility |
+| `addresses[0].line1` | `contactInfo.address.line1` | Primary address |
+| `addresses[0].city` | `contactInfo.address.city` | Primary address |
+| `addresses[0].state` | `contactInfo.address.state` | Primary address |
+| `addresses[0].pincode` | `contactInfo.address.pincode` | Primary address |
+| `addresses` | `addresses` | Full array also sent |
+| `paymentTerms` | `paymentTerms` | Array of strings |
+| `qualityStandards` | `qualityStandards` | Array of strings |
 | `documents` | `documents` | Rename from `verificationDocuments` |
 | `documents[].type` | `documents[].type` | Rename from `fileType` |
 | `documents[].url` | `documents[].url` | Must be full URL |
+
+### Backend to Frontend Field Mapping (Normalization)
+
+When receiving a profile, the frontend handles multiple backend structures:
+
+| Backend Path | Frontend Field | Fallback Paths |
+|--------------|----------------|----------------|
+| `email` | `email` | `contactInfo.email` |
+| `mobile` | `mobile` | `phone`, `contactInfo.phone`, `contactInfo.mobile` |
+| `panNumber` | `panNumber` | `businessRegistration.taxId`, `businessRegistration.panNumber` |
+| `gstNumber` | `gstNumber` | `businessRegistration.gstNumber` |
+| `registrationNumber` | `registrationNumber` | `businessRegistration.registrationNumber` |
+| `addresses` | `addresses` | `contactInfo.address` (wrapped in array), flat fields |
+| `documents` | `documents` | `verificationDocuments` |
 
 ---
 
 ## Document Types
 
-| Type Key | Display Name |
-|----------|--------------|
-| `pan_card` | PAN Card |
-| `gst_certificate` | GST Certificate |
-| `incorporation_certificate` | Certificate of Incorporation |
-| `bank_statement` | Bank Statement |
-| `cancelled_cheque` | Cancelled Cheque |
-| `address_proof` | Address Proof |
+### Current Frontend Document Types
+
+| Type Key | Display Name | Category |
+|----------|--------------|----------|
+| `gst_certificate` | GST Certificate | Mandatory |
+| `pan_card` | PAN Card | Mandatory |
+| `registration_certificate` | Registration Certificate | Mandatory |
+| `service_certifications` | Service Certifications | Service Vendor |
+| `insurance_certificate` | Insurance Certificate | Service Vendor |
+| `technical_qualifications` | Technical Qualifications | Service Vendor |
+| `product_certifications` | Product Certifications | Product Vendor |
+| `quality_certificates` | Quality Certificates | Product Vendor |
+| `manufacturer_authorization` | Manufacturer Authorization | Product Vendor |
+| `product_catalog` | Product Catalog | Product Vendor |
+| `transport_license` | Transport License | Logistics Vendor |
+| `vehicle_registration` | Vehicle Registration | Logistics Vendor |
+| `goods_insurance` | Goods Insurance | Logistics Vendor |
+| `warehouse_license` | Warehouse License | Logistics Vendor |
+| `address_proof` | Address Proof | Optional |
+
+### Backend Expected Document Types (from 422 error)
+
+The backend appears to expect different document type values:
+
+| Backend Expected | Frontend Current | Action Required |
+|------------------|------------------|-----------------|
+| `business_registration` | `registration_certificate` | Backend to accept both |
+| `tax_document` | `pan_card` | Backend to accept both |
+| `quality_certification` | `quality_certificates` | Backend to accept both |
+| `address_proof` | `address_proof` | ✅ Matches |
+
+**Recommendation**: Backend should accept both naming conventions and map internally.
 
 ---
 
@@ -214,9 +266,31 @@ Returns the updated profile in the same format as GET `/profile`.
 
 | Status | Description |
 |--------|-------------|
+| `incomplete` | Profile not ready for submission |
 | `pending` | Awaiting verification |
-| `verified` | Successfully verified |
+| `approved` | Successfully verified |
 | `rejected` | Verification failed |
+
+---
+
+## Required Fields for Verification
+
+Based on the 422 error response, the following fields are required:
+
+### Profile Fields
+- `businessRegistration.registrationNumber` (frontend: `registrationNumber`)
+- `businessRegistration.taxId` (frontend: `panNumber`)
+- `contactInfo.email` (frontend: `email`)
+- `contactInfo.phone` (frontend: `mobile`)
+- `contactInfo.address` (frontend: `addresses[0]`)
+- `paymentTerms` (frontend: `paymentTerms`)
+- `qualityStandards` (frontend: `qualityStandards`)
+
+### Required Documents
+- `business_registration` or `registration_certificate`
+- `tax_document` or `pan_card`
+- `quality_certification` or `quality_certificates`
+- `address_proof`
 
 ---
 
@@ -229,6 +303,37 @@ Returns the updated profile in the same format as GET `/profile`.
 - [ ] In documents: rename `fileType` → `type`
 - [ ] Return full URLs for document files
 - [ ] Remove `document` wrapper from upload response
+- [ ] **NEW**: Accept both frontend and backend document type naming conventions
+- [ ] **NEW**: Add validation endpoint to check profile completeness before submission
+
+### Suggested New Endpoint: Pre-Validation
+
+```
+GET /api/v1/vendors/profile/validate
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "canSubmit": false,
+    "completionPercentage": 65,
+    "missingFields": [
+      {
+        "path": "contactInfo.address",
+        "displayName": "Business Address"
+      }
+    ],
+    "missingDocuments": [
+      {
+        "type": "address_proof",
+        "displayName": "Address Proof"
+      }
+    ]
+  }
+}
+```
 
 ---
 
@@ -240,6 +345,8 @@ The frontend handles both current and new backend structures via:
 - `normalizeProfile()` - Maps nested/flat structures to expected interface
 - `normalizeDocuments()` - Standardizes document array format
 - `normalizeDocumentUrl()` - Ensures full URLs for documents
+- `normalizeAddresses()` - **NEW**: Handles address normalization
+- `denormalizeProfile()` - **NEW**: Transforms frontend to backend structure
 
 **No frontend changes required** once backend is updated.
 
@@ -253,3 +360,5 @@ After backend updates, verify:
 3. "View" button opens documents in new tab
 4. Document upload works and shows in list
 5. Profile save persists all fields correctly
+6. **NEW**: Address section displays and saves correctly
+7. **NEW**: Verification submission succeeds with complete profile
