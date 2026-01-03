@@ -49,17 +49,35 @@ class VendorProfileService {
   private normalizeDocuments(docs: any[]): VerificationDocument[] {
     if (!docs || !Array.isArray(docs)) return [];
 
-    return docs.map(doc => ({
-      id: doc.id || doc._id || '',
-      name: doc.name || doc.fileName || doc.originalName || '',
-      type: doc.type || doc.fileType || doc.mimeType || 'application/octet-stream',
-      size: doc.size || doc.fileSize || 0,
-      url: this.normalizeDocumentUrl(doc.url || doc.fileUrl || doc.path || ''),
-      documentType: doc.documentType || doc.docType || 'other',
-      uploadedAt: doc.uploadedAt ? new Date(doc.uploadedAt) : new Date(),
-      status: doc.status || 'pending',
-      remarks: doc.remarks || doc.comment || undefined,
-    }));
+    // List of valid document type values (backend uses "type" field for these)
+    const validDocumentTypes = [
+      'gst_certificate', 'pan_card', 'registration_certificate',
+      'service_certifications', 'insurance_certificate', 'technical_qualifications',
+      'product_certifications', 'quality_certificates', 'manufacturer_authorization',
+      'product_catalog', 'transport_license', 'vehicle_registration',
+      'goods_insurance', 'warehouse_license', 'company_logo', 'address_proof',
+      'authorization_letter'
+    ];
+
+    return docs.map(doc => {
+      // Backend uses "type" for document category (gst_certificate, pan_card, etc.)
+      // Detect if "type" is a document type or MIME type
+      const isDocumentTypeValue = validDocumentTypes.includes(doc.type);
+
+      return {
+        id: doc.id || doc._id || '',
+        name: doc.name || doc.fileName || doc.originalName || '',
+        // MIME type: use mimeType, fileType, or default to pdf for known doc types
+        type: doc.mimeType || doc.fileType || (isDocumentTypeValue ? 'application/pdf' : doc.type) || 'application/octet-stream',
+        size: doc.size || doc.fileSize || 0,
+        url: this.normalizeDocumentUrl(doc.url || doc.fileUrl || doc.path || ''),
+        // Document type: prioritize documentType, then check if type is a doc type
+        documentType: doc.documentType || doc.docType || (isDocumentTypeValue ? doc.type : 'other'),
+        uploadedAt: doc.uploadedAt ? new Date(doc.uploadedAt) : new Date(),
+        status: doc.status || 'pending',
+        remarks: doc.remarks || doc.comment || undefined,
+      };
+    });
   }
 
   /**
