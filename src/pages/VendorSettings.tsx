@@ -178,9 +178,13 @@ const VendorSettings = () => {
     const loadingToast = errorHandler.showLoading('Approving profile...');
 
     try {
+      console.log('[Self-Approve] Starting self-approval process...');
       const response = await vendorProfileService.selfApprove();
+      console.log('[Self-Approve] API Response:', response);
 
       if (response.success) {
+        console.log('[Self-Approve] Success! Updating local profile state...');
+
         // Update local profile state
         setProfile(prev => ({
           ...prev,
@@ -188,11 +192,17 @@ const VendorSettings = () => {
           verificationCompletedAt: response.data.verificationCompletedAt
         }));
 
+        console.log('[Self-Approve] Calling updateVerificationStatus with:', VerificationStatus.APPROVED);
         // Directly update UserContext verification status (immediate unlock)
         updateVerificationStatus(VerificationStatus.APPROVED);
 
         errorHandler.updateSuccess(loadingToast, 'Profile approved! Navigation enabled.');
 
+        // Small delay to ensure state propagates
+        console.log('[Self-Approve] Waiting for state to propagate...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        console.log('[Self-Approve] Complete! Showing success message.');
         // Success message
         toast.success('Sidebar navigation is now enabled!', {
           description: 'You can now access all features.',
@@ -200,6 +210,7 @@ const VendorSettings = () => {
         });
       }
     } catch (error) {
+      console.error('[Self-Approve] Error during approval:', error);
       errorHandler.updateError(loadingToast, 'Failed to approve profile');
     } finally {
       setIsSubmitting(false);

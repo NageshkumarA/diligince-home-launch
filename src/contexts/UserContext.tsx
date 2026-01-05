@@ -104,7 +104,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
               apiStatus = profileResponse?.data?.data?.profile?.verificationStatus;
             } else if (userData.role === 'vendor') {
               const profileResponse = await api.get(vendorProfileRoutes.get);
-              apiStatus = profileResponse?.data?.data?.profile?.verificationStatus;
+              apiStatus = profileResponse?.data?.data?.verificationStatus;
             }
 
             if (apiStatus) {
@@ -271,7 +271,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
               apiStatus = response?.data?.data?.profile?.verificationStatus;
             } else if (userProfile.role === 'vendor') {
               const response = await api.get(vendorProfileRoutes.get);
-              apiStatus = response?.data?.data?.profile?.verificationStatus;
+              apiStatus = response?.data?.data?.verificationStatus;
             }
 
             if (apiStatus) {
@@ -405,10 +405,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   };
 
   const updateVerificationStatus = useCallback((status: VerificationStatus) => {
-    console.log('Manually updating verification status to:', status);
+    console.log('[UserContext] updateVerificationStatus called with:', status);
+    console.log('[UserContext] Current verificationStatus:', verificationStatus);
     setVerificationStatus(status);
     localStorage.setItem('verificationStatus', status);
-  }, []);
+    console.log('[UserContext] Updated verificationStatus to:', status);
+    console.log('[UserContext] localStorage now has:', localStorage.getItem('verificationStatus'));
+  }, [verificationStatus]);
 
   const refreshVerificationStatus = async () => {
     try {
@@ -421,7 +424,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         apiStatus = response?.data?.data?.profile?.verificationStatus;
       } else if (user.role === 'vendor') {
         const response = await api.get(vendorProfileRoutes.get);
-        apiStatus = response?.data?.data?.profile?.verificationStatus;
+        apiStatus = response?.data?.data?.verificationStatus;
       }
 
       if (apiStatus) {

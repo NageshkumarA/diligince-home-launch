@@ -15,8 +15,10 @@ const Sidebar: React.FC = () => {
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const { isLoading, permissionsMap, pathToModuleMap, hierarchicalConfig } = usePermissions();
-  
+
+  console.log('[Sidebar] Rendering - verificationStatus:', verificationStatus);
   const canAccessFeature = verificationStatus === VerificationStatus.APPROVED;
+  console.log('[Sidebar] canAccessFeature:', canAccessFeature, '(verificationStatus === APPROVED:', verificationStatus === VerificationStatus.APPROVED, ')');
 
   if (!user) return null;
 
@@ -88,8 +90,8 @@ const Sidebar: React.FC = () => {
   // Auto-expand menu containing active route on mount/route change
   useEffect(() => {
     if (!isCollapsed && menuItems.length > 0) {
-      const activeParent = menuItems.find(item => 
-        item.submenu?.some(sub => 
+      const activeParent = menuItems.find(item =>
+        item.submenu?.some(sub =>
           location.pathname === sub.path || location.pathname.startsWith(sub.path + '/')
         )
       );
@@ -133,9 +135,8 @@ const Sidebar: React.FC = () => {
 
   return (
     <>
-      <aside className={`${
-        isCollapsed ? 'w-16' : 'w-80'
-      } bg-primary border-r border-sidebar-border flex flex-col h-screen transition-all duration-300 relative z-40`}>
+      <aside className={`${isCollapsed ? 'w-16' : 'w-80'
+        } bg-primary border-r border-sidebar-border flex flex-col h-screen transition-all duration-300 relative z-40`}>
         {/* Header with Logo */}
         <div className="p-4 border-b border-sidebar-border">
           <div className={`${isCollapsed ? 'justify-center position-relative' : 'justify-between'} flex items-center`}>
@@ -180,108 +181,105 @@ const Sidebar: React.FC = () => {
               </div>
             ) : (
               menuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              const isExpanded = expandedMenus.includes(item.path);
-              const hasSubmenu = item.submenu && item.submenu.length > 0;
-              const isSubmenuActive = activeSubmenu === item.path;
-              
-              // Check if any child route is currently active
-              const hasActiveChild = hasSubmenu && item.submenu!.some(
-                subItem => location.pathname === subItem.path || location.pathname.startsWith(subItem.path + '/')
-              );
-              
-              // Check if this item should be locked during verification
-              // Allow access to settings pages for both industry and vendor users
-              const isSettingsPage = item.path.includes('industry-settings') || 
-                                     item.path.includes('vendor-settings') ||
-                                     item.path.includes('service-vendor-profile') ||
-                                     item.path.includes('product-vendor-profile') ||
-                                     item.path.includes('logistics-vendor-profile');
-              const isLocked = !canAccessFeature && !isSettingsPage;
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                const isExpanded = expandedMenus.includes(item.path);
+                const hasSubmenu = item.submenu && item.submenu.length > 0;
+                const isSubmenuActive = activeSubmenu === item.path;
 
-              return (
-                <div key={item.path} className="relative">
-                  <div
-                    onClick={(e) => {
-                      if (isLocked) {
-                        e.preventDefault();
-                        toast.error('Complete profile verification to access this feature');
-                        return;
-                      }
-                      if (hasSubmenu && !isCollapsed) {
-                        e.preventDefault();
-                        toggleAccordion(item.path);
-                      } else if (hasSubmenu && isCollapsed) {
-                        e.preventDefault();
-                        handleIconClick(item.path, hasSubmenu);
-                      }
-                    }}
-                    className={`flex items-center ${
-                      isCollapsed ? 'justify-center h-10 w-10 mx-auto' : 'space-x-3 px-3 py-3'
-                    } rounded-md transition-colors relative ${
-                      isActive || isSubmenuActive || hasActiveChild
-                        ? 'bg-primary-foreground text-primary'
-                        : 'text-primary-foreground hover:bg-primary-foreground hover:text-primary'
-                    } ${hasSubmenu || isLocked ? 'cursor-pointer' : ''} ${isLocked ? 'opacity-50' : ''}`}
-                    title={isCollapsed ? item.label : ''}
-                  >
-                    {hasSubmenu && !isCollapsed ? (
-                      <>
-                        <Icon className="w-5 h-5 flex-shrink-0" />
-                        <span className="font-medium flex-1">{item.label}</span>
-                        {isLocked ? (
-                          <Lock className="w-4 h-4 text-gray-400" />
-                        ) : isExpanded ? (
-                          <ChevronUp className="w-4 h-4" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4" />
-                        )}
-                      </>
-                    ) : hasSubmenu && isCollapsed ? (
-                      <Icon className="w-6 h-6" />
-                    ) : isLocked ? (
-                      <div className={`flex items-center w-full ${isCollapsed ? 'justify-center' : ''}`}>
-                        <Icon className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
-                        {!isCollapsed && (
-                          <>
+                // Check if any child route is currently active
+                const hasActiveChild = hasSubmenu && item.submenu!.some(
+                  subItem => location.pathname === subItem.path || location.pathname.startsWith(subItem.path + '/')
+                );
+
+                // Check if this item should be locked during verification
+                // Allow access to settings pages for both industry and vendor users
+                const isSettingsPage = item.path.includes('industry-settings') ||
+                  item.path.includes('vendor-settings') ||
+                  item.path.includes('service-vendor-profile') ||
+                  item.path.includes('product-vendor-profile') ||
+                  item.path.includes('logistics-vendor-profile');
+                const isLocked = !canAccessFeature && !isSettingsPage;
+
+                return (
+                  <div key={item.path} className="relative">
+                    <div
+                      onClick={(e) => {
+                        if (isLocked) {
+                          e.preventDefault();
+                          toast.error('Complete profile verification to access this feature');
+                          return;
+                        }
+                        if (hasSubmenu && !isCollapsed) {
+                          e.preventDefault();
+                          toggleAccordion(item.path);
+                        } else if (hasSubmenu && isCollapsed) {
+                          e.preventDefault();
+                          handleIconClick(item.path, hasSubmenu);
+                        }
+                      }}
+                      className={`flex items-center ${isCollapsed ? 'justify-center h-10 w-10 mx-auto' : 'space-x-3 px-3 py-3'
+                        } rounded-md transition-colors relative ${isActive || isSubmenuActive || hasActiveChild
+                          ? 'bg-primary-foreground text-primary'
+                          : 'text-primary-foreground hover:bg-primary-foreground hover:text-primary'
+                        } ${hasSubmenu || isLocked ? 'cursor-pointer' : ''} ${isLocked ? 'opacity-50' : ''}`}
+                      title={isCollapsed ? item.label : ''}
+                    >
+                      {hasSubmenu && !isCollapsed ? (
+                        <>
+                          <Icon className="w-5 h-5 flex-shrink-0" />
+                          <span className="font-medium flex-1">{item.label}</span>
+                          {isLocked ? (
+                            <Lock className="w-4 h-4 text-gray-400" />
+                          ) : isExpanded ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
+                        </>
+                      ) : hasSubmenu && isCollapsed ? (
+                        <Icon className="w-6 h-6" />
+                      ) : isLocked ? (
+                        <div className={`flex items-center w-full ${isCollapsed ? 'justify-center' : ''}`}>
+                          <Icon className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
+                          {!isCollapsed && (
+                            <>
+                              <span className="font-medium ml-3">{item.label}</span>
+                              <Lock className="w-3 h-3 ml-auto text-gray-400" />
+                            </>
+                          )}
+                        </div>
+                      ) : (
+                        <Link to={item.path} className={`flex items-center w-full ${isCollapsed ? 'justify-center' : ''}`}>
+                          <Icon className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
+                          {!isCollapsed && (
                             <span className="font-medium ml-3">{item.label}</span>
-                            <Lock className="w-3 h-3 ml-auto text-gray-400" />
-                          </>
-                        )}
+                          )}
+                        </Link>
+                      )}
+                    </div>
+
+                    {/* Submenu for expanded state */}
+                    {!isCollapsed && hasSubmenu && isExpanded && (
+                      <div className="ml-8 mt-2 space-y-1">
+                        {item.submenu!.map((subItem, index) => (
+                          <Link
+                            key={index}
+                            to={subItem.path}
+                            className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${location.pathname === subItem.path
+                                ? 'bg-accent text-accent-foreground'
+                                : 'text-primary-foreground hover:bg-accent hover:text-accent-foreground'
+                              }`}
+                          >
+                            <subItem.icon className="w-4 h-4" />
+                            <span>{subItem.label}</span>
+                          </Link>
+                        ))}
                       </div>
-                    ) : (
-                      <Link to={item.path} className={`flex items-center w-full ${isCollapsed ? 'justify-center' : ''}`}>
-                        <Icon className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
-                        {!isCollapsed && (
-                          <span className="font-medium ml-3">{item.label}</span>
-                        )}
-                      </Link>
                     )}
                   </div>
-
-                  {/* Submenu for expanded state */}
-                  {!isCollapsed && hasSubmenu && isExpanded && (
-                    <div className="ml-8 mt-2 space-y-1">
-                      {item.submenu!.map((subItem, index) => (
-                        <Link
-                          key={index}
-                          to={subItem.path}
-                          className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
-                            location.pathname === subItem.path
-                              ? 'bg-accent text-accent-foreground'
-                              : 'text-primary-foreground hover:bg-accent hover:text-accent-foreground'
-                          }`}
-                        >
-                          <subItem.icon className="w-4 h-4" />
-                          <span>{subItem.label}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })
+                );
+              })
             )}
           </nav>
         </div>
@@ -293,15 +291,13 @@ const Sidebar: React.FC = () => {
             const Icon = item.icon;
             const isExpanded = expandedMenus.includes(item.path);
             const isSubmenuActive = activeSubmenu === item.path;
-            
+
             return (
               <div key={item.path} className="relative">
                 <div
-                  className={`flex items-center ${
-                    isCollapsed ? 'justify-center h-10 w-10 mx-auto' : 'space-x-3 px-3 py-3'
-                  } rounded-md text-primary-foreground hover:bg-primary-foreground hover:text-primary transition-colors cursor-pointer ${
-                    isSubmenuActive ? 'bg-primary-foreground text-primary' : ''
-                  }`}
+                  className={`flex items-center ${isCollapsed ? 'justify-center h-10 w-10 mx-auto' : 'space-x-3 px-3 py-3'
+                    } rounded-md text-primary-foreground hover:bg-primary-foreground hover:text-primary transition-colors cursor-pointer ${isSubmenuActive ? 'bg-primary-foreground text-primary' : ''
+                    }`}
                   title={isCollapsed ? item.label : ''}
                   onClick={(e) => {
                     if (hasSubmenu && !isCollapsed) {
@@ -343,11 +339,10 @@ const Sidebar: React.FC = () => {
                         <button
                           key={index}
                           onClick={subItem.onClick}
-                          className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors w-full text-left ${
-                            location.pathname === subItem.path
+                          className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors w-full text-left ${location.pathname === subItem.path
                               ? 'bg-accent text-accent-foreground'
                               : 'text-primary-foreground hover:bg-accent hover:text-accent-foreground'
-                          }`}
+                            }`}
                         >
                           <subItem.icon className="w-4 h-4" />
                           <span>{subItem.label}</span>
@@ -356,11 +351,10 @@ const Sidebar: React.FC = () => {
                         <Link
                           key={index}
                           to={subItem.path}
-                          className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
-                            location.pathname === subItem.path
+                          className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${location.pathname === subItem.path
                               ? 'bg-accent text-accent-foreground'
                               : 'text-primary-foreground hover:bg-accent hover:text-accent-foreground'
-                          }`}
+                            }`}
                         >
                           <subItem.icon className="w-4 h-4" />
                           <span>{subItem.label}</span>
@@ -379,17 +373,17 @@ const Sidebar: React.FC = () => {
       {isCollapsed && activeSubmenu && (
         <>
           {/* Backdrop to close submenu */}
-          <div 
-            className="fixed inset-0 z-30 bg-transparent" 
+          <div
+            className="fixed inset-0 z-30 bg-transparent"
             onClick={() => setActiveSubmenu(null)}
           />
-          
+
           {/* Submenu panel - positioned absolutely to avoid overflow */}
           <div className="fixed left-16 top-0 bottom-0 w-72 bg-background border border-border shadow-2xl z-50 overflow-y-auto animate-slide-in-right">
             <div className="p-4 border-b border-border bg-muted/30">
               <h3 className="text-lg font-semibold text-foreground">
                 {menuItems.find(item => item.path === activeSubmenu)?.label ||
-                 userProfileItems.find(item => item.path === activeSubmenu)?.label}
+                  userProfileItems.find(item => item.path === activeSubmenu)?.label}
               </h3>
             </div>
             <div className="p-4">
@@ -402,17 +396,16 @@ const Sidebar: React.FC = () => {
                       key={index}
                       to={subItem.path}
                       onClick={() => setActiveSubmenu(null)}
-                      className={`flex items-center space-x-3 px-3 py-3 text-sm rounded-lg transition-all duration-200 ${
-                        location.pathname === subItem.path
+                      className={`flex items-center space-x-3 px-3 py-3 text-sm rounded-lg transition-all duration-200 ${location.pathname === subItem.path
                           ? 'bg-primary text-primary-foreground shadow-sm'
                           : 'text-foreground hover:bg-muted hover:translate-x-1'
-                      }`}
+                        }`}
                     >
                       <subItem.icon className="w-4 h-4 flex-shrink-0" />
                       <span>{subItem.label}</span>
                     </Link>
                   ))}
-                
+
                 {/* Profile submenu for user profile items */}
                 {userProfileItems
                   .find(item => item.path === activeSubmenu)
@@ -434,11 +427,10 @@ const Sidebar: React.FC = () => {
                         key={index}
                         to={subItem.path}
                         onClick={() => setActiveSubmenu(null)}
-                        className={`flex items-center space-x-3 px-3 py-3 text-sm rounded-lg transition-all duration-200 ${
-                          location.pathname === subItem.path
+                        className={`flex items-center space-x-3 px-3 py-3 text-sm rounded-lg transition-all duration-200 ${location.pathname === subItem.path
                             ? 'bg-primary text-primary-foreground shadow-sm'
                             : 'text-foreground hover:bg-muted hover:translate-x-1'
-                        }`}
+                          }`}
                       >
                         <subItem.icon className="w-4 h-4 flex-shrink-0" />
                         <span>{subItem.label}</span>
