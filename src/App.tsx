@@ -122,7 +122,7 @@ import ProductVendorDashboard from "@/pages/ProductVendorDashboard";
 import LogisticsVendorDashboard from "@/pages/LogisticsVendorDashboard";
 
 // Service Vendor pages
-import ServiceVendorRFQs from "@/pages/ServiceVendorRFQs";
+// ServiceVendorRFQs removed - using VendorRFQsBrowse instead
 import ServiceVendorProjects from "@/pages/ServiceVendorProjects";
 import ServiceVendorMessages from "@/pages/ServiceVendorMessages";
 import ServiceVendorProfile from "@/pages/ServiceVendorProfile";
@@ -492,7 +492,7 @@ function App() {
                               {/* Service Vendor Routes */}
                               <Route
                                 path="service-vendor-rfqs"
-                                element={<ServiceVendorRFQs />}
+                                element={<VendorRFQsBrowse />}
                               />
                               <Route
                                 path="rfqs/:rfqId"
