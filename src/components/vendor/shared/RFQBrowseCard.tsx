@@ -1,20 +1,22 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Building2, 
-  MapPin, 
-  Calendar, 
-  Clock, 
-  Users, 
-  Bookmark, 
+import { Badge } from '@/components/ui/badge';
+import {
+  Building2,
+  MapPin,
+  Calendar,
+  IndianRupee,
+  Users,
+  Bookmark,
   BookmarkCheck,
+  BadgeCheck,
+  Clock,
   Sparkles,
-  CheckCircle2,
-  AlertCircle
+  ArrowRight,
+  CheckCircle2
 } from 'lucide-react';
-import { RFQBrowseItem } from '@/types/rfq-browse';
+import { RFQBrowseItem, RFQLocation } from '@/types/rfq-browse';
 import { cn } from '@/lib/utils';
 
 interface RFQBrowseCardProps {
@@ -24,18 +26,64 @@ interface RFQBrowseCardProps {
   onToggleSave: (rfq: RFQBrowseItem) => void;
 }
 
-const priorityConfig = {
-  critical: { label: 'Critical', className: 'bg-destructive/10 text-destructive border-destructive/20' },
-  high: { label: 'High', className: 'bg-orange-500/10 text-orange-600 border-orange-500/20' },
-  medium: { label: 'Medium', className: 'bg-amber-500/10 text-amber-600 border-amber-500/20' },
-  low: { label: 'Low', className: 'bg-muted text-muted-foreground border-border' }
+// Helper: Get first category from array or string
+const getCategory = (category: string | string[]): string => {
+  if (Array.isArray(category)) {
+    return category[0] || 'service';
+  }
+  return category || 'service';
 };
 
-const categoryConfig = {
-  service: { label: 'Service', className: 'bg-blue-500/10 text-blue-600 border-blue-500/20' },
-  product: { label: 'Product', className: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
-  logistics: { label: 'Logistics', className: 'bg-purple-500/10 text-purple-600 border-purple-500/20' },
-  professional: { label: 'Professional', className: 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20' }
+// Helper: Format location with fallback
+const formatLocation = (location: Partial<RFQLocation> | undefined): string => {
+  if (!location?.city && !location?.state) return 'Not specified';
+  const parts = [location.city, location.state].filter(Boolean);
+  return parts.join(', ') || 'Not specified';
+};
+
+// Helper: Format date with fallback
+const formatDate = (dateString?: string): string => {
+  if (!dateString) return 'Recently';
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return 'Recently';
+  return date.toLocaleDateString('en-IN', { 
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric' 
+  });
+};
+
+// Helper: Get deadline or posted info
+const getDateInfo = (deadline?: string, postedDate?: string): { label: string; value: string } => {
+  if (deadline) {
+    const date = new Date(deadline);
+    if (!isNaN(date.getTime())) {
+      return { label: 'Deadline', value: formatDate(deadline) };
+    }
+  }
+  return { label: 'Posted', value: formatDate(postedDate) };
+};
+
+// Helper: Format days left
+const formatDaysLeft = (daysLeft: number | null): string | null => {
+  if (daysLeft === null || daysLeft === undefined) return null;
+  if (daysLeft <= 0) return 'Closing today';
+  if (daysLeft === 1) return '1 day left';
+  return `${daysLeft} days left`;
+};
+
+const priorityConfig: Record<string, { label: string; className: string }> = {
+  critical: { label: 'Critical', className: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800' },
+  high: { label: 'High', className: 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800' },
+  medium: { label: 'Medium', className: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800' },
+  low: { label: 'Low', className: 'bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700' }
+};
+
+const categoryConfig: Record<string, { label: string; className: string }> = {
+  service: { label: 'Service', className: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800' },
+  product: { label: 'Product', className: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800' },
+  logistics: { label: 'Logistics', className: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800' },
+  professional: { label: 'Professional', className: 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800' }
 };
 
 const RFQBrowseCard: React.FC<RFQBrowseCardProps> = ({
@@ -44,41 +92,37 @@ const RFQBrowseCard: React.FC<RFQBrowseCardProps> = ({
   onSubmitQuote,
   onToggleSave
 }) => {
-  const priority = priorityConfig[rfq.priority];
-  const category = categoryConfig[rfq.category];
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
-  };
+  const categoryKey = getCategory(rfq.category);
+  const category = categoryConfig[categoryKey] || categoryConfig.service;
+  const priority = priorityConfig[rfq.priority] || priorityConfig.medium;
+  const dateInfo = getDateInfo(rfq.deadline, rfq.postedDate);
+  const daysLeftText = formatDaysLeft(rfq.daysLeft);
+  const locationText = formatLocation(rfq.location);
 
   return (
     <Card className={cn(
-      "group hover:shadow-lg transition-all duration-200 border",
-      rfq.isClosingSoon && "border-orange-300 bg-orange-50/30",
-      rfq.hasApplied && "border-green-300 bg-green-50/30"
+      "group relative bg-card hover:shadow-lg transition-all duration-300 border rounded-xl overflow-hidden",
+      rfq.isClosingSoon && "ring-1 ring-orange-300 dark:ring-orange-700",
+      rfq.hasApplied && "ring-1 ring-green-300 bg-green-50/30 dark:ring-green-700 dark:bg-green-950/30"
     )}>
-      <CardContent className="p-5">
-        {/* Header with badges */}
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className={category.className}>
+      <CardContent className="p-0">
+        {/* Header: Badges & Bookmark */}
+        <div className="flex items-start justify-between p-4 pb-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="outline" className={cn("text-xs font-medium border", category.className)}>
               {category.label}
             </Badge>
-            <Badge variant="outline" className={priority.className}>
+            <Badge variant="outline" className={cn("text-xs font-medium border", priority.className)}>
               {priority.label}
             </Badge>
             {rfq.isClosingSoon && (
-              <Badge variant="outline" className="bg-orange-500/10 text-orange-600 border-orange-500/20">
-                <AlertCircle className="w-3 h-3 mr-1" />
+              <Badge className="bg-orange-500 text-white text-xs">
+                <Clock className="w-3 h-3 mr-1" />
                 Closing Soon
               </Badge>
             )}
             {rfq.hasApplied && (
-              <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
+              <Badge className="bg-green-600 text-white text-xs">
                 <CheckCircle2 className="w-3 h-3 mr-1" />
                 Applied
               </Badge>
@@ -87,128 +131,145 @@ const RFQBrowseCard: React.FC<RFQBrowseCardProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 shrink-0"
+            className="h-8 w-8 shrink-0 text-muted-foreground hover:text-primary"
             onClick={(e) => {
               e.stopPropagation();
               onToggleSave(rfq);
             }}
           >
             {rfq.isSaved ? (
-              <BookmarkCheck className="w-4 h-4 text-primary" />
+              <BookmarkCheck className="h-4 w-4 text-primary fill-primary" />
             ) : (
-              <Bookmark className="w-4 h-4 text-muted-foreground" />
+              <Bookmark className="h-4 w-4" />
             )}
           </Button>
         </div>
 
-        {/* AI Recommendation Badge */}
-        {rfq.aiRecommendation && (
-          <div className="mb-3 px-3 py-2 bg-gradient-to-r from-violet-500/10 to-purple-500/10 border border-violet-500/20 rounded-lg">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-violet-600" />
-              <span className="text-xs font-medium text-violet-700">
-                {rfq.aiRecommendation.score}% Match
-              </span>
-              <span className="text-xs text-violet-600">
-                — {rfq.aiRecommendation.reasoning}
-              </span>
+        {/* Title & Company */}
+        <div className="px-4 pb-3 space-y-2">
+          <h3 className="font-semibold text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors">
+            {rfq.title || 'Untitled RFQ'}
+          </h3>
+          
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Building2 className="h-4 w-4 shrink-0" />
+            <span className="truncate">{rfq.company?.name || 'Unknown Company'}</span>
+            {rfq.company?.verified && (
+              <BadgeCheck className="h-4 w-4 text-blue-600 shrink-0" />
+            )}
+          </div>
+        </div>
+
+        {/* Description */}
+        <div className="px-4 pb-3">
+          {rfq.description ? (
+            <p className="text-sm text-muted-foreground line-clamp-2">{rfq.description}</p>
+          ) : (
+            <p className="text-sm text-muted-foreground/60 italic">No description provided</p>
+          )}
+        </div>
+
+        {/* Meta: Location & Date */}
+        <div className="px-4 pb-3">
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <MapPin className="h-4 w-4 shrink-0" />
+              <span className="truncate">{locationText}</span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Calendar className="h-4 w-4 shrink-0" />
+              <span className="truncate">{dateInfo.label}: {dateInfo.value}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Budget Section */}
+        <div className="mx-4 mb-3 p-3 rounded-lg bg-muted/50">
+          <div className="flex items-center gap-2">
+            <IndianRupee className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-medium text-foreground">
+              {rfq.budget?.display || 'Budget not specified'}
+            </span>
+          </div>
+        </div>
+
+        {/* Skills (only if present) */}
+        {rfq.skills && rfq.skills.length > 0 && (
+          <div className="px-4 pb-3">
+            <div className="flex flex-wrap gap-1.5">
+              {rfq.skills.slice(0, 3).map((skill, index) => (
+                <Badge key={index} variant="secondary" className="text-xs font-normal">
+                  {skill}
+                </Badge>
+              ))}
+              {rfq.skills.length > 3 && (
+                <Badge variant="secondary" className="text-xs font-normal">
+                  +{rfq.skills.length - 3} more
+                </Badge>
+              )}
             </div>
           </div>
         )}
 
-        {/* Title */}
-        <h3 className="font-semibold text-foreground text-base mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-          {rfq.title}
-        </h3>
-
-        {/* Company */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-          <Building2 className="w-4 h-4" />
-          <span className="truncate">{rfq.company.name}</span>
-          {rfq.company.verified && (
-            <Badge variant="secondary" className="h-5 text-xs px-1.5">
-              Verified
-            </Badge>
-          )}
-        </div>
-
-        {/* Description */}
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-          {rfq.description}
-        </p>
-
-        {/* Meta info */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="flex items-center gap-2 text-sm">
-            <MapPin className="w-4 h-4 text-muted-foreground" />
-            <span className="truncate text-muted-foreground">
-              {rfq.location.city}, {rfq.location.state}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 text-sm">
-            <Calendar className="w-4 h-4 text-muted-foreground" />
-            <span className={cn(
-              "truncate",
-              rfq.isClosingSoon ? "text-orange-600 font-medium" : "text-muted-foreground"
-            )}>
-              {formatDate(rfq.deadline)}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 text-sm">
-            <Clock className="w-4 h-4 text-muted-foreground" />
-            <span className={cn(
-              rfq.daysLeft <= 3 ? "text-orange-600 font-medium" : "text-muted-foreground"
-            )}>
-              {rfq.daysLeft} days left
-            </span>
-          </div>
-          <div className="flex items-center gap-2 text-sm">
-            <Users className="w-4 h-4 text-muted-foreground" />
-            <span className="text-muted-foreground">
-              {rfq.responses} responses
-            </span>
-          </div>
-        </div>
-
-        {/* Budget */}
-        <div className="px-3 py-2 bg-muted/50 rounded-lg mb-4">
-          <div className="text-xs text-muted-foreground mb-0.5">Budget Range</div>
-          <div className="font-semibold text-foreground">{rfq.budget.display}</div>
-        </div>
-
-        {/* Skills */}
-        {rfq.skills.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            {rfq.skills.slice(0, 3).map((skill, index) => (
-              <Badge key={index} variant="secondary" className="text-xs font-normal">
-                {skill}
-              </Badge>
-            ))}
-            {rfq.skills.length > 3 && (
-              <Badge variant="secondary" className="text-xs font-normal">
-                +{rfq.skills.length - 3} more
-              </Badge>
+        {/* AI Recommendation */}
+        {rfq.aiRecommendation && (
+          <div className="mx-4 mb-3 p-3 rounded-lg bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-950/50 dark:to-blue-950/50 border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-purple-600" />
+              <span className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                {rfq.aiRecommendation.score}% Match
+              </span>
+              {rfq.aiRecommendation.winProbability && (
+                <span className="text-xs text-purple-600 dark:text-purple-400">
+                  • {rfq.aiRecommendation.winProbability}% win probability
+                </span>
+              )}
+            </div>
+            {rfq.aiRecommendation.reasoning && (
+              <p className="text-xs text-purple-600 dark:text-purple-400 mt-1 line-clamp-1">
+                {rfq.aiRecommendation.reasoning}
+              </p>
             )}
           </div>
         )}
 
-        {/* Actions */}
-        <div className="flex gap-2">
+        {/* Footer: Responses & Status */}
+        <div className="px-4 py-3 border-t bg-muted/30 flex items-center justify-between">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <Users className="h-4 w-4" />
+              <span>{rfq.responses || 0} responses</span>
+            </div>
+            {daysLeftText && (
+              <div className="flex items-center gap-1.5">
+                <Clock className="h-4 w-4" />
+                <span className={rfq.isClosingSoon ? 'text-orange-600 font-medium' : ''}>
+                  {daysLeftText}
+                </span>
+              </div>
+            )}
+          </div>
+          <Badge variant={rfq.status === 'open' ? 'default' : 'secondary'} className="text-xs capitalize">
+            {rfq.status || 'Open'}
+          </Badge>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="p-4 pt-3 flex gap-3 border-t">
           <Button
             variant="outline"
-            size="sm"
             className="flex-1"
             onClick={() => onViewDetails(rfq)}
           >
             View Details
           </Button>
           <Button
-            size="sm"
-            className="flex-1"
+            className="flex-1 gap-2"
             onClick={() => onSubmitQuote(rfq)}
             disabled={rfq.hasApplied}
           >
             {rfq.hasApplied ? 'Quote Submitted' : 'Submit Quote'}
+            {!rfq.hasApplied && <ArrowRight className="h-4 w-4" />}
           </Button>
         </div>
       </CardContent>
