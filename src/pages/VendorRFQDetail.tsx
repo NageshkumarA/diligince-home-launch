@@ -91,7 +91,7 @@ const VendorRFQDetail = () => {
       toast.info('You have already submitted a quote for this RFQ');
       return;
     }
-    navigate(`/dashboard/vendor-submit-quotation?rfqId=${rfqId}`);
+    navigate(`/dashboard/rfqs/${rfqId}/submit-quotation`);
   };
 
   if (isLoading) {
