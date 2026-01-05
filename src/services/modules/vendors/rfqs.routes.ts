@@ -1,18 +1,11 @@
 import { buildQueryString, API_BASE_PATH } from '../../core/api.config';
+import type { RFQBrowseFilters } from '@/types/rfq-browse';
 
 const BASE_PATH = `${API_BASE_PATH}/vendors/rfqs`;
 
 export const vendorRFQsRoutes = {
-  // Browse available RFQs
-  browse: (params?: {
-    category?: string;
-    status?: 'open' | 'closing_soon' | 'closed';
-    minBudget?: number;
-    maxBudget?: number;
-    location?: string;
-    page?: number;
-    limit?: number;
-  }) => `${BASE_PATH}/browse${buildQueryString(params)}`,
+  // Browse available RFQs with full filter support
+  browse: (params?: RFQBrowseFilters) => `${BASE_PATH}/browse${buildQueryString(params)}`,
   
   // Get RFQ details
   getById: (rfqId: string) => `${BASE_PATH}/${rfqId}`,
@@ -23,6 +16,9 @@ export const vendorRFQsRoutes = {
     page?: number;
     limit?: number;
   }) => `${BASE_PATH}/invited${buildQueryString(params)}`,
+  
+  // Save/Unsave RFQ
+  save: (rfqId: string) => `${BASE_PATH}/${rfqId}/save`,
   
   // Get RFQ statistics for vendor dashboard
   stats: `${BASE_PATH}/stats`,

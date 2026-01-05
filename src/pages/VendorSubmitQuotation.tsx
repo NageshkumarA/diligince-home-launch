@@ -134,15 +134,15 @@ const VendorSubmitQuotation: React.FC = () => {
             <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">Company</p>
-                <p className="font-medium">{rfqDetail.company}</p>
+                <p className="font-medium">{rfqDetail.company?.name || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Budget</p>
-                <p className="font-medium">{rfqDetail.budget}</p>
+                <p className="font-medium">{rfqDetail.budget?.display || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Deadline</p>
-                <p className="font-medium">{rfqDetail.deadline}</p>
+                <p className="font-medium">{rfqDetail.timeline?.deadline ? new Date(rfqDetail.timeline.deadline).toLocaleDateString() : 'N/A'}</p>
               </div>
             </CardContent>
           </Card>

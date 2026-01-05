@@ -38,7 +38,7 @@ const VendorRFQsBrowse = () => {
   };
 
   const handleToggleSave = (rfq: RFQBrowseItem) => {
-    toggleSaveRFQ(rfq.id);
+    toggleSaveRFQ(rfq.id, rfq.isSaved);
     toast.success(rfq.isSaved ? 'RFQ removed from saved' : 'RFQ saved successfully');
   };
 
