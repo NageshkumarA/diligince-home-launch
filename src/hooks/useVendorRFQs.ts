@@ -4,21 +4,22 @@ import { vendorRFQsService } from '@/services/modules/vendors/rfqs.service';
 import { 
   RFQBrowseFilters, 
   RFQBrowseItem, 
-  RFQDetailItem,
   RFQStats,
-  RFQBrowseFiltersResponse,
-  RFQBrowsePagination
+  RFQBrowsePagination,
+  SearchInterpretation
 } from '@/types/rfq-browse';
 
 interface UseVendorRFQsReturn {
   rfqs: RFQBrowseItem[];
   stats: RFQStats | null;
-  filterOptions: RFQBrowseFiltersResponse | null;
+  searchInterpretation: SearchInterpretation | null;
   pagination: RFQBrowsePagination | null;
   isLoading: boolean;
   error: string | null;
   filters: RFQBrowseFilters;
   setFilters: (filters: RFQBrowseFilters) => void;
+  setQuery: (query: string) => void;
+  setAiRecommended: (aiRecommended: boolean) => void;
   clearFilters: () => void;
   toggleSaveRFQ: (rfqId: string, isSaved: boolean) => void;
   refreshRFQs: () => void;
@@ -27,8 +28,7 @@ interface UseVendorRFQsReturn {
 const defaultFilters: RFQBrowseFilters = {
   page: 1,
   limit: 12,
-  sortBy: 'postedDate',
-  sortOrder: 'desc'
+  aiRecommended: false
 };
 
 export const useVendorRFQs = (): UseVendorRFQsReturn => {
@@ -75,6 +75,14 @@ export const useVendorRFQs = (): UseVendorRFQsReturn => {
     setFiltersState(newFilters);
   }, []);
 
+  const setQuery = useCallback((query: string) => {
+    setFiltersState(prev => ({ ...prev, query: query || undefined, page: 1 }));
+  }, []);
+
+  const setAiRecommended = useCallback((aiRecommended: boolean) => {
+    setFiltersState(prev => ({ ...prev, aiRecommended, page: 1 }));
+  }, []);
+
   const clearFilters = useCallback(() => {
     setFiltersState(defaultFilters);
   }, []);
@@ -94,12 +102,14 @@ export const useVendorRFQs = (): UseVendorRFQsReturn => {
   return {
     rfqs: browseData?.data?.rfqs || [],
     stats: statsData?.data || null,
-    filterOptions: browseData?.data?.filters || null,
+    searchInterpretation: browseData?.data?.searchInterpretation || null,
     pagination: browseData?.data?.pagination || null,
     isLoading: isLoadingRFQs || isLoadingStats,
     error: rfqsError?.message || null,
     filters,
     setFilters,
+    setQuery,
+    setAiRecommended,
     clearFilters,
     toggleSaveRFQ,
     refreshRFQs

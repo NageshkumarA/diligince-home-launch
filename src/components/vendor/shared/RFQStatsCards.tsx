@@ -3,10 +3,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { 
   FileText, 
   Sparkles, 
-  Clock, 
-  TrendingUp,
-  CheckCircle2,
-  Bookmark
+  Send,
+  Trophy
 } from 'lucide-react';
 import { RFQStats } from '@/types/rfq-browse';
 import { cn } from '@/lib/utils';
@@ -19,7 +17,7 @@ interface RFQStatsCardsProps {
 const RFQStatsCards: React.FC<RFQStatsCardsProps> = ({ stats, isLoading }) => {
   const statItems = [
     {
-      label: 'Total Available',
+      label: 'Total Available RFQs',
       value: stats?.totalAvailable || 0,
       icon: FileText,
       iconColor: 'text-primary',
@@ -33,44 +31,31 @@ const RFQStatsCards: React.FC<RFQStatsCardsProps> = ({ stats, isLoading }) => {
       bgColor: 'bg-violet-500/10'
     },
     {
-      label: 'Closing Soon',
-      value: stats?.closingSoon || 0,
-      icon: Clock,
-      iconColor: 'text-orange-600',
-      bgColor: 'bg-orange-500/10'
-    },
-    {
-      label: 'New This Week',
-      value: stats?.newThisWeek || 0,
-      icon: TrendingUp,
-      iconColor: 'text-emerald-600',
-      bgColor: 'bg-emerald-500/10'
-    },
-    {
-      label: 'Applied',
-      value: stats?.appliedCount || 0,
-      icon: CheckCircle2,
+      label: 'Submitted Quotations',
+      value: stats?.submittedQuotations || 0,
+      icon: Send,
       iconColor: 'text-blue-600',
       bgColor: 'bg-blue-500/10'
     },
     {
-      label: 'Saved',
-      value: stats?.savedCount || 0,
-      icon: Bookmark,
-      iconColor: 'text-amber-600',
-      bgColor: 'bg-amber-500/10'
+      label: 'Win Rate',
+      value: `${stats?.winRate || 0}%`,
+      icon: Trophy,
+      iconColor: 'text-emerald-600',
+      bgColor: 'bg-emerald-500/10',
+      isPercentage: true
     }
   ];
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {[...Array(6)].map((_, i) => (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[...Array(4)].map((_, i) => (
           <Card key={i} className="animate-pulse">
             <CardContent className="p-4">
               <div className="h-10 w-10 rounded-lg bg-muted mb-3" />
               <div className="h-6 w-12 bg-muted rounded mb-1" />
-              <div className="h-4 w-20 bg-muted rounded" />
+              <div className="h-4 w-24 bg-muted rounded" />
             </CardContent>
           </Card>
         ))}
@@ -79,7 +64,7 @@ const RFQStatsCards: React.FC<RFQStatsCardsProps> = ({ stats, isLoading }) => {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {statItems.map((item) => (
         <Card key={item.label} className="hover:shadow-md transition-shadow">
           <CardContent className="p-4">
