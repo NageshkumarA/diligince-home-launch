@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { vendorRFQsService } from '@/services/modules/vendors/rfqs.service';
 import {
   RFQBrowseFilters,
@@ -21,7 +22,7 @@ interface UseVendorRFQsReturn {
   setQuery: (query: string) => void;
   setAiRecommended: (aiRecommended: boolean) => void;
   clearFilters: () => void;
-  toggleSaveRFQ: (rfqId: string, isSaved: boolean) => void;
+  toggleSaveRFQ: (rfqId: string) => void;
   refreshRFQs: () => void;
 }
 
@@ -57,19 +58,17 @@ export const useVendorRFQs = (): UseVendorRFQsReturn => {
     refetchOnMount: 'always', // Always refetch when component mounts
   });
 
-  // Save mutation
-  const saveMutation = useMutation({
-    mutationFn: vendorRFQsService.saveRFQ,
-    onSuccess: () => {
+  // Toggle save mutation
+  const toggleSaveMutation = useMutation({
+    mutationFn: vendorRFQsService.toggleSaveRFQ,
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['vendor-rfqs'] });
-    },
-  });
-
-  // Unsave mutation
-  const unsaveMutation = useMutation({
-    mutationFn: vendorRFQsService.unsaveRFQ,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['vendor-rfqs'] });
+      // Show toast with actual result from API
+      if (response.data.saved) {
+        toast.success('RFQ saved successfully');
+      } else {
+        toast.success('RFQ removed from saved list');
+      }
     },
   });
 
@@ -89,13 +88,9 @@ export const useVendorRFQs = (): UseVendorRFQsReturn => {
     setFiltersState(defaultFilters);
   }, []);
 
-  const toggleSaveRFQ = useCallback((rfqId: string, isSaved: boolean) => {
-    if (isSaved) {
-      unsaveMutation.mutate(rfqId);
-    } else {
-      saveMutation.mutate(rfqId);
-    }
-  }, [saveMutation, unsaveMutation]);
+  const toggleSaveRFQ = useCallback((rfqId: string) => {
+    toggleSaveMutation.mutate(rfqId);
+  }, [toggleSaveMutation]);
 
   const refreshRFQs = useCallback(() => {
     refetch();

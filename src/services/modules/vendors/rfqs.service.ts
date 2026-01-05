@@ -6,6 +6,7 @@ import type {
   RFQStatsResponse,
   RFQBrowseFilters,
   RFQDetailItem,
+  RFQBrowseItem,
 } from '@/types/rfq-browse';
 
 class VendorRFQsService {
@@ -40,10 +41,18 @@ class VendorRFQsService {
   }
 
   /**
-   * Save/bookmark an RFQ
+   * Toggle save/unsave state of an RFQ
    */
-  async saveRFQ(rfqId: string): Promise<{ success: boolean; message: string }> {
-    const response = await apiService.post<{ success: boolean; message: string }, Record<string, never>>(
+  async toggleSaveRFQ(rfqId: string): Promise<{
+    success: boolean;
+    message: string;
+    data: { rfqId: string; saved: boolean };
+  }> {
+    const response = await apiService.post<{
+      success: boolean;
+      message: string;
+      data: { rfqId: string; saved: boolean };
+    }, Record<string, never>>(
       vendorRFQsRoutes.save(rfqId),
       {}
     );
@@ -51,12 +60,16 @@ class VendorRFQsService {
   }
 
   /**
-   * Remove RFQ from saved list
+   * Get saved/bookmarked RFQs
    */
-  async unsaveRFQ(rfqId: string): Promise<{ success: boolean; message: string }> {
-    const response = await apiService.remove<{ success: boolean; message: string }>(
-      vendorRFQsRoutes.save(rfqId)
-    );
+  async getSavedRFQs(): Promise<{
+    success: boolean;
+    data: { rfqs: RFQBrowseItem[]; total: number };
+  }> {
+    const response = await apiService.get<{
+      success: boolean;
+      data: { rfqs: RFQBrowseItem[]; total: number };
+    }>(vendorRFQsRoutes.saved);
     return response;
   }
 }

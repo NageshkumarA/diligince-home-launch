@@ -158,6 +158,7 @@ import ProjectsActive from "@/pages/ProjectsActive";
 
 // Vendor sub-pages
 import VendorRFQsBrowse from "@/pages/VendorRFQsBrowse";
+import VendorRFQsSaved from "@/pages/VendorRFQsSaved";
 import VendorRFQDetail from "@/pages/VendorRFQDetail";
 import VendorSubmitQuotation from "@/pages/VendorSubmitQuotation";
 import VendorQuotations from "@/pages/VendorQuotations";
@@ -177,276 +178,276 @@ function App() {
                       <StakeholderProvider>
                         <VendorSpecializationProvider>
                           <div className="App">
-                          <Routes>
-                            {/* Public Routes */}
-                            <Route path="/" element={<Index />} />
-                            <Route path="/about" element={<About />} />
-                            <Route path="/contact" element={<Contact />} />
-                            <Route path="/pricing" element={<Pricing />} />
-                            <Route path="/blog" element={<Blog />} />
-                            <Route
-                              path="/blog/:slug"
-                              element={<BlogArticle />}
-                            />
-                            <Route path="/careers" element={<Careers />} />
-                            <Route path="/legal" element={<Legal />} />
-                            <Route path="/privacy" element={<Privacy />} />
-                            <Route path="/terms" element={<Terms />} />
+                            <Routes>
+                              {/* Public Routes */}
+                              <Route path="/" element={<Index />} />
+                              <Route path="/about" element={<About />} />
+                              <Route path="/contact" element={<Contact />} />
+                              <Route path="/pricing" element={<Pricing />} />
+                              <Route path="/blog" element={<Blog />} />
+                              <Route
+                                path="/blog/:slug"
+                                element={<BlogArticle />}
+                              />
+                              <Route path="/careers" element={<Careers />} />
+                              <Route path="/legal" element={<Legal />} />
+                              <Route path="/privacy" element={<Privacy />} />
+                              <Route path="/terms" element={<Terms />} />
 
-                            {/* Auth Routes */}
-                            <Route path="/signup" element={<SignUp />} />
-                            <Route path="/login" element={<MultiStepLogin />} />
-                            <Route path="/signin" element={<SignIn />} />
-                            <Route
-                              path="/forgot-password"
-                              element={<ForgotPassword />}
-                            />
-                            <Route
-                              path="/reset-password"
-                              element={<ResetPassword />}
-                            />
-                            <Route
-                              path="/pending-approval"
-                              element={<PendingApproval />}
-                            />
-                            <Route
-                              path="/verification-pending"
-                              element={
+                              {/* Auth Routes */}
+                              <Route path="/signup" element={<SignUp />} />
+                              <Route path="/login" element={<MultiStepLogin />} />
+                              <Route path="/signin" element={<SignIn />} />
+                              <Route
+                                path="/forgot-password"
+                                element={<ForgotPassword />}
+                              />
+                              <Route
+                                path="/reset-password"
+                                element={<ResetPassword />}
+                              />
+                              <Route
+                                path="/pending-approval"
+                                element={<PendingApproval />}
+                              />
+                              <Route
+                                path="/verification-pending"
+                                element={
+                                  <ProtectedRoute>
+                                    <VerificationPending />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              {/* Legacy vendor-settings route - redirect to dashboard path */}
+                              <Route
+                                path="/vendor-settings"
+                                element={<Navigate to="/dashboard/vendor-settings" replace />}
+                              />
+
+                              {/* Profile & Onboarding */}
+                              <Route
+                                path="/profile-completion"
+                                element={<ProfileCompletion />}
+                              />
+                              <Route
+                                path="/stakeholder-onboarding/:token"
+                                element={<StakeholderOnboarding />}
+                              />
+
+                              {/* Dashboard Routes */}
+                              <Route path="/dashboard/*" element={
                                 <ProtectedRoute>
-                                  <VerificationPending />
+                                  <Layout />
                                 </ProtectedRoute>
-                              }
-                            />
-                            {/* Legacy vendor-settings route - redirect to dashboard path */}
-                            <Route
-                              path="/vendor-settings"
-                              element={<Navigate to="/dashboard/vendor-settings" replace />}
-                            />
+                              }>
+                                {/* Vendor Settings (inside dashboard for sidebar visibility) */}
+                                <Route
+                                  path="vendor-settings"
+                                  element={<VendorSettings />}
+                                />
 
-                            {/* Profile & Onboarding */}
-                            <Route
-                              path="/profile-completion"
-                              element={<ProfileCompletion />}
-                            />
-                            <Route
-                              path="/stakeholder-onboarding/:token"
-                              element={<StakeholderOnboarding />}
-                            />
+                                {/* Industry */}
+                                <Route
+                                  path="industry"
+                                  element={<IndustryDashboard />}
+                                />
+                                <Route
+                                  path="industry-profile"
+                                  element={<IndustryProfile />}
+                                />
+                                <Route
+                                  path="industry-requirements"
+                                  element={<IndustryRequirements />}
+                                />
+                                <Route
+                                  path="industry-approvals"
+                                  element={<IndustryApprovals />}
+                                />
+                                <Route
+                                  path="industry-purchase-orders"
+                                  element={<IndustryPurchaseOrders />}
+                                />
+                                <Route
+                                  path="industry-quotes"
+                                  element={<IndustryQuotes />}
+                                />
+                                <Route
+                                  path="industry-reports"
+                                  element={<IndustryReports />}
+                                />
+                                <Route
+                                  path="industry-settings"
+                                  element={<IndustrySettings />}
+                                />
+                                <Route
+                                  path="industry-workflows"
+                                  element={<IndustryWorkflows />}
+                                />
+                                <Route
+                                  path="industry-project-workflow/:id"
+                                  element={<IndustryProjectWorkflow />}
+                                />
+                                <Route
+                                  path="industry-stakeholders"
+                                  element={<IndustryStakeholders />}
+                                />
+                                <Route
+                                  path="industry-documents"
+                                  element={<IndustryDocuments />}
+                                />
+                                <Route
+                                  path="industry-messages"
+                                  element={<IndustryMessages />}
+                                />
+                                {/* Redirect from old approval matrix path to new redesigned pages */}
+                                <Route
+                                  path="industry-approval-matrix"
+                                  element={<Navigate to="/dashboard/approval-matrix" replace />}
+                                />
+                                <Route
+                                  path="industry-analytics"
+                                  element={<IndustryAnalytics />}
+                                />
+                                <Route
+                                  path="industry-team"
+                                  element={<TeamMembersPage />}
+                                />
+                                <Route
+                                  path="industry-notifications"
+                                  element={<IndustryNotifications />}
+                                />
+                                <Route
+                                  path="create-requirement"
+                                  element={<CreateRequirement />}
+                                />
+                                <Route
+                                  path="pending-approvals"
+                                  element={<PendingApprovals />}
+                                />
+                                <Route
+                                  path="create-purchase-order"
+                                  element={<CreatePurchaseOrder />}
+                                />
+                                <Route
+                                  path="purchase-orders/create"
+                                  element={<CreateEditPurchaseOrder />}
+                                />
+                                <Route
+                                  path="purchase-orders/:id/edit"
+                                  element={<CreateEditPurchaseOrder />}
+                                />
+                                <Route
+                                  path="role-management"
+                                  element={<RoleManagementPage />}
+                                />
+                                <Route
+                                  path="role-management/create"
+                                  element={<CreateRolePage />}
+                                />
+                                <Route
+                                  path="role-management/:roleId"
+                                  element={<ViewRolePage />}
+                                />
+                                <Route
+                                  path="role-management/:roleId/edit"
+                                  element={<EditRolePage />}
+                                />
 
-                            {/* Dashboard Routes */}
-                            <Route path="/dashboard/*" element={
-                              <ProtectedRoute>
-                                <Layout />
-                              </ProtectedRoute>
-                            }>
-                              {/* Vendor Settings (inside dashboard for sidebar visibility) */}
-                              <Route
-                                path="vendor-settings"
-                                element={<VendorSettings />}
-                              />
-                              
-                              {/* Industry */}
-                              <Route
-                                path="industry"
-                                element={<IndustryDashboard />}
-                              />
-                              <Route
-                                path="industry-profile"
-                                element={<IndustryProfile />}
-                              />
-                              <Route
-                                path="industry-requirements"
-                                element={<IndustryRequirements />}
-                              />
-                              <Route
-                                path="industry-approvals"
-                                element={<IndustryApprovals />}
-                              />
-                              <Route
-                                path="industry-purchase-orders"
-                                element={<IndustryPurchaseOrders />}
-                              />
-                              <Route
-                                path="industry-quotes"
-                                element={<IndustryQuotes />}
-                              />
-                              <Route
-                                path="industry-reports"
-                                element={<IndustryReports />}
-                              />
-                              <Route
-                                path="industry-settings"
-                                element={<IndustrySettings />}
-                              />
-                              <Route
-                                path="industry-workflows"
-                                element={<IndustryWorkflows />}
-                              />
-                              <Route
-                                path="industry-project-workflow/:id"
-                                element={<IndustryProjectWorkflow />}
-                              />
-                              <Route
-                                path="industry-stakeholders"
-                                element={<IndustryStakeholders />}
-                              />
-                              <Route
-                                path="industry-documents"
-                                element={<IndustryDocuments />}
-                              />
-                              <Route
-                                path="industry-messages"
-                                element={<IndustryMessages />}
-                              />
-                              {/* Redirect from old approval matrix path to new redesigned pages */}
-                              <Route
-                                path="industry-approval-matrix"
-                                element={<Navigate to="/dashboard/approval-matrix" replace />}
-                              />
-                              <Route
-                                path="industry-analytics"
-                                element={<IndustryAnalytics />}
-                              />
-                              <Route
-                                path="industry-team"
-                                element={<TeamMembersPage />}
-                              />
-                              <Route
-                                path="industry-notifications"
-                                element={<IndustryNotifications />}
-                              />
-                              <Route
-                                path="create-requirement"
-                                element={<CreateRequirement />}
-                              />
-                              <Route
-                                path="pending-approvals"
-                                element={<PendingApprovals />}
-                              />
-                              <Route
-                                path="create-purchase-order"
-                                element={<CreatePurchaseOrder />}
-                              />
-                              <Route
-                                path="purchase-orders/create"
-                                element={<CreateEditPurchaseOrder />}
-                              />
-                              <Route
-                                path="purchase-orders/:id/edit"
-                                element={<CreateEditPurchaseOrder />}
-                              />
-                              <Route
-                                path="role-management"
-                                element={<RoleManagementPage />}
-                              />
-                              <Route
-                                path="role-management/create"
-                                element={<CreateRolePage />}
-                              />
-                              <Route
-                                path="role-management/:roleId"
-                                element={<ViewRolePage />}
-                              />
-                              <Route
-                                path="role-management/:roleId/edit"
-                                element={<EditRolePage />}
-                              />
+                                {/* Approval Matrix Routes */}
+                                <Route
+                                  path="approval-matrix"
+                                  element={<ApprovalMatrixListPage />}
+                                />
+                                <Route
+                                  path="approval-matrix/create"
+                                  element={<ApprovalMatrixFormPage />}
+                                />
+                                <Route
+                                  path="approval-matrix/:matrixId"
+                                  element={<ApprovalMatrixViewPage />}
+                                />
+                                <Route
+                                  path="approval-matrix/:matrixId/edit"
+                                  element={<ApprovalMatrixFormPage />}
+                                />
 
-                              {/* Approval Matrix Routes */}
-                              <Route
-                                path="approval-matrix"
-                                element={<ApprovalMatrixListPage />}
-                              />
-                              <Route
-                                path="approval-matrix/create"
-                                element={<ApprovalMatrixFormPage />}
-                              />
-                              <Route
-                                path="approval-matrix/:matrixId"
-                                element={<ApprovalMatrixViewPage />}
-                              />
-                              <Route
-                                path="approval-matrix/:matrixId/edit"
-                                element={<ApprovalMatrixFormPage />}
-                              />
+                                {/* Requirements Sub-routes */}
+                                <Route
+                                  path="requirements/drafts"
+                                  element={<RequirementsDrafts />}
+                                />
+                                <Route
+                                  path="requirements/pending"
+                                  element={<RequirementsPending />}
+                                />
+                                <Route
+                                  path="requirements/pending/:id"
+                                  element={<PendingRequirementView />}
+                                />
+                                <Route
+                                  path="requirements/approved"
+                                  element={<RequirementsApproved />}
+                                />
+                                <Route
+                                  path="requirements/approved/:id"
+                                  element={<ApprovedRequirementView />}
+                                />
+                                <Route
+                                  path="requirements/published"
+                                  element={<RequirementsPublished />}
+                                />
+                                <Route
+                                  path="requirements/published/:id"
+                                  element={<PublishedRequirementView />}
+                                />
+                                {/* Requirement Details */}
+                                <Route
+                                  path="requirements/:id"
+                                  element={<RequirementDetails />}
+                                />
 
-                              {/* Requirements Sub-routes */}
-                              <Route
-                                path="requirements/drafts"
-                                element={<RequirementsDrafts />}
-                              />
-                              <Route
-                                path="requirements/pending"
-                                element={<RequirementsPending />}
-                              />
-                              <Route
-                                path="requirements/pending/:id"
-                                element={<PendingRequirementView />}
-                              />
-                              <Route
-                                path="requirements/approved"
-                                element={<RequirementsApproved />}
-                              />
-                              <Route
-                                path="requirements/approved/:id"
-                                element={<ApprovedRequirementView />}
-                              />
-                              <Route
-                                path="requirements/published"
-                                element={<RequirementsPublished />}
-                              />
-                              <Route
-                                path="requirements/published/:id"
-                                element={<PublishedRequirementView />}
-                              />
-                              {/* Requirement Details */}
-                              <Route
-                                path="requirements/:id"
-                                element={<RequirementDetails />}
-                              />
+                                {/* Quotations Sub-routes */}
+                                <Route
+                                  path="quotations/pending"
+                                  element={<QuotationsPending />}
+                                />
+                                <Route
+                                  path="quotations/approved"
+                                  element={<QuotationsApproved />}
+                                />
+                                <Route
+                                  path="quotations/comparison"
+                                  element={<QuotationsComparison />}
+                                />
+                                <Route
+                                  path="quotations/:id"
+                                  element={<QuotationDetails />}
+                                />
 
-                              {/* Quotations Sub-routes */}
-                              <Route
-                                path="quotations/pending"
-                                element={<QuotationsPending />}
-                              />
-                              <Route
-                                path="quotations/approved"
-                                element={<QuotationsApproved />}
-                              />
-                              <Route
-                                path="quotations/comparison"
-                                element={<QuotationsComparison />}
-                              />
-                              <Route
-                                path="quotations/:id"
-                                element={<QuotationDetails />}
-                              />
+                                {/* Purchase Orders Sub-routes */}
+                                <Route
+                                  path="purchase-orders/pending"
+                                  element={<PurchaseOrdersPending />}
+                                />
+                                <Route
+                                  path="purchase-orders/in-progress"
+                                  element={<PurchaseOrdersInProgress />}
+                                />
+                                <Route
+                                  path="purchase-orders/completed"
+                                  element={<PurchaseOrdersCompleted />}
+                                />
+                                <Route
+                                  path="purchase-orders/:id"
+                                  element={<PurchaseOrderDetails />}
+                                />
 
-                              {/* Purchase Orders Sub-routes */}
-                              <Route
-                                path="purchase-orders/pending"
-                                element={<PurchaseOrdersPending />}
-                              />
-                              <Route
-                                path="purchase-orders/in-progress"
-                                element={<PurchaseOrdersInProgress />}
-                              />
-                              <Route
-                                path="purchase-orders/completed"
-                                element={<PurchaseOrdersCompleted />}
-                              />
-                              <Route
-                                path="purchase-orders/:id"
-                                element={<PurchaseOrderDetails />}
-                              />
-
-                              {/* Workflow Sub-routes */}
-                              <Route
-                                path="workflows/active"
-                                element={<WorkflowsActive />}
-                              />
-                              {/* <Route
+                                {/* Workflow Sub-routes */}
+                                <Route
+                                  path="workflows/active"
+                                  element={<WorkflowsActive />}
+                                />
+                                {/* <Route
                                 path="workflows/timeline"
                                 element={<WorkflowsTimeline />}
                               />
@@ -455,206 +456,210 @@ function App() {
                                 element={<WorkflowsReports />}
                               /> */}
 
-                              {/* Stakeholder Sub-routes */}
-                              <Route
-                                path="stakeholders/vendors"
-                                element={<StakeholdersVendors />}
-                              />
-                              <Route
-                                path="stakeholders/professionals"
-                                element={<StakeholdersProfessionals />}
-                              />
+                                {/* Stakeholder Sub-routes */}
+                                <Route
+                                  path="stakeholders/vendors"
+                                  element={<StakeholdersVendors />}
+                                />
+                                <Route
+                                  path="stakeholders/professionals"
+                                  element={<StakeholdersProfessionals />}
+                                />
 
-                              {/* Diligince HUB Routes */}
-                              <Route
-                                path="Diligince-hub/vendors"
-                                element={<FindVendors />}
-                              />
-                              <Route
-                                path="Diligince-hub/professionals"
-                                element={<FindProfessionals />}
-                              />
+                                {/* Diligince HUB Routes */}
+                                <Route
+                                  path="Diligince-hub/vendors"
+                                  element={<FindVendors />}
+                                />
+                                <Route
+                                  path="Diligince-hub/professionals"
+                                  element={<FindProfessionals />}
+                                />
 
-                              {/* Vendor Routes */}
-                              <Route
-                                path="service-vendor"
-                                element={<ServiceVendorDashboard />}
-                              />
-                              <Route
-                                path="product-vendor"
-                                element={<ProductVendorDashboard />}
-                              />
-                              <Route
-                                path="logistics-vendor"
-                                element={<LogisticsVendorDashboard />}
-                              />
+                                {/* Vendor Routes */}
+                                <Route
+                                  path="service-vendor"
+                                  element={<ServiceVendorDashboard />}
+                                />
+                                <Route
+                                  path="product-vendor"
+                                  element={<ProductVendorDashboard />}
+                                />
+                                <Route
+                                  path="logistics-vendor"
+                                  element={<LogisticsVendorDashboard />}
+                                />
 
-                              {/* Service Vendor Routes */}
-                              <Route
-                                path="service-vendor-rfqs"
-                                element={<VendorRFQsBrowse />}
-                              />
-                              <Route
-                                path="rfqs/:rfqId"
-                                element={<VendorRFQDetail />}
-                              />
-                              <Route
-                                path="service-vendor-projects"
-                                element={<ServiceVendorProjects />}
-                              />
-                              <Route
-                                path="service-vendor-messages"
-                                element={<ServiceVendorMessages />}
-                              />
-                              <Route
-                                path="service-vendor-profile"
-                                element={<ServiceVendorProfile />}
-                              />
-                              <Route
-                                path="service-vendor-profile/payment"
-                                element={<VendorPaymentSettings />}
-                              />
-                              <Route
-                                path="service-vendor-services"
-                                element={<ServiceVendorServices />}
-                              />
+                                {/* Service Vendor Routes */}
+                                <Route
+                                  path="service-vendor-rfqs"
+                                  element={<VendorRFQsBrowse />}
+                                />
+                                <Route
+                                  path="rfqs/:rfqId"
+                                  element={<VendorRFQDetail />}
+                                />
+                                <Route
+                                  path="service-vendor-projects"
+                                  element={<ServiceVendorProjects />}
+                                />
+                                <Route
+                                  path="service-vendor-messages"
+                                  element={<ServiceVendorMessages />}
+                                />
+                                <Route
+                                  path="service-vendor-profile"
+                                  element={<ServiceVendorProfile />}
+                                />
+                                <Route
+                                  path="service-vendor-profile/payment"
+                                  element={<VendorPaymentSettings />}
+                                />
+                                <Route
+                                  path="service-vendor-services"
+                                  element={<ServiceVendorServices />}
+                                />
 
-                              {/* Product Vendor Routes */}
-                              <Route
-                                path="product-vendor-rfqs"
-                                element={<ProductVendorRFQs />}
-                              />
-                              <Route
-                                path="product-vendor-orders"
-                                element={<ProductVendorOrders />}
-                              />
-                              <Route
-                                path="product-vendor-catalog"
-                                element={<ProductVendorCatalog />}
-                              />
-                              <Route
-                                path="product-vendor-messages"
-                                element={<ProductVendorMessages />}
-                              />
-                              <Route
-                                path="product-vendor-profile"
-                                element={<ProductVendorProfile />}
-                              />
-                              <Route
-                                path="product-vendor-profile/payment"
-                                element={<VendorPaymentSettings />}
-                              />
+                                {/* Product Vendor Routes */}
+                                <Route
+                                  path="product-vendor-rfqs"
+                                  element={<ProductVendorRFQs />}
+                                />
+                                <Route
+                                  path="product-vendor-orders"
+                                  element={<ProductVendorOrders />}
+                                />
+                                <Route
+                                  path="product-vendor-catalog"
+                                  element={<ProductVendorCatalog />}
+                                />
+                                <Route
+                                  path="product-vendor-messages"
+                                  element={<ProductVendorMessages />}
+                                />
+                                <Route
+                                  path="product-vendor-profile"
+                                  element={<ProductVendorProfile />}
+                                />
+                                <Route
+                                  path="product-vendor-profile/payment"
+                                  element={<VendorPaymentSettings />}
+                                />
 
-                              {/* Logistics Vendor Routes */}
-                              <Route
-                                path="logistics-vendor-requests"
-                                element={<LogisticsVendorRequests />}
-                              />
-                              <Route
-                                path="logistics-vendor-deliveries"
-                                element={<LogisticsVendorDeliveries />}
-                              />
-                              <Route
-                                path="logistics-vendor-fleet"
-                                element={<LogisticsVendorFleet />}
-                              />
-                              <Route
-                                path="logistics-vendor-messages"
-                                element={<LogisticsVendorMessages />}
-                              />
-                              <Route
-                                path="logistics-vendor-profile"
-                                element={<LogisticsVendorProfile />}
-                              />
-                              <Route
-                                path="logistics-vendor-profile/payment"
-                                element={<VendorPaymentSettings />}
-                              />
+                                {/* Logistics Vendor Routes */}
+                                <Route
+                                  path="logistics-vendor-requests"
+                                  element={<LogisticsVendorRequests />}
+                                />
+                                <Route
+                                  path="logistics-vendor-deliveries"
+                                  element={<LogisticsVendorDeliveries />}
+                                />
+                                <Route
+                                  path="logistics-vendor-fleet"
+                                  element={<LogisticsVendorFleet />}
+                                />
+                                <Route
+                                  path="logistics-vendor-messages"
+                                  element={<LogisticsVendorMessages />}
+                                />
+                                <Route
+                                  path="logistics-vendor-profile"
+                                  element={<LogisticsVendorProfile />}
+                                />
+                                <Route
+                                  path="logistics-vendor-profile/payment"
+                                  element={<VendorPaymentSettings />}
+                                />
 
-                              {/* Professional Routes */}
-                              <Route
-                                path="professional"
-                                element={<ProfessionalDashboard />}
-                              />
-                              <Route
-                                path="professional-opportunities"
-                                element={<ProfessionalOpportunities />}
-                              />
-                              <Route
-                                path="professional-calendar"
-                                element={<ProfessionalCalendar />}
-                              />
-                              <Route
-                                path="professional-messages"
-                                element={<ProfessionalMessages />}
-                              />
-                              <Route
-                                path="professional-profile"
-                                element={<ProfessionalProfile />}
-                              />
-                              <Route
-                                path="professional-portfolio"
-                                element={<ProfessionalPortfolio />}
-                              />
-                              <Route
-                                path="professional-certifications"
-                                element={<ProfessionalCertifications />}
-                              />
+                                {/* Professional Routes */}
+                                <Route
+                                  path="professional"
+                                  element={<ProfessionalDashboard />}
+                                />
+                                <Route
+                                  path="professional-opportunities"
+                                  element={<ProfessionalOpportunities />}
+                                />
+                                <Route
+                                  path="professional-calendar"
+                                  element={<ProfessionalCalendar />}
+                                />
+                                <Route
+                                  path="professional-messages"
+                                  element={<ProfessionalMessages />}
+                                />
+                                <Route
+                                  path="professional-profile"
+                                  element={<ProfessionalProfile />}
+                                />
+                                <Route
+                                  path="professional-portfolio"
+                                  element={<ProfessionalPortfolio />}
+                                />
+                                <Route
+                                  path="professional-certifications"
+                                  element={<ProfessionalCertifications />}
+                                />
 
-                              {/* Professional Sub-routes */}
-                              <Route
-                                path="opportunities/saved"
-                                element={<OpportunitiesSaved />}
-                              />
-                              <Route
-                                path="opportunities/applications"
-                                element={<OpportunitiesApplications />}
-                              />
-                              <Route
-                                path="projects/active"
-                                element={<ProjectsActive />}
-                              />
+                                {/* Professional Sub-routes */}
+                                <Route
+                                  path="opportunities/saved"
+                                  element={<OpportunitiesSaved />}
+                                />
+                                <Route
+                                  path="opportunities/applications"
+                                  element={<OpportunitiesApplications />}
+                                />
+                                <Route
+                                  path="projects/active"
+                                  element={<ProjectsActive />}
+                                />
 
-                              {/* Vendor Sub-routes */}
-                              <Route
-                                path="rfqs/browse"
-                                element={<VendorRFQsBrowse />}
-                              />
-                              <Route
-                                path="rfqs/:rfqId/submit-quotation"
-                                element={<VendorSubmitQuotation />}
-                              />
-                              <Route
-                                path="vendor/quotations"
-                                element={<VendorQuotations />}
-                              />
-                              <Route
-                                path="vendor/quotations/:quotationId"
-                                element={<VendorQuotationDetails />}
-                              />
+                                {/* Vendor Sub-routes */}
+                                <Route
+                                  path="rfqs/browse"
+                                  element={<VendorRFQsBrowse />}
+                                />
+                                <Route
+                                  path="rfqs/saved"
+                                  element={<VendorRFQsSaved />}
+                                />
+                                <Route
+                                  path="rfqs/:rfqId/submit-quotation"
+                                  element={<VendorSubmitQuotation />}
+                                />
+                                <Route
+                                  path="vendor/quotations"
+                                  element={<VendorQuotations />}
+                                />
+                                <Route
+                                  path="vendor/quotations/:quotationId"
+                                  element={<VendorQuotationDetails />}
+                                />
 
-                              {/* Test & Common */}
-                              <Route path="test" element={<TestPage />} />
-                              <Route
-                                path="work-completion-payment/:id"
-                                element={<WorkCompletionPayment />}
-                              />
-                            </Route>
+                                {/* Test & Common */}
+                                <Route path="test" element={<TestPage />} />
+                                <Route
+                                  path="work-completion-payment/:id"
+                                  element={<WorkCompletionPayment />}
+                                />
+                              </Route>
 
-                            {/* Settings Routes - with Layout wrapper */}
-                            <Route path="/settings/*" element={
-                              <ProtectedRoute>
-                                <Layout />
-                              </ProtectedRoute>
-                            }>
-                              <Route path="account-settings" element={<UserAccountSettings />} />
-                            </Route>
+                              {/* Settings Routes - with Layout wrapper */}
+                              <Route path="/settings/*" element={
+                                <ProtectedRoute>
+                                  <Layout />
+                                </ProtectedRoute>
+                              }>
+                                <Route path="account-settings" element={<UserAccountSettings />} />
+                              </Route>
 
-                            {/* 404 */}
-                            <Route path="*" element={<NotFound />} />
-                          </Routes>
-                          <Toaster richColors position="top-right"/>
-                          <DiliginceChatbot />
+                              {/* 404 */}
+                              <Route path="*" element={<NotFound />} />
+                            </Routes>
+                            <Toaster richColors position="top-right" />
+                            <DiliginceChatbot />
                           </div>
                         </VendorSpecializationProvider>
                       </StakeholderProvider>

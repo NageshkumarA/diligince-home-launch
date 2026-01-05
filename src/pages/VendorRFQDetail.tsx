@@ -76,9 +76,14 @@ const VendorRFQDetail = () => {
     return `${(bytes / 1024).toFixed(0)} KB`;
   };
 
-  const handleToggleSave = () => {
-    setIsSaved(!isSaved);
-    toast.success(isSaved ? 'RFQ removed from saved' : 'RFQ saved successfully');
+  const handleToggleSave = async () => {
+    try {
+      const response = await vendorRFQsService.toggleSaveRFQ(rfqId || '');
+      setIsSaved(response.data.saved);
+      toast.success(response.data.saved ? 'RFQ saved successfully' : 'RFQ removed from saved list');
+    } catch (error) {
+      toast.error('Failed to update saved RFQ');
+    }
   };
 
   const handleSubmitQuote = () => {
