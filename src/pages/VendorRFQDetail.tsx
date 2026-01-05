@@ -25,107 +25,9 @@ import {
   IndianRupee
 } from 'lucide-react';
 import { RFQDetailItem } from '@/types/rfq-browse';
+import { useVendorRFQDetail } from '@/hooks/useVendorRFQs';
+import { vendorRFQsService } from '@/services/modules/vendors/rfqs.service';
 import { cn } from '@/lib/utils';
-
-// Mock data - will be replaced by API call
-const mockRFQDetail: RFQDetailItem = {
-  id: 'req-2025-001',
-  title: 'Industrial Automation Services for Manufacturing Plant',
-  description: 'Looking for experienced automation service provider for our manufacturing unit. The project involves PLC programming, SCADA implementation, and integration with existing systems.\n\nKey objectives:\n- Improve production efficiency by 30%\n- Reduce manual intervention\n- Real-time monitoring and reporting',
-  category: 'service',
-  priority: 'high',
-  status: 'open',
-  company: {
-    id: 'company-123',
-    name: 'TechCorp Industries',
-    logo: null,
-    location: 'Mumbai, Maharashtra',
-    rating: 4.5,
-    verified: true,
-    industry: 'Manufacturing',
-    totalProjects: 25,
-    memberSince: '2020-05-15'
-  },
-  budget: {
-    min: 500000,
-    max: 750000,
-    currency: 'INR',
-    display: '₹5,00,000 - ₹7,50,000',
-    isNegotiable: true
-  },
-  location: {
-    state: 'Maharashtra',
-    city: 'Mumbai',
-    address: 'Industrial Area, Andheri East, Mumbai 400093',
-    isRemoteAllowed: false
-  },
-  timeline: {
-    postedDate: '2025-01-05T10:30:00Z',
-    deadline: '2025-01-20T23:59:59Z',
-    expectedStartDate: '2025-02-01',
-    expectedDuration: '3 months',
-    daysLeft: 15
-  },
-  specifications: {
-    requirements: [
-      'ISO 9001:2015 Certification required',
-      'Minimum 5 years experience in industrial automation',
-      '24/7 on-site support capability during implementation',
-      'Experience with Siemens or Allen Bradley PLCs'
-    ],
-    skills: ['PLC Programming', 'SCADA', 'Industrial IoT', 'HMI Design'],
-    deliverables: [
-      'Complete automation solution design document',
-      'PLC programming and testing',
-      'SCADA system implementation',
-      'Training for 10 staff members',
-      '1-year warranty support'
-    ],
-    technicalDetails: 'The plant has 5 production lines with various machinery including CNC machines, conveyor systems, and packaging units. Current control system uses legacy relay-based controls that need to be upgraded to PLC-based automation.'
-  },
-  attachments: [
-    {
-      id: 'att-001',
-      name: 'Technical_Requirements_v2.pdf',
-      type: 'application/pdf',
-      size: 2456789,
-      url: '#'
-    },
-    {
-      id: 'att-002',
-      name: 'Plant_Layout.dwg',
-      type: 'application/dwg',
-      size: 1234567,
-      url: '#'
-    }
-  ],
-  evaluation: {
-    criteria: ['Price', 'Quality', 'Timeline', 'Experience'],
-    weightage: { Price: 30, Quality: 35, Timeline: 20, Experience: 15 }
-  },
-  requirements: [
-    'ISO 9001:2015 Certification required',
-    'Minimum 5 years experience in industrial automation'
-  ],
-  skills: ['PLC Programming', 'SCADA', 'Industrial IoT', 'HMI Design'],
-  responses: 12,
-  daysLeft: 15,
-  isClosingSoon: false,
-  isSaved: false,
-  hasApplied: false,
-  aiRecommendation: {
-    score: 92,
-    reasoning: 'Strong match with your service portfolio and expertise in industrial automation',
-    matchFactors: [
-      'Location match - Same city as your office',
-      'Category expertise - Automation is your primary specialization',
-      'Budget range - Within your typical project range',
-      'Skills match - 4/4 required skills match your profile'
-    ],
-    suggestedBid: '₹6,50,000',
-    winProbability: 75
-  }
-};
 
 const priorityConfig = {
   critical: { label: 'Critical', className: 'bg-destructive/10 text-destructive border-destructive/20' },
@@ -144,18 +46,14 @@ const categoryConfig = {
 const VendorRFQDetail = () => {
   const { rfqId } = useParams<{ rfqId: string }>();
   const navigate = useNavigate();
-  const [rfq, setRfq] = useState<RFQDetailItem | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { rfq, isLoading, error } = useVendorRFQDetail(rfqId || '');
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setRfq(mockRFQDetail);
-      setIsSaved(mockRFQDetail.isSaved);
-      setIsLoading(false);
-    }, 500);
-  }, [rfqId]);
+    if (rfq) {
+      setIsSaved(rfq.isSaved);
+    }
+  }, [rfq]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-IN', {
