@@ -13,29 +13,46 @@ API endpoints for vendors to browse, view, and interact with published RFQs (Req
 
 ### 1. GET `/api/v1/vendors/rfqs/browse`
 
-**Description:** Get paginated list of published requirements for vendors to browse
+**Description:** Get paginated list of published requirements for vendors to browse with AI-powered search
 
 #### Query Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `search` | string | No | - | Search in title, description, company name |
-| `category` | string | No | - | Filter by category: `service`, `product`, `logistics`, `professional` |
-| `priority` | string | No | - | Filter by priority: `critical`, `high`, `medium`, `low` |
-| `minBudget` | number | No | - | Minimum budget amount (INR) |
-| `maxBudget` | number | No | - | Maximum budget amount (INR) |
-| `state` | string | No | - | Filter by state |
-| `city` | string | No | - | Filter by city |
-| `status` | string | No | `open` | Filter by status: `open`, `closing_soon` |
-| `sortBy` | string | No | `postedDate` | Sort field: `deadline`, `budget`, `postedDate`, `relevance` |
-| `sortOrder` | string | No | `desc` | Sort direction: `asc`, `desc` |
+| `query` | string | No | - | AI-powered natural language search query |
+| `aiRecommended` | boolean | No | false | Filter to show only AI recommended RFQs |
 | `page` | number | No | 1 | Page number |
 | `limit` | number | No | 12 | Items per page (max: 50) |
 
-#### Request Example
+#### AI Search Query Examples
+
+The `query` parameter accepts natural language queries. The backend AI will parse and extract structured filters:
+
+| Query | Extracted Filters |
+|-------|-------------------|
+| "urgent electrical in Delhi" | priority: critical/high, category: service, city: Delhi |
+| "products under 5 lakhs" | category: product, maxBudget: 500000 |
+| "high priority automation services in Mumbai" | priority: high, category: service, city: Mumbai |
+| "closing soon logistics" | category: logistics, status: closing_soon |
+| "ISO certified vendors Maharashtra" | keywords: ["ISO"], state: Maharashtra |
+
+#### Request Examples
 
 ```http
-GET /api/v1/vendors/rfqs/browse?search=automation&category=service&priority=high&minBudget=100000&maxBudget=1000000&state=Maharashtra&sortBy=deadline&sortOrder=asc&page=1&limit=12
+# All RFQs (no filters)
+GET /api/v1/vendors/rfqs/browse?page=1&limit=12
+Authorization: Bearer <token>
+
+# AI Recommended only
+GET /api/v1/vendors/rfqs/browse?aiRecommended=true&page=1&limit=12
+Authorization: Bearer <token>
+
+# Natural language search
+GET /api/v1/vendors/rfqs/browse?query=urgent%20electrical%20work%20in%20Mumbai&page=1&limit=12
+Authorization: Bearer <token>
+
+# Combined: AI Recommended with search
+GET /api/v1/vendors/rfqs/browse?query=automation&aiRecommended=true&page=1&limit=12
 Authorization: Bearer <token>
 ```
 
@@ -90,46 +107,6 @@ Authorization: Bearer <token>
           "reasoning": "Strong match with your service portfolio",
           "matchFactors": ["Location match", "Category expertise", "Budget range"]
         }
-      },
-      {
-        "id": "req-2025-002",
-        "title": "Electrical Panel Manufacturing",
-        "description": "Require vendor for manufacturing 50 industrial electrical panels with custom specifications for our new plant expansion.",
-        "category": "product",
-        "priority": "medium",
-        "status": "open",
-        "company": {
-          "id": "company-456",
-          "name": "PowerGrid Solutions",
-          "logo": null,
-          "location": "Pune, Maharashtra",
-          "rating": 4.2,
-          "verified": true
-        },
-        "budget": {
-          "min": 200000,
-          "max": 350000,
-          "currency": "INR",
-          "display": "₹2,00,000 - ₹3,50,000"
-        },
-        "deadline": "2025-01-25T23:59:59Z",
-        "postedDate": "2025-01-03T14:00:00Z",
-        "location": {
-          "state": "Maharashtra",
-          "city": "Pune",
-          "address": "Pimpri Industrial Zone"
-        },
-        "requirements": [
-          "BIS Certification",
-          "Minimum 3 years in panel manufacturing"
-        ],
-        "skills": ["Electrical Panels", "Industrial Manufacturing"],
-        "responses": 8,
-        "daysLeft": 20,
-        "isClosingSoon": false,
-        "isSaved": true,
-        "hasApplied": false,
-        "aiRecommendation": null
       }
     ],
     "pagination": {
@@ -140,33 +117,38 @@ Authorization: Bearer <token>
       "hasNextPage": true,
       "hasPreviousPage": false
     },
-    "filters": {
-      "categories": [
-        { "key": "service", "label": "Service", "count": 45 },
-        { "key": "product", "label": "Product", "count": 67 },
-        { "key": "logistics", "label": "Logistics", "count": 28 },
-        { "key": "professional", "label": "Professional", "count": 16 }
-      ],
-      "priorities": [
-        { "key": "critical", "label": "Critical", "count": 12 },
-        { "key": "high", "label": "High", "count": 45 },
-        { "key": "medium", "label": "Medium", "count": 78 },
-        { "key": "low", "label": "Low", "count": 21 }
-      ],
-      "locations": [
-        { "key": "Maharashtra", "count": 35 },
-        { "key": "Karnataka", "count": 28 },
-        { "key": "Gujarat", "count": 22 },
-        { "key": "Tamil Nadu", "count": 18 }
-      ],
-      "budgetRange": {
-        "min": 10000,
-        "max": 10000000
-      }
+    "searchInterpretation": {
+      "originalQuery": "high priority automation services in Mumbai under 10 lakhs",
+      "extractedFilters": {
+        "priority": "high",
+        "category": "service",
+        "city": "Mumbai",
+        "maxBudget": 1000000,
+        "keywords": ["automation"]
+      },
+      "sortedBy": "relevance",
+      "confidence": 0.92
     }
   }
 }
 ```
+
+#### Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `rfqs` | array | List of RFQ browse items |
+| `pagination` | object | Pagination metadata |
+| `searchInterpretation` | object | AI interpretation of the search query (only present when `query` is provided) |
+
+#### Search Interpretation Object
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `originalQuery` | string | The original search query |
+| `extractedFilters` | object | Structured filters extracted from the query |
+| `sortedBy` | string | How results are sorted (e.g., "relevance", "deadline") |
+| `confidence` | number | Confidence score of the AI interpretation (0-1) |
 
 #### Error Responses
 
@@ -219,7 +201,7 @@ Authorization: Bearer <token>
   "data": {
     "id": "req-2025-001",
     "title": "Industrial Automation Services",
-    "description": "Looking for experienced automation service provider for our manufacturing unit. The project involves PLC programming, SCADA implementation, and integration with existing systems. The scope includes design, development, testing, installation, and commissioning of the automation system.\n\nKey objectives:\n- Improve production efficiency by 30%\n- Reduce manual intervention\n- Real-time monitoring and reporting",
+    "description": "Looking for experienced automation service provider for our manufacturing unit...",
     "category": "service",
     "priority": "high",
     "status": "open",
@@ -258,18 +240,15 @@ Authorization: Bearer <token>
       "requirements": [
         "ISO 9001:2015 Certification required",
         "Minimum 5 years experience in industrial automation",
-        "24/7 on-site support capability during implementation",
-        "Experience with Siemens or Allen Bradley PLCs"
+        "24/7 on-site support capability during implementation"
       ],
       "skills": ["PLC Programming", "SCADA", "Industrial IoT", "HMI Design"],
       "deliverables": [
         "Complete automation solution design document",
         "PLC programming and testing",
-        "SCADA system implementation",
-        "Training for 10 staff members",
-        "1-year warranty support"
+        "SCADA system implementation"
       ],
-      "technicalDetails": "The plant has 5 production lines with various machinery including CNC machines, conveyor systems, and packaging units. Current control system uses legacy relay-based controls that need to be upgraded to PLC-based automation."
+      "technicalDetails": "The plant has 5 production lines with various machinery..."
     },
     "attachments": [
       {
@@ -278,13 +257,6 @@ Authorization: Bearer <token>
         "type": "application/pdf",
         "size": 2456789,
         "url": "https://storage.example.com/attachments/att-001.pdf"
-      },
-      {
-        "id": "att-002",
-        "name": "Plant_Layout.dwg",
-        "type": "application/dwg",
-        "size": 1234567,
-        "url": "https://storage.example.com/attachments/att-002.dwg"
       }
     ],
     "evaluation": {
@@ -304,9 +276,7 @@ Authorization: Bearer <token>
       "reasoning": "Strong match with your service portfolio and expertise in industrial automation",
       "matchFactors": [
         "Location match - Same city as your office",
-        "Category expertise - Automation is your primary specialization",
-        "Budget range - Within your typical project range",
-        "Skills match - 4/4 required skills match your profile"
+        "Category expertise - Automation is your primary specialization"
       ],
       "suggestedBid": "₹6,50,000",
       "winProbability": 75
@@ -349,19 +319,20 @@ Authorization: Bearer <token>
   "data": {
     "totalAvailable": 156,
     "aiRecommended": 24,
-    "closingSoon": 8,
-    "newThisWeek": 32,
-    "appliedCount": 5,
-    "savedCount": 12,
-    "categoryBreakdown": {
-      "service": 45,
-      "product": 67,
-      "logistics": 28,
-      "professional": 16
-    }
+    "submittedQuotations": 8,
+    "winRate": 74
   }
 }
 ```
+
+#### Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `totalAvailable` | number | Total number of available RFQs |
+| `aiRecommended` | number | Number of RFQs recommended by AI for this vendor |
+| `submittedQuotations` | number | Number of quotations submitted by the vendor |
+| `winRate` | number | Win rate percentage (0-100) |
 
 ---
 
@@ -440,6 +411,36 @@ Authorization: Bearer <token>
 
 ## Data Models
 
+### RFQ Browse Filters
+
+```typescript
+interface RFQBrowseFilters {
+  query?: string;           // AI-powered natural language search
+  aiRecommended?: boolean;  // Filter to AI recommended RFQs only
+  page?: number;
+  limit?: number;
+}
+```
+
+### Search Interpretation
+
+```typescript
+interface SearchInterpretation {
+  originalQuery: string;
+  extractedFilters: {
+    category?: string;
+    priority?: string;
+    state?: string;
+    city?: string;
+    minBudget?: number;
+    maxBudget?: number;
+    keywords?: string[];
+  };
+  sortedBy: string;
+  confidence: number;
+}
+```
+
 ### RFQ Browse Item
 
 ```typescript
@@ -486,65 +487,27 @@ interface RFQBrowseItem {
 }
 ```
 
-### RFQ Detail
+### RFQ Stats
 
 ```typescript
-interface RFQDetail extends RFQBrowseItem {
-  company: {
-    id: string;
-    name: string;
-    logo: string | null;
-    location: string;
-    industry: string;
-    rating: number;
-    totalProjects: number;
-    verified: boolean;
-    memberSince: string;
+interface RFQStats {
+  totalAvailable: number;
+  aiRecommended: number;
+  submittedQuotations: number;
+  winRate: number; // percentage (0-100)
+}
+```
+
+### RFQ Browse Response
+
+```typescript
+interface RFQBrowseResponse {
+  success: boolean;
+  data: {
+    rfqs: RFQBrowseItem[];
+    pagination: RFQBrowsePagination;
+    searchInterpretation?: SearchInterpretation;
   };
-  budget: {
-    min: number;
-    max: number;
-    currency: string;
-    display: string;
-    isNegotiable: boolean;
-  };
-  timeline: {
-    postedDate: string;
-    deadline: string;
-    expectedStartDate: string;
-    expectedDuration: string;
-    daysLeft: number;
-  };
-  location: {
-    state: string;
-    city: string;
-    address: string;
-    isRemoteAllowed: boolean;
-  };
-  specifications: {
-    requirements: string[];
-    skills: string[];
-    deliverables: string[];
-    technicalDetails: string;
-  };
-  attachments: Array<{
-    id: string;
-    name: string;
-    type: string;
-    size: number;
-    url: string;
-  }>;
-  evaluation: {
-    criteria: string[];
-    weightage: Record<string, number>;
-  };
-  aiRecommendation?: {
-    score: number;
-    reasoning: string;
-    matchFactors: string[];
-    suggestedBid: string;
-    winProbability: number;
-  } | null;
 }
 ```
 
@@ -552,57 +515,101 @@ interface RFQDetail extends RFQBrowseItem {
 
 ## Backend Implementation Notes
 
-### Database Query (requirementdrafts collection)
+### AI Query Processing
+
+The backend should implement the following AI-powered query parsing:
+
+1. **Parse natural language query** using NLP/AI to extract structured filters
+2. **Extract intent** (category, priority, location, budget keywords)
+3. **Apply relevance-based sorting** when query is present
+4. **Calculate confidence score** for transparency
+
+### Database Query Logic
 
 ```javascript
-// Filter for browse endpoint
-{
-  status: 'published',
-  deadline: { $gte: new Date() }, // Only active RFQs
-  category: { $in: vendorCategories }, // Match vendor's categories
+// Build query based on parsed filters
+const query = db.collection('requirementdrafts')
+  .where('status', '==', 'published');
+
+// Apply AI-extracted filters
+if (extractedFilters.category) {
+  query.where('category', '==', extractedFilters.category);
+}
+
+if (extractedFilters.priority) {
+  query.where('priority', '==', extractedFilters.priority);
+}
+
+if (extractedFilters.city || extractedFilters.state) {
+  // Apply location filters
+}
+
+if (extractedFilters.maxBudget) {
+  query.where('budget.max', '<=', extractedFilters.maxBudget);
+}
+
+// Apply keyword search on title/description
+if (extractedFilters.keywords?.length) {
+  // Full-text search implementation
+}
+
+// Apply AI recommendation filter
+if (aiRecommended) {
+  query.where('aiRecommendation.score', '>=', 70);
 }
 ```
 
-### AI Recommendation Logic (Optional - Phase 2)
+### AI Recommendation Logic
 
-1. Match vendor specializations with RFQ skills
-2. Calculate location proximity
-3. Analyze budget range fit
-4. Consider vendor's past win rate in similar categories
-5. Generate match score (0-100)
+RFQs should be flagged as "AI Recommended" based on:
 
-### Closing Soon Logic
+1. **Category match** - Vendor's primary service category
+2. **Location proximity** - Within vendor's service area
+3. **Budget alignment** - Within vendor's typical project range
+4. **Skills match** - Required skills match vendor's capabilities
+5. **Historical performance** - Similar past successful bids
 
-RFQ is marked as `isClosingSoon: true` when:
-- `daysLeft <= 3`
-- OR `deadline` is within 72 hours
+### Closing Soon Criteria
 
-### Vendor Category Filtering
-
-- Service vendors see: `category: 'service'`
-- Product vendors see: `category: 'product'`
-- Logistics vendors see: `category: 'logistics'`
-- Optionally show `professional` category to all vendors
+An RFQ should be marked as `isClosingSoon` when:
+- `daysLeft <= 3` (deadline within 3 days)
 
 ---
 
-## Frontend-Backend Field Mapping
+## Frontend Integration Notes
 
-| Frontend Display | Backend Field |
-|------------------|---------------|
-| Company Name | `company.name` |
-| Budget Range | `budget.display` |
-| Deadline | `deadline` (ISO 8601) |
-| Days Left | `daysLeft` (calculated) |
-| Location | `location.city, location.state` |
-| Requirements | `specifications.requirements[]` |
-| Skills | `specifications.skills[]` |
-| Responses | `responses` (count) |
+### Component Usage
 
----
+```tsx
+// AI Search Bar
+<AISearchBar
+  value={filters.query || ''}
+  onChange={setQuery}
+  placeholder="Search with AI..."
+  isLoading={isLoading}
+/>
 
-## Version History
+// View Toggle
+<RFQViewToggle
+  value={filters.aiRecommended ? 'recommended' : 'all'}
+  onChange={(mode) => setAiRecommended(mode === 'recommended')}
+/>
+```
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2025-01-05 | Initial specification |
+### Hook Usage
+
+```tsx
+const {
+  rfqs,
+  stats,
+  searchInterpretation,
+  pagination,
+  isLoading,
+  filters,
+  setQuery,
+  setAiRecommended,
+  clearFilters,
+  toggleSaveRFQ,
+  refreshRFQs
+} = useVendorRFQs();
+```

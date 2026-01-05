@@ -97,34 +97,25 @@ export interface RFQDetailItem extends Omit<RFQBrowseItem, 'deadline' | 'postedD
 }
 
 export interface RFQBrowseFilters {
-  search?: string;
-  category?: RFQCategory;
-  priority?: RFQPriority;
-  minBudget?: number;
-  maxBudget?: number;
-  state?: string;
-  city?: string;
-  status?: RFQStatus;
-  sortBy?: 'deadline' | 'budget' | 'postedDate' | 'relevance';
-  sortOrder?: 'asc' | 'desc';
+  query?: string;           // AI-powered natural language search
+  aiRecommended?: boolean;  // Toggle: true = Diligence Recommended only
   page?: number;
   limit?: number;
 }
 
-export interface RFQFilterOption {
-  key: string;
-  label?: string;
-  count: number;
-}
-
-export interface RFQBrowseFiltersResponse {
-  categories: RFQFilterOption[];
-  priorities: RFQFilterOption[];
-  locations: RFQFilterOption[];
-  budgetRange: {
-    min: number;
-    max: number;
+export interface SearchInterpretation {
+  originalQuery: string;
+  extractedFilters: {
+    category?: string;
+    priority?: string;
+    state?: string;
+    city?: string;
+    minBudget?: number;
+    maxBudget?: number;
+    keywords?: string[];
   };
+  sortedBy: string;
+  confidence: number;
 }
 
 export interface RFQBrowsePagination {
@@ -141,7 +132,7 @@ export interface RFQBrowseResponse {
   data: {
     rfqs: RFQBrowseItem[];
     pagination: RFQBrowsePagination;
-    filters: RFQBrowseFiltersResponse;
+    searchInterpretation?: SearchInterpretation;
   };
 }
 
@@ -153,11 +144,8 @@ export interface RFQDetailResponse {
 export interface RFQStats {
   totalAvailable: number;
   aiRecommended: number;
-  closingSoon: number;
-  newThisWeek: number;
-  appliedCount: number;
-  savedCount: number;
-  categoryBreakdown: Record<RFQCategory, number>;
+  submittedQuotations: number;
+  winRate: number; // percentage (0-100)
 }
 
 export interface RFQStatsResponse {

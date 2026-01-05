@@ -2,7 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import RFQBrowseCard from '@/components/vendor/shared/RFQBrowseCard';
-import RFQFiltersComponent from '@/components/vendor/shared/RFQFilters';
+import AISearchBar from '@/components/vendor/shared/AISearchBar';
+import RFQViewToggle, { RFQViewMode } from '@/components/vendor/shared/RFQViewToggle';
 import RFQStatsCards from '@/components/vendor/shared/RFQStatsCards';
 import { useVendorRFQs } from '@/hooks/useVendorRFQs';
 import { RFQBrowseItem } from '@/types/rfq-browse';
@@ -15,11 +16,12 @@ const VendorRFQsBrowse = () => {
   const {
     rfqs,
     stats,
-    filterOptions,
     pagination,
     isLoading,
     filters,
     setFilters,
+    setQuery,
+    setAiRecommended,
     clearFilters,
     toggleSaveRFQ,
     refreshRFQs
@@ -47,6 +49,10 @@ const VendorRFQsBrowse = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleViewModeChange = (mode: RFQViewMode) => {
+    setAiRecommended(mode === 'recommended');
+  };
+
   return (
     <div className="p-6 bg-background min-h-screen space-y-6">
       {/* Header */}
@@ -71,20 +77,28 @@ const VendorRFQsBrowse = () => {
       {/* Stats Cards */}
       <RFQStatsCards stats={stats} isLoading={isLoading && !rfqs.length} />
 
-      {/* Filters */}
-      <RFQFiltersComponent
-        filters={filters}
-        filterOptions={filterOptions || undefined}
-        onFilterChange={setFilters}
-        onClearFilters={clearFilters}
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={filters.query || ''}
+        onChange={setQuery}
+        placeholder="Search with AI..."
+        isLoading={isLoading}
       />
 
-      {/* Results count */}
-      {pagination && (
-        <div className="text-sm text-muted-foreground">
-          Showing {rfqs.length} of {pagination.total} RFQs
-        </div>
-      )}
+      {/* View Toggle */}
+      <div className="flex items-center justify-between">
+        <RFQViewToggle
+          value={filters.aiRecommended ? 'recommended' : 'all'}
+          onChange={handleViewModeChange}
+        />
+
+        {/* Results count */}
+        {pagination && (
+          <div className="text-sm text-muted-foreground">
+            Showing {rfqs.length} of {pagination.total} RFQs
+          </div>
+        )}
+      </div>
 
       {/* RFQ Cards Grid */}
       {isLoading && !rfqs.length ? (
@@ -119,11 +133,15 @@ const VendorRFQsBrowse = () => {
             No RFQs Found
           </h3>
           <p className="text-muted-foreground max-w-md mb-4">
-            No RFQs match your current filters. Try adjusting your search criteria or clearing filters.
+            {filters.query || filters.aiRecommended
+              ? 'No RFQs match your search. Try adjusting your query or view all RFQs.'
+              : 'No RFQs are currently available.'}
           </p>
-          <Button variant="outline" onClick={clearFilters}>
-            Clear Filters
-          </Button>
+          {(filters.query || filters.aiRecommended) && (
+            <Button variant="outline" onClick={clearFilters}>
+              Clear Search
+            </Button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
