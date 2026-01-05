@@ -102,24 +102,25 @@ const VendorRFQsBrowse = () => {
 
       {/* RFQ Cards Grid */}
       {isLoading && !rfqs.length ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="space-y-4 p-5 border rounded-lg">
+            <div key={i} className="space-y-4 p-5 border rounded-xl bg-card">
               <div className="flex gap-2">
-                <Skeleton className="h-5 w-16" />
-                <Skeleton className="h-5 w-12" />
+                <Skeleton className="h-5 w-16 rounded-full" />
+                <Skeleton className="h-5 w-12 rounded-full" />
               </div>
               <Skeleton className="h-6 w-3/4" />
               <Skeleton className="h-4 w-1/2" />
-              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-12 w-full" />
               <div className="grid grid-cols-2 gap-2">
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-4 w-full" />
               </div>
-              <Skeleton className="h-12 w-full" />
-              <div className="flex gap-2">
-                <Skeleton className="h-9 w-full" />
-                <Skeleton className="h-9 w-full" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+              <Skeleton className="h-10 w-full" />
+              <div className="flex gap-3 pt-2">
+                <Skeleton className="h-10 flex-1" />
+                <Skeleton className="h-10 flex-1" />
               </div>
             </div>
           ))}
@@ -144,7 +145,7 @@ const VendorRFQsBrowse = () => {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {rfqs.map((rfq) => (
             <RFQBrowseCard
               key={rfq.id}

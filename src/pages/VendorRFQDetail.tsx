@@ -36,11 +36,19 @@ const priorityConfig = {
   low: { label: 'Low', className: 'bg-muted text-muted-foreground border-border' }
 };
 
-const categoryConfig = {
+const categoryConfig: Record<string, { label: string; className: string }> = {
   service: { label: 'Service', className: 'bg-blue-500/10 text-blue-600 border-blue-500/20' },
   product: { label: 'Product', className: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
   logistics: { label: 'Logistics', className: 'bg-purple-500/10 text-purple-600 border-purple-500/20' },
   professional: { label: 'Professional', className: 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20' }
+};
+
+// Helper: Get first category from array or string
+const getCategory = (category: string | string[] | undefined): string => {
+  if (Array.isArray(category)) {
+    return category[0] || 'service';
+  }
+  return category || 'service';
 };
 
 const VendorRFQDetail = () => {
@@ -112,8 +120,9 @@ const VendorRFQDetail = () => {
     );
   }
 
-  const priority = priorityConfig[rfq.priority];
-  const category = categoryConfig[rfq.category];
+  const priority = priorityConfig[rfq.priority] || priorityConfig.medium;
+  const categoryKey = getCategory(rfq.category);
+  const category = categoryConfig[categoryKey] || categoryConfig.service;
 
   return (
     <div className="p-6 bg-background min-h-screen space-y-6">
