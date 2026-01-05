@@ -36,7 +36,7 @@ const VendorRFQsBrowse = () => {
       toast.info('You have already submitted a quote for this RFQ');
       return;
     }
-    navigate(`/dashboard/vendor-submit-quotation?rfqId=${rfq.id}`);
+    navigate(`/dashboard/rfqs/${rfq.id}/submit-quotation`);
   };
 
   const handleToggleSave = (rfq: RFQBrowseItem) => {

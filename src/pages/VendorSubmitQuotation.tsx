@@ -1,29 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Helmet } from 'react-helmet';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowLeft, ChevronLeft, ChevronRight, Building2, MapPin, Calendar, IndianRupee } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Form } from '@/components/ui/form';
 import { toast } from 'sonner';
-import { FormPageSkeleton } from '@/components/shared/loading';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import { vendorRFQsService, vendorQuotationsService } from '@/services';
 import { vendorQuotationFormSchema, type VendorQuotationFormData } from '@/schemas/vendor-quotation-form.schema';
 
+import { QuotationStepIndicator, QuotationStep } from '@/components/vendor/quotation-form/QuotationStepIndicator';
 import { QuotationPricingSection } from '@/components/vendor/quotation-form/QuotationPricingSection';
 import { QuotationTimelineSection } from '@/components/vendor/quotation-form/QuotationTimelineSection';
 import { QuotationTechnicalSection } from '@/components/vendor/quotation-form/QuotationTechnicalSection';
-import { QuotationDocumentsSection } from '@/components/vendor/quotation-form/QuotationDocumentsSection';
 import { QuotationTermsSection } from '@/components/vendor/quotation-form/QuotationTermsSection';
+import { QuotationReviewSection } from '@/components/vendor/quotation-form/QuotationReviewSection';
+
+const steps: QuotationStep[] = ['pricing', 'timeline', 'technical', 'terms', 'review'];
 
 const VendorSubmitQuotation: React.FC = () => {
   const { rfqId } = useParams<{ rfqId: string }>();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('pricing');
+  const [currentStep, setCurrentStep] = useState<QuotationStep>('pricing');
+  const [completedSteps, setCompletedSteps] = useState<QuotationStep[]>([]);
 
   // Fetch RFQ details
   const { data: rfqDetail, isLoading: loadingRFQ } = useQuery({
@@ -38,27 +43,34 @@ const VendorSubmitQuotation: React.FC = () => {
       rfqId: rfqId || '',
       lineItems: [],
       subtotal: 0,
-      taxRate: 0,
+      taxRate: 18,
       taxAmount: 0,
       totalAmount: 0,
-      currency: 'USD',
+      currency: 'INR',
       paymentTerms: '',
       proposedStartDate: '',
       proposedCompletionDate: '',
+      milestones: [],
       methodology: '',
+      technicalSpecifications: '',
+      qualityAssurance: '',
+      complianceCertifications: [],
+      documents: [],
       warrantyPeriod: '',
       supportTerms: '',
       cancellationPolicy: '',
+      specialConditions: '',
       status: 'draft',
     },
   });
 
   // Submit quotation mutation
   const submitMutation = useMutation({
-    mutationFn: (data: any) => 
+    mutationFn: (data: VendorQuotationFormData) =>
       vendorQuotationsService.submitQuotation({
         ...data,
         rfqId: rfqId!,
+        status: 'submitted',
       } as any),
     onSuccess: () => {
       toast.success('Quotation submitted successfully!');
@@ -71,7 +83,7 @@ const VendorSubmitQuotation: React.FC = () => {
 
   // Save as draft mutation
   const saveDraftMutation = useMutation({
-    mutationFn: (data: any) =>
+    mutationFn: (data: VendorQuotationFormData) =>
       vendorQuotationsService.submitQuotation({
         ...data,
         rfqId: rfqId!,
@@ -86,17 +98,63 @@ const VendorSubmitQuotation: React.FC = () => {
     },
   });
 
-  const onSubmit = (data: VendorQuotationFormData) => {
-    submitMutation.mutate({ ...data, status: 'submitted' } as any);
-  };
+  const currentStepIndex = steps.indexOf(currentStep);
+
+  const goToStep = useCallback((step: QuotationStep) => {
+    setCurrentStep(step);
+  }, []);
+
+  const goNext = useCallback(() => {
+    const currentIndex = steps.indexOf(currentStep);
+    if (currentIndex < steps.length - 1) {
+      // Mark current step as completed
+      if (!completedSteps.includes(currentStep)) {
+        setCompletedSteps((prev) => [...prev, currentStep]);
+      }
+      setCurrentStep(steps[currentIndex + 1]);
+    }
+  }, [currentStep, completedSteps]);
+
+  const goPrevious = useCallback(() => {
+    const currentIndex = steps.indexOf(currentStep);
+    if (currentIndex > 0) {
+      setCurrentStep(steps[currentIndex - 1]);
+    }
+  }, [currentStep]);
 
   const handleSaveDraft = () => {
     const data = form.getValues();
-    saveDraftMutation.mutate({ ...data, status: 'draft' } as any);
+    saveDraftMutation.mutate(data);
+  };
+
+  const onSubmit = (data: VendorQuotationFormData) => {
+    submitMutation.mutate(data);
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
+  // Get category display
+  const getCategory = (category: string | string[] | undefined): string => {
+    if (Array.isArray(category)) return category[0] || 'General';
+    return category || 'General';
   };
 
   if (loadingRFQ) {
-    return <FormPageSkeleton sections={3} fieldsPerSection={4} />;
+    return (
+      <div className="min-h-screen bg-background p-6 space-y-6">
+        <Skeleton className="h-10 w-48" />
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-96 w-full" />
+      </div>
+    );
   }
 
   return (
@@ -105,112 +163,166 @@ const VendorSubmitQuotation: React.FC = () => {
         <title>Submit Quotation | Vendor Dashboard</title>
       </Helmet>
 
-      <main className="container mx-auto p-6 space-y-6">
+      <main className="container mx-auto p-6 space-y-6 max-w-5xl">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold">Submit Quotation</h1>
-              <p className="text-muted-foreground">
-                {rfqDetail?.title || 'Loading...'}
-              </p>
-            </div>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(-1)}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold">Submit Quotation</h1>
+            <p className="text-muted-foreground text-sm">
+              {rfqDetail?.title || 'Loading...'}
+            </p>
           </div>
         </div>
 
-        {/* RFQ Details Card */}
+        {/* RFQ Summary Card */}
         {rfqDetail && (
-          <Card>
-            <CardHeader>
-              <CardTitle>RFQ Details</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Company</p>
-                <p className="font-medium">{rfqDetail.company?.name || 'N/A'}</p>
+          <Card className="border-l-4 border-l-primary">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Badge variant="secondary" className="text-xs">
+                  {getCategory(rfqDetail.category)}
+                </Badge>
+                {rfqDetail.priority && (
+                  <Badge variant="outline" className="text-xs">
+                    {rfqDetail.priority} Priority
+                  </Badge>
+                )}
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Budget</p>
-                <p className="font-medium">{rfqDetail.budget?.display || 'N/A'}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Deadline</p>
-                <p className="font-medium">{rfqDetail.timeline?.deadline ? new Date(rfqDetail.timeline.deadline).toLocaleDateString() : 'N/A'}</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-muted-foreground text-xs">Company</p>
+                    <p className="font-medium">{rfqDetail.company?.name || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <IndianRupee className="w-4 h-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-muted-foreground text-xs">Budget</p>
+                    <p className="font-medium">{rfqDetail.budget?.display || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-muted-foreground text-xs">Deadline</p>
+                    <p className="font-medium">{formatDate(rfqDetail.timeline?.deadline)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-muted-foreground text-xs">Location</p>
+                    <p className="font-medium">
+                      {rfqDetail.location?.city || rfqDetail.location?.state || 'N/A'}
+                    </p>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Quotation Form */}
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="pricing">Pricing</TabsTrigger>
-              <TabsTrigger value="timeline">Timeline</TabsTrigger>
-              <TabsTrigger value="technical">Technical</TabsTrigger>
-              <TabsTrigger value="documents">Documents</TabsTrigger>
-              <TabsTrigger value="terms">Terms</TabsTrigger>
-            </TabsList>
+        {/* Step Indicator */}
+        <Card>
+          <CardContent className="p-4">
+            <QuotationStepIndicator
+              currentStep={currentStep}
+              completedSteps={completedSteps}
+              onStepClick={goToStep}
+            />
+          </CardContent>
+        </Card>
 
-            <TabsContent value="pricing" className="space-y-4">
-              <QuotationPricingSection form={form} />
-            </TabsContent>
-
-            <TabsContent value="timeline" className="space-y-4">
-              <QuotationTimelineSection form={form} />
-            </TabsContent>
-
-            <TabsContent value="technical" className="space-y-4">
-              <QuotationTechnicalSection form={form} />
-            </TabsContent>
-
-            <TabsContent value="documents" className="space-y-4">
-              <QuotationDocumentsSection form={form} />
-            </TabsContent>
-
-            <TabsContent value="terms" className="space-y-4">
-              <QuotationTermsSection form={form} />
-            </TabsContent>
-          </Tabs>
-
-          {/* Action Buttons */}
-          <div className="flex justify-end gap-4 mt-6">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate(-1)}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleSaveDraft}
-              disabled={saveDraftMutation.isPending}
-            >
-              {saveDraftMutation.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        {/* Form Content */}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            {/* Step Content */}
+            <div className="min-h-[400px]">
+              {currentStep === 'pricing' && <QuotationPricingSection form={form} />}
+              {currentStep === 'timeline' && <QuotationTimelineSection form={form} />}
+              {currentStep === 'technical' && <QuotationTechnicalSection form={form} />}
+              {currentStep === 'terms' && <QuotationTermsSection form={form} />}
+              {currentStep === 'review' && (
+                <QuotationReviewSection form={form} onEditSection={goToStep} />
               )}
-              Save as Draft
-            </Button>
-            <Button
-              type="submit"
-              disabled={submitMutation.isPending}
-            >
-              {submitMutation.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Submit Quotation
-            </Button>
-          </div>
-        </form>
+            </div>
+
+            {/* Navigation Buttons */}
+            <Card className="mt-6">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  {/* Previous Button */}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={goPrevious}
+                    disabled={currentStepIndex === 0}
+                    className="gap-2"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Previous
+                  </Button>
+
+                  {/* Center Actions */}
+                  <div className="flex items-center gap-3">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => navigate(-1)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={handleSaveDraft}
+                      disabled={saveDraftMutation.isPending}
+                    >
+                      {saveDraftMutation.isPending && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      Save Draft
+                    </Button>
+                  </div>
+
+                  {/* Next/Submit Button */}
+                  {currentStep === 'review' ? (
+                    <Button
+                      type="submit"
+                      disabled={submitMutation.isPending}
+                      className="gap-2"
+                    >
+                      {submitMutation.isPending && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      Submit Quotation
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      onClick={goNext}
+                      className="gap-2"
+                    >
+                      Next
+                      <ChevronRight className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </form>
+        </Form>
       </main>
     </div>
   );
