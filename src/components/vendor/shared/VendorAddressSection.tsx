@@ -56,22 +56,32 @@ export const VendorAddressSection: React.FC<VendorAddressSectionProps> = ({
   isProfileLocked = false,
   maxAddresses = 3,
 }) => {
-  // Ensure at least one address exists
-  const currentAddresses = addresses.length > 0 ? addresses : [{ line1: '', city: '', state: '', pincode: '', isPrimary: true }];
+  // Initialize addresses if empty
+  React.useEffect(() => {
+    if (!addresses || addresses.length === 0) {
+      onChange([{ line1: '', city: '', state: '', pincode: '', isPrimary: true }]);
+    }
+  }, []); // Only run on mount
+
+  const currentAddresses = addresses && addresses.length > 0
+    ? addresses
+    : [{ line1: '', city: '', state: '', pincode: '', isPrimary: true }];
 
   const hasValidAddress = currentAddresses.some(addr => addr.line1?.trim());
 
   const handleAddressChange = (index: number, field: keyof Address, value: string | boolean) => {
+    // Use currentAddresses which always has at least one element
     const updated = [...currentAddresses];
     updated[index] = { ...updated[index], [field]: value };
-    
+
     // If setting isPrimary to true, unset others
     if (field === 'isPrimary' && value === true) {
       updated.forEach((addr, i) => {
         if (i !== index) addr.isPrimary = false;
       });
     }
-    
+
+    console.log('[VendorAddressSection] calling onChange with:', updated);
     onChange(updated);
   };
 
@@ -126,7 +136,7 @@ export const VendorAddressSection: React.FC<VendorAddressSectionProps> = ({
         {!hasValidAddress && (
           <p className="text-xs text-red-600">At least one business address is required for verification</p>
         )}
-        
+
         {currentAddresses.map((address, index) => (
           <div
             key={index}
@@ -177,15 +187,21 @@ export const VendorAddressSection: React.FC<VendorAddressSectionProps> = ({
                 <Select
                   value={address.state || ''}
                   onValueChange={(value) => {
-                    handleAddressChange(index, 'state', value);
-                    handleAddressChange(index, 'city', ''); // Reset city when state changes
+                    // Batch both updates to avoid stale closure issue
+                    const updated = [...currentAddresses];
+                    updated[index] = {
+                      ...updated[index],
+                      state: value,
+                      city: '' // Reset city when state changes
+                    };
+                    onChange(updated);
                   }}
                   disabled={isProfileLocked}
                 >
                   <SelectTrigger className={!address.state ? 'border-red-300' : 'border-green-300'}>
                     <SelectValue placeholder="Select state" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper" sideOffset={5}>
                     {indianStates.map((state) => (
                       <SelectItem key={state} value={state}>
                         {state}
@@ -207,7 +223,7 @@ export const VendorAddressSection: React.FC<VendorAddressSectionProps> = ({
                   <SelectTrigger className={!address.city ? 'border-red-300' : 'border-green-300'}>
                     <SelectValue placeholder={address.state ? "Select city" : "Select state first"} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper" sideOffset={5}>
                     {getCitiesForState(address.state).map((city) => (
                       <SelectItem key={city} value={city}>
                         {city}

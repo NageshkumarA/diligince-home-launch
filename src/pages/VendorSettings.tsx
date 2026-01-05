@@ -14,8 +14,8 @@ import { VendorProfile, VerificationStatus, VerificationDocument, VendorDocument
 import { VendorProfileCompletionBanner } from '@/components/vendor/shared/VendorProfileCompletionBanner';
 import { VendorDocumentUploadField } from '@/components/vendor/shared/VendorDocumentUploadField';
 import { VendorAddressSection } from '@/components/vendor/shared/VendorAddressSection';
-import { 
-  calculateVendorProfileCompletion, 
+import {
+  calculateVendorProfileCompletion,
   canVendorSubmitForVerification,
   getVendorRequiredDocuments,
   getDocumentDisplayName
@@ -61,7 +61,7 @@ const VendorSettings = () => {
       try {
         setIsLoadingProfile(true);
         const existingProfile = await vendorProfileService.getProfile();
-        
+
         if (existingProfile) {
           setProfile(existingProfile);
         } else {
@@ -131,7 +131,7 @@ const VendorSettings = () => {
 
     try {
       const response = await vendorProfileService.saveProfile(profile);
-      
+
       if (response.success) {
         // Update local state with response data
         const savedProfile = 'profile' in response.data ? response.data.profile : response.data;
@@ -251,7 +251,7 @@ const VendorSettings = () => {
     return profile.documents?.find(doc => doc.documentType === type);
   };
 
-    return (
+  return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
@@ -580,7 +580,7 @@ const VendorSettings = () => {
             </Card>
 
             {/* Services & Skills Section - All Vendor Types */}
-            <ServicesSkillsForm 
+            <ServicesSkillsForm
               isProfileLocked={isProfileLocked}
               onSaveSuccess={() => toast.success('Services updated')}
             />
