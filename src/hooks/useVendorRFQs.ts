@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { vendorRFQsService } from '@/services/modules/vendors/rfqs.service';
-import { 
-  RFQBrowseFilters, 
-  RFQBrowseItem, 
+import {
+  RFQBrowseFilters,
+  RFQBrowseItem,
   RFQStats,
   RFQBrowsePagination,
   SearchInterpretation
@@ -36,23 +36,25 @@ export const useVendorRFQs = (): UseVendorRFQsReturn => {
   const queryClient = useQueryClient();
 
   // Fetch RFQs with React Query
-  const { 
-    data: browseData, 
-    isLoading: isLoadingRFQs, 
+  const {
+    data: browseData,
+    isLoading: isLoadingRFQs,
     error: rfqsError,
-    refetch 
+    refetch
   } = useQuery({
     queryKey: ['vendor-rfqs', 'browse', filters],
     queryFn: () => vendorRFQsService.getBrowseRFQs(filters),
+    refetchOnMount: 'always', // Always refetch when component mounts
   });
 
   // Fetch stats
-  const { 
-    data: statsData, 
-    isLoading: isLoadingStats 
+  const {
+    data: statsData,
+    isLoading: isLoadingStats
   } = useQuery({
     queryKey: ['vendor-rfqs', 'stats'],
     queryFn: () => vendorRFQsService.getRFQStats(),
+    refetchOnMount: 'always', // Always refetch when component mounts
   });
 
   // Save mutation
@@ -124,9 +126,9 @@ export const useVendorRFQDetail = (rfqId: string) => {
     enabled: !!rfqId,
   });
 
-  return { 
-    rfq: data || null, 
-    isLoading, 
-    error: error?.message || null 
+  return {
+    rfq: data || null,
+    isLoading,
+    error: error?.message || null
   };
 };
