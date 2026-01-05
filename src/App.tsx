@@ -158,6 +158,7 @@ import ProjectsActive from "@/pages/ProjectsActive";
 
 // Vendor sub-pages
 import VendorRFQsBrowse from "@/pages/VendorRFQsBrowse";
+import VendorRFQDetail from "@/pages/VendorRFQDetail";
 import VendorSubmitQuotation from "@/pages/VendorSubmitQuotation";
 import VendorQuotations from "@/pages/VendorQuotations";
 import VendorQuotationDetails from "@/pages/VendorQuotationDetails";
@@ -492,6 +493,10 @@ function App() {
                               <Route
                                 path="service-vendor-rfqs"
                                 element={<ServiceVendorRFQs />}
+                              />
+                              <Route
+                                path="rfqs/:rfqId"
+                                element={<VendorRFQDetail />}
                               />
                               <Route
                                 path="service-vendor-projects"
