@@ -8,5 +8,6 @@ export const vendorProfileRoutes = {
   uploadDocument: `${BASE_PATH}/documents/upload`,
   deleteDocument: (documentId: string) => `${BASE_PATH}/documents/${documentId}`,
   submitVerification: `${BASE_PATH}/submit-verification`,
+  selfApprove: `${BASE_PATH}/self-approve`,
   completionStatus: `${BASE_PATH}/completion-status`,
 };

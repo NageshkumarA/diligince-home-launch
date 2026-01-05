@@ -28,7 +28,14 @@ const VENDOR_CATEGORIES = ['Service Vendor', 'Product Vendor', 'Logistics Vendor
 
 const VendorSettings = () => {
   const navigate = useNavigate();
-  const { user, refreshVerificationStatus } = useUser();
+  const {
+    user,
+    verificationStatus,
+    canAccessDashboard,
+    isUserType,
+    refreshVerificationStatus,
+    updateVerificationStatus
+  } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [isConsentOpen, setIsConsentOpen] = useState(false);
@@ -166,6 +173,39 @@ const VendorSettings = () => {
     setIsConsentOpen(true);
   };
 
+  const handleSelfApprove = async () => {
+    setIsSubmitting(true);
+    const loadingToast = errorHandler.showLoading('Approving profile...');
+
+    try {
+      const response = await vendorProfileService.selfApprove();
+
+      if (response.success) {
+        // Update local profile state
+        setProfile(prev => ({
+          ...prev,
+          verificationStatus: VerificationStatus.APPROVED,
+          verificationCompletedAt: response.data.verificationCompletedAt
+        }));
+
+        // Directly update UserContext verification status (immediate unlock)
+        updateVerificationStatus(VerificationStatus.APPROVED);
+
+        errorHandler.updateSuccess(loadingToast, 'Profile approved! Navigation enabled.');
+
+        // Success message
+        toast.success('Sidebar navigation is now enabled!', {
+          description: 'You can now access all features.',
+          duration: 3000
+        });
+      }
+    } catch (error) {
+      errorHandler.updateError(loadingToast, 'Failed to approve profile');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleConsentConfirm = async () => {
     setIsSubmitting(true);
     const loadingToast = errorHandler.showLoading('Submitting for verification...');
@@ -272,7 +312,7 @@ const VendorSettings = () => {
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-3">
                     <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 mt-0.5" />
-                    <div>
+                    <div className="flex-1">
                       <h3 className="font-semibold text-yellow-800 dark:text-yellow-400">
                         Profile Locked
                       </h3>
@@ -281,6 +321,19 @@ const VendorSettings = () => {
                           ? 'Your profile has been submitted for verification and is currently under review. No changes can be made during this period.'
                           : 'Your profile has been verified and is permanently locked. Please contact support if you need to make changes.'}
                       </p>
+                      {/* Testing Button - Only show for pending profiles */}
+                      {profile.verificationStatus === VerificationStatus.PENDING && (
+                        <Button
+                          onClick={handleSelfApprove}
+                          disabled={isSubmitting}
+                          variant="outline"
+                          className="mt-3 border-yellow-600 text-yellow-700 hover:bg-yellow-100 dark:hover:bg-yellow-900/30"
+                          size="sm"
+                        >
+                          <CheckCircle2 className="w-4 h-4 mr-2" />
+                          {isSubmitting ? 'Approving...' : 'Self Approve (Testing)'}
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </CardContent>

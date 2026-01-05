@@ -132,7 +132,7 @@ class VendorProfileService {
     const rawDocs = data.documents || data.verificationDocuments || [];
 
     // Extract addresses - handle nested contactInfo.address or flat addresses array
-    const rawAddresses = data.addresses || 
+    const rawAddresses = data.addresses ||
       (data.contactInfo?.address ? [data.contactInfo.address] : []) ||
       (data.address ? [{ line1: data.address, city: data.city, state: data.state, pincode: data.pincode }] : []);
 
@@ -191,7 +191,7 @@ class VendorProfileService {
    */
   private denormalizeProfile(profile: Partial<VendorProfile>): any {
     const primaryAddress = profile.addresses?.[0];
-    
+
     return {
       businessName: profile.businessName,
       vendorCategory: profile.vendorCategory,
@@ -245,7 +245,7 @@ class VendorProfileService {
       const response = await apiService.get<{ success: boolean; data: any }>(
         vendorProfileRoutes.get
       );
-      
+
       // Normalize the response data to frontend structure
       return this.normalizeProfile(response.data);
     } catch (error: any) {
@@ -265,7 +265,7 @@ class VendorProfileService {
     try {
       // Transform to backend expected structure
       const backendPayload = this.denormalizeProfile(profile);
-      
+
       const response = await apiService.post<SaveVendorProfileResponse, any>(
         vendorProfileRoutes.save,
         backendPayload
@@ -353,6 +353,31 @@ class VendorProfileService {
       return response;
     } catch (error: any) {
       errorHandler.handleApiError(error, 'Failed to submit for verification');
+      throw error;
+    }
+  }
+
+  /**
+   * Self-approve pending profile (for testing purposes)
+   */
+  async selfApprove(): Promise<{
+    success: boolean;
+    message: string;
+    data: {
+      verificationStatus: string;
+      verificationCompletedAt: string;
+      isLocked: boolean;
+      isVerified: boolean;
+    };
+  }> {
+    try {
+      const response = await apiService.post<any, {}>(
+        vendorProfileRoutes.selfApprove,
+        {}
+      );
+      return response;
+    } catch (error: any) {
+      errorHandler.handleApiError(error, 'Failed to self-approve profile');
       throw error;
     }
   }
