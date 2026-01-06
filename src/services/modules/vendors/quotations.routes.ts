@@ -10,6 +10,7 @@ export const vendorQuotationsRoutes = {
   getAll: (params?: {
     status?: 'draft' | 'submitted' | 'under_review' | 'accepted' | 'rejected';
     rfqId?: string;
+    search?: string;
     page?: number;
     limit?: number;
   }) => `${BASE_PATH}${buildQueryString(params)}`,

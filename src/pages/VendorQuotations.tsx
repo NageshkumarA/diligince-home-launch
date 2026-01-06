@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CustomTable, { ColumnConfig } from '@/components/CustomTable';
 import { TableSkeletonLoader } from '@/components/shared/loading';
+import AISearchBar from '@/components/vendor/shared/AISearchBar';
 
 import { vendorQuotationsService } from '@/services';
 import type { VendorQuotation } from '@/types/vendor';
@@ -16,15 +17,17 @@ const VendorQuotations: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch quotations
   const { data: quotationsData, isLoading } = useQuery({
-    queryKey: ['vendor-quotations', activeTab, page, limit],
+    queryKey: ['vendor-quotations', activeTab, page, limit, searchQuery],
     queryFn: () =>
       vendorQuotationsService.getMyQuotations({
         status: activeTab === 'all' ? undefined : (activeTab as any),
         page,
         limit,
+        search: searchQuery || undefined,
       }),
   });
 
@@ -118,6 +121,14 @@ const VendorQuotations: React.FC = () => {
             Browse RFQs
           </Button>
         </div>
+
+        {/* AI Search Bar */}
+        <AISearchBar
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Search quotations by number, RFQ title, or company..."
+          isLoading={isLoading}
+        />
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>

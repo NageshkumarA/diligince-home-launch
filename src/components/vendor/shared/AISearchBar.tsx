@@ -83,10 +83,6 @@ const AISearchBar: React.FC<AISearchBarProps> = ({
         </Button>
       </div>
 
-      {/* Helper Text */}
-      <p className="mt-2 text-xs text-muted-foreground">
-        Try: "high priority automation services in Mumbai under 5 lakhs"
-      </p>
     </form>
   );
 };
