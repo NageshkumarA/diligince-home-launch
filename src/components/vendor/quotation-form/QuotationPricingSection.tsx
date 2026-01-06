@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { UseFormReturn, useFieldArray } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -48,22 +48,30 @@ export const QuotationPricingSection: React.FC<QuotationPricingSectionProps> = (
     name: 'lineItems',
   });
 
-  const watchLineItems = form.watch('lineItems');
   const watchTaxRate = form.watch('taxRate');
+  const watchLineItems = form.watch('lineItems');
   const currency = form.watch('currency') || 'INR';
 
   const currencySymbol = currencies.find((c) => c.value === currency)?.symbol || '₹';
 
-  // Calculate totals whenever line items or tax rate changes
-  useEffect(() => {
-    const subtotal = watchLineItems?.reduce((sum, item) => sum + (item.total || 0), 0) || 0;
-    const taxAmount = (subtotal * (watchTaxRate || 0)) / 100;
+  // Recalculate summary totals
+  const recalculateSummary = useCallback(() => {
+    const lineItems = form.getValues('lineItems') || [];
+    const taxRate = form.getValues('taxRate') || 0;
+
+    const subtotal = lineItems.reduce((sum, item) => sum + (item.total || 0), 0);
+    const taxAmount = (subtotal * taxRate) / 100;
     const totalAmount = subtotal + taxAmount;
 
     form.setValue('subtotal', subtotal, { shouldValidate: false });
     form.setValue('taxAmount', taxAmount, { shouldValidate: false });
     form.setValue('totalAmount', totalAmount, { shouldValidate: false });
-  }, [watchLineItems, watchTaxRate, form]);
+  }, [form]);
+
+  // Recalculate when tax rate changes
+  useEffect(() => {
+    recalculateSummary();
+  }, [watchTaxRate, recalculateSummary]);
 
   // Update line item total when quantity or unit price changes
   const handleLineItemChange = (index: number) => {
@@ -71,6 +79,7 @@ export const QuotationPricingSection: React.FC<QuotationPricingSectionProps> = (
     const unitPrice = form.getValues(`lineItems.${index}.unitPrice`) || 0;
     const total = quantity * unitPrice;
     form.setValue(`lineItems.${index}.total`, total, { shouldValidate: false });
+    recalculateSummary();
   };
 
   const addLineItem = () => {
@@ -81,6 +90,11 @@ export const QuotationPricingSection: React.FC<QuotationPricingSectionProps> = (
       unitPrice: 0,
       total: 0,
     });
+  };
+
+  const handleRemoveItem = (index: number) => {
+    remove(index);
+    setTimeout(() => recalculateSummary(), 0);
   };
 
   const formatNumber = (value: number) => {
