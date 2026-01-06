@@ -77,6 +77,10 @@ import RoleManagementPage from "@/pages/RoleManagementPage";
 import CreateRolePage from "@/pages/CreateRolePage";
 import EditRolePage from "@/pages/EditRolePage";
 import ViewRolePage from "@/pages/ViewRolePage";
+import VendorRoleManagementPage from "@/pages/VendorRoleManagementPage";
+import VendorCreateRolePage from "@/pages/VendorCreateRolePage";
+import VendorEditRolePage from "@/pages/VendorEditRolePage";
+import VendorViewRolePage from "@/pages/VendorViewRolePage";
 import { ApprovalMatrixListPage } from "@/pages/ApprovalMatrixListPage";
 import { ApprovalMatrixFormPage } from "@/pages/ApprovalMatrixFormPage";
 import { ApprovalMatrixViewPage } from "@/pages/ApprovalMatrixViewPage";
@@ -518,6 +522,24 @@ function App() {
                                 <Route
                                   path="service-vendor-services"
                                   element={<ServiceVendorServices />}
+                                />
+
+                                {/* Vendor Team & Role Management */}
+                                <Route
+                                  path="team/roles"
+                                  element={<VendorRoleManagementPage />}
+                                />
+                                <Route
+                                  path="team/roles/create"
+                                  element={<VendorCreateRolePage />}
+                                />
+                                <Route
+                                  path="team/roles/:id"
+                                  element={<VendorViewRolePage />}
+                                />
+                                <Route
+                                  path="team/roles/:id/edit"
+                                  element={<VendorEditRolePage />}
                                 />
 
                                 {/* Product Vendor Routes */}
