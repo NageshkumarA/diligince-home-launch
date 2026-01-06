@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -30,18 +30,19 @@ const VendorSubmitQuotation: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<QuotationStep>('pricing');
   const [completedSteps, setCompletedSteps] = useState<QuotationStep[]>([]);
 
-  // Determine if we're in edit mode
   const isEditMode = !!quotationId;
 
-  // Fetch existing quotation data when editing
+  // Fetch existing quotation for edit mode
   const { data: existingQuotation, isLoading: loadingQuotation } = useQuery({
-    queryKey: ['quotation', quotationId],
+    queryKey: ['vendor-quotation-edit', quotationId],
     queryFn: () => vendorQuotationsService.getQuotationDetails(quotationId!),
     enabled: isEditMode,
   });
 
-  // Fetch RFQ details (either from URL param or from existing quotation)
+  // Effective RFQ ID (from params or from existing quotation's requirementId)
   const effectiveRfqId = rfqId || existingQuotation?.requirementId;
+
+  // Fetch RFQ details
   const { data: rfqDetail, isLoading: loadingRFQ } = useQuery({
     queryKey: ['rfq', effectiveRfqId],
     queryFn: () => vendorRFQsService.getRFQDetails(effectiveRfqId!),
@@ -51,7 +52,7 @@ const VendorSubmitQuotation: React.FC = () => {
   const form = useForm<VendorQuotationFormData>({
     resolver: zodResolver(vendorQuotationFormSchema),
     defaultValues: {
-      rfqId: effectiveRfqId || '',
+      rfqId: rfqId || '',
       lineItems: [],
       subtotal: 0,
       taxRate: 18,
@@ -76,115 +77,78 @@ const VendorSubmitQuotation: React.FC = () => {
   });
 
   // Populate form with existing quotation data when editing
-  React.useEffect(() => {
-    if (existingQuotation && isEditMode) {
+  useEffect(() => {
+    if (isEditMode && existingQuotation) {
       form.reset({
-        rfqId: existingQuotation.requirementId,
-        lineItems: existingQuotation.lineItems || [],
-        subtotal: existingQuotation.subtotal || 0,
-        taxRate: existingQuotation.taxRate || 18,
-        taxAmount: existingQuotation.taxAmount || 0,
+        rfqId: existingQuotation.requirementId || rfqId || '',
+        lineItems: (existingQuotation as any).lineItems || [],
+        subtotal: (existingQuotation as any).subtotal || 0,
+        taxRate: (existingQuotation as any).taxRate || 18,
+        taxAmount: (existingQuotation as any).taxAmount || 0,
         totalAmount: existingQuotation.quotedAmount || 0,
         currency: existingQuotation.currency || 'INR',
         paymentTerms: existingQuotation.paymentTerms || '',
-        proposedStartDate: existingQuotation.proposedStartDate || '',
-        proposedCompletionDate: existingQuotation.proposedCompletionDate || '',
-        milestones: existingQuotation.milestones || [],
-        methodology: existingQuotation.methodology || '',
-        technicalSpecifications: existingQuotation.technicalSpecifications || '',
-        qualityAssurance: existingQuotation.qualityAssurance || '',
-        complianceCertifications: existingQuotation.complianceCertifications || [],
+        proposedStartDate: (existingQuotation as any).proposedStartDate || '',
+        proposedCompletionDate: (existingQuotation as any).proposedCompletionDate || '',
+        milestones: (existingQuotation as any).milestones || [],
+        methodology: (existingQuotation as any).methodology || '',
+        technicalSpecifications: (existingQuotation as any).technicalSpecifications || '',
+        qualityAssurance: (existingQuotation as any).qualityAssurance || '',
+        complianceCertifications: (existingQuotation as any).complianceCertifications || [],
         documents: existingQuotation.documents || [],
         warrantyPeriod: existingQuotation.warrantyPeriod || '',
-        supportTerms: existingQuotation.supportTerms || '',
-        cancellationPolicy: existingQuotation.cancellationPolicy || '',
-        specialConditions: existingQuotation.specialConditions || '',
-        status: (existingQuotation.status === 'draft' || existingQuotation.status === 'submitted') ? existingQuotation.status : 'draft',
+        supportTerms: (existingQuotation as any).supportTerms || '',
+        cancellationPolicy: (existingQuotation as any).cancellationPolicy || '',
+        specialConditions: (existingQuotation as any).specialConditions || '',
+        status: existingQuotation.status === 'draft' ? 'draft' : 'submitted',
       });
     }
-  }, [existingQuotation, isEditMode, form]);
+  }, [isEditMode, existingQuotation, form, rfqId]);
 
   // Submit quotation mutation
   const submitMutation = useMutation({
     mutationFn: (data: VendorQuotationFormData) => {
-      const payload = {
+      if (isEditMode && quotationId) {
+        return vendorQuotationsService.updateDraftQuotation(quotationId, {
+          ...data,
+          status: 'submitted',
+        } as any);
+      }
+      return vendorQuotationsService.submitQuotation({
         ...data,
         rfqId: effectiveRfqId!,
-        status: 'submitted' as const,
-      };
-
-      // If editing, use update API; otherwise use create API
-      if (isEditMode && quotationId) {
-        return vendorQuotationsService.updateDraftQuotation(quotationId, payload as any);
-      }
-      return vendorQuotationsService.submitQuotation(payload as any);
+        status: 'submitted',
+      } as any);
     },
     onSuccess: () => {
       toast.success('Quotation submitted successfully!');
       navigate('/dashboard/vendor/quotations');
     },
     onError: (error: any) => {
-      console.error('Submit quotation error:', error);
-
-      // Check if error has validation details
-      if (error.response?.data?.error?.details) {
-        const details = error.response.data.error.details;
-        if (Array.isArray(details)) {
-          // Show first few validation errors
-          details.slice(0, 3).forEach((detail: any) => {
-            toast.error(`${detail.field}: ${detail.message}`);
-          });
-          if (details.length > 3) {
-            toast.error(`...and ${details.length - 3} more validation errors`);
-          }
-        } else {
-          toast.error(error.response.data.error.message || 'Failed to submit quotation');
-        }
-      } else {
-        toast.error(error.response?.data?.error?.message || error.message || 'Failed to submit quotation');
-      }
+      toast.error(error.message || 'Failed to submit quotation');
     },
   });
 
   // Save as draft mutation
   const saveDraftMutation = useMutation({
     mutationFn: (data: VendorQuotationFormData) => {
-      const payload = {
+      if (isEditMode && quotationId) {
+        return vendorQuotationsService.updateDraftQuotation(quotationId, {
+          ...data,
+          status: 'draft',
+        } as any);
+      }
+      return vendorQuotationsService.submitQuotation({
         ...data,
         rfqId: effectiveRfqId!,
-        status: 'draft' as const,
-      };
-
-      // If editing, use update API; otherwise use create API
-      if (isEditMode && quotationId) {
-        return vendorQuotationsService.updateDraftQuotation(quotationId, payload as any);
-      }
-      return vendorQuotationsService.submitQuotation(payload as any);
+        status: 'draft',
+      } as any);
     },
     onSuccess: () => {
       toast.success('Quotation saved as draft');
-      navigate('/dashboard/vendor/quotations');
     },
     onError: (error: any) => {
-      console.error('Save draft error:', error);
-
-      // Check if error has validation details
-      if (error.response?.data?.error?.details) {
-        const details = error.response.data.error.details;
-        if (Array.isArray(details)) {
-          // Show first few validation errors
-          details.slice(0, 3).forEach((detail: any) => {
-            toast.error(`${detail.field}: ${detail.message}`);
-          });
-          if (details.length > 3) {
-            toast.error(`...and ${details.length - 3} more validation errors`);
-          }
-        } else {
-          toast.error(error.response.data.error.message || 'Failed to save draft');
-        }
-      } else {
-        toast.error(error.response?.data?.error?.message || error.message || 'Failed to save draft');
-      }
+      toast.error(error.message || 'Failed to save draft');
     },
   });
 
@@ -236,7 +200,7 @@ const VendorSubmitQuotation: React.FC = () => {
     return category || 'General';
   };
 
-  if (loadingRFQ || loadingQuotation) {
+  if (loadingRFQ || (isEditMode && loadingQuotation)) {
     return (
       <div className="min-h-screen bg-background p-6 space-y-6">
         <Skeleton className="h-10 w-48" />
@@ -266,9 +230,13 @@ const VendorSubmitQuotation: React.FC = () => {
             Back
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">{isEditMode ? 'Edit Quotation' : 'Submit Quotation'}</h1>
+            <h1 className="text-2xl font-bold">
+              {isEditMode ? 'Edit Quotation' : 'Submit Quotation'}
+            </h1>
             <p className="text-muted-foreground text-sm">
-              {rfqDetail?.title || 'Loading...'}
+              {isEditMode && existingQuotation
+                ? `${existingQuotation.quotationNumber} - ${existingQuotation.requirementTitle || rfqDetail?.title || 'Draft Quotation'}`
+                : rfqDetail?.title || 'Loading...'}
             </p>
           </div>
         </div>
