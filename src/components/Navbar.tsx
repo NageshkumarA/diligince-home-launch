@@ -99,10 +99,10 @@ const Navbar = () => {
             </Link>
             <div className="flex flex-col space-y-2 mt-4">
               <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-primary" asChild>
-                <Link to="/signin">Log In</Link>
+                <Link to="/login">Log In</Link>
               </Button>
               <Button className="bg-white text-primary hover:bg-primary/5 hover:text-primary" asChild>
-                <Link to="/signup">Sign In</Link>
+                <Link to="/signup">Sign Up</Link>
               </Button>
             </div>
           </div>
