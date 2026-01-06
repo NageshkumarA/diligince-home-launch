@@ -40,6 +40,11 @@ const VendorQuotations: React.FC = () => {
       isSortable: true,
     },
     {
+      name: 'rfqId',
+      label: 'RFQ ID',
+      isSortable: true,
+    },
+    {
       name: 'rfqTitle',
       label: 'RFQ Title',
       isSortable: true,
