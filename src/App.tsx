@@ -642,6 +642,10 @@ function App() {
                                   path="vendor/quotations/:quotationId"
                                   element={<VendorQuotationDetails />}
                                 />
+                                <Route
+                                  path="vendor/quotations/:quotationId/edit"
+                                  element={<VendorSubmitQuotation />}
+                                />
 
                                 {/* Test & Common */}
                                 <Route path="test" element={<TestPage />} />

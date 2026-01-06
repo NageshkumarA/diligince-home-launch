@@ -48,15 +48,15 @@ export const useVendorRFQs = (): UseVendorRFQsReturn => {
     refetchOnMount: 'always', // Always refetch when component mounts
   });
 
-  // Fetch stats
-  const {
-    data: statsData,
-    isLoading: isLoadingStats
-  } = useQuery({
-    queryKey: ['vendor-rfqs', 'stats'],
-    queryFn: () => vendorRFQsService.getRFQStats(),
-    refetchOnMount: 'always', // Always refetch when component mounts
-  });
+  // Fetch stats - Moved to Service Vendor Dashboard
+  // const {
+  //   data: statsData,
+  //   isLoading: isLoadingStats
+  // } = useQuery({
+  //   queryKey: ['vendor-rfqs', 'stats'],
+  //   queryFn: () => vendorRFQsService.getRFQStats(),
+  //   refetchOnMount: 'always',
+  // });
 
   // Toggle save mutation
   const toggleSaveMutation = useMutation({
@@ -98,10 +98,10 @@ export const useVendorRFQs = (): UseVendorRFQsReturn => {
 
   return {
     rfqs: browseData?.data?.rfqs || [],
-    stats: statsData?.data || null,
+    stats: null, // Stats moved to Service Vendor Dashboard
     searchInterpretation: browseData?.data?.searchInterpretation || null,
     pagination: browseData?.data?.pagination || null,
-    isLoading: isLoadingRFQs || isLoadingStats,
+    isLoading: isLoadingRFQs,
     error: rfqsError?.message || null,
     filters,
     setFilters,
