@@ -20,6 +20,9 @@ export const vendorRFQsRoutes = {
   // Get saved/bookmarked RFQs
   saved: `${BASE_PATH}/saved`,
 
+  // Get applied RFQs (where vendor has submitted quotations)
+  applied: (params?: RFQBrowseFilters) => `${BASE_PATH}/applied${buildQueryString(params)}`,
+
   // Save/Unsave RFQ
   save: (rfqId: string) => `${BASE_PATH}/${rfqId}/save`,
 

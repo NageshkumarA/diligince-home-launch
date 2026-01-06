@@ -60,16 +60,17 @@ export const QuotationPricingSection: React.FC<QuotationPricingSectionProps> = (
     const taxAmount = (subtotal * (watchTaxRate || 0)) / 100;
     const totalAmount = subtotal + taxAmount;
 
-    form.setValue('subtotal', subtotal);
-    form.setValue('taxAmount', taxAmount);
-    form.setValue('totalAmount', totalAmount);
+    form.setValue('subtotal', subtotal, { shouldValidate: false });
+    form.setValue('taxAmount', taxAmount, { shouldValidate: false });
+    form.setValue('totalAmount', totalAmount, { shouldValidate: false });
   }, [watchLineItems, watchTaxRate, form]);
 
   // Update line item total when quantity or unit price changes
   const handleLineItemChange = (index: number) => {
     const quantity = form.getValues(`lineItems.${index}.quantity`) || 0;
     const unitPrice = form.getValues(`lineItems.${index}.unitPrice`) || 0;
-    form.setValue(`lineItems.${index}.total`, quantity * unitPrice);
+    const total = quantity * unitPrice;
+    form.setValue(`lineItems.${index}.total`, total, { shouldValidate: false });
   };
 
   const addLineItem = () => {

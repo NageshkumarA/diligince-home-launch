@@ -23,6 +23,7 @@ interface RFQBrowseCardProps {
   rfq: RFQBrowseItem;
   onViewDetails: (rfq: RFQBrowseItem) => void;
   onSubmitQuote: (rfq: RFQBrowseItem) => void;
+  onViewQuote?: (rfq: RFQBrowseItem) => void; // NEW: Optional for viewing submitted quotation
   onToggleSave: (rfq: RFQBrowseItem) => void;
 }
 
@@ -46,10 +47,10 @@ const formatDate = (dateString?: string): string => {
   if (!dateString) return 'Recently';
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return 'Recently';
-  return date.toLocaleDateString('en-IN', { 
-    day: 'numeric', 
-    month: 'short', 
-    year: 'numeric' 
+  return date.toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
   });
 };
 
@@ -90,6 +91,7 @@ const RFQBrowseCard: React.FC<RFQBrowseCardProps> = ({
   rfq,
   onViewDetails,
   onSubmitQuote,
+  onViewQuote, // NEW
   onToggleSave
 }) => {
   const categoryKey = getCategory(rfq.category);
@@ -150,7 +152,7 @@ const RFQBrowseCard: React.FC<RFQBrowseCardProps> = ({
           <h3 className="font-semibold text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors">
             {rfq.title || 'Untitled RFQ'}
           </h3>
-          
+
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Building2 className="h-4 w-4 shrink-0" />
             <span className="truncate">{rfq.company?.name || 'Unknown Company'}</span>
@@ -265,10 +267,10 @@ const RFQBrowseCard: React.FC<RFQBrowseCardProps> = ({
           </Button>
           <Button
             className="flex-1 gap-2"
-            onClick={() => onSubmitQuote(rfq)}
-            disabled={rfq.hasApplied}
+            onClick={() => rfq.hasApplied && onViewQuote ? onViewQuote(rfq) : onSubmitQuote(rfq)}
+            variant={rfq.hasApplied ? "outline" : "default"}
           >
-            {rfq.hasApplied ? 'Quote Submitted' : 'Submit Quote'}
+            {rfq.hasApplied ? 'View Quote' : 'Submit Quote'}
             {!rfq.hasApplied && <ArrowRight className="h-4 w-4" />}
           </Button>
         </div>

@@ -86,6 +86,8 @@ export interface RFQBrowseItem {
   isClosingSoon: boolean;
   isSaved: boolean;
   hasApplied: boolean;
+  quotationId?: string; // NEW: ID of submitted quotation
+  quotationStatus?: 'draft' | 'submitted' | 'under_review' | 'accepted' | 'rejected' | 'withdrawn'; // NEW: Status of quotation
   aiRecommendation?: AIRecommendation | null;
 }
 

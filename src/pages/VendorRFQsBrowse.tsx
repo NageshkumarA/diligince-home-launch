@@ -39,6 +39,14 @@ const VendorRFQsBrowse = () => {
     navigate(`/dashboard/rfqs/${rfq.id}/submit-quotation`);
   };
 
+  const handleViewQuote = (rfq: RFQBrowseItem) => {
+    if (rfq.quotationId) {
+      navigate(`/dashboard/vendor/quotations/${rfq.quotationId}`);
+    } else {
+      toast.error('Quotation not found');
+    }
+  };
+
   const handleToggleSave = (rfq: RFQBrowseItem) => {
     toggleSaveRFQ(rfq.id);
   };
@@ -151,6 +159,7 @@ const VendorRFQsBrowse = () => {
               rfq={rfq}
               onViewDetails={handleViewDetails}
               onSubmitQuote={handleSubmitQuote}
+              onViewQuote={handleViewQuote}
               onToggleSave={handleToggleSave}
             />
           ))}
