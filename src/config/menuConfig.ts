@@ -343,26 +343,27 @@ export const menuConfig: MenuConfig = {
           label: "All Quotations",
           path: "/dashboard/vendor/quotations",
         },
-        {
-          icon: GitPullRequestDraft,
-          label: "Drafts",
-          path: "/dashboard/vendor/quotations/drafts",
-        },
-        {
-          icon: Clock,
-          label: "Submitted",
-          path: "/dashboard/vendor/quotations/submitted",
-        },
-        {
-          icon: CheckCircle,
-          label: "Accepted",
-          path: "/dashboard/vendor/quotations/accepted",
-        },
-        {
-          icon: XCircle,
-          label: "Rejected",
-          path: "/dashboard/vendor/quotations/rejected",
-        },
+        // Hidden for now - filtering available via tabs on All Quotations page
+        // {
+        //   icon: GitPullRequestDraft,
+        //   label: "Drafts",
+        //   path: "/dashboard/vendor/quotations/drafts",
+        // },
+        // {
+        //   icon: Clock,
+        //   label: "Submitted",
+        //   path: "/dashboard/vendor/quotations/submitted",
+        // },
+        // {
+        //   icon: CheckCircle,
+        //   label: "Accepted",
+        //   path: "/dashboard/vendor/quotations/accepted",
+        // },
+        // {
+        //   icon: XCircle,
+        //   label: "Rejected",
+        //   path: "/dashboard/vendor/quotations/rejected",
+        // },
       ],
     },
     {

@@ -72,6 +72,16 @@ class VendorRFQsService {
     }>(vendorRFQsRoutes.saved);
     return response;
   }
+
+  /**
+   * Get applied RFQs (where vendor has submitted quotations)
+   */
+  async getAppliedRFQs(filters?: RFQBrowseFilters): Promise<RFQBrowseResponse> {
+    const response = await apiService.get<RFQBrowseResponse>(
+      vendorRFQsRoutes.applied(filters)
+    );
+    return response;
+  }
 }
 
 export const vendorRFQsService = new VendorRFQsService();

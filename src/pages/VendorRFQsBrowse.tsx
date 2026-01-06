@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import RFQBrowseCard from '@/components/vendor/shared/RFQBrowseCard';
 import AISearchBar from '@/components/vendor/shared/AISearchBar';
 import RFQViewToggle, { RFQViewMode } from '@/components/vendor/shared/RFQViewToggle';
-import RFQStatsCards from '@/components/vendor/shared/RFQStatsCards';
+// import RFQStatsCards from '@/components/vendor/shared/RFQStatsCards'; // Stats moved to Service Vendor Dashboard
 import { useVendorRFQs } from '@/hooks/useVendorRFQs';
 import { RFQBrowseItem } from '@/types/rfq-browse';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ const VendorRFQsBrowse = () => {
   const navigate = useNavigate();
   const {
     rfqs,
-    stats,
+    // stats, // Stats moved to Service Vendor Dashboard
     pagination,
     isLoading,
     filters,
@@ -36,7 +36,15 @@ const VendorRFQsBrowse = () => {
       toast.info('You have already submitted a quote for this RFQ');
       return;
     }
-    navigate(`/dashboard/vendor-submit-quotation?rfqId=${rfq.id}`);
+    navigate(`/dashboard/rfqs/${rfq.id}/submit-quotation`);
+  };
+
+  const handleViewQuote = (rfq: RFQBrowseItem) => {
+    if (rfq.quotationId) {
+      navigate(`/dashboard/vendor/quotations/${rfq.quotationId}`);
+    } else {
+      toast.error('Quotation not found');
+    }
   };
 
   const handleToggleSave = (rfq: RFQBrowseItem) => {
@@ -73,8 +81,9 @@ const VendorRFQsBrowse = () => {
         </Button>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Moved to Service Vendor Dashboard
       <RFQStatsCards stats={stats} isLoading={isLoading && !rfqs.length} />
+      */}
 
       {/* AI Search Bar */}
       <AISearchBar
@@ -151,6 +160,7 @@ const VendorRFQsBrowse = () => {
               rfq={rfq}
               onViewDetails={handleViewDetails}
               onSubmitQuote={handleSubmitQuote}
+              onViewQuote={handleViewQuote}
               onToggleSave={handleToggleSave}
             />
           ))}

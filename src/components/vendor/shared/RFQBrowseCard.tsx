@@ -23,6 +23,7 @@ interface RFQBrowseCardProps {
   rfq: RFQBrowseItem;
   onViewDetails: (rfq: RFQBrowseItem) => void;
   onSubmitQuote: (rfq: RFQBrowseItem) => void;
+  onViewQuote?: (rfq: RFQBrowseItem) => void; // NEW: Optional for viewing submitted quotation
   onToggleSave: (rfq: RFQBrowseItem) => void;
 }
 
@@ -46,10 +47,10 @@ const formatDate = (dateString?: string): string => {
   if (!dateString) return 'Recently';
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return 'Recently';
-  return date.toLocaleDateString('en-IN', { 
-    day: 'numeric', 
-    month: 'short', 
-    year: 'numeric' 
+  return date.toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
   });
 };
 
@@ -90,6 +91,7 @@ const RFQBrowseCard: React.FC<RFQBrowseCardProps> = ({
   rfq,
   onViewDetails,
   onSubmitQuote,
+  onViewQuote, // NEW
   onToggleSave
 }) => {
   const categoryKey = getCategory(rfq.category);
@@ -146,16 +148,16 @@ const RFQBrowseCard: React.FC<RFQBrowseCardProps> = ({
         </div>
 
         {/* Title & Company */}
-        <div className="px-4 pb-3 space-y-2">
-          <h3 className="font-semibold text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors">
+        <div className="px-4 pb-3 space-y-1.5">
+          <h3 className="text-base font-semibold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors">
             {rfq.title || 'Untitled RFQ'}
           </h3>
-          
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Building2 className="h-4 w-4 shrink-0" />
+
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Building2 className="h-3.5 w-3.5 shrink-0" />
             <span className="truncate">{rfq.company?.name || 'Unknown Company'}</span>
             {rfq.company?.verified && (
-              <BadgeCheck className="h-4 w-4 text-blue-600 shrink-0" />
+              <BadgeCheck className="h-3.5 w-3.5 text-blue-600 shrink-0" />
             )}
           </div>
         </div>
@@ -163,30 +165,30 @@ const RFQBrowseCard: React.FC<RFQBrowseCardProps> = ({
         {/* Description */}
         <div className="px-4 pb-3">
           {rfq.description ? (
-            <p className="text-sm text-muted-foreground line-clamp-2">{rfq.description}</p>
+            <p className="text-sm text-muted-foreground/80 line-clamp-2 leading-relaxed">{rfq.description}</p>
           ) : (
-            <p className="text-sm text-muted-foreground/60 italic">No description provided</p>
+            <p className="text-sm text-muted-foreground/50 italic">No description provided</p>
           )}
         </div>
 
         {/* Meta: Location & Date */}
         <div className="px-4 pb-3">
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <MapPin className="h-4 w-4 shrink-0" />
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <MapPin className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">{locationText}</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Calendar className="h-4 w-4 shrink-0" />
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <Calendar className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">{dateInfo.label}: {dateInfo.value}</span>
             </div>
           </div>
         </div>
 
         {/* Budget Section */}
-        <div className="mx-4 mb-3 p-3 rounded-lg bg-muted/50">
-          <div className="flex items-center gap-2">
-            <IndianRupee className="h-4 w-4 text-muted-foreground" />
+        <div className="mx-4 mb-3 p-2.5 rounded-lg bg-muted/40">
+          <div className="flex items-center gap-1.5">
+            <IndianRupee className="h-3.5 w-3.5 text-muted-foreground" />
             <span className="text-sm font-medium text-foreground">
               {rfq.budget?.display || 'Budget not specified'}
             </span>
@@ -234,15 +236,15 @@ const RFQBrowseCard: React.FC<RFQBrowseCardProps> = ({
         )}
 
         {/* Footer: Responses & Status */}
-        <div className="px-4 py-3 border-t bg-muted/30 flex items-center justify-between">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <Users className="h-4 w-4" />
+        <div className="px-4 py-2.5 border-t bg-muted/20 flex items-center justify-between">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Users className="h-3.5 w-3.5" />
               <span>{rfq.responses || 0} responses</span>
             </div>
             {daysLeftText && (
-              <div className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4" />
+              <div className="flex items-center gap-1">
+                <Clock className="h-3.5 w-3.5" />
                 <span className={rfq.isClosingSoon ? 'text-orange-600 font-medium' : ''}>
                   {daysLeftText}
                 </span>
@@ -255,21 +257,23 @@ const RFQBrowseCard: React.FC<RFQBrowseCardProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="p-4 pt-3 flex gap-3 border-t">
+        <div className="p-4 pt-3 flex gap-2 border-t">
           <Button
             variant="outline"
-            className="flex-1"
+            size="sm"
+            className="flex-1 text-sm"
             onClick={() => onViewDetails(rfq)}
           >
             View Details
           </Button>
           <Button
-            className="flex-1 gap-2"
-            onClick={() => onSubmitQuote(rfq)}
-            disabled={rfq.hasApplied}
+            size="sm"
+            className="flex-1 gap-1.5 text-sm"
+            onClick={() => rfq.hasApplied && onViewQuote ? onViewQuote(rfq) : onSubmitQuote(rfq)}
+            variant={rfq.hasApplied ? "outline" : "default"}
           >
-            {rfq.hasApplied ? 'Quote Submitted' : 'Submit Quote'}
-            {!rfq.hasApplied && <ArrowRight className="h-4 w-4" />}
+            {rfq.hasApplied ? 'View Quote' : 'Submit Quote'}
+            {!rfq.hasApplied && <ArrowRight className="h-3.5 w-3.5" />}
           </Button>
         </div>
       </CardContent>

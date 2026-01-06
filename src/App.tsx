@@ -163,6 +163,7 @@ import ProjectsActive from "@/pages/ProjectsActive";
 // Vendor sub-pages
 import VendorRFQsBrowse from "@/pages/VendorRFQsBrowse";
 import VendorRFQsSaved from "@/pages/VendorRFQsSaved";
+import VendorRFQsApplied from "@/pages/VendorRFQsApplied";
 import VendorRFQDetail from "@/pages/VendorRFQDetail";
 import VendorSubmitQuotation from "@/pages/VendorSubmitQuotation";
 import VendorQuotations from "@/pages/VendorQuotations";
@@ -207,7 +208,7 @@ function App() {
                                 element={<ForgotPassword />}
                               />
                               <Route
-                                path="/reset-password"
+                                path="/reset-password/:token"
                                 element={<ResetPassword />}
                               />
                               <Route
@@ -648,6 +649,10 @@ function App() {
                                   element={<VendorRFQsSaved />}
                                 />
                                 <Route
+                                  path="rfqs/applied"
+                                  element={<VendorRFQsApplied />}
+                                />
+                                <Route
                                   path="rfqs/:rfqId/submit-quotation"
                                   element={<VendorSubmitQuotation />}
                                 />
@@ -658,6 +663,10 @@ function App() {
                                 <Route
                                   path="vendor/quotations/:quotationId"
                                   element={<VendorQuotationDetails />}
+                                />
+                                <Route
+                                  path="vendor/quotations/:quotationId/edit"
+                                  element={<VendorSubmitQuotation />}
                                 />
 
                                 {/* Test & Common */}

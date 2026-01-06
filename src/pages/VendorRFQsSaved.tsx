@@ -37,6 +37,14 @@ const VendorRFQsSaved = () => {
         navigate(`/dashboard/vendor-submit-quotation?rfqId=${rfq.id}`);
     };
 
+    const handleViewQuote = (rfq: RFQBrowseItem) => {
+        if (rfq.quotationId) {
+            navigate(`/dashboard/vendor/quotations/${rfq.quotationId}`);
+        } else {
+            toast.error('Quotation not found');
+        }
+    };
+
     const handleToggleSave = async (rfq: RFQBrowseItem) => {
         try {
             await vendorRFQsService.toggleSaveRFQ(rfq.id);
@@ -120,6 +128,7 @@ const VendorRFQsSaved = () => {
                                 rfq={rfq}
                                 onViewDetails={handleViewDetails}
                                 onSubmitQuote={handleSubmitQuote}
+                                onViewQuote={handleViewQuote}
                                 onToggleSave={handleToggleSave}
                             />
                         ))}
