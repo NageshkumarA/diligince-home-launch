@@ -303,7 +303,7 @@ export const QuotationPricingSection: React.FC<QuotationPricingSectionProps> = (
                       variant="ghost"
                       size="icon"
                       className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                      onClick={() => remove(index)}
+                      onClick={() => handleRemoveItem(index)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>

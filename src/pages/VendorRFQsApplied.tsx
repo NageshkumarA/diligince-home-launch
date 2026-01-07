@@ -39,7 +39,7 @@ const VendorRFQsApplied = () => {
 
     const handleSubmitQuote = (rfq: RFQBrowseItem) => {
         // This shouldn't be called for applied RFQs, but keeping for consistency
-        navigate(`/dashboard/vendor-submit-quotation?rfqId=${rfq.id}`);
+        navigate(`/dashboard/rfqs/${rfq.id}/submit-quotation`);
     };
 
     const handleViewQuote = (rfq: RFQBrowseItem) => {
