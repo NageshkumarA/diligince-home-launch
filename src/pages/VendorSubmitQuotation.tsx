@@ -79,31 +79,50 @@ const VendorSubmitQuotation: React.FC = () => {
   // Populate form with existing quotation data when editing
   useEffect(() => {
     if (isEditMode && existingQuotation) {
-      form.reset({
-        rfqId: existingQuotation.requirementId || rfqId || '',
-        lineItems: (existingQuotation as any).lineItems || [],
-        subtotal: (existingQuotation as any).subtotal || 0,
-        taxRate: (existingQuotation as any).taxRate || 18,
-        taxAmount: (existingQuotation as any).taxAmount || 0,
+      console.log('🔍 Populating form with existing quotation:', existingQuotation);
+      console.log('📋 Line items from API:', existingQuotation.lineItems);
+
+      // Map line items from backend format (amount) to frontend format (total)
+      const mappedLineItems = (existingQuotation.lineItems || []).map((item: any) => ({
+        id: item.id || item._id || `item_${Date.now()}_${Math.random()}`,
+        description: item.description || '',
+        quantity: item.quantity || 0,
+        unitPrice: item.unitPrice || 0,
+        total: item.total || item.amount || 0, // Backend uses 'amount', frontend uses 'total'
+      }));
+
+      console.log('🔄 Mapped line items:', mappedLineItems);
+
+      const formData = {
+        rfqId: existingQuotation.requirementId || '',
+        lineItems: mappedLineItems,
+        subtotal: existingQuotation.subtotal || 0,
+        taxRate: existingQuotation.taxRate || 18,
+        taxAmount: existingQuotation.taxAmount || 0,
         totalAmount: existingQuotation.quotedAmount || 0,
         currency: existingQuotation.currency || 'INR',
         paymentTerms: existingQuotation.paymentTerms || '',
-        proposedStartDate: (existingQuotation as any).proposedStartDate || '',
-        proposedCompletionDate: (existingQuotation as any).proposedCompletionDate || '',
-        milestones: (existingQuotation as any).milestones || [],
-        methodology: (existingQuotation as any).methodology || '',
-        technicalSpecifications: (existingQuotation as any).technicalSpecifications || '',
-        qualityAssurance: (existingQuotation as any).qualityAssurance || '',
-        complianceCertifications: (existingQuotation as any).complianceCertifications || [],
+        proposedStartDate: existingQuotation.proposedStartDate || '',
+        proposedCompletionDate: existingQuotation.proposedCompletionDate || '',
+        milestones: existingQuotation.milestones || [],
+        methodology: existingQuotation.methodology || '',
+        technicalSpecifications: existingQuotation.technicalSpecifications || '',
+        qualityAssurance: existingQuotation.qualityAssurance || '',
+        complianceCertifications: existingQuotation.complianceCertifications || [],
         documents: existingQuotation.documents || [],
         warrantyPeriod: existingQuotation.warrantyPeriod || '',
-        supportTerms: (existingQuotation as any).supportTerms || '',
-        cancellationPolicy: (existingQuotation as any).cancellationPolicy || '',
-        specialConditions: (existingQuotation as any).specialConditions || '',
-        status: existingQuotation.status === 'draft' ? 'draft' : 'submitted',
-      });
+        supportTerms: existingQuotation.supportTerms || '',
+        cancellationPolicy: existingQuotation.cancellationPolicy || '',
+        specialConditions: existingQuotation.specialConditions || '',
+        status: (existingQuotation.status === 'draft' ? 'draft' : 'submitted') as 'draft' | 'submitted',
+      };
+
+      console.log('📝 Form data being set:', formData);
+      form.reset(formData);
+      console.log('✅ Form reset complete');
     }
-  }, [isEditMode, existingQuotation, form, rfqId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditMode, existingQuotation]);
 
   // Submit quotation mutation
   const submitMutation = useMutation({
