@@ -1076,3 +1076,44 @@
     opacity: 0.06;
   }
 }
+
+/* Pricing Page AI Animations */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.05); }
+}
+
+@keyframes icon-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(10deg); }
+}
+
+@keyframes badge-pulse {
+  0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 4px 12px rgba(21, 59, 96, 0.3); }
+  50% { transform: translateX(-50%) scale(1.02); box-shadow: 0 6px 20px rgba(21, 59, 96, 0.4); }
+}
+
+@keyframes gradient-border {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes line-pulse {
+  0%, 100% { stroke-opacity: 0.1; }
+  50% { stroke-opacity: 0.4; }
+}
+
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-icon-pulse { animation: icon-pulse 1.5s ease-in-out infinite; }
+.animate-sparkle { animation: sparkle 2s ease-in-out infinite; }
+.animate-badge-pulse { animation: badge-pulse 2s ease-in-out infinite; }
+.animate-gradient-border { 
+  background-size: 200% 200%;
+  animation: gradient-border 3s ease infinite; 
+}

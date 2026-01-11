@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check } from 'lucide-react';
+import { Check, Sparkles, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -32,22 +32,48 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, onAction }) => {
   return (
     <Card 
       className={cn(
-        "relative flex flex-col h-full transition-all duration-300 hover:shadow-lg",
+        "group relative flex flex-col h-full transition-all duration-500",
+        "bg-white/80 backdrop-blur-sm",
+        "hover:-translate-y-2 hover:scale-[1.02]",
         isPopular 
-          ? "border-2 border-[hsl(210,64%,23%)] shadow-lg" 
-          : "border hover:border-[hsl(210,64%,23%)]/50"
+          ? "border-2 border-[hsl(210,64%,23%)] shadow-xl ring-1 ring-[hsl(210,64%,23%,0.2)]" 
+          : "border border-[hsl(210,64%,23%,0.1)] hover:border-[hsl(210,64%,23%,0.3)] hover:shadow-xl"
       )}
     >
+      {/* Animated gradient border for popular */}
       {isPopular && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <Badge className="bg-[hsl(210,64%,23%)] hover:bg-[hsl(210,64%,28%)] text-white px-3 py-1">
+        <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-[hsl(210,64%,23%)] via-[hsl(210,64%,35%)] to-[hsl(210,64%,23%)] opacity-20 blur-sm animate-gradient-border -z-10" />
+      )}
+      
+      {/* Hover glow effect */}
+      <div className={cn(
+        "absolute inset-0 rounded-xl opacity-0 transition-opacity duration-500 pointer-events-none",
+        "group-hover:opacity-100",
+        isPopular 
+          ? "shadow-[0_0_40px_-10px_hsl(210,64%,23%,0.4)]"
+          : "shadow-[0_0_30px_-10px_hsl(210,64%,23%,0.2)]"
+      )} />
+
+      {/* Floating sparkles for enterprise */}
+      {isEnterprise && (
+        <div className="absolute top-4 right-4 opacity-40">
+          <Sparkles className="h-5 w-5 text-[hsl(210,64%,23%)] animate-sparkle" />
+        </div>
+      )}
+
+      {isPopular && (
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
+          <Badge className="bg-gradient-to-r from-[hsl(210,64%,23%)] to-[hsl(210,64%,30%)] hover:from-[hsl(210,64%,25%)] hover:to-[hsl(210,64%,33%)] text-white px-4 py-1.5 shadow-lg animate-badge-pulse">
+            <Zap className="h-3 w-3 mr-1 inline" />
             Most Popular
           </Badge>
         </div>
       )}
 
-      <CardHeader className={cn("text-center pb-4", isPopular && "pt-6")}>
-        <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
+      <CardHeader className={cn("text-center pb-4", isPopular && "pt-8")}>
+        <h3 className="text-xl font-bold text-foreground group-hover:text-[hsl(210,64%,23%)] transition-colors duration-300">
+          {plan.name}
+        </h3>
         <div className="mt-4">
           <span className={cn(
             "font-bold text-foreground",
@@ -68,8 +94,14 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, onAction }) => {
       <CardContent className="flex-grow">
         <ul className="space-y-3">
           {plan.highlights.map((highlight, index) => (
-            <li key={index} className="flex items-start gap-2">
-              <Check className="h-4 w-4 text-[hsl(210,64%,23%)] flex-shrink-0 mt-0.5" />
+            <li 
+              key={index} 
+              className="flex items-start gap-2 group/item"
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              <div className="relative mt-0.5">
+                <Check className="h-4 w-4 text-[hsl(210,64%,23%)] flex-shrink-0 transition-transform duration-200 group-hover/item:scale-110" />
+              </div>
               <span className="text-sm text-foreground">{highlight}</span>
             </li>
           ))}
@@ -80,15 +112,21 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, onAction }) => {
         <Button
           onClick={() => onAction(plan.ctaAction)}
           className={cn(
-            "w-full font-medium",
+            "w-full font-medium transition-all duration-300 group/btn",
+            "hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]",
             isPopular || isEnterprise
-              ? "bg-[hsl(210,64%,23%)] hover:bg-[hsl(210,64%,18%)] text-white"
+              ? "bg-gradient-to-r from-[hsl(210,64%,23%)] to-[hsl(210,64%,28%)] hover:from-[hsl(210,64%,18%)] hover:to-[hsl(210,64%,23%)] text-white shadow-md"
               : isFree
-                ? "bg-background border-2 border-[hsl(210,64%,23%)] text-[hsl(210,64%,23%)] hover:bg-[hsl(210,64%,23%)] hover:text-white"
-                : "bg-[hsl(210,64%,23%)] hover:bg-[hsl(210,64%,18%)] text-white"
+                ? "bg-white border-2 border-[hsl(210,64%,23%)] text-[hsl(210,64%,23%)] hover:bg-[hsl(210,64%,23%)] hover:text-white"
+                : "bg-gradient-to-r from-[hsl(210,64%,23%)] to-[hsl(210,64%,28%)] hover:from-[hsl(210,64%,18%)] hover:to-[hsl(210,64%,23%)] text-white"
           )}
         >
-          {plan.ctaLabel}
+          <span className="flex items-center justify-center gap-2">
+            {plan.ctaLabel}
+            {(isPopular || isEnterprise) && (
+              <Sparkles className="h-3.5 w-3.5 opacity-70 group-hover/btn:animate-sparkle" />
+            )}
+          </span>
         </Button>
       </CardFooter>
     </Card>
