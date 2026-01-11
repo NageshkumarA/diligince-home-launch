@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Helmet } from "react-helmet";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,13 @@ import { toast } from "sonner";
 import { conversationsService } from "@/services/modules/conversations/conversations.service";
 import type { Conversation, Message } from "@/services/modules/conversations/conversations.types";
 import { useUser } from "@/contexts/UserContext";
+import { useWebSocket } from "@/contexts/WebSocketContext";
+import { socketService } from "@/services/core/socket.service";
 
 const IndustryMessages = () => {
   const queryClient = useQueryClient();
   const { user } = useUser();
+  const { isConnected, isUserOnline, typingUsers, sendTypingIndicator } = useWebSocket();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [messageText, setMessageText] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -78,14 +81,87 @@ const IndustryMessages = () => {
     }
   }, [selectedConversationId]);
 
+  // Real-time message updates via WebSocket
+  useEffect(() => {
+    const handleNewMessage = (data: { message: any; conversation: { _id: string } }) => {
+      console.log('[Socket] New message received:', data);
+
+      // If message is for the currently selected conversation, add it immediately
+      if (data.conversation._id === selectedConversationId) {
+        queryClient.setQueryData(
+          ['conversation-messages', selectedConversationId],
+          (oldData: any) => {
+            if (!oldData) return { messages: [data.message] };
+            // Avoid duplicates
+            const exists = oldData.messages?.some((m: any) => m._id === data.message._id);
+            if (exists) return oldData;
+            return {
+              ...oldData,
+              messages: [...(oldData.messages || []), data.message]
+            };
+          }
+        );
+      }
+
+      // Always refresh conversation list to update lastMessage and badges
+      queryClient.invalidateQueries({ queryKey: ['industry-conversations'] });
+    };
+
+    socketService.on('new_message', handleNewMessage);
+
+    return () => {
+      socketService.off('new_message', handleNewMessage);
+    };
+  }, [selectedConversationId, queryClient]);
+
   const conversations = conversationsData?.conversations || [];
   const messages = messagesData?.messages || [];
 
-  // Filter conversations
-  const filteredConversations = conversations.filter((conv) => {
+  // CONSOLIDATION: Group conversations by participant email (company-oriented view)
+  // This ensures the same vendor appears only once, showing the most recent conversation
+  const consolidatedConversations = useMemo(() => {
+    const groupedByParticipant: Record<string, Conversation> = {};
+
+    conversations.forEach((conv) => {
+      const otherParticipant = conv.participants.find(p => p.userId._id !== user?.id);
+      const participantKey = otherParticipant?.userId.email || conv._id;
+
+      // Keep the most recent conversation (by lastMessage timestamp or updatedAt)
+      const existingConv = groupedByParticipant[participantKey];
+      const convTime = conv.lastMessage?.timestamp || conv.updatedAt;
+      const existingTime = existingConv?.lastMessage?.timestamp || existingConv?.updatedAt;
+
+      if (!existingConv || new Date(convTime) > new Date(existingTime)) {
+        // Merge unread counts from all conversations with same participant
+        const totalUnread = existingConv
+          ? (existingConv.unreadCount || 0) + (conv.unreadCount || 0)
+          : (conv.unreadCount || 0);
+
+        groupedByParticipant[participantKey] = {
+          ...conv,
+          unreadCount: totalUnread
+        };
+      } else if (existingConv) {
+        // Add unread count from this conversation to the existing one
+        groupedByParticipant[participantKey] = {
+          ...existingConv,
+          unreadCount: (existingConv.unreadCount || 0) + (conv.unreadCount || 0)
+        };
+      }
+    });
+
+    return Object.values(groupedByParticipant);
+  }, [conversations, user?.id]);
+
+  // Filter consolidated conversations
+  const filteredConversations = consolidatedConversations.filter((conv) => {
+    const otherParticipant = conv.participants.find(p => p.userId._id !== user?.id);
+    const participantEmail = otherParticipant?.userId.email || '';
+
     const matchesSearch =
       conv.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      conv.lastMessage?.content?.toLowerCase().includes(searchTerm.toLowerCase());
+      conv.lastMessage?.content?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      participantEmail.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter =
       filterType === "all" ||
       (filterType === "unread" && (conv.unreadCount || 0) > 0) ||
@@ -245,11 +321,20 @@ const IndustryMessages = () => {
                         </span>
                       </div>
 
-                      {conversation.relatedType && (
-                        <Badge variant="outline" className="text-xs mb-2 bg-[hsl(var(--messages-primary)/0.1)] text-[hsl(var(--messages-primary))] border-[hsl(var(--messages-primary)/0.2)]">
-                          {conversation.relatedType}
-                        </Badge>
-                      )}
+                      {/* Online/Offline Status */}
+                      {(() => {
+                        const otherParticipant = conversation.participants.find(p => p.userId._id !== user?.id);
+                        const participantId = otherParticipant?.userId._id;
+                        const online = participantId ? isUserOnline(participantId) : false;
+                        return (
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <span className={`h-2 w-2 rounded-full ${online ? 'bg-green-500' : 'bg-gray-400'}`} />
+                            <span className="text-xs text-[hsl(var(--muted-foreground))]">
+                              {online ? 'Online' : 'Offline'}
+                            </span>
+                          </div>
+                        );
+                      })()}
 
                       <p className="text-sm text-[hsl(var(--muted-foreground))] line-clamp-2">
                         {conversation.lastMessage?.content || "No messages yet"}
@@ -287,9 +372,21 @@ const IndustryMessages = () => {
                       <h2 className="text-sm font-semibold text-[hsl(var(--foreground))]">
                         {getParticipantName(selectedConv)}
                       </h2>
-                      {selectedConv.relatedType && (
-                        <p className="text-xs text-[hsl(var(--muted-foreground))]">{selectedConv.relatedType}</p>
-                      )}
+                      {/* Online/Offline status in header */}
+                      {(() => {
+                        const otherParticipant = selectedConv.participants.find(p => p.userId._id !== user?.id);
+                        const participantId = otherParticipant?.userId._id;
+                        const online = participantId ? isUserOnline(participantId) : false;
+                        const isTyping = participantId && typingUsers.get(selectedConv._id)?.has(participantId);
+                        return (
+                          <div className="flex items-center gap-1.5">
+                            <span className={`h-2 w-2 rounded-full ${online ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
+                            <span className="text-xs text-[hsl(var(--muted-foreground))]">
+                              {isTyping ? 'Typing...' : (online ? 'Online' : 'Offline')}
+                            </span>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
 
