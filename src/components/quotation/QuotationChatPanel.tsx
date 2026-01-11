@@ -177,7 +177,7 @@ export const QuotationChatPanel: React.FC<QuotationChatPanelProps> = ({
         const isSent = message.status === 'sent';
 
         if (isRead) {
-            return <Eye className="h-3.5 w-3.5 text-blue-400 ml-1 inline-block" />;
+            return <Eye className="h-3.5 w-3.5 text-[hsl(var(--messages-primary))] ml-1 inline-block" />;
         } else if (isDelivered) {
             return <CheckCheck className="h-3.5 w-3.5 text-gray-400 ml-1 inline-block" />;
         } else if (isSent) {
@@ -201,11 +201,11 @@ export const QuotationChatPanel: React.FC<QuotationChatPanelProps> = ({
     return (
         <div className="fixed inset-y-0 right-0 w-full sm:w-[420px] bg-white shadow-2xl z-50 flex flex-col border-l border-gray-200" style={{ paddingBottom: '80px' }}>
             {/* Header */}
-            <div className="border-b bg-gradient-to-r from-blue-50 to-white">
+            <div className="border-b bg-gradient-to-r from-[hsl(var(--messages-primary-light))] to-white">
                 {/* Vendor Info Row */}
                 <div className="flex items-center justify-between p-3 pb-2">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold text-lg shadow-sm">
+                        <div className="w-10 h-10 rounded-full bg-[hsl(var(--messages-primary))] flex items-center justify-center text-white font-semibold text-lg shadow-sm">
                             {vendorName.charAt(0).toUpperCase()}
                         </div>
                         <div>
@@ -223,7 +223,7 @@ export const QuotationChatPanel: React.FC<QuotationChatPanelProps> = ({
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                        className="h-8 w-8 rounded-lg bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))] text-white"
                         onClick={handleAudioCall}
                         title="Audio Call"
                     >
@@ -232,7 +232,7 @@ export const QuotationChatPanel: React.FC<QuotationChatPanelProps> = ({
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                        className="h-8 w-8 rounded-lg bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))] text-white"
                         onClick={handleVideoCall}
                         title="Video Call"
                     >
@@ -241,7 +241,7 @@ export const QuotationChatPanel: React.FC<QuotationChatPanelProps> = ({
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                        className="h-8 w-8 rounded-lg bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))] text-white"
                         onClick={handleEmail}
                         title="Send Email"
                     >
@@ -250,7 +250,7 @@ export const QuotationChatPanel: React.FC<QuotationChatPanelProps> = ({
                     <Button
                         variant="ghost"
                         size="icon"
-                        className={`h-8 w-8 rounded-lg ${isFavorite ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
+                        className={`h-8 w-8 rounded-lg ${isFavorite ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))]'} text-white`}
                         onClick={handleFavorite}
                         title={isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
                     >
@@ -259,7 +259,7 @@ export const QuotationChatPanel: React.FC<QuotationChatPanelProps> = ({
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                        className="h-8 w-8 rounded-lg bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))] text-white"
                         onClick={handleSchedule}
                         title="Schedule Meeting"
                     >
@@ -270,7 +270,7 @@ export const QuotationChatPanel: React.FC<QuotationChatPanelProps> = ({
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                                className="h-8 w-8 rounded-lg bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))] text-white"
                                 title="More Options"
                             >
                                 <MoreHorizontal className="h-3.5 w-3.5" />
@@ -334,12 +334,12 @@ export const QuotationChatPanel: React.FC<QuotationChatPanelProps> = ({
                                     >
                                         <div
                                             className={`max-w-[80%] px-4 py-2.5 rounded-2xl ${isOwn
-                                                ? 'bg-blue-600 text-white rounded-br-md'
-                                                : 'bg-white text-gray-800 rounded-bl-md shadow-sm border border-gray-100'
+                                                ? 'bg-[hsl(var(--messages-sent-bubble))] text-white rounded-br-md'
+                                                : 'bg-[hsl(var(--messages-received-bubble))] text-gray-800 rounded-bl-md shadow-sm border border-gray-100'
                                                 }`}
                                         >
                                             <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
-                                            <div className={`flex items-center justify-end gap-0.5 mt-1 ${isOwn ? 'text-blue-100' : 'text-gray-400'}`}>
+                                            <div className={`flex items-center justify-end gap-0.5 mt-1 ${isOwn ? 'text-white/70' : 'text-gray-400'}`}>
                                                 <span className="text-[11px]">
                                                     {formatTime(message.createdAt)}
                                                     {message.isEdited && ' (edited)'}
@@ -369,14 +369,14 @@ export const QuotationChatPanel: React.FC<QuotationChatPanelProps> = ({
                             onKeyPress={handleKeyPress}
                             placeholder="Type a message..."
                             rows={1}
-                            className="w-full px-4 py-2.5 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                            className="w-full px-4 py-2.5 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[hsl(var(--messages-primary))] focus:border-transparent resize-none text-sm"
                             style={{ minHeight: '42px', maxHeight: '100px' }}
                         />
                     </div>
                     <Button
                         onClick={handleSendMessage}
                         disabled={!messageText.trim() || sendMessageMutation.isPending}
-                        className="shrink-0 rounded-full h-10 w-10 p-0 bg-blue-600 hover:bg-blue-700"
+                        className="shrink-0 rounded-full h-10 w-10 p-0 bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))]"
                     >
                         <Send className="h-4 w-4" />
                     </Button>
