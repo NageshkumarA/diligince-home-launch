@@ -195,6 +195,7 @@ const IndustryMessages = () => {
                 <SelectContent>
                   <SelectItem value="all">All Messages</SelectItem>
                   <SelectItem value="unread">Unread</SelectItem>
+                  <SelectItem value="vendor-company">Vendors</SelectItem>
                   <SelectItem value="quote">Quotations</SelectItem>
                   <SelectItem value="rfq">Requirements</SelectItem>
                   <SelectItem value="purchaseOrder">Purchase Orders</SelectItem>

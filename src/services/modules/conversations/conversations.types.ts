@@ -25,7 +25,7 @@ export interface Conversation {
     title?: string;
     description?: string;
     relatedId?: string;
-    relatedType?: 'requirement' | 'rfq' | 'quote' | 'purchaseOrder' | 'project';
+    relatedType?: 'requirement' | 'rfq' | 'quote' | 'purchaseOrder' | 'project' | 'vendor-company';
     lastMessage?: ConversationLastMessage;
     settings?: {
         isEncrypted?: boolean;
