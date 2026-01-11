@@ -463,14 +463,6 @@ const ProfessionalMessages = () => {
                     >
                       <Archive className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleMoreActions}
-                      className="hover:bg-purple-50"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
                   </div>
                 </div>
               </div>

@@ -10,19 +10,12 @@ import {
     Mail,
     Star,
     Calendar,
-    MoreHorizontal,
     Check,
     CheckCheck,
     Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { conversationsService } from '@/services/modules/conversations';
 import type { Conversation, Message } from '@/services/modules/conversations';
 import { toast } from 'sonner';
@@ -248,49 +241,23 @@ export const QuotationChatPanel: React.FC<QuotationChatPanelProps> = ({
                         <Mail className="h-3.5 w-3.5" />
                     </Button>
                     <Button
-                        variant="ghost"
+                        variant="outline"
                         size="icon"
-                        className={`h-8 w-8 rounded-lg ${isFavorite ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))]'} text-white`}
+                        className={`h-8 w-8 rounded-lg border border-[hsl(var(--messages-border))] ${isFavorite ? 'bg-yellow-500 hover:bg-yellow-600 text-white border-0' : 'bg-white text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--messages-hover))]'}`}
                         onClick={handleFavorite}
                         title={isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
                     >
                         <Star className={`h-3.5 w-3.5 ${isFavorite ? 'fill-current' : ''}`} />
                     </Button>
                     <Button
-                        variant="ghost"
+                        variant="outline"
                         size="icon"
-                        className="h-8 w-8 rounded-lg bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))] text-white"
+                        className="h-8 w-8 rounded-lg border border-[hsl(var(--messages-border))] bg-white text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--messages-hover))]"
                         onClick={handleSchedule}
                         title="Schedule Meeting"
                     >
                         <Calendar className="h-3.5 w-3.5" />
                     </Button>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 rounded-lg bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))] text-white"
-                                title="More Options"
-                            >
-                                <MoreHorizontal className="h-3.5 w-3.5" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                            <DropdownMenuItem onClick={() => toast.info('View Profile')}>
-                                View Vendor Profile
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => toast.info('Block User')}>
-                                Block User
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => toast.info('Clear Chat')}>
-                                Clear Chat History
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => toast.info('Report')}>
-                                Report Issue
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
                 </div>
             </div>
 
