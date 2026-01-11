@@ -431,14 +431,6 @@ const IndustryMessages = () => {
                     >
                       <Archive className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => toast.info("More actions...")}
-                      className="border-[hsl(var(--messages-border))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--messages-hover))] h-8 w-8 p-0"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
                   </div>
                 </div>
               </div>

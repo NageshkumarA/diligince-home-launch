@@ -364,9 +364,6 @@ const LogisticsVendorMessages = () => {
                     <Button variant="outline" size="sm" onClick={handleArchiveConversation} className="text-gray-50 bg-pink-700 hover:bg-pink-600">
                       <Archive className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm" onClick={handleMoreActions} className="text-gray-50 bg-pink-700 hover:bg-pink-600">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
                   </div>
                 </div>
               </div>
