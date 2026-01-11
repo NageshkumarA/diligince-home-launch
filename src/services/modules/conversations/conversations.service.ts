@@ -25,7 +25,7 @@ class ConversationsService {
      * Create a new conversation
      */
     async createConversation(data: CreateConversationRequest): Promise<Conversation> {
-        const response = await apiService.post<{ data: Conversation }>(
+        const response = await apiService.post<{ data: Conversation }, CreateConversationRequest>(
             conversationsRoutes.createConversation,
             data
         );
@@ -36,7 +36,7 @@ class ConversationsService {
      * Get or create a conversation for a specific quotation
      */
     async getQuotationConversation(quotationId: string): Promise<Conversation> {
-        const response = await apiService.post<{ data: Conversation }>(
+        const response = await apiService.post<{ data: Conversation }, Record<string, never>>(
             conversationsRoutes.quotationConversation(quotationId),
             {}
         );
@@ -58,7 +58,7 @@ class ConversationsService {
      * Send a message
      */
     async sendMessage(data: SendMessageRequest): Promise<Message> {
-        const response = await apiService.post<{ data: Message }>(
+        const response = await apiService.post<{ data: Message }, SendMessageRequest>(
             conversationsRoutes.messages,
             data
         );

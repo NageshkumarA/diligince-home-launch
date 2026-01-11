@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { ChatMessage } from './types';
 // Switch between button variants by changing the import:
 // import { ChatbotButton } from './ChatbotButton'; // Original solid button
@@ -8,7 +9,24 @@ import { sendChatMessage, generateMessageId } from './chatbotService';
 
 export type ChatWindowState = 'closed' | 'minimized' | 'open';
 
+// Routes where the chatbot should be hidden to avoid overlapping with Messages UI
+const HIDDEN_ROUTES = [
+  '/dashboard/messages',
+  '/dashboard/chats',
+  '/industry/messages',
+  '/vendor/messages',
+  '/professional/messages',
+  '/conversation/',
+  '/messages',
+];
+
 export const DiliginceChatbot: React.FC = () => {
+  const location = useLocation();
+  
+  // Check if chatbot should be hidden on current route
+  const shouldHideChatbot = HIDDEN_ROUTES.some(route => 
+    location.pathname.includes(route)
+  );
   const [windowState, setWindowState] = useState<ChatWindowState>('closed');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -144,6 +162,11 @@ export const DiliginceChatbot: React.FC = () => {
     }
   }, [messages]);
   
+  // Don't render chatbot on Messages pages to avoid overlap
+  if (shouldHideChatbot) {
+    return null;
+  }
+
   return (
     <>
       {/* Floating Button with attention animation */}
