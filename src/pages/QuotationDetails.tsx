@@ -329,12 +329,6 @@ export default function QuotationDetails() {
               <MessageCircle className="h-4 w-4 mr-2" />
               Chat
             </Button>
-            {canRequestClarification && actionPermissions?.userPermissions?.canRequestClarification && (
-              <Button variant="outline" onClick={() => setShowClarificationModal(true)}>
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Request Clarification
-              </Button>
-            )}
             <Button variant="outline" onClick={handleCompareWithOthers}>
               <GitCompare className="h-4 w-4 mr-2" />
               Compare
