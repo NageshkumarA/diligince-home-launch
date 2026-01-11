@@ -164,16 +164,16 @@ const ServiceVendorMessages = () => {
   const unreadCount = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <div className="pt-16 flex-1 flex">
+    <div className="min-h-screen flex flex-col bg-[hsl(var(--messages-received-bubble))]">
+      <div className="flex-1 flex h-[calc(100vh-64px)]">
         {/* Conversations Sidebar */}
-        <div className="w-1/3 bg-white border-r border-gray-200 flex flex-col">
+        <div className="w-[360px] bg-[hsl(var(--messages-sidebar-bg))] border-r border-[hsl(var(--messages-border))] flex flex-col">
           {/* Header */}
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-semibold text-gray-900">Messages</h1>
+          <div className="p-5 border-b border-[hsl(var(--messages-border))]">
+            <div className="flex items-center justify-between mb-5">
+              <h1 className="text-lg font-semibold text-[hsl(var(--foreground))]">Messages</h1>
               {unreadCount > 0 && (
-                <Badge className="bg-red-100 text-red-800">
+                <Badge className="bg-[hsl(var(--messages-primary)/0.1)] text-[hsl(var(--messages-primary))] border border-[hsl(var(--messages-primary)/0.2)] font-medium">
                   {unreadCount} unread
                 </Badge>
               )}
@@ -182,20 +182,20 @@ const ServiceVendorMessages = () => {
             {/* Search and Filter */}
             <div className="space-y-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
                 <Input
                   placeholder="Search conversations..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-[hsl(var(--messages-border))] bg-[hsl(var(--messages-received-bubble))] focus:border-[hsl(var(--messages-primary))]"
                 />
               </div>
 
               <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger>
+                <SelectTrigger className="border-[hsl(var(--messages-border))] bg-[hsl(var(--messages-sidebar-bg))]">
                   <SelectValue placeholder="Filter messages" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-[hsl(var(--card))] border-[hsl(var(--messages-border))]">
                   <SelectItem value="all">All Messages</SelectItem>
                   <SelectItem value="unread">Unread</SelectItem>
                   <SelectItem value="quote">Quotations</SelectItem>
@@ -210,10 +210,10 @@ const ServiceVendorMessages = () => {
           <div className="flex-1 overflow-y-auto">
             {conversationsLoading ? (
               <div className="flex items-center justify-center h-32">
-                <Loader2 className="h-6 w-6 animate-spin text-slate-600" />
+                <Loader2 className="h-6 w-6 animate-spin text-[hsl(var(--messages-primary))]" />
               </div>
             ) : filteredConversations.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-32 text-gray-500">
+              <div className="flex flex-col items-center justify-center h-32 text-[hsl(var(--muted-foreground))]">
                 <MessageSquare className="h-8 w-8 mb-2" />
                 <p>No conversations found</p>
               </div>
@@ -222,31 +222,31 @@ const ServiceVendorMessages = () => {
                 <div
                   key={conversation._id}
                   onClick={() => handleConversationSelect(conversation)}
-                  className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${selectedConversationId === conversation._id
-                    ? "bg-slate-100 border-l-4 border-l-slate-600"
+                  className={`p-4 border-b border-[hsl(var(--messages-border))] cursor-pointer hover:bg-[hsl(var(--messages-hover))] transition-colors ${selectedConversationId === conversation._id
+                    ? "bg-[hsl(var(--messages-selected))] border-l-4 border-l-[hsl(var(--messages-primary))]"
                     : ""
-                    } ${(conversation.unreadCount || 0) > 0 ? "bg-blue-50" : ""}`}
+                    } ${(conversation.unreadCount || 0) > 0 ? "bg-[hsl(var(--messages-unread))]" : ""}`}
                 >
                   <div className="flex items-start gap-3">
-                    <Avatar className="h-10 w-10 bg-slate-100">
-                      <AvatarFallback className="text-slate-700">
+                    <Avatar className="h-10 w-10 bg-[hsl(var(--messages-primary)/0.1)]">
+                      <AvatarFallback className="text-[hsl(var(--messages-primary))] text-sm font-semibold">
                         {getInitials(getParticipantName(conversation))}
                       </AvatarFallback>
                     </Avatar>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
-                        <h3 className={`text-base font-medium text-gray-900 truncate ${(conversation.unreadCount || 0) > 0 ? "font-semibold" : ""
+                        <h3 className={`text-sm font-medium text-[hsl(var(--foreground))] truncate ${(conversation.unreadCount || 0) > 0 ? "font-semibold" : ""
                           }`}>
                           {getParticipantName(conversation)}
                         </h3>
                         <div className="flex items-center gap-2">
                           {(conversation.unreadCount || 0) > 0 && (
-                            <Badge className="bg-blue-600 hover:bg-blue-700 text-xs px-2">
+                            <Badge className="bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))] text-white text-xs px-2">
                               {conversation.unreadCount}
                             </Badge>
                           )}
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-[hsl(var(--muted-foreground))]">
                             {conversation.lastMessage?.timestamp
                               ? formatTimestamp(conversation.lastMessage.timestamp)
                               : formatTimestamp(conversation.updatedAt)}
@@ -255,12 +255,12 @@ const ServiceVendorMessages = () => {
                       </div>
 
                       {conversation.relatedType && (
-                        <Badge variant="outline" className="text-xs mb-2 bg-slate-600 text-white">
+                        <Badge variant="outline" className="text-xs mb-2 bg-[hsl(var(--messages-primary)/0.1)] text-[hsl(var(--messages-primary))] border-[hsl(var(--messages-primary)/0.2)]">
                           {conversation.relatedType}
                         </Badge>
                       )}
 
-                      <p className="text-sm text-gray-600 line-clamp-2">
+                      <p className="text-sm text-[hsl(var(--muted-foreground))] line-clamp-2">
                         {conversation.lastMessage?.content || "No messages yet"}
                       </p>
                     </div>
@@ -272,36 +272,36 @@ const ServiceVendorMessages = () => {
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 flex flex-col bg-white">
+        <div className="flex-1 flex flex-col bg-[hsl(var(--messages-sidebar-bg))]">
           {selectedConv ? (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b border-gray-200">
+              <div className="p-4 border-b border-[hsl(var(--messages-border))]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 bg-slate-100">
-                      <AvatarFallback className="text-slate-700">
+                    <Avatar className="h-10 w-10 bg-[hsl(var(--messages-primary)/0.1)]">
+                      <AvatarFallback className="text-[hsl(var(--messages-primary))] text-sm font-semibold">
                         {getInitials(getParticipantName(selectedConv))}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <h2 className="text-base font-semibold text-gray-900">
+                      <h2 className="text-sm font-semibold text-[hsl(var(--foreground))]">
                         {getParticipantName(selectedConv)}
                       </h2>
                       {selectedConv.relatedType && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs bg-[hsl(var(--messages-primary)/0.1)] text-[hsl(var(--messages-primary))] border-[hsl(var(--messages-primary)/0.2)]">
                           {selectedConv.relatedType}
                         </Badge>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => toast.success("Calling...")}
-                      className="bg-slate-600 hover:bg-slate-500 text-white border-slate-600"
+                      className="bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))] text-white border-0 h-8 w-8 p-0"
                     >
                       <Phone className="h-4 w-4" />
                     </Button>
@@ -309,7 +309,7 @@ const ServiceVendorMessages = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => toast.success("Starting video call...")}
-                      className="bg-slate-600 hover:bg-slate-500 text-white border-slate-600"
+                      className="bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))] text-white border-0 h-8 w-8 p-0"
                     >
                       <Video className="h-4 w-4" />
                     </Button>
@@ -317,7 +317,7 @@ const ServiceVendorMessages = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => toast.success("Opening email...")}
-                      className="bg-slate-600 hover:bg-slate-500 text-white border-slate-600"
+                      className="bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))] text-white border-0 h-8 w-8 p-0"
                     >
                       <Mail className="h-4 w-4" />
                     </Button>
@@ -325,7 +325,7 @@ const ServiceVendorMessages = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => toast.success("Starred!")}
-                      className="bg-slate-600 hover:bg-slate-500 text-white border-slate-600"
+                      className="border-[hsl(var(--messages-border))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--messages-hover))] h-8 w-8 p-0"
                     >
                       <Star className="h-4 w-4" />
                     </Button>
@@ -333,7 +333,7 @@ const ServiceVendorMessages = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => toast.success("Archived!")}
-                      className="bg-slate-600 hover:bg-slate-500 text-white border-slate-600"
+                      className="border-[hsl(var(--messages-border))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--messages-hover))] h-8 w-8 p-0"
                     >
                       <Archive className="h-4 w-4" />
                     </Button>
@@ -341,7 +341,7 @@ const ServiceVendorMessages = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => toast.info("More actions...")}
-                      className="bg-slate-600 hover:bg-slate-500 text-white border-slate-600"
+                      className="border-[hsl(var(--messages-border))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--messages-hover))] h-8 w-8 p-0"
                     >
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
@@ -350,13 +350,13 @@ const ServiceVendorMessages = () => {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[hsl(var(--messages-received-bubble))]">
                 {messagesLoading ? (
                   <div className="flex items-center justify-center h-full">
-                    <Loader2 className="h-6 w-6 animate-spin text-slate-600" />
+                    <Loader2 className="h-6 w-6 animate-spin text-[hsl(var(--messages-primary))]" />
                   </div>
                 ) : messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                  <div className="flex flex-col items-center justify-center h-full text-[hsl(var(--muted-foreground))]">
                     <MessageSquare className="h-12 w-12 mb-4" />
                     <p>No messages yet. Start the conversation!</p>
                   </div>
@@ -369,24 +369,24 @@ const ServiceVendorMessages = () => {
                     >
                       {message.senderId._id !== user?.id && (
                         <Avatar className="h-8 w-8 mr-2">
-                          <AvatarFallback className="bg-slate-100 text-slate-700 text-sm">
+                          <AvatarFallback className="bg-[hsl(var(--messages-primary)/0.1)] text-[hsl(var(--messages-primary))] text-xs">
                             {getInitials(message.senderId.email)}
                           </AvatarFallback>
                         </Avatar>
                       )}
 
                       <div
-                        className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.senderId._id === user?.id
-                          ? "bg-slate-700 text-white"
-                          : "bg-gray-100 text-gray-900"
+                        className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-2xl ${message.senderId._id === user?.id
+                          ? "bg-[hsl(var(--messages-sent-bubble))] text-white rounded-br-md"
+                          : "bg-[hsl(var(--messages-sidebar-bg))] text-[hsl(var(--foreground))] border border-[hsl(var(--messages-border))] rounded-bl-md"
                           }`}
                       >
                         <p className="text-sm">{message.content}</p>
                         <div className="flex items-center justify-end gap-1 mt-1">
                           <p
                             className={`text-xs ${message.senderId._id === user?.id
-                              ? "text-slate-300"
-                              : "text-gray-500"
+                              ? "text-white/70"
+                              : "text-[hsl(var(--muted-foreground))]"
                               }`}
                           >
                             {new Date(message.createdAt).toLocaleTimeString([], {
@@ -400,7 +400,7 @@ const ServiceVendorMessages = () => {
 
                       {message.senderId._id === user?.id && (
                         <Avatar className="h-8 w-8 ml-2">
-                          <AvatarFallback className="bg-slate-700 text-white text-sm">
+                          <AvatarFallback className="bg-[hsl(var(--messages-primary))] text-white text-xs">
                             {getInitials(user?.email || "")}
                           </AvatarFallback>
                         </Avatar>
@@ -411,13 +411,13 @@ const ServiceVendorMessages = () => {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Message Input - with right margin for chatbot */}
-              <div className="p-4 border-t border-gray-200 mr-16">
-                <div className="flex items-end gap-2">
+              {/* Message Input */}
+              <div className="p-4 border-t border-[hsl(var(--messages-border))] bg-[hsl(var(--messages-sidebar-bg))]">
+                <div className="flex items-end gap-3">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="text-base font-normal bg-slate-600 hover:bg-slate-500 text-white border-slate-600"
+                    className="border-[hsl(var(--messages-border))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--messages-hover))] h-10 w-10 p-0"
                   >
                     <Paperclip className="h-4 w-4" />
                   </Button>
@@ -431,12 +431,12 @@ const ServiceVendorMessages = () => {
                         handleSendMessage();
                       }
                     }}
-                    className="flex-1 min-h-[40px] max-h-32 resize-none bg-slate-50"
+                    className="flex-1 min-h-[40px] max-h-32 resize-none border-[hsl(var(--messages-border))] bg-[hsl(var(--messages-received-bubble))] focus:border-[hsl(var(--messages-primary))]"
                   />
                   <Button
                     onClick={handleSendMessage}
                     disabled={!messageText.trim() || sendMessageMutation.isPending}
-                    className="bg-slate-700 hover:bg-slate-600"
+                    className="bg-[hsl(var(--messages-primary))] hover:bg-[hsl(var(--messages-primary-hover))] text-white h-10 w-10 p-0"
                   >
                     {sendMessageMutation.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -448,17 +448,15 @@ const ServiceVendorMessages = () => {
               </div>
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center">
+            <div className="flex-1 flex items-center justify-center bg-[hsl(var(--messages-received-bubble))]">
               <div className="text-center">
-                <div className="mb-4">
-                  <div className="h-16 w-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto">
-                    <MessageSquare className="h-8 w-8 text-slate-600" />
-                  </div>
+                <div className="h-16 w-16 bg-[hsl(var(--messages-primary)/0.1)] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MessageSquare className="h-8 w-8 text-[hsl(var(--messages-primary))]" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-2">
                   Select a conversation
                 </h3>
-                <p className="text-gray-500">
+                <p className="text-[hsl(var(--muted-foreground))]">
                   Choose a conversation from the sidebar to start messaging
                 </p>
               </div>
