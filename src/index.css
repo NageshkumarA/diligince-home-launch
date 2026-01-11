@@ -584,6 +584,18 @@
     --status-error: 0 84% 60%;
     --status-info: 210 65% 23%;
     --status-pending: 45 93% 62%;
+
+    /* Messages Module - Corporate Navy Theme */
+    --messages-primary: 210 64% 23%;
+    --messages-primary-light: 210 64% 95%;
+    --messages-primary-hover: 210 59% 30%;
+    --messages-sent-bubble: 210 64% 23%;
+    --messages-received-bubble: 210 17% 96%;
+    --messages-sidebar-bg: 0 0% 100%;
+    --messages-border: 210 11% 90%;
+    --messages-hover: 210 40% 96%;
+    --messages-selected: 210 64% 95%;
+    --messages-unread: 210 100% 97%;
   }
 
   .dark {
