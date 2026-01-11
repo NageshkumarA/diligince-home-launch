@@ -1,0 +1,492 @@
+{
+    "industryPlans": [
+        {
+            "code": "INDUSTRY_STARTER",
+            "name": "Industry Starter",
+            "userType": "INDUSTRY",
+            "billingCycle": "monthly",
+            "price": 3999,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 3,
+                "defaultRoles": 3,
+                "customRoles": 2,
+                "approvalLevels": 2,
+                "monthlyCaps": {
+                    "requirementsPublished": 10,
+                    "rfqsIssued": 30,
+                    "posGenerated": 10
+                }
+            },
+            "features": {
+                "requirementsManagement": true,
+                "quotationAnalysis": "limited_ai",
+                "poManagement": true,
+                "chatAndWorkflow": true,
+                "analyticsLevel": "basic",
+                "aiSearch": "basic",
+                "diliginceBot": "helper"
+            },
+            "trials": {
+                "advancedAnalyticsDays": 30,
+                "botV2Generations": 5,
+                "aiRecommendationCredits": 5,
+                "aiQuotationAnalysisCredits": 5
+            },
+            "status": "active"
+        },
+        {
+            "code": "INDUSTRY_GROWTH_BASE",
+            "name": "Industry Growth",
+            "userType": "INDUSTRY",
+            "billingCycle": "monthly",
+            "priceRange": {
+                "min": 12000,
+                "max": 20000
+            },
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": "10-25 (configurable)",
+                "defaultRoles": 5,
+                "customRoles": 10,
+                "approvalLevels": 5,
+                "monthlyCaps": {
+                    "requirementsPublished": "50-100",
+                    "rfqsIssued": "150-300",
+                    "posGenerated": "50-100"
+                }
+            },
+            "features": {
+                "requirementsManagement": true,
+                "quotationAnalysis": "ai_fair_use",
+                "poManagement": true,
+                "chatAndWorkflow": true,
+                "analyticsLevel": "advanced",
+                "aiSearch": "advanced",
+                "diliginceBot": "v2_fair_use"
+            },
+            "includedAddOns": {
+                "DILIGIENCE_BOT_V2": true,
+                "AI_ADVANCED_ANALYTICS": true
+            },
+            "status": "active"
+        },
+        {
+            "code": "INDUSTRY_ENTERPRISE",
+            "name": "Industry Enterprise",
+            "userType": "INDUSTRY",
+            "billingCycle": "monthly",
+            "price": null,
+            "currency": "INR",
+            "isCustomPricing": true,
+            "limits": {
+                "teamSize": "unlimited",
+                "defaultRoles": "custom",
+                "customRoles": "custom",
+                "approvalLevels": "custom",
+                "monthlyCaps": "contractual"
+            },
+            "features": {
+                "requirementsManagement": true,
+                "quotationAnalysis": "ai_unlimited_contract",
+                "poManagement": true,
+                "chatAndWorkflow": true,
+                "analyticsLevel": "enterprise",
+                "aiSearch": "enterprise",
+                "diliginceBot": "v2_unlimited"
+            },
+            "includedAddOns": {
+                "ALL": true
+            },
+            "status": "active"
+        }
+    ],
+    "serviceVendorPlans": [
+        {
+            "code": "SERVICE_VENDOR_FREE",
+            "name": "Service Vendor Free",
+            "userType": "SERVICE_VENDOR",
+            "billingCycle": "monthly",
+            "price": 0,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 1,
+                "monthlyCaps": {
+                    "applications": 10,
+                    "rfqResponses": 10,
+                    "activeBids": 2,
+                    "activeJobs": 1
+                }
+            },
+            "features": {
+                "companyListing": true,
+                "verifiedBadge": false,
+                "requirementsDiscovery": "limited_feed",
+                "rfqParticipation": "enabled",
+                "quotationSubmission": true,
+                "chat": "enabled",
+                "workProgressTracking": true,
+                "milestonesAndInvoices": true,
+                "analyticsLevel": "none",
+                "aiAssistMode": "none"
+            },
+            "status": "active"
+        },
+        {
+            "code": "SERVICE_VENDOR_PLUS",
+            "name": "Service Vendor Plus",
+            "userType": "SERVICE_VENDOR",
+            "billingCycle": "monthly",
+            "price": 2499,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 3,
+                "monthlyCaps": {
+                    "applications": 60,
+                    "rfqResponses": 60,
+                    "activeBids": 10,
+                    "activeJobs": 5
+                }
+            },
+            "features": {
+                "companyListing": true,
+                "verifiedBadge": true,
+                "requirementsDiscovery": "full_feed",
+                "rfqParticipation": "enabled",
+                "quotationSubmission": true,
+                "chat": "enabled",
+                "workProgressTracking": true,
+                "milestonesAndInvoices": true,
+                "analyticsLevel": "basic",
+                "aiAssistMode": "credits_only"
+            },
+            "status": "active"
+        },
+        {
+            "code": "SERVICE_VENDOR_PRO",
+            "name": "Service Vendor Pro",
+            "userType": "SERVICE_VENDOR",
+            "billingCycle": "monthly",
+            "price": 6999,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 10,
+                "monthlyCaps": {
+                    "applications": 200,
+                    "rfqResponses": 200,
+                    "activeBids": 30,
+                    "activeJobs": 15
+                }
+            },
+            "features": {
+                "companyListing": true,
+                "verifiedBadge": true,
+                "requirementsDiscovery": "priority_feed",
+                "rfqParticipation": "enabled",
+                "quotationSubmission": true,
+                "chat": "enabled",
+                "workProgressTracking": true,
+                "milestonesAndInvoices": true,
+                "analyticsLevel": "advanced",
+                "aiAssistMode": "fair_use"
+            },
+            "fairUse": {
+                "aiAssistCreditsPerMonth": 50
+            },
+            "status": "active"
+        }
+    ],
+    "productVendorPlans": [
+        {
+            "code": "PRODUCT_VENDOR_FREE",
+            "name": "Product Vendor Free",
+            "userType": "PRODUCT_VENDOR",
+            "billingCycle": "monthly",
+            "price": 0,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 1,
+                "monthlyCaps": {
+                    "rfqResponses": 15,
+                    "activeBids": 5,
+                    "activePOs": 1,
+                    "catalogItems": 25
+                }
+            },
+            "features": {
+                "companyListing": true,
+                "catalogEnabled": true,
+                "verifiedBadge": false,
+                "requirementsDiscovery": "limited_feed",
+                "rfqParticipation": "enabled",
+                "quotationSubmission": true,
+                "chat": "enabled",
+                "workProgressTracking": true,
+                "milestonesAndInvoices": true,
+                "analyticsLevel": "none",
+                "aiAssistMode": "none"
+            },
+            "status": "active"
+        },
+        {
+            "code": "PRODUCT_VENDOR_PLUS",
+            "name": "Product Vendor Plus",
+            "userType": "PRODUCT_VENDOR",
+            "billingCycle": "monthly",
+            "price": 1999,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 3,
+                "monthlyCaps": {
+                    "rfqResponses": 100,
+                    "activeBids": 25,
+                    "activePOs": 5,
+                    "catalogItems": 250
+                }
+            },
+            "features": {
+                "companyListing": true,
+                "catalogEnabled": true,
+                "verifiedBadge": true,
+                "requirementsDiscovery": "full_feed",
+                "rfqParticipation": "enabled",
+                "quotationSubmission": true,
+                "chat": "enabled",
+                "workProgressTracking": true,
+                "milestonesAndInvoices": true,
+                "analyticsLevel": "basic",
+                "aiAssistMode": "credits_only"
+            },
+            "status": "active"
+        },
+        {
+            "code": "PRODUCT_VENDOR_PRO",
+            "name": "Product Vendor Pro",
+            "userType": "PRODUCT_VENDOR",
+            "billingCycle": "monthly",
+            "price": 4999,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 10,
+                "monthlyCaps": {
+                    "rfqResponses": 300,
+                    "activeBids": 50,
+                    "activePOs": 20,
+                    "catalogItems": 2000
+                }
+            },
+            "features": {
+                "companyListing": true,
+                "catalogEnabled": true,
+                "verifiedBadge": true,
+                "requirementsDiscovery": "priority_feed",
+                "rfqParticipation": "enabled",
+                "quotationSubmission": true,
+                "chat": "enabled",
+                "workProgressTracking": true,
+                "milestonesAndInvoices": true,
+                "analyticsLevel": "advanced",
+                "aiAssistMode": "fair_use"
+            },
+            "fairUse": {
+                "aiAssistCreditsPerMonth": 50
+            },
+            "status": "active"
+        }
+    ],
+    "logisticsVendorPlans": [
+        {
+            "code": "LOGISTICS_FREE",
+            "name": "Logistics Free",
+            "userType": "LOGISTICS_VENDOR",
+            "billingCycle": "monthly",
+            "price": 0,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 1,
+                "monthlyCaps": {
+                    "applications": 10,
+                    "activeJobs": 2
+                }
+            },
+            "features": {
+                "companyListing": true,
+                "verifiedBadge": false,
+                "requirementsDiscovery": "limited_feed",
+                "rfqParticipation": "enabled",
+                "quotationSubmission": true,
+                "chat": "enabled",
+                "workProgressTracking": true,
+                "milestonesAndInvoices": true,
+                "analyticsLevel": "none",
+                "aiAssistMode": "none"
+            },
+            "status": "active"
+        },
+        {
+            "code": "LOGISTICS_PLUS",
+            "name": "Logistics Plus",
+            "userType": "LOGISTICS_VENDOR",
+            "billingCycle": "monthly",
+            "price": 1499,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 3,
+                "monthlyCaps": {
+                    "applications": 80,
+                    "activeJobs": 10
+                }
+            },
+            "features": {
+                "companyListing": true,
+                "verifiedBadge": true,
+                "requirementsDiscovery": "full_feed",
+                "rfqParticipation": "enabled",
+                "quotationSubmission": true,
+                "chat": "enabled",
+                "workProgressTracking": true,
+                "milestonesAndInvoices": true,
+                "analyticsLevel": "basic",
+                "aiAssistMode": "credits_only"
+            },
+            "status": "active"
+        },
+        {
+            "code": "LOGISTICS_PRO",
+            "name": "Logistics Pro",
+            "userType": "LOGISTICS_VENDOR",
+            "billingCycle": "monthly",
+            "price": 3999,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 10,
+                "monthlyCaps": {
+                    "applications": 250,
+                    "activeJobs": 25
+                }
+            },
+            "features": {
+                "companyListing": true,
+                "verifiedBadge": true,
+                "requirementsDiscovery": "priority_feed",
+                "rfqParticipation": "enabled",
+                "quotationSubmission": true,
+                "chat": "enabled",
+                "workProgressTracking": true,
+                "milestonesAndInvoices": true,
+                "analyticsLevel": "advanced",
+                "aiAssistMode": "fair_use"
+            },
+            "fairUse": {
+                "aiAssistCreditsPerMonth": 40
+            },
+            "status": "active"
+        }
+    ],
+    "professionalPlans": [
+        {
+            "code": "EXPERT_FREE",
+            "name": "Expert Free",
+            "userType": "EXPERT_PROFESSIONAL",
+            "billingCycle": "monthly",
+            "price": 0,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 1,
+                "monthlyCaps": {
+                    "applications": 5,
+                    "rfqResponses": 5,
+                    "activeEngagements": 1
+                }
+            },
+            "features": {
+                "profileListing": true,
+                "verifiedBadge": false,
+                "requirementsDiscovery": "limited_feed",
+                "rfqParticipation": "shortlisted_only",
+                "quotationSubmission": true,
+                "chat": "post_shortlist_only",
+                "workProgressTracking": true,
+                "milestonesAndInvoices": true,
+                "analyticsLevel": "none",
+                "aiAssistMode": "none"
+            },
+            "status": "active"
+        },
+        {
+            "code": "EXPERT_PLUS",
+            "name": "Expert Plus",
+            "userType": "EXPERT_PROFESSIONAL",
+            "billingCycle": "monthly",
+            "price": 999,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 1,
+                "monthlyCaps": {
+                    "applications": 25,
+                    "rfqResponses": 25,
+                    "activeEngagements": 3
+                }
+            },
+            "features": {
+                "profileListing": true,
+                "verifiedBadge": "optional",
+                "requirementsDiscovery": "full_feed",
+                "rfqParticipation": "enabled",
+                "quotationSubmission": true,
+                "chat": "enabled",
+                "workProgressTracking": true,
+                "milestonesAndInvoices": true,
+                "analyticsLevel": "basic",
+                "aiAssistMode": "credits_only"
+            },
+            "status": "active"
+        },
+        {
+            "code": "EXPERT_PRO",
+            "name": "Expert Pro",
+            "userType": "EXPERT_PROFESSIONAL",
+            "billingCycle": "monthly",
+            "price": 2999,
+            "currency": "INR",
+            "isCustomPricing": false,
+            "limits": {
+                "teamSize": 1,
+                "monthlyCaps": {
+                    "applications": 100,
+                    "rfqResponses": 100,
+                    "activeEngagements": 10
+                }
+            },
+            "features": {
+                "profileListing": true,
+                "verifiedBadge": true,
+                "requirementsDiscovery": "priority_feed",
+                "rfqParticipation": "enabled",
+                "quotationSubmission": true,
+                "chat": "enabled",
+                "workProgressTracking": true,
+                "milestonesAndInvoices": true,
+                "analyticsLevel": "advanced",
+                "aiAssistMode": "fair_use"
+            },
+            "fairUse": {
+                "aiAssistCreditsPerMonth": 30
+            },
+            "status": "active"
+        }
+    ]
+}
