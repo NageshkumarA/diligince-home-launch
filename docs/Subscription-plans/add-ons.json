@@ -1,0 +1,101 @@
+{
+    "addons": [
+        {
+            "code": "DILIGIENCE_HUB",
+            "name": "Diligince Hub",
+            "type": "subscription",
+            "billingCycle": "monthly",
+            "price": 999,
+            "currency": "INR",
+            "features": {
+                "industryVendorNetworking": true,
+                "industryProfessionalNetworking": true,
+                "verifiedProfiles": true,
+                "chatAndCommunication": true
+            },
+            "description": "Provides networking, verified ecosystem access, and enhanced messaging capabilities.",
+            "compatiblePlans": [
+                "INDUSTRY_STARTER",
+                "INDUSTRY_GROWTH",
+                "INDUSTRY_ENTERPRISE",
+                "EXPERT_FREE",
+                "EXPERT_PLUS",
+                "EXPERT_PRO",
+                "SERVICE_VENDOR_FREE",
+                "SERVICE_VENDOR_PLUS",
+                "SERVICE_VENDOR_PRO",
+                "PRODUCT_VENDOR_FREE",
+                "PRODUCT_VENDOR_PLUS",
+                "PRODUCT_VENDOR_PRO",
+                "LOGISTICS_FREE",
+                "LOGISTICS_PLUS",
+                "LOGISTICS_PRO"
+            ],
+            "status": "active"
+        },
+        {
+            "code": "AI_RECOMMENDATION_PACK",
+            "name": "AI Recommendation Pack",
+            "type": "usage",
+            "price": 499,
+            "currency": "INR",
+            "limits": {
+                "credits": 20,
+                "validityDays": 90
+            },
+            "compatiblePlans": [
+                "INDUSTRY_STARTER",
+                "INDUSTRY_GROWTH"
+            ],
+            "status": "active"
+        },
+        {
+            "code": "AI_QUOTATION_ANALYSIS_PACK",
+            "name": "AI Quotation Analysis Pack",
+            "type": "usage",
+            "price": 499,
+            "currency": "INR",
+            "limits": {
+                "credits": 20,
+                "validityDays": 90
+            },
+            "compatiblePlans": [
+                "INDUSTRY_STARTER",
+                "INDUSTRY_GROWTH"
+            ],
+            "status": "active"
+        },
+        {
+            "code": "BOT_V2_UPGRADE",
+            "name": "Bot V2",
+            "type": "subscription",
+            "billingCycle": "monthly",
+            "price": 499,
+            "currency": "INR",
+            "limits": {
+                "generationsPerMonth": 30
+            },
+            "description": "Available for Industry Starter users to upgrade their Diligince Bot from helper to V2.",
+            "compatiblePlans": [
+                "INDUSTRY_STARTER"
+            ],
+            "status": "active"
+        },
+        {
+            "code": "AI_ADVANCED_ANALYTICS_UPGRADE",
+            "name": "AI Advanced Analytics",
+            "type": "subscription",
+            "billingCycle": "monthly",
+            "price": 499,
+            "currency": "INR",
+            "limits": {
+                "reportsPerMonth": 20
+            },
+            "description": "Enables advanced analytics dashboards for Industry Starter users after their 30-day trial.",
+            "compatiblePlans": [
+                "INDUSTRY_STARTER"
+            ],
+            "status": "active"
+        }
+    ]
+}
