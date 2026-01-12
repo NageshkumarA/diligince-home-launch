@@ -162,34 +162,33 @@ const Pricing = () => {
                 <PricingFAQ />
               </div>
               
-              {/* Right Column: Transaction Fee + Contact Us (stacked) */}
-              <div className="lg:w-[340px] xl:w-[380px] flex flex-col gap-6">
-                {/* Transaction Fee Card */}
-                <TransactionFeeCard />
-                
-                {/* Still Have Questions Card */}
-                <Card className="group relative p-6 bg-white/70 backdrop-blur-sm border border-[hsl(210,64%,23%,0.15)] overflow-hidden transition-all duration-500 hover:shadow-lg hover:border-[hsl(210,64%,23%,0.25)] flex flex-col justify-center items-center text-center">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                    <div className="absolute inset-0 bg-gradient-to-r from-[hsl(210,64%,23%,0.05)] via-transparent to-[hsl(210,64%,23%,0.05)]" />
-                  </div>
-                  <div className="relative">
-                    <h3 className="text-xl font-semibold mb-2 text-foreground flex items-center justify-center gap-2">
-                      Still have questions?
-                      <Sparkles className="h-4 w-4 text-[hsl(210,64%,23%)] opacity-60" />
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-4">
-                      Our team is here to help you find the perfect plan
-                    </p>
-                    <Button 
-                      className="bg-gradient-to-r from-[hsl(210,64%,23%)] to-[hsl(210,64%,28%)] hover:from-[hsl(210,64%,18%)] hover:to-[hsl(210,64%,23%)] text-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
-                      onClick={() => navigate("/contact")}
-                    >
-                      <MessageCircle className="mr-2 h-4 w-4" />
-                      Contact Us
-                    </Button>
-                  </div>
-                </Card>
-              </div>
+        {/* Right Column: Transaction Fee + Contact Us (stacked) */}
+        <div className="lg:w-[340px] xl:w-[380px] flex flex-col gap-5 lg:sticky lg:top-24">
+          {/* Transaction Fee Card */}
+          <TransactionFeeCard />
+          
+          {/* Need Help Deciding Card */}
+          <Card className="bg-card/80 backdrop-blur-sm border border-border/50 overflow-hidden">
+            <div className="p-6 text-center">
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                Need Help Deciding?
+              </h3>
+              <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
+                Our team can guide you to the perfect plan for your business
+              </p>
+              <Button 
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow-md transition-all duration-300"
+                onClick={() => navigate("/contact")}
+              >
+                <MessageCircle className="mr-2 h-4 w-4" />
+                Contact Us
+              </Button>
+              <p className="text-xs text-muted-foreground mt-4">
+                or email us at <span className="font-medium">support@diligince.com</span>
+              </p>
+            </div>
+          </Card>
+        </div>
             </div>
           </div>
         </section>
