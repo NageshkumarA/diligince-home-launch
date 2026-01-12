@@ -29,7 +29,7 @@ export const AddOnCard: React.FC<AddOnCardProps> = ({ addon, index = 0, isSelect
     <Card 
       onClick={handleClick}
       className={cn(
-        "group h-full transition-all duration-500 bg-white/70 backdrop-blur-sm",
+        "group relative h-full transition-all duration-500 bg-white/70 backdrop-blur-sm",
         "border border-[hsl(210,64%,23%,0.1)]",
         "hover:-translate-y-1 hover:shadow-xl hover:border-[hsl(210,64%,23%,0.3)]",
         "hover:bg-white/90",
@@ -38,6 +38,14 @@ export const AddOnCard: React.FC<AddOnCardProps> = ({ addon, index = 0, isSelect
       )}
       style={{ animationDelay: `${index * 100}ms` }}
     >
+      {/* Selection indicator - matches PlanCard */}
+      {isSelected && (
+        <div className="absolute -top-3 -right-3 z-20">
+          <div className="p-1 rounded-full bg-[hsl(210,64%,23%)] shadow-lg">
+            <CircleCheck className="h-5 w-5 text-white" />
+          </div>
+        </div>
+      )}
       {/* AI glow for AI-related add-ons */}
       {isAIRelated && (
         <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
@@ -63,7 +71,7 @@ export const AddOnCard: React.FC<AddOnCardProps> = ({ addon, index = 0, isSelect
               )} />
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-foreground flex items-center gap-1.5 group-hover:text-[hsl(210,64%,23%)] transition-colors duration-300">
+              <h4 className="text-base font-bold text-foreground flex items-center gap-1.5 group-hover:text-[hsl(210,64%,23%)] transition-colors duration-300">
                 {addon.name}
                 {isAIRelated && (
                   <Sparkles className="h-3 w-3 text-[hsl(210,64%,23%)] opacity-50 group-hover:opacity-100 group-hover:animate-sparkle transition-opacity duration-300" />

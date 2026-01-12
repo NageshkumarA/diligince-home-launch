@@ -132,7 +132,14 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, onAction, isSelected, 
 
       <CardFooter className="pt-4">
         <Button
-          onClick={() => onAction(plan.ctaAction)}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (selectionMode && onSelect) {
+              onSelect(plan);
+            } else {
+              onAction(plan.ctaAction);
+            }
+          }}
           className={cn(
             "w-full font-medium transition-all duration-300 group/btn",
             "hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]",
