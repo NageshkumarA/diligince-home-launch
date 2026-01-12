@@ -110,8 +110,9 @@ const Pricing = () => {
         <section className="py-8">
           <div className="container mx-auto px-4 md:px-8">
             <div className="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto">
-              {/* Plan Cards */}
+              {/* Left Column: Plans + Add-ons (Scrollable) */}
               <div className="flex-1">
+                {/* Plan Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {currentPlans.map((plan, index) => (
                     <div 
@@ -129,27 +130,25 @@ const Pricing = () => {
                     </div>
                   ))}
                 </div>
+
+                {/* Add-ons Section - Inside left column */}
+                <div className="mt-10">
+                  <AddOnSection 
+                    userType={selectedUserType}
+                    selectionMode={hasValidSelection}
+                    selectedAddOns={selection?.selectedAddOns || []}
+                    onToggleAddOn={toggleAddOn}
+                  />
+                </div>
               </div>
 
-              {/* Calculator - Sticky on Desktop */}
+              {/* Right Column: Calculator (Sticky) */}
               <div className="lg:w-[340px] xl:w-[380px]">
                 <div className="lg:sticky lg:top-24">
                   <PricingCalculator />
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* Add-ons Section */}
-        <section className="py-8">
-          <div className="container mx-auto px-4 md:px-8">
-            <AddOnSection 
-              userType={selectedUserType}
-              selectionMode={hasValidSelection}
-              selectedAddOns={selection?.selectedAddOns || []}
-              onToggleAddOn={toggleAddOn}
-            />
           </div>
         </section>
 

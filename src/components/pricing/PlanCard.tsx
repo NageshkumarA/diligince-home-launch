@@ -136,17 +136,32 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, onAction, isSelected, 
           className={cn(
             "w-full font-medium transition-all duration-300 group/btn",
             "hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]",
-            isPopular || isEnterprise
-              ? "bg-gradient-to-r from-[hsl(210,64%,23%)] to-[hsl(210,64%,28%)] hover:from-[hsl(210,64%,18%)] hover:to-[hsl(210,64%,23%)] text-white shadow-md"
-              : isFree
-                ? "bg-white border-2 border-[hsl(210,64%,23%)] text-[hsl(210,64%,23%)] hover:bg-[hsl(210,64%,23%)] hover:text-white"
-                : "bg-gradient-to-r from-[hsl(210,64%,23%)] to-[hsl(210,64%,28%)] hover:from-[hsl(210,64%,18%)] hover:to-[hsl(210,64%,23%)] text-white"
+            isSelected
+              ? "bg-[hsl(210,64%,23%)] text-white shadow-md"
+              : isPopular || isEnterprise
+                ? "bg-gradient-to-r from-[hsl(210,64%,23%)] to-[hsl(210,64%,28%)] hover:from-[hsl(210,64%,18%)] hover:to-[hsl(210,64%,23%)] text-white shadow-md"
+                : isFree
+                  ? "bg-white border-2 border-[hsl(210,64%,23%)] text-[hsl(210,64%,23%)] hover:bg-[hsl(210,64%,23%)] hover:text-white"
+                  : "bg-gradient-to-r from-[hsl(210,64%,23%)] to-[hsl(210,64%,28%)] hover:from-[hsl(210,64%,18%)] hover:to-[hsl(210,64%,23%)] text-white"
           )}
         >
           <span className="flex items-center justify-center gap-2">
-            {plan.ctaLabel}
-            {(isPopular || isEnterprise) && (
-              <Sparkles className="h-3.5 w-3.5 opacity-70 group-hover/btn:animate-sparkle" />
+            {selectionMode ? (
+              isSelected ? (
+                <>
+                  Selected
+                  <CircleCheck className="h-4 w-4" />
+                </>
+              ) : (
+                'Select'
+              )
+            ) : (
+              <>
+                {plan.ctaLabel}
+                {(isPopular || isEnterprise) && (
+                  <Sparkles className="h-3.5 w-3.5 opacity-70 group-hover/btn:animate-sparkle" />
+                )}
+              </>
             )}
           </span>
         </Button>

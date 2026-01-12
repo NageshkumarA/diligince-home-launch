@@ -63,7 +63,7 @@ export const AddOnCard: React.FC<AddOnCardProps> = ({ addon, index = 0, isSelect
               )} />
             </div>
             <div>
-              <h4 className="font-semibold text-foreground flex items-center gap-1.5 group-hover:text-[hsl(210,64%,23%)] transition-colors duration-300">
+              <h4 className="text-sm font-semibold text-foreground flex items-center gap-1.5 group-hover:text-[hsl(210,64%,23%)] transition-colors duration-300">
                 {addon.name}
                 {isAIRelated && (
                   <Sparkles className="h-3 w-3 text-[hsl(210,64%,23%)] opacity-50 group-hover:opacity-100 group-hover:animate-sparkle transition-opacity duration-300" />
