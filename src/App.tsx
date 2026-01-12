@@ -16,6 +16,7 @@ import { ApprovalProvider } from "@/contexts/ApprovalContext";
 import { StakeholderProvider } from "@/contexts/StakeholderContext";
 import { VendorSpecializationProvider } from "@/contexts/VendorSpecializationContext";
 import { WebSocketProvider } from "@/contexts/WebSocketContext";
+import { PricingSelectionProvider } from "@/contexts/PricingSelectionContext";
 import { Toaster } from "@/components/ui/sonner";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Layout from "@/components/Layout";
@@ -185,7 +186,8 @@ function App() {
                       <ApprovalProvider>
                         <StakeholderProvider>
                           <VendorSpecializationProvider>
-                            <div className="App">
+                            <PricingSelectionProvider>
+                              <div className="App">
                               <Routes>
                                 {/* Public Routes */}
                                 <Route path="/" element={<Index />} />
@@ -699,6 +701,7 @@ function App() {
                               <Toaster richColors position="top-right" />
                               <DiliginceChatbot />
                             </div>
+                            </PricingSelectionProvider>
                           </VendorSpecializationProvider>
                         </StakeholderProvider>
                       </ApprovalProvider>
