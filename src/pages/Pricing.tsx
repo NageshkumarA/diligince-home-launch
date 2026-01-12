@@ -113,6 +113,23 @@ const Pricing = () => {
             <div className="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto">
               {/* Left Column: Plans + Add-ons (Scrollable) */}
               <div className="flex-1">
+                {/* Compact User Type Header */}
+                {currentUserTypeConfig && (
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 rounded-lg bg-muted/50">
+                      <currentUserTypeConfig.icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-semibold text-foreground">
+                        {currentUserTypeConfig.label} Plans
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        {currentUserTypeConfig.description}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Plan Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {currentPlans.map((plan, index) => (

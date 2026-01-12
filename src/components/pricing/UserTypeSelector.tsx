@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { userTypes, UserType } from '@/data/pricingData';
-import { Sparkles } from 'lucide-react';
+
 
 interface UserTypeSelectorProps {
   selectedType: UserType;
@@ -43,9 +43,6 @@ export const UserTypeSelector: React.FC<UserTypeSelectorProps> = ({
                   isSelected && "animate-icon-pulse"
                 )} />
                 <span>{type.shortLabel}</span>
-                {isSelected && (
-                  <Sparkles className="h-3 w-3 ml-1 opacity-60 animate-sparkle" />
-                )}
               </div>
             </button>
           );
@@ -85,30 +82,6 @@ export const UserTypeSelector: React.FC<UserTypeSelectorProps> = ({
         </div>
       </div>
 
-      {/* Selected type description with glassmorphism */}
-      {userTypes.map((type) => {
-        if (type.id !== selectedType) return null;
-        const Icon = type.icon;
-        
-        return (
-          <div 
-            key={type.id}
-            className="mt-6 flex items-start gap-4 p-5 bg-white/70 backdrop-blur-sm rounded-xl max-w-2xl mx-auto border border-[hsl(210,64%,23%,0.1)] shadow-sm animate-fade-in"
-          >
-            <div className="relative p-3 rounded-xl bg-gradient-to-br from-[hsl(210,64%,23%)] to-[hsl(210,64%,18%)] text-white flex-shrink-0 shadow-lg">
-              <div className="absolute inset-0 rounded-xl bg-[hsl(210,64%,23%)] opacity-30 blur-md" />
-              <Icon className="relative h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground flex items-center gap-2">
-                {type.label}
-                <Sparkles className="h-3.5 w-3.5 text-[hsl(210,64%,23%)] opacity-60" />
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">{type.description}</p>
-            </div>
-          </div>
-        );
-      })}
     </div>
   );
 };
