@@ -1,27 +1,40 @@
 import React from 'react';
-import { Check, Sparkles } from 'lucide-react';
+import { Check, Sparkles, CircleCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { AddOn, getIconComponent } from '@/data/pricingData';
 import { cn } from '@/lib/utils';
 
 interface AddOnCardProps {
   addon: AddOn;
   index?: number;
+  isSelected?: boolean;
+  onToggle?: (addon: AddOn) => void;
+  selectionMode?: boolean;
 }
 
-export const AddOnCard: React.FC<AddOnCardProps> = ({ addon, index = 0 }) => {
+export const AddOnCard: React.FC<AddOnCardProps> = ({ addon, index = 0, isSelected, onToggle, selectionMode }) => {
   const Icon = getIconComponent(addon.icon);
   const isSubscription = addon.type === 'subscription';
   const isAIRelated = addon.name.toLowerCase().includes('ai') || addon.name.toLowerCase().includes('bot');
 
+  const handleClick = () => {
+    if (selectionMode && onToggle) {
+      onToggle(addon);
+    }
+  };
+
   return (
     <Card 
+      onClick={handleClick}
       className={cn(
         "group h-full transition-all duration-500 bg-white/70 backdrop-blur-sm",
         "border border-[hsl(210,64%,23%,0.1)]",
         "hover:-translate-y-1 hover:shadow-xl hover:border-[hsl(210,64%,23%,0.3)]",
-        "hover:bg-white/90"
+        "hover:bg-white/90",
+        selectionMode && "cursor-pointer",
+        isSelected && "border-[hsl(210,64%,23%)] ring-2 ring-[hsl(210,64%,23%,0.2)] bg-[hsl(210,64%,23%,0.03)]"
       )}
       style={{ animationDelay: `${index * 100}ms` }}
     >
@@ -61,16 +74,24 @@ export const AddOnCard: React.FC<AddOnCardProps> = ({ addon, index = 0 }) => {
           </div>
         </div>
         
-        <div className="flex items-center gap-2 mt-3">
-          <span className="text-xl font-bold text-foreground">
-            ₹{addon.price.toLocaleString('en-IN')}
-          </span>
-          {isSubscription ? (
-            <span className="text-sm text-muted-foreground">/month</span>
-          ) : (
-            <Badge variant="outline" className="text-xs border-[hsl(210,64%,23%,0.3)] text-[hsl(210,64%,23%)]">
-              One-time
-            </Badge>
+        <div className="flex items-center justify-between mt-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-bold text-foreground">
+              ₹{addon.price.toLocaleString('en-IN')}
+            </span>
+            {isSubscription ? (
+              <span className="text-sm text-muted-foreground">/month</span>
+            ) : (
+              <Badge variant="outline" className="text-xs border-[hsl(210,64%,23%,0.3)] text-[hsl(210,64%,23%)]">
+                One-time
+              </Badge>
+            )}
+          </div>
+          {selectionMode && (
+            <Checkbox 
+              checked={isSelected} 
+              className="h-5 w-5 border-2 data-[state=checked]:bg-[hsl(210,64%,23%)] data-[state=checked]:border-[hsl(210,64%,23%)]"
+            />
           )}
         </div>
       </CardHeader>

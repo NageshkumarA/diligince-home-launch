@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, Sparkles, Zap } from 'lucide-react';
+import { Check, Sparkles, Zap, CircleCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,9 +9,12 @@ import { Plan } from '@/data/pricingData';
 interface PlanCardProps {
   plan: Plan;
   onAction: (action: 'signup' | 'subscribe' | 'contact') => void;
+  isSelected?: boolean;
+  onSelect?: (plan: Plan) => void;
+  selectionMode?: boolean;
 }
 
-export const PlanCard: React.FC<PlanCardProps> = ({ plan, onAction }) => {
+export const PlanCard: React.FC<PlanCardProps> = ({ plan, onAction, isSelected, onSelect, selectionMode }) => {
   const formatPrice = () => {
     if (plan.isCustomPricing) {
       return 'Custom';
@@ -29,15 +32,25 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, onAction }) => {
   const isFree = plan.price === 0;
   const isEnterprise = plan.tier === 'enterprise';
 
+  const handleCardClick = () => {
+    if (selectionMode && onSelect) {
+      onSelect(plan);
+    }
+  };
+
   return (
     <Card 
+      onClick={handleCardClick}
       className={cn(
         "group relative flex flex-col h-full transition-all duration-500",
         "bg-white/80 backdrop-blur-sm",
         "hover:-translate-y-2 hover:scale-[1.02]",
-        isPopular 
-          ? "border-2 border-[hsl(210,64%,23%)] shadow-xl ring-1 ring-[hsl(210,64%,23%,0.2)]" 
-          : "border border-[hsl(210,64%,23%,0.1)] hover:border-[hsl(210,64%,23%,0.3)] hover:shadow-xl"
+        selectionMode && "cursor-pointer",
+        isSelected 
+          ? "border-2 border-[hsl(210,64%,23%)] shadow-xl ring-2 ring-[hsl(210,64%,23%,0.3)]"
+          : isPopular 
+            ? "border-2 border-[hsl(210,64%,23%)] shadow-xl ring-1 ring-[hsl(210,64%,23%,0.2)]" 
+            : "border border-[hsl(210,64%,23%,0.1)] hover:border-[hsl(210,64%,23%,0.3)] hover:shadow-xl"
       )}
     >
       {/* Animated gradient border for popular */}
@@ -61,7 +74,16 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, onAction }) => {
         </div>
       )}
 
-      {isPopular && (
+      {/* Selection indicator */}
+      {isSelected && (
+        <div className="absolute -top-3 -right-3 z-20">
+          <div className="p-1 rounded-full bg-[hsl(210,64%,23%)] shadow-lg">
+            <CircleCheck className="h-5 w-5 text-white" />
+          </div>
+        </div>
+      )}
+
+      {isPopular && !isSelected && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
           <Badge className="bg-gradient-to-r from-[hsl(210,64%,23%)] to-[hsl(210,64%,30%)] hover:from-[hsl(210,64%,25%)] hover:to-[hsl(210,64%,33%)] text-white px-4 py-1.5 shadow-lg animate-badge-pulse">
             <Zap className="h-3 w-3 mr-1 inline" />
