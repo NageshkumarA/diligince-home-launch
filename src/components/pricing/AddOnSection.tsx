@@ -1,18 +1,28 @@
 import React from 'react';
 import { Puzzle, Sparkles } from 'lucide-react';
 import { AddOnCard } from './AddOnCard';
-import { UserType, getAddOnsForUserType } from '@/data/pricingData';
+import { UserType, AddOn, getAddOnsForUserType } from '@/data/pricingData';
 
 interface AddOnSectionProps {
   userType: UserType;
+  selectionMode?: boolean;
+  selectedAddOns?: AddOn[];
+  onToggleAddOn?: (addon: AddOn) => void;
 }
 
-export const AddOnSection: React.FC<AddOnSectionProps> = ({ userType }) => {
+export const AddOnSection: React.FC<AddOnSectionProps> = ({ 
+  userType, 
+  selectionMode,
+  selectedAddOns = [],
+  onToggleAddOn 
+}) => {
   const compatibleAddOns = getAddOnsForUserType(userType);
 
   if (compatibleAddOns.length === 0) {
     return null;
   }
+
+  const isAddOnSelected = (code: string) => selectedAddOns.some(a => a.code === code);
 
   return (
     <section className="relative py-12 overflow-hidden">
@@ -35,13 +45,23 @@ export const AddOnSection: React.FC<AddOnSectionProps> = ({ userType }) => {
             <Sparkles className="h-4 w-4 text-[hsl(210,64%,23%)] opacity-60" />
           </div>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Enhance your plan with powerful AI-driven add-ons tailored to your needs
+            {selectionMode 
+              ? 'Select add-ons to enhance your plan (click to add/remove)'
+              : 'Enhance your plan with powerful AI-driven add-ons tailored to your needs'
+            }
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
           {compatibleAddOns.map((addon, index) => (
-            <AddOnCard key={addon.code} addon={addon} index={index} />
+            <AddOnCard 
+              key={addon.code} 
+              addon={addon} 
+              index={index}
+              selectionMode={selectionMode}
+              isSelected={isAddOnSelected(addon.code)}
+              onToggle={onToggleAddOn}
+            />
           ))}
         </div>
       </div>
