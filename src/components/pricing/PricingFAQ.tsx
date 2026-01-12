@@ -10,12 +10,12 @@ import { faqData } from '@/data/pricingData';
 
 export const PricingFAQ: React.FC = () => {
   return (
-    <section className="relative py-12">
+    <section className="relative h-full">
       {/* Subtle background */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[hsl(210,64%,23%,0.01)] to-transparent pointer-events-none" />
       
-      <div className="relative z-10">
-        <div className="text-center mb-8">
+      <div className="relative z-10 h-full">
+        <div className="text-center mb-6">
           <div className="inline-flex items-center gap-2 mb-3 px-4 py-2 rounded-full bg-[hsl(210,64%,23%,0.05)] border border-[hsl(210,64%,23%,0.1)]">
             <HelpCircle className="h-5 w-5 text-[hsl(210,64%,23%)]" />
             <h2 className="text-2xl font-bold text-foreground">Frequently Asked Questions</h2>
@@ -26,7 +26,7 @@ export const PricingFAQ: React.FC = () => {
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto bg-white/60 backdrop-blur-sm rounded-2xl border border-[hsl(210,64%,23%,0.1)] p-4 shadow-sm">
+        <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-[hsl(210,64%,23%,0.1)] p-4 shadow-sm">
           <Accordion type="single" collapsible className="w-full">
             {faqData.map((faq, index) => (
               <AccordionItem 
