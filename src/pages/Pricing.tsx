@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import PublicHeader from "../components/PublicHeader";
 import Footer from "../components/Footer";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { MessageCircle, Sparkles } from "lucide-react";
 import { 
   UserTypeSelector, 
@@ -152,10 +153,36 @@ const Pricing = () => {
           </div>
         </section>
 
-        {/* Transaction Fee Section */}
+        {/* Transaction Fee + Still Have Questions - Side by Side */}
         <section className="py-8">
           <div className="container mx-auto px-4 md:px-8">
-            <TransactionFeeCard />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              {/* Transaction Fee Card */}
+              <TransactionFeeCard />
+              
+              {/* Still Have Questions Card */}
+              <Card className="group relative p-6 bg-white/70 backdrop-blur-sm border border-[hsl(210,64%,23%,0.15)] h-full overflow-hidden transition-all duration-500 hover:shadow-lg hover:border-[hsl(210,64%,23%,0.25)] flex flex-col justify-center items-center text-center">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[hsl(210,64%,23%,0.05)] via-transparent to-[hsl(210,64%,23%,0.05)]" />
+                </div>
+                <div className="relative">
+                  <h3 className="text-xl font-semibold mb-2 text-foreground flex items-center justify-center gap-2">
+                    Still have questions?
+                    <Sparkles className="h-4 w-4 text-[hsl(210,64%,23%)] opacity-60" />
+                  </h3>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    Our team is here to help you find the perfect plan
+                  </p>
+                  <Button 
+                    className="bg-gradient-to-r from-[hsl(210,64%,23%)] to-[hsl(210,64%,28%)] hover:from-[hsl(210,64%,18%)] hover:to-[hsl(210,64%,23%)] text-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+                    onClick={() => navigate("/contact")}
+                  >
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Contact Us
+                  </Button>
+                </div>
+              </Card>
+            </div>
           </div>
         </section>
 
@@ -163,31 +190,6 @@ const Pricing = () => {
         <section className="py-8">
           <div className="container mx-auto px-4 md:px-8">
             <PricingFAQ />
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-12">
-          <div className="container mx-auto px-4 md:px-8 text-center">
-            <div className="relative max-w-md mx-auto p-8 rounded-2xl bg-white/60 backdrop-blur-sm border border-[hsl(210,64%,23%,0.1)] shadow-lg">
-              <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-[hsl(210,64%,23%,0.1)] via-transparent to-[hsl(210,64%,23%,0.1)] opacity-50" />
-              <div className="relative">
-                <h3 className="text-xl font-semibold mb-2 text-foreground flex items-center justify-center gap-2">
-                  Still have questions?
-                  <Sparkles className="h-4 w-4 text-[hsl(210,64%,23%)] opacity-60" />
-                </h3>
-                <p className="text-muted-foreground text-sm mb-4">
-                  Our team is here to help you find the perfect plan
-                </p>
-                <Button 
-                  className="bg-gradient-to-r from-[hsl(210,64%,23%)] to-[hsl(210,64%,28%)] hover:from-[hsl(210,64%,18%)] hover:to-[hsl(210,64%,23%)] text-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
-                  onClick={() => navigate("/contact")}
-                >
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  Contact Us
-                </Button>
-              </div>
-            </div>
           </div>
         </section>
       </main>

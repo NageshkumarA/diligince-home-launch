@@ -32,17 +32,18 @@ export const PricingFAQ: React.FC = () => {
               <AccordionItem 
                 key={index} 
                 value={`item-${index}`}
-                className="border-b-[hsl(210,64%,23%,0.1)] last:border-b-0"
+                className="border-b-[hsl(210,64%,23%,0.1)] last:border-b-0 animate-fade-in"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                <AccordionTrigger className="text-left font-medium hover:text-[hsl(210,64%,23%)] transition-colors duration-300 py-4 hover:no-underline group">
-                  <span className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-[hsl(210,64%,23%,0.1)] flex items-center justify-center text-xs font-semibold text-[hsl(210,64%,23%)] group-hover:bg-[hsl(210,64%,23%)] group-hover:text-white transition-colors duration-300">
+                <AccordionTrigger className="text-left text-lg font-semibold hover:text-[hsl(210,64%,23%)] transition-colors duration-300 py-4 hover:no-underline group">
+                  <span className="flex items-center gap-3">
+                    <span className="w-7 h-7 rounded-full bg-[hsl(210,64%,23%,0.1)] flex items-center justify-center text-sm font-bold text-[hsl(210,64%,23%)] group-hover:bg-[hsl(210,64%,23%)] group-hover:text-white transition-all duration-300 group-hover:scale-110">
                       {index + 1}
                     </span>
                     {faq.question}
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground pl-8 pb-4">
+                <AccordionContent className="text-muted-foreground pl-10 pb-4 text-base leading-relaxed">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>

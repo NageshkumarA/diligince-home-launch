@@ -125,8 +125,9 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ className 
         </div>
       </CardHeader>
 
-      <CardContent className="p-4">
-        <ScrollArea className="max-h-[400px] pr-2">
+      <CardContent className="p-4 flex flex-col">
+        {/* Scrollable: Plan selection + Add-ons only */}
+        <ScrollArea className="max-h-[250px] pr-2 flex-shrink-0">
           {/* Selected Plan */}
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
@@ -197,99 +198,97 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ className 
               </div>
             </div>
           )}
-
-          {/* Cost Breakdown */}
-          {!isCustomPricing && (
-            <>
-              <Separator className="my-4" />
-              
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 mb-3">
-                  <Calculator className="h-4 w-4 text-[hsl(210,64%,23%)]" />
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Cost Breakdown
-                  </span>
-                </div>
-
-                {/* Monthly Subscription */}
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Monthly Subscription</span>
-                  <span className="text-foreground">{formatPriceValue(breakdown.planMonthly)}</span>
-                </div>
-
-                {/* Monthly Add-ons */}
-                {breakdown.addOnsMonthly > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Monthly Add-ons</span>
-                    <span className="text-foreground">{formatCurrency(breakdown.addOnsMonthly)}</span>
-                  </div>
-                )}
-
-                {/* One-time Add-ons */}
-                {breakdown.addOnsOneTime > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">One-time Add-ons</span>
-                    <span className="text-foreground">{formatCurrency(breakdown.addOnsOneTime)}</span>
-                  </div>
-                )}
-
-                <Separator className="my-2" />
-
-                {/* Subtotal */}
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span className="text-foreground">
-                    {formatPriceValue(breakdown.subtotalMonthly)}
-                    {breakdown.addOnsOneTime > 0 && ` + ${formatCurrency(breakdown.addOnsOneTime)}`}
-                  </span>
-                </div>
-
-                {/* GST */}
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    GST ({GST_RATE * 100}%)
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Info className="h-3 w-3 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="text-xs">Goods and Services Tax applicable in India</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </span>
-                  <span className="text-foreground">
-                    {formatPriceValue(breakdown.gstMonthly)}
-                    {breakdown.gstOneTime > 0 && ` + ${formatCurrency(breakdown.gstOneTime)}`}
-                  </span>
-                </div>
-
-                <Separator className="my-2" />
-
-                {/* First Month Total */}
-                <div className="flex justify-between items-center p-3 -mx-1 rounded-lg bg-gradient-to-r from-[hsl(210,64%,23%,0.08)] to-[hsl(210,64%,23%,0.03)]">
-                  <span className="font-semibold text-foreground">First Month Total</span>
-                  <span className="font-bold text-lg text-[hsl(210,64%,23%)]">
-                    {formatPriceValue(breakdown.firstMonthTotal)}
-                  </span>
-                </div>
-
-                {/* Recurring Monthly (if different from first month) */}
-                {breakdown.addOnsOneTime > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Then monthly</span>
-                    <span className="text-foreground font-medium">
-                      {formatPriceValue(breakdown.recurringMonthly)}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
         </ScrollArea>
 
-        {/* CTA Button */}
+        {/* Always Visible: Cost Breakdown + Total + CTA */}
+        {!isCustomPricing && (
+          <div className="mt-4 border-t border-[hsl(210,64%,23%,0.1)] pt-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 mb-3">
+                <Calculator className="h-4 w-4 text-[hsl(210,64%,23%)]" />
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Cost Breakdown
+                </span>
+              </div>
+
+              {/* Monthly Subscription */}
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Monthly Subscription</span>
+                <span className="text-foreground">{formatPriceValue(breakdown.planMonthly)}</span>
+              </div>
+
+              {/* Monthly Add-ons */}
+              {breakdown.addOnsMonthly > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Monthly Add-ons</span>
+                  <span className="text-foreground">{formatCurrency(breakdown.addOnsMonthly)}</span>
+                </div>
+              )}
+
+              {/* One-time Add-ons */}
+              {breakdown.addOnsOneTime > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">One-time Add-ons</span>
+                  <span className="text-foreground">{formatCurrency(breakdown.addOnsOneTime)}</span>
+                </div>
+              )}
+
+              <Separator className="my-2" />
+
+              {/* Subtotal */}
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-foreground">
+                  {formatPriceValue(breakdown.subtotalMonthly)}
+                  {breakdown.addOnsOneTime > 0 && ` + ${formatCurrency(breakdown.addOnsOneTime)}`}
+                </span>
+              </div>
+
+              {/* GST */}
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground flex items-center gap-1">
+                  GST ({GST_RATE * 100}%)
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-3 w-3 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-xs">Goods and Services Tax applicable in India</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </span>
+                <span className="text-foreground">
+                  {formatPriceValue(breakdown.gstMonthly)}
+                  {breakdown.gstOneTime > 0 && ` + ${formatCurrency(breakdown.gstOneTime)}`}
+                </span>
+              </div>
+
+              <Separator className="my-2" />
+
+              {/* First Month Total */}
+              <div className="flex justify-between items-center p-3 -mx-1 rounded-lg bg-gradient-to-r from-[hsl(210,64%,23%,0.08)] to-[hsl(210,64%,23%,0.03)]">
+                <span className="font-semibold text-foreground">First Month Total</span>
+                <span className="font-bold text-lg text-[hsl(210,64%,23%)]">
+                  {formatPriceValue(breakdown.firstMonthTotal)}
+                </span>
+              </div>
+
+              {/* Recurring Monthly (if different from first month) */}
+              {breakdown.addOnsOneTime > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Then monthly</span>
+                  <span className="text-foreground font-medium">
+                    {formatPriceValue(breakdown.recurringMonthly)}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* CTA Button - always visible */}
         <div className="mt-4 pt-4 border-t border-[hsl(210,64%,23%,0.1)]">
           <Button
             onClick={handleSignUp}

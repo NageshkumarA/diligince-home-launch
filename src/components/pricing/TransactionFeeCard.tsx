@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 
 export const TransactionFeeCard: React.FC = () => {
   return (
-    <Card className="group relative p-6 bg-white/70 backdrop-blur-sm border-[hsl(210,64%,23%,0.15)] max-w-2xl mx-auto overflow-hidden transition-all duration-500 hover:shadow-lg hover:border-[hsl(210,64%,23%,0.25)]">
+    <Card className="group relative p-6 bg-white/70 backdrop-blur-sm border-[hsl(210,64%,23%,0.15)] h-full overflow-hidden transition-all duration-500 hover:shadow-lg hover:border-[hsl(210,64%,23%,0.25)]">
       {/* Animated gradient border */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-r from-[hsl(210,64%,23%,0.05)] via-transparent to-[hsl(210,64%,23%,0.05)]" />
