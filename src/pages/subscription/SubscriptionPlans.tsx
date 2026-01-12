@@ -44,11 +44,11 @@ const SubscriptionPlans = () => {
   );
 
   const handlePlanSelect = (plan: Plan) => {
-    setSelectedPlan(plan.code);
+    setSelectedPlan(userType, plan);
   };
 
   const handleAddOnToggle = (addOn: AddOn) => {
-    toggleAddOn(addOn.code);
+    toggleAddOn(addOn);
   };
 
   const handlePayment = () => {
