@@ -125,9 +125,12 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ className 
         </div>
       </CardHeader>
 
-      <CardContent className="p-4 flex flex-col">
+      <CardContent className="p-4 flex flex-col max-h-[calc(100vh-200px)] overflow-hidden">
         {/* Scrollable: Plan selection + Add-ons only */}
-        <ScrollArea className="max-h-[250px] pr-2 flex-shrink-0">
+        <div 
+          className="max-h-[200px] overflow-auto flex-shrink-0 pr-2"
+          onWheel={(e) => e.stopPropagation()}
+        >
           {/* Selected Plan */}
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
@@ -198,7 +201,7 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ className 
               </div>
             </div>
           )}
-        </ScrollArea>
+        </div>
 
         {/* Always Visible: Cost Breakdown + Total + CTA */}
         {!isCustomPricing && (
