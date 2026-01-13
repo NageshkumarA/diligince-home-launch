@@ -9,25 +9,29 @@
 
 import { API_BASE_PATH } from '@/services/core/api.config';
 import apiService from '@/services/core/api.service';
-import { UserType, Plan, AddOn } from '@/data/pricingData';
 import { calculatePricingBreakdown, GST_RATE } from '@/utils/pricingCalculations';
+import type { UserType, Plan, AddOn } from '@/services/modules/subscription/subscription.types';
+
+// ============= Types =============
+
+export interface PricingBreakdown {
+  planMonthlyMin: number;
+  planMonthlyMax: number;
+  addOnsMonthlyAmount: number;
+  addOnsOneTimeAmount: number;
+  gstRate: number;
+  estimatedFirstMonthMin: number;
+  estimatedFirstMonthMax: number;
+  estimatedRecurringMin: number;
+  estimatedRecurringMax: number;
+}
 
 export interface StorePricingSelectionPayload {
   userId: string;
   userType: UserType;
   selectedPlanCode: string;
   selectedAddOnCodes: string[];
-  pricing: {
-    planMonthlyMin: number;
-    planMonthlyMax: number;
-    addOnsMonthlyAmount: number;
-    addOnsOneTimeAmount: number;
-    gstRate: number;
-    estimatedFirstMonthMin: number;
-    estimatedFirstMonthMax: number;
-    estimatedRecurringMin: number;
-    estimatedRecurringMax: number;
-  };
+  pricing: PricingBreakdown;
   source: 'pricing_page';
   capturedAt: string;
 }
@@ -41,11 +45,53 @@ export interface StorePricingSelectionResponse {
   error?: {
     code: string;
     message: string;
+    details?: any;
   };
 }
 
+export interface GetPricingSelectionResponse {
+  success: boolean;
+  data?: {
+    id: string;
+    userId: string;
+    userType: UserType;
+    selectedPlanCode: string;
+    selectedAddOnCodes: string[];
+    pricing: PricingBreakdown;
+    source: string;
+    capturedAt: string;
+    createdAt: string;
+    status: 'pending' | 'contacted' | 'converted' | 'expired';
+    user?: {
+      email: string;
+      name: string;
+      company?: string;
+    };
+  };
+  error?: {
+    code: string;
+    message: string;
+  };
+}
+
+// ============= Routes =============
+
+export const pricingSelectionRoutes = {
+  store: `${API_BASE_PATH}/pricing-selections`,
+  getByUserId: (userId: string) => `${API_BASE_PATH}/pricing-selections/${userId}`,
+  list: `${API_BASE_PATH}/pricing-selections`,
+  updateStatus: (id: string) => `${API_BASE_PATH}/pricing-selections/${id}/status`,
+};
+
+// ============= Utilities =============
+
 /**
  * Validates if the signup user type matches the pricing selection user type
+ * 
+ * @param pricingUserType - User type selected on pricing page
+ * @param signupTab - Tab selected on signup page ('industry', 'vendor', 'professional')
+ * @param vendorCategory - For vendor signups, the category ('service', 'product', 'logistics')
+ * @returns boolean indicating if types match
  */
 export const validateUserTypeMatch = (
   pricingUserType: UserType,
@@ -71,14 +117,34 @@ export const validateUserTypeMatch = (
 
 /**
  * Creates the payload for storing pricing selection
+ * 
+ * @param userId - The newly registered user's ID
+ * @param userType - User type from pricing selection
+ * @param plan - Selected plan object
+ * @param addOns - Array of selected add-on objects
+ * @returns Formatted payload for API
  */
 export const createPricingSelectionPayload = (
   userId: string,
   userType: UserType,
-  plan: Plan,
-  addOns: AddOn[]
+  plan: { code: string; price?: number | null; priceRange?: { min: number; max: number } | null },
+  addOns: Array<{ code: string; type: string; price: number }>
 ): StorePricingSelectionPayload => {
-  const breakdown = calculatePricingBreakdown(plan, addOns);
+  // Calculate pricing breakdown
+  const planPrice = plan.price || 0;
+  const planMin = plan.priceRange?.min || planPrice;
+  const planMax = plan.priceRange?.max || planPrice;
+
+  const monthlyAddOns = addOns
+    .filter(a => a.type === 'subscription')
+    .reduce((sum, a) => sum + a.price, 0);
+
+  const oneTimeAddOns = addOns
+    .filter(a => a.type === 'usage')
+    .reduce((sum, a) => sum + a.price, 0);
+
+  const gstRate = GST_RATE;
+  const gstMultiplier = 1 + gstRate;
 
   return {
     userId,
@@ -86,20 +152,22 @@ export const createPricingSelectionPayload = (
     selectedPlanCode: plan.code,
     selectedAddOnCodes: addOns.map(a => a.code),
     pricing: {
-      planMonthlyMin: breakdown.planMonthly.min,
-      planMonthlyMax: breakdown.planMonthly.max,
-      addOnsMonthlyAmount: breakdown.addOnsMonthly,
-      addOnsOneTimeAmount: breakdown.addOnsOneTime,
-      gstRate: GST_RATE * 100,
-      estimatedFirstMonthMin: breakdown.firstMonthTotal.min,
-      estimatedFirstMonthMax: breakdown.firstMonthTotal.max,
-      estimatedRecurringMin: breakdown.recurringMonthly.min,
-      estimatedRecurringMax: breakdown.recurringMonthly.max,
+      planMonthlyMin: planMin,
+      planMonthlyMax: planMax,
+      addOnsMonthlyAmount: monthlyAddOns,
+      addOnsOneTimeAmount: oneTimeAddOns,
+      gstRate: gstRate * 100,
+      estimatedFirstMonthMin: Math.round((planMin + monthlyAddOns + oneTimeAddOns) * gstMultiplier),
+      estimatedFirstMonthMax: Math.round((planMax + monthlyAddOns + oneTimeAddOns) * gstMultiplier),
+      estimatedRecurringMin: Math.round((planMin + monthlyAddOns) * gstMultiplier),
+      estimatedRecurringMax: Math.round((planMax + monthlyAddOns) * gstMultiplier),
     },
     source: 'pricing_page',
     capturedAt: new Date().toISOString(),
   };
 };
+
+// ============= Service =============
 
 export const pricingSelectionService = {
   /**
@@ -112,23 +180,11 @@ export const pricingSelectionService = {
     payload: StorePricingSelectionPayload
   ): Promise<StorePricingSelectionResponse> => {
     try {
-      // TODO: Replace with actual API call when backend is ready
-      // const response = await apiService.post<StorePricingSelectionResponse>(
-      //   `${API_BASE_PATH}/pricing-selections`,
-      //   payload
-      // );
-      // return response;
-
-      // Placeholder: Log the payload and return mock success
-      console.log('[PricingSelection] Would store pricing selection:', payload);
-      
-      return {
-        success: true,
-        data: {
-          id: `ps_${Date.now()}`,
-          message: 'Pricing selection stored successfully (mock)',
-        },
-      };
+      const response = await apiService.post<StorePricingSelectionResponse, StorePricingSelectionPayload>(
+        pricingSelectionRoutes.store,
+        payload
+      );
+      return response;
     } catch (error) {
       console.error('[PricingSelection] Error storing selection:', error);
       return {
@@ -142,15 +198,47 @@ export const pricingSelectionService = {
   },
 
   /**
+   * Get pricing selection for a user (admin/support use)
+   * 
+   * @param userId - User ID to fetch selection for
+   * @returns Promise with the user's pricing selection
+   */
+  getPricingSelection: async (userId: string): Promise<GetPricingSelectionResponse> => {
+    try {
+      const response = await apiService.get<GetPricingSelectionResponse>(
+        pricingSelectionRoutes.getByUserId(userId)
+      );
+      return response;
+    } catch (error) {
+      console.error('[PricingSelection] Error fetching selection:', error);
+      return {
+        success: false,
+        error: {
+          code: 'FETCH_FAILED',
+          message: 'Failed to fetch pricing selection',
+        },
+      };
+    }
+  },
+
+  /**
    * Convenience method to store selection after successful signup
-   * Only stores if user type matches
+   * Only stores if user type matches between pricing page and signup form
+   * 
+   * @param userId - Newly registered user's ID
+   * @param signupTab - Tab selected on signup ('industry', 'vendor', 'professional')
+   * @param pricingUserType - User type from pricing page selection
+   * @param plan - Selected plan object
+   * @param addOns - Array of selected add-on objects
+   * @param vendorCategory - For vendor signups, the category
+   * @returns Promise with the API response
    */
   storeSelectionOnSignup: async (
     userId: string,
     signupTab: string,
     pricingUserType: UserType,
-    plan: Plan,
-    addOns: AddOn[],
+    plan: { code: string; price?: number | null; priceRange?: { min: number; max: number } | null },
+    addOns: Array<{ code: string; type: string; price: number }>,
     vendorCategory?: string
   ): Promise<StorePricingSelectionResponse> => {
     // Validate user type match
@@ -161,6 +249,11 @@ export const pricingSelectionService = {
         error: {
           code: 'USER_TYPE_MISMATCH',
           message: 'Pricing selection user type does not match signup user type',
+          details: {
+            pricingUserType,
+            signupTab,
+            vendorCategory,
+          },
         },
       };
     }
