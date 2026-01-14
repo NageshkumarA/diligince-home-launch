@@ -43,6 +43,9 @@ import {
   RotateCcw,
   MapPin,
   Wrench,
+  Crown,
+  Receipt,
+  Wallet,
 } from "lucide-react";
 
 interface MenuItem {
@@ -250,6 +253,28 @@ export const menuConfig: MenuConfig = {
         },
       ],
     },
+    {
+      icon: Crown,
+      label: "Subscription",
+      path: "/dashboard/subscription",
+      submenu: [
+        {
+          icon: Crown,
+          label: "My Plan",
+          path: "/dashboard/subscription/plans",
+        },
+        {
+          icon: Receipt,
+          label: "Transactions",
+          path: "/dashboard/subscription/transactions",
+        },
+        {
+          icon: Wallet,
+          label: "Payment Methods",
+          path: "/dashboard/subscription/payment-methods",
+        },
+      ],
+    },
   ],
 
   // ---------------- PROFESSIONAL ----------------
@@ -301,6 +326,15 @@ export const menuConfig: MenuConfig = {
       icon: Settings,
       label: "Profile",
       path: "/dashboard/professional-profile",
+    },
+    {
+      icon: Crown,
+      label: "Subscription",
+      path: "/dashboard/subscription",
+      submenu: [
+        { icon: Crown, label: "My Plan", path: "/dashboard/subscription/plans" },
+        { icon: Receipt, label: "Transactions", path: "/dashboard/subscription/transactions" },
+      ],
     },
   ],
 
@@ -424,8 +458,17 @@ export const menuConfig: MenuConfig = {
           icon: Award,
           label: "Skills & Expertise",
           path: "/dashboard/service-vendor-services/skills",
-        },
+    },
+    {
+      icon: Crown,
+      label: "Subscription",
+      path: "/dashboard/subscription",
+      submenu: [
+        { icon: Crown, label: "My Plan", path: "/dashboard/subscription/plans" },
+        { icon: Receipt, label: "Transactions", path: "/dashboard/subscription/transactions" },
       ],
+    },
+  ],
     },
     {
       icon: Settings,
@@ -590,8 +633,17 @@ export const menuConfig: MenuConfig = {
           icon: CreditCard,
           label: "Payment Settings",
           path: "/dashboard/product-vendor-profile/payment",
-        },
+    },
+    {
+      icon: Crown,
+      label: "Subscription",
+      path: "/dashboard/subscription",
+      submenu: [
+        { icon: Crown, label: "My Plan", path: "/dashboard/subscription/plans" },
+        { icon: Receipt, label: "Transactions", path: "/dashboard/subscription/transactions" },
       ],
+    },
+  ],
     },
   ],
 
@@ -737,6 +789,15 @@ export const menuConfig: MenuConfig = {
           label: "Payment Settings",
           path: "/dashboard/logistics-vendor-profile/payment",
         },
+      ],
+    },
+    {
+      icon: Crown,
+      label: "Subscription",
+      path: "/dashboard/subscription",
+      submenu: [
+        { icon: Crown, label: "My Plan", path: "/dashboard/subscription/plans" },
+        { icon: Receipt, label: "Transactions", path: "/dashboard/subscription/transactions" },
       ],
     },
   ],
