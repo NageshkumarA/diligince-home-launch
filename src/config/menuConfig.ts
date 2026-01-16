@@ -458,17 +458,8 @@ export const menuConfig: MenuConfig = {
           icon: Award,
           label: "Skills & Expertise",
           path: "/dashboard/service-vendor-services/skills",
-    },
-    {
-      icon: Crown,
-      label: "Subscription",
-      path: "/dashboard/subscription",
-      submenu: [
-        { icon: Crown, label: "My Plan", path: "/dashboard/subscription/plans" },
-        { icon: Receipt, label: "Transactions", path: "/dashboard/subscription/transactions" },
+        },
       ],
-    },
-  ],
     },
     {
       icon: Settings,
@@ -495,6 +486,15 @@ export const menuConfig: MenuConfig = {
           label: "Payment Settings",
           path: "/dashboard/service-vendor-profile/payment",
         },
+      ],
+    },
+    {
+      icon: Crown,
+      label: "Subscription",
+      path: "/dashboard/subscription",
+      submenu: [
+        { icon: Crown, label: "My Plan", path: "/dashboard/subscription/plans" },
+        { icon: Receipt, label: "Transactions", path: "/dashboard/subscription/transactions" },
       ],
     },
   ],
@@ -633,6 +633,8 @@ export const menuConfig: MenuConfig = {
           icon: CreditCard,
           label: "Payment Settings",
           path: "/dashboard/product-vendor-profile/payment",
+        },
+      ],
     },
     {
       icon: Crown,
@@ -642,8 +644,6 @@ export const menuConfig: MenuConfig = {
         { icon: Crown, label: "My Plan", path: "/dashboard/subscription/plans" },
         { icon: Receipt, label: "Transactions", path: "/dashboard/subscription/transactions" },
       ],
-    },
-  ],
     },
   ],
 
