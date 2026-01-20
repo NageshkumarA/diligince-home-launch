@@ -58,6 +58,12 @@ const Sidebar: React.FC = () => {
     };
 
     const hasReadAccess = (path: string): boolean => {
+      // Subscription paths bypass permission check - available to all authenticated users
+      // This is a billing/account feature, not a module-specific permission
+      if (path.includes('/subscription')) {
+        return true;
+      }
+
       const moduleId = resolveModuleId(path);
       if (!moduleId) return false;
       const perm = permissionsMap.get(moduleId);
@@ -267,8 +273,8 @@ const Sidebar: React.FC = () => {
                             key={index}
                             to={subItem.path}
                             className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${location.pathname === subItem.path
-                                ? 'bg-accent text-accent-foreground'
-                                : 'text-primary-foreground hover:bg-accent hover:text-accent-foreground'
+                              ? 'bg-accent text-accent-foreground'
+                              : 'text-primary-foreground hover:bg-accent hover:text-accent-foreground'
                               }`}
                           >
                             <subItem.icon className="w-4 h-4" />
@@ -340,8 +346,8 @@ const Sidebar: React.FC = () => {
                           key={index}
                           onClick={subItem.onClick}
                           className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors w-full text-left ${location.pathname === subItem.path
-                              ? 'bg-accent text-accent-foreground'
-                              : 'text-primary-foreground hover:bg-accent hover:text-accent-foreground'
+                            ? 'bg-accent text-accent-foreground'
+                            : 'text-primary-foreground hover:bg-accent hover:text-accent-foreground'
                             }`}
                         >
                           <subItem.icon className="w-4 h-4" />
@@ -352,8 +358,8 @@ const Sidebar: React.FC = () => {
                           key={index}
                           to={subItem.path}
                           className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${location.pathname === subItem.path
-                              ? 'bg-accent text-accent-foreground'
-                              : 'text-primary-foreground hover:bg-accent hover:text-accent-foreground'
+                            ? 'bg-accent text-accent-foreground'
+                            : 'text-primary-foreground hover:bg-accent hover:text-accent-foreground'
                             }`}
                         >
                           <subItem.icon className="w-4 h-4" />
@@ -397,8 +403,8 @@ const Sidebar: React.FC = () => {
                       to={subItem.path}
                       onClick={() => setActiveSubmenu(null)}
                       className={`flex items-center space-x-3 px-3 py-3 text-sm rounded-lg transition-all duration-200 ${location.pathname === subItem.path
-                          ? 'bg-primary text-primary-foreground shadow-sm'
-                          : 'text-foreground hover:bg-muted hover:translate-x-1'
+                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        : 'text-foreground hover:bg-muted hover:translate-x-1'
                         }`}
                     >
                       <subItem.icon className="w-4 h-4 flex-shrink-0" />
@@ -428,8 +434,8 @@ const Sidebar: React.FC = () => {
                         to={subItem.path}
                         onClick={() => setActiveSubmenu(null)}
                         className={`flex items-center space-x-3 px-3 py-3 text-sm rounded-lg transition-all duration-200 ${location.pathname === subItem.path
-                            ? 'bg-primary text-primary-foreground shadow-sm'
-                            : 'text-foreground hover:bg-muted hover:translate-x-1'
+                          ? 'bg-primary text-primary-foreground shadow-sm'
+                          : 'text-foreground hover:bg-muted hover:translate-x-1'
                           }`}
                       >
                         <subItem.icon className="w-4 h-4 flex-shrink-0" />

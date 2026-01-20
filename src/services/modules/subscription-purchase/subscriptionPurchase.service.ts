@@ -28,13 +28,15 @@ class SubscriptionPurchaseService {
    */
   async createOrder(payload: CreateOrderPayload): Promise<CreateOrderResponse> {
     console.log('[SubscriptionPurchase] Creating order:', payload);
-    
-    const response: AxiosResponse<CreateOrderResponse> = await api.post(
+
+    // api.post already returns the envelope {success, data, error}
+    const response = await api.post<CreateOrderResponse, CreateOrderPayload>(
       SUBSCRIPTION_PURCHASE_ROUTES.CREATE_ORDER,
       payload
     );
-    
-    return response.data;
+
+    // The response is already the API envelope, return it directly
+    return response as unknown as CreateOrderResponse;
   }
 
   /**
@@ -43,24 +45,26 @@ class SubscriptionPurchaseService {
    */
   async verifyPayment(payload: VerifyPaymentPayload): Promise<VerifyPaymentResponse> {
     console.log('[SubscriptionPurchase] Verifying payment:', payload.razorpayPaymentId);
-    
-    const response: AxiosResponse<VerifyPaymentResponse> = await api.post(
+
+    // api.post already returns the envelope {success, data, error}
+    const response = await api.post<VerifyPaymentResponse, VerifyPaymentPayload>(
       SUBSCRIPTION_PURCHASE_ROUTES.VERIFY_PAYMENT,
       payload
     );
-    
-    return response.data;
+
+    // The response is already the API envelope, return it directly
+    return response as unknown as VerifyPaymentResponse;
   }
 
   /**
    * Get current user's active subscription
    */
   async getSubscription(): Promise<GetSubscriptionResponse> {
-    const response: AxiosResponse<GetSubscriptionResponse> = await api.get(
+    const response = await api.get<GetSubscriptionResponse>(
       SUBSCRIPTION_PURCHASE_ROUTES.GET_SUBSCRIPTION
     );
-    
-    return response.data;
+
+    return response as unknown as GetSubscriptionResponse;
   }
 
   /**
@@ -68,13 +72,13 @@ class SubscriptionPurchaseService {
    */
   async cancelSubscription(payload: CancelSubscriptionPayload): Promise<CancelSubscriptionResponse> {
     console.log('[SubscriptionPurchase] Cancelling subscription');
-    
-    const response: AxiosResponse<CancelSubscriptionResponse> = await api.post(
+
+    const response = await api.post<CancelSubscriptionResponse, CancelSubscriptionPayload>(
       SUBSCRIPTION_PURCHASE_ROUTES.CANCEL_SUBSCRIPTION,
       payload
     );
-    
-    return response.data;
+
+    return response as unknown as CancelSubscriptionResponse;
   }
 
   /**
@@ -85,12 +89,12 @@ class SubscriptionPurchaseService {
     limit?: number;
     type?: string;
   }): Promise<GetTransactionsResponse> {
-    const response: AxiosResponse<GetTransactionsResponse> = await api.get(
+    const response = await api.get<GetTransactionsResponse>(
       SUBSCRIPTION_PURCHASE_ROUTES.GET_TRANSACTIONS,
       { params }
     );
-    
-    return response.data;
+
+    return response as unknown as GetTransactionsResponse;
   }
 
   /**
@@ -101,7 +105,7 @@ class SubscriptionPurchaseService {
       SUBSCRIPTION_PURCHASE_ROUTES.DOWNLOAD_INVOICE(transactionId),
       { responseType: 'blob' }
     );
-    
+
     return response.data;
   }
 
@@ -109,11 +113,11 @@ class SubscriptionPurchaseService {
    * Get order details by ID
    */
   async getOrder(orderId: string): Promise<{ success: boolean; data: SubscriptionOrder }> {
-    const response: AxiosResponse<{ success: boolean; data: SubscriptionOrder }> = await api.get(
+    const response = await api.get<{ success: boolean; data: SubscriptionOrder }>(
       SUBSCRIPTION_PURCHASE_ROUTES.GET_ORDER(orderId)
     );
-    
-    return response.data;
+
+    return response as unknown as { success: boolean; data: SubscriptionOrder };
   }
 
   /**

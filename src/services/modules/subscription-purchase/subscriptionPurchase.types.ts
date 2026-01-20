@@ -204,6 +204,9 @@ export interface CreateOrderResponse {
   error?: {
     code: string;
     message: string;
+    data?: {
+      orderId?: string;
+    };
   };
 }
 
