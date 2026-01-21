@@ -41,8 +41,10 @@ export const useVendorPOResponse = () => {
         negotiate: 'negotiation requested',
       }[variables.data.action];
       
+      const poNumber = response?.data?.orderNumber || 'PO';
+      
       toast.success(`Purchase order ${actionLabel}`, {
-        description: `PO ${response.data.poNumber} has been ${actionLabel}.`,
+        description: `${poNumber} has been ${actionLabel}.`,
       });
       
       queryClient.invalidateQueries({ queryKey: ['vendor-purchase-order', variables.poId] });
