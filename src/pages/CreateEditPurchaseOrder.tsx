@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
@@ -19,6 +19,8 @@ const STEP_TITLES = ['Basic Info', 'Deliverables', 'Payment Milestones', 'Accept
 
 const CreateEditPurchaseOrder: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const quotationId = searchParams.get('quotationId');
   const navigate = useNavigate();
   const isEditMode = !!id;
   const [currentStep, setCurrentStep] = useState(1);
@@ -28,6 +30,13 @@ const CreateEditPurchaseOrder: React.FC = () => {
     queryKey: ['purchase-order', id],
     queryFn: () => purchaseOrdersService.getById(id!),
     enabled: isEditMode,
+  });
+
+  // Fetch prefill data from quotation if quotationId is provided
+  const { data: prefillData, isLoading: isLoadingPrefill } = useQuery({
+    queryKey: ['po-prefill', quotationId],
+    queryFn: () => purchaseOrdersService.getPrefillFromQuotation(quotationId!),
+    enabled: !!quotationId && !isEditMode,
   });
 
   const form = useForm<PurchaseOrderFormData>({
@@ -77,6 +86,40 @@ const CreateEditPurchaseOrder: React.FC = () => {
       });
     }
   }, [poDetail, isEditMode, form]);
+
+  // Populate form with quotation prefill data
+  useEffect(() => {
+    if (prefillData?.data && quotationId && !isEditMode) {
+      const data = prefillData.data;
+
+      // Calculate suggested dates
+      const startDate = data.suggestedStartDate ? new Date(data.suggestedStartDate) : new Date();
+      const endDate = data.suggestedEndDate ? new Date(data.suggestedEndDate) : new Date(new Date().setDate(new Date().getDate() + (data.proposedDeliveryDays || 30)));
+
+      form.reset({
+        quotationId: data.quotationId,
+        projectTitle: data.requirementTitle || '',
+        scopeOfWork: '', // User needs to fill this
+        specialInstructions: '',
+        startDate,
+        endDate,
+        paymentTerms: data.termsFromQuotation?.paymentTerms || '',
+        deliverables: data.lineItems?.map((item, index) => ({
+          id: `del-${index}`,
+          description: item.description,
+          quantity: item.quantity,
+          unit: item.unit,
+          unitPrice: item.unitPrice,
+        })) || [],
+        paymentMilestones: [],
+        acceptanceCriteria: [],
+      });
+
+      toast.success('Form pre-filled with quotation data', {
+        description: `Vendor: ${data.vendor?.name || 'Unknown'}`,
+      });
+    }
+  }, [prefillData, quotationId, isEditMode, form]);
 
   const { loading, execute } = useAsyncOperation({
     showSuccessToast: true,
@@ -252,7 +295,7 @@ const CreateEditPurchaseOrder: React.FC = () => {
     }
   };
 
-  if (isEditMode && isLoadingPO) {
+  if ((isEditMode && isLoadingPO) || (quotationId && isLoadingPrefill)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 flex items-center justify-center">
         <div className="w-full max-w-md p-8">
@@ -260,6 +303,9 @@ const CreateEditPurchaseOrder: React.FC = () => {
             <div className="h-8 bg-muted rounded w-1/2 mx-auto"></div>
             <div className="h-64 bg-muted rounded"></div>
             <div className="h-4 bg-muted rounded w-3/4 mx-auto"></div>
+            <p className="text-center text-muted-foreground mt-4">
+              {quotationId ? 'Loading quotation data...' : 'Loading purchase order...'}
+            </p>
           </div>
         </div>
       </div>
