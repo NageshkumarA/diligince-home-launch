@@ -17,6 +17,16 @@ import { toast } from 'sonner';
 const TOTAL_STEPS = 4;
 const STEP_TITLES = ['Basic Info', 'Deliverables', 'Payment Milestones', 'Acceptance Criteria'];
 
+interface UploadedFile {
+  id: string;
+  file: File;
+  name: string;
+  size: number;
+  type: string;
+  status: 'pending' | 'uploading' | 'success' | 'error';
+  error?: string;
+}
+
 const CreateEditPurchaseOrder: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
@@ -24,6 +34,7 @@ const CreateEditPurchaseOrder: React.FC = () => {
   const navigate = useNavigate();
   const isEditMode = !!id;
   const [currentStep, setCurrentStep] = useState(1);
+  const [sowDocuments, setSowDocuments] = useState<UploadedFile[]>([]);
 
   // Fetch existing PO data if in edit mode
   const { data: poDetail, isLoading: isLoadingPO } = useQuery({
@@ -283,7 +294,13 @@ const CreateEditPurchaseOrder: React.FC = () => {
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return <POFormBasicInfo form={form} />;
+        return (
+          <POFormBasicInfo 
+            form={form} 
+            sowDocuments={sowDocuments}
+            onSowDocumentsChange={setSowDocuments}
+          />
+        );
       case 2:
         return <POFormDeliverables form={form} />;
       case 3:

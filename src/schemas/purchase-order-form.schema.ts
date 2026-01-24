@@ -1,7 +1,20 @@
 import * as z from 'zod';
 
+// Schema for SOW uploaded files
+export const sowDocumentSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  size: z.number(),
+  type: z.string(),
+  status: z.enum(['pending', 'uploading', 'success', 'error']),
+  error: z.string().optional()
+});
+
+export type SOWDocument = z.infer<typeof sowDocumentSchema>;
+
 export const purchaseOrderFormSchema = z.object({
   quotationId: z.string().optional(),
+  sowDocuments: z.array(sowDocumentSchema).optional(),
   projectTitle: z.string().min(3, "Project title must be at least 3 characters"),
   scopeOfWork: z.string().min(10, "Scope of work must be at least 10 characters"),
   specialInstructions: z.string().optional(),
