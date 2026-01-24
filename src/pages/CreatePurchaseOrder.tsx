@@ -17,6 +17,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PurchaseOrderStepIndicator from '@/components/purchase-order/PurchaseOrderStepIndicator';
 import { ISO9001TermsSection } from '@/components/industry/workflow/ISO9001TermsSection';
 import POReviewStep from '@/components/purchase-order/POReviewStep';
+import SOWDocumentUpload from '@/components/purchase-order/SOWDocumentUpload';
+
+// Type for uploaded files
+interface UploadedFile {
+  id: string;
+  file: File;
+  name: string;
+  size: number;
+  type: string;
+  status: 'pending' | 'uploading' | 'success' | 'error';
+  error?: string;
+}
 
 // Define step type
 export type POStepType = 1 | 2 | 3 | 4 | 5;
@@ -78,30 +90,30 @@ const usePOFormData = (form: UseFormReturn<FormValues>) => {
   // Type-safe data preparation for review
   const prepareReviewData = useCallback((): FormValues | null => {
     const values = form.getValues();
-    
+
     // Validate that all required fields have values
-    if (!values.poNumber || !values.vendor || !values.projectTitle || 
-        !values.startDate || !values.endDate || !values.paymentTerms || 
-        !values.scopeOfWork) {
+    if (!values.poNumber || !values.vendor || !values.projectTitle ||
+      !values.startDate || !values.endDate || !values.paymentTerms ||
+      !values.scopeOfWork) {
       return null;
     }
-    
+
     // After validation, we can safely cast - all required fields are guaranteed to exist
     return values as FormValues;
   }, [form]);
-  
+
   // Create complete PO data for final submission
   const createCompletePOData = useCallback((isoTerms: string[], customTerms: string): CompletePOData | null => {
     const reviewData = prepareReviewData();
     if (!reviewData) return null;
-    
+
     return {
       ...reviewData,
       isoTerms,
       customTerms
     };
   }, [prepareReviewData]);
-  
+
   return {
     prepareReviewData,
     createCompletePOData
@@ -115,21 +127,21 @@ const usePOValidation = (form: UseFormReturn<FormValues>) => {
     hasRequiredFields: false,
     validationErrors: []
   });
-  
+
   const validateForm = useCallback(async (): Promise<boolean> => {
     const result = await form.trigger();
     const errors = form.formState.errors;
     const errorMessages = Object.values(errors).map(error => error?.message || 'Validation error').filter(Boolean);
-    
+
     setValidationState({
       isFormValid: result,
       hasRequiredFields: result,
       validationErrors: errorMessages
     });
-    
+
     return result;
   }, [form]);
-  
+
   return {
     validationState,
     validateForm
@@ -142,6 +154,7 @@ const CreatePurchaseOrder: React.FC = () => {
   const [selectedISOTerms, setSelectedISOTerms] = useState<string[]>([]);
   const [customISOTerms, setCustomISOTerms] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sopDocuments, setSopDocuments] = useState<UploadedFile[]>([]);
 
   // Generate unique PO number
   const generatePONumber = useCallback(() => {
@@ -243,7 +256,7 @@ const CreatePurchaseOrder: React.FC = () => {
     setIsSubmitting(true);
     try {
       const completePOData = createCompletePOData(selectedISOTerms, customISOTerms);
-      
+
       if (!completePOData) {
         throw new Error('Form data is incomplete');
       }
@@ -385,7 +398,7 @@ const CreatePurchaseOrder: React.FC = () => {
           </div>
         );
       }
-      
+
       return (
         <POReviewStep
           formData={reviewData as any}
@@ -423,16 +436,16 @@ const CreatePurchaseOrder: React.FC = () => {
 
             <div className="bg-blue-50 p-4 rounded-lg mb-6">
               <p className="text-sm text-blue-800">
-                <strong>What happens next:</strong><br/>
-                • PO will be created and assigned number {reviewData.poNumber}<br/>
-                • Saved to your industry records<br/>
-                • Delivered to {vendors.find(v => v.id === reviewData.vendor)?.name || 'the vendor'}<br/>
+                <strong>What happens next:</strong><br />
+                • PO will be created and assigned number {reviewData.poNumber}<br />
+                • Saved to your industry records<br />
+                • Delivered to {vendors.find(v => v.id === reviewData.vendor)?.name || 'the vendor'}<br />
                 • Workflow will begin tracking
               </p>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  );
+      );
     }
 
     // Default - PO Details Step (Step 3)
@@ -721,6 +734,19 @@ const CreatePurchaseOrder: React.FC = () => {
                   </FormItem>
                 )}
               />
+
+              {/* Document Upload Section */}
+              <div className="mt-4">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Supporting Documents (Optional)</h4>
+                <p className="text-xs text-gray-500 mb-3">
+                  Upload scope of work documents, specifications, or other supporting files.
+                </p>
+                <SOWDocumentUpload
+                  files={sopDocuments}
+                  onFilesChange={setSopDocuments}
+                  maxFiles={5}
+                />
+              </div>
 
               <div>
                 <div className="flex justify-between items-center mb-4">
