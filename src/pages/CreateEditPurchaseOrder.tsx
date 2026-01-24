@@ -1,12 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Save } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { Card } from '@/components/ui/card';
 import { useAsyncOperation } from '@/hooks/useAsyncOperation';
 import { purchaseOrdersService } from '@/services/modules/purchase-orders';
 import { purchaseOrderFormSchema, PurchaseOrderFormData } from '@/schemas/purchase-order-form.schema';
@@ -14,11 +11,17 @@ import { POFormBasicInfo } from '@/components/purchase-order/forms/POFormBasicIn
 import { POFormDeliverables } from '@/components/purchase-order/forms/POFormDeliverables';
 import { POFormMilestones } from '@/components/purchase-order/forms/POFormMilestones';
 import { POFormAcceptanceCriteria } from '@/components/purchase-order/forms/POFormAcceptanceCriteria';
+import { CreatePOLayout } from '@/components/purchase-order/CreatePOLayout';
+import { toast } from 'sonner';
+
+const TOTAL_STEPS = 4;
+const STEP_TITLES = ['Basic Info', 'Deliverables', 'Payment Milestones', 'Acceptance Criteria'];
 
 const CreateEditPurchaseOrder: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const isEditMode = !!id;
+  const [currentStep, setCurrentStep] = useState(1);
 
   // Fetch existing PO data if in edit mode
   const { data: poDetail, isLoading: isLoadingPO } = useQuery({
@@ -54,20 +57,20 @@ const CreateEditPurchaseOrder: React.FC = () => {
         startDate: new Date(po.startDate),
         endDate: new Date(po.endDate),
         paymentTerms: po.paymentTerms,
-        deliverables: po.deliverables.map(d => ({
+        deliverables: po.deliverables.map((d: any) => ({
           id: d.id,
           description: d.description,
           quantity: d.quantity,
           unit: d.unit,
           unitPrice: d.unitPrice,
         })),
-        paymentMilestones: po.paymentMilestones.map(m => ({
+        paymentMilestones: po.paymentMilestones.map((m: any) => ({
           id: m.id,
           description: m.description,
           percentage: m.percentage,
           dueDate: m.dueDate,
         })),
-        acceptanceCriteria: po.acceptanceCriteria.map(a => ({
+        acceptanceCriteria: po.acceptanceCriteria.map((a: any) => ({
           id: a.id,
           criteria: a.criteria,
         })),
@@ -88,6 +91,110 @@ const CreateEditPurchaseOrder: React.FC = () => {
     },
   });
 
+  // Calculate form completion progress
+  const progress = useMemo(() => {
+    const values = form.getValues();
+    let filled = 0;
+    let total = 8; // Total required fields
+
+    // Basic info fields
+    if (values.projectTitle?.length >= 3) filled++;
+    if (values.scopeOfWork?.length >= 10) filled++;
+    if (values.startDate) filled++;
+    if (values.endDate) filled++;
+    if (values.paymentTerms?.length >= 5) filled++;
+
+    // Array fields
+    if (values.deliverables?.length > 0) filled++;
+    if (values.paymentMilestones?.length > 0) filled++;
+    if (values.acceptanceCriteria?.length > 0) filled++;
+
+    return Math.round((filled / total) * 100);
+  }, [form.watch()]);
+
+  // Step validation
+  const validateStep = useCallback((step: number): boolean => {
+    const values = form.getValues();
+
+    switch (step) {
+      case 1: // Basic Info
+        if (!values.projectTitle || values.projectTitle.length < 3) {
+          toast.error('Please enter a valid project title (at least 3 characters)');
+          return false;
+        }
+        if (!values.scopeOfWork || values.scopeOfWork.length < 10) {
+          toast.error('Please enter scope of work (at least 10 characters)');
+          return false;
+        }
+        if (!values.startDate || !values.endDate) {
+          toast.error('Please select start and end dates');
+          return false;
+        }
+        if (!values.paymentTerms || values.paymentTerms.length < 5) {
+          toast.error('Please enter payment terms');
+          return false;
+        }
+        return true;
+
+      case 2: // Deliverables
+        if (!values.deliverables || values.deliverables.length === 0) {
+          toast.error('Please add at least one deliverable');
+          return false;
+        }
+        for (const d of values.deliverables) {
+          if (!d.description || !d.quantity || !d.unit) {
+            toast.error('Please fill all required deliverable fields');
+            return false;
+          }
+        }
+        return true;
+
+      case 3: // Milestones
+        if (!values.paymentMilestones || values.paymentMilestones.length === 0) {
+          toast.error('Please add at least one payment milestone');
+          return false;
+        }
+        const totalPercentage = values.paymentMilestones.reduce(
+          (sum, m) => sum + Number(m.percentage || 0),
+          0
+        );
+        if (Math.abs(totalPercentage - 100) > 0.01) {
+          toast.error('Payment milestone percentages must total 100%');
+          return false;
+        }
+        return true;
+
+      case 4: // Acceptance Criteria
+        if (!values.acceptanceCriteria || values.acceptanceCriteria.length === 0) {
+          toast.error('Please add at least one acceptance criteria');
+          return false;
+        }
+        return true;
+
+      default:
+        return true;
+    }
+  }, [form]);
+
+  const handleNext = useCallback(() => {
+    if (validateStep(currentStep)) {
+      setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
+    }
+  }, [currentStep, validateStep]);
+
+  const handlePrevious = useCallback(() => {
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+  }, []);
+
+  const handleStepChange = useCallback((step: number) => {
+    // Allow going back freely, but validate when moving forward
+    if (step < currentStep) {
+      setCurrentStep(step);
+    } else if (step === currentStep + 1 && validateStep(currentStep)) {
+      setCurrentStep(step);
+    }
+  }, [currentStep, validateStep]);
+
   const onSubmit = async (data: PurchaseOrderFormData) => {
     await execute(async () => {
       // Transform form data to API format
@@ -99,18 +206,18 @@ const CreateEditPurchaseOrder: React.FC = () => {
         startDate: data.startDate.toISOString().split('T')[0],
         endDate: data.endDate.toISOString().split('T')[0],
         paymentTerms: data.paymentTerms,
-        deliverables: data.deliverables.map(d => ({
+        deliverables: data.deliverables.map((d) => ({
           description: d.description,
           quantity: d.quantity,
           unit: d.unit,
           unitPrice: d.unitPrice,
         })),
-        paymentMilestones: data.paymentMilestones.map(m => ({
+        paymentMilestones: data.paymentMilestones.map((m) => ({
           description: m.description,
           percentage: m.percentage,
           dueDate: m.dueDate,
         })),
-        acceptanceCriteria: data.acceptanceCriteria.map(a => ({
+        acceptanceCriteria: data.acceptanceCriteria.map((a) => ({
           criteria: a.criteria,
         })),
       };
@@ -123,13 +230,36 @@ const CreateEditPurchaseOrder: React.FC = () => {
     });
   };
 
+  const handleFormSubmit = useCallback(() => {
+    if (validateStep(TOTAL_STEPS)) {
+      form.handleSubmit(onSubmit)();
+    }
+  }, [form, onSubmit, validateStep]);
+
+  // Render current step content
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return <POFormBasicInfo form={form} />;
+      case 2:
+        return <POFormDeliverables form={form} />;
+      case 3:
+        return <POFormMilestones form={form} />;
+      case 4:
+        return <POFormAcceptanceCriteria form={form} />;
+      default:
+        return null;
+    }
+  };
+
   if (isEditMode && isLoadingPO) {
     return (
-      <div className="min-h-screen bg-muted/30 p-6">
-        <div className="container mx-auto max-w-4xl">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 flex items-center justify-center">
+        <div className="w-full max-w-md p-8">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-muted rounded w-1/4"></div>
+            <div className="h-8 bg-muted rounded w-1/2 mx-auto"></div>
             <div className="h-64 bg-muted rounded"></div>
+            <div className="h-4 bg-muted rounded w-3/4 mx-auto"></div>
           </div>
         </div>
       </div>
@@ -137,59 +267,24 @@ const CreateEditPurchaseOrder: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <div className="container mx-auto max-w-4xl p-6 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate(-1)}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-            <h1 className="text-3xl font-bold">
-              {isEditMode ? 'Edit Purchase Order' : 'Create Purchase Order'}
-            </h1>
-          </div>
-        </div>
-
-        {/* Form */}
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <POFormBasicInfo form={form} />
-            <POFormDeliverables form={form} />
-            <POFormMilestones form={form} />
-            <POFormAcceptanceCriteria form={form} />
-
-            {/* Actions */}
-            <Card className="p-6">
-              <div className="flex gap-3 justify-end">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigate(-1)}
-                  disabled={loading}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="gap-2"
-                >
-                  <Save className="h-4 w-4" />
-                  {loading ? 'Saving...' : (isEditMode ? 'Update Purchase Order' : 'Create Purchase Order')}
-                </Button>
-              </div>
-            </Card>
-          </form>
-        </Form>
-      </div>
-    </div>
+    <Form {...form}>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <CreatePOLayout
+          currentStep={currentStep}
+          totalSteps={TOTAL_STEPS}
+          onStepChange={handleStepChange}
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          onSubmit={handleFormSubmit}
+          isEditMode={isEditMode}
+          isSubmitting={loading}
+          progress={progress}
+          stepTitle={STEP_TITLES[currentStep - 1]}
+        >
+          {renderStepContent()}
+        </CreatePOLayout>
+      </form>
+    </Form>
   );
 };
 
