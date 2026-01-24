@@ -139,8 +139,8 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
                 className={cn(
                     "border-2 border-dashed rounded-lg p-6 text-center transition-colors",
                     isDragging
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-300 hover:border-gray-400",
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary/50",
                     disabled && "opacity-50 cursor-not-allowed",
                     !canAddMore && "opacity-50"
                 )}
@@ -158,25 +158,25 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
                 <div className="flex flex-col items-center gap-2">
                     <Upload className={cn(
                         "h-8 w-8",
-                        isDragging ? "text-blue-500" : "text-gray-400"
+                        isDragging ? "text-primary" : "text-muted-foreground"
                     )} />
                     <div>
-                        <p className="text-sm font-medium text-gray-700">
+                        <p className="text-sm font-medium text-foreground">
                             {isDragging ? "Drop files here" : "Drag & drop files here"}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                             or{' '}
                             <button
                                 type="button"
                                 onClick={handleBrowseClick}
                                 disabled={!canAddMore}
-                                className="text-blue-600 hover:text-blue-700 font-medium disabled:opacity-50"
+                                className="text-primary hover:text-primary/80 font-medium disabled:opacity-50"
                             >
                                 browse
                             </button>
                         </p>
                     </div>
-                    <p className="text-xs text-gray-400 mt-2">
+                    <p className="text-xs text-muted-foreground mt-2">
                         PDF, DOC, DOCX, XLS, XLSX (max {formatFileSize(MAX_FILE_SIZE)} each, up to {maxFiles} files)
                     </p>
                 </div>
@@ -185,38 +185,38 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
             {/* File list */}
             {files.length > 0 && (
                 <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-700">
+                    <p className="text-sm font-medium text-foreground">
                         Uploaded Documents ({files.length}/{maxFiles})
                     </p>
                     {files.map((file) => (
-                        <Card key={file.id} className="p-3">
+                        <Card key={file.id} className="p-3 bg-card/60 border-border/60">
                             <div className="flex items-center gap-3">
                                 <File className={cn(
                                     "h-8 w-8 flex-shrink-0",
-                                    file.status === 'error' ? "text-red-400" : "text-blue-400"
+                                    file.status === 'error' ? "text-destructive" : "text-primary"
                                 )} />
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-900 truncate">
+                                    <p className="text-sm font-medium text-foreground truncate">
                                         {file.name}
                                     </p>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs text-gray-500">
+                                        <span className="text-xs text-muted-foreground">
                                             {formatFileSize(file.size)}
                                         </span>
                                         {file.status === 'error' && (
-                                            <span className="flex items-center gap-1 text-xs text-red-600">
+                                            <span className="flex items-center gap-1 text-xs text-destructive">
                                                 <AlertCircle className="h-3 w-3" />
                                                 {file.error}
                                             </span>
                                         )}
                                         {file.status === 'success' && (
-                                            <span className="flex items-center gap-1 text-xs text-green-600">
+                                            <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
                                                 <CheckCircle className="h-3 w-3" />
                                                 Uploaded
                                             </span>
                                         )}
                                         {file.status === 'pending' && (
-                                            <span className="text-xs text-gray-400">Ready to upload</span>
+                                            <span className="text-xs text-muted-foreground">Ready to upload</span>
                                         )}
                                     </div>
                                 </div>
@@ -226,7 +226,7 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
                                     size="sm"
                                     onClick={() => handleRemoveFile(file.id)}
                                     disabled={disabled}
-                                    className="text-gray-400 hover:text-red-500"
+                                    className="text-muted-foreground hover:text-destructive"
                                 >
                                     <X className="h-4 w-4" />
                                 </Button>
