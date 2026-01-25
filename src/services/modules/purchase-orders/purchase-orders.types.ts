@@ -1,35 +1,35 @@
 import { PaginationParams, PaginationResponse } from '../../core/common.types';
 
 // ============= Status Types =============
-export type POStatus = 
-  | 'draft' 
-  | 'pending_approval' 
-  | 'approved' 
+export type POStatus =
+  | 'draft'
+  | 'pending_approval'
+  | 'approved'
   | 'sent_to_vendor'
   | 'vendor_accepted'
   | 'vendor_rejected'
-  | 'in_progress' 
-  | 'completed' 
+  | 'in_progress'
+  | 'completed'
   | 'cancelled';
 
-export type MilestoneStatus = 
-  | 'pending' 
-  | 'in_progress' 
-  | 'completed' 
+export type MilestoneStatus =
+  | 'pending'
+  | 'in_progress'
+  | 'completed'
   | 'overdue';
 
-export type InvoiceStatus = 
-  | 'draft' 
-  | 'pending' 
-  | 'paid' 
-  | 'overdue' 
+export type InvoiceStatus =
+  | 'draft'
+  | 'pending'
+  | 'paid'
+  | 'overdue'
   | 'cancelled';
 
-export type DeliveryStatus = 
-  | 'not_started' 
-  | 'in_transit' 
-  | 'partially_delivered' 
-  | 'delivered' 
+export type DeliveryStatus =
+  | 'not_started'
+  | 'in_transit'
+  | 'partially_delivered'
+  | 'delivered'
   | 'delayed';
 
 export type RecipientType = 'vendor' | 'professional';
@@ -44,11 +44,11 @@ export interface PurchaseOrder {
   vendorName: string;
   requirementId: string;
   quotationId: string;
-  
+
   // Recipient Info
   recipientType?: RecipientType;
   recipientId?: string;
-  
+
   // Financial details
   status: POStatus;
   amount: number;
@@ -57,12 +57,12 @@ export interface PurchaseOrder {
   totalValue: number;
   currency: string;
   paymentTerms: string;
-  
+
   // Project details
   projectTitle: string;
   scopeOfWork: string;
   specialInstructions?: string;
-  
+
   // Timeline
   startDate: string;
   endDate: string;
@@ -71,18 +71,18 @@ export interface PurchaseOrder {
   approvedAt?: string;
   completedAt?: string;
   sentToVendorAt?: string;
-  
+
   // Progress tracking
   completionPercentage: number;
   milestonesCompleted: number;
   milestonesPending: number;
   totalMilestones: number;
-  
+
   // Summary counts
   totalInvoices: number;
   paidInvoices: number;
   pendingInvoices: number;
-  
+
   // Vendor Response
   vendorResponseStatus?: VendorResponseStatus;
   acceptanceDeadline?: string;
@@ -325,6 +325,7 @@ export interface POPrefillData {
   proposedDeliveryDays: number;
   suggestedStartDate: string;
   suggestedEndDate: string;
+  proposalSummary?: string; // For Scope of Work pre-fill
   termsFromQuotation: {
     paymentTerms: string;
     warrantyPeriod?: string;

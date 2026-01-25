@@ -110,7 +110,7 @@ const CreateEditPurchaseOrder: React.FC = () => {
       form.reset({
         quotationId: data.quotationId,
         projectTitle: data.requirementTitle || '',
-        scopeOfWork: '', // User needs to fill this
+        scopeOfWork: data.proposalSummary || '', // Pre-filled from quotation
         specialInstructions: '',
         startDate,
         endDate,
@@ -295,8 +295,8 @@ const CreateEditPurchaseOrder: React.FC = () => {
     switch (currentStep) {
       case 1:
         return (
-          <POFormBasicInfo 
-            form={form} 
+          <POFormBasicInfo
+            form={form}
             sowDocuments={sowDocuments}
             onSowDocumentsChange={setSowDocuments}
           />

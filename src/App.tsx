@@ -64,6 +64,7 @@ import IndustryReports from "@/pages/IndustryReports";
 import IndustrySettings from "@/pages/IndustrySettings";
 import IndustryWorkflows from "@/pages/IndustryWorkflows";
 import IndustryProjectWorkflow from "@/pages/IndustryProjectWorkflow";
+import IndustryWorkflowDetails from "@/pages/IndustryWorkflowDetails";
 import IndustryStakeholders from "@/pages/IndustryStakeholders";
 import IndustryDocuments from "@/pages/IndustryDocuments";
 import IndustryMessages from "@/pages/IndustryMessages";
@@ -135,6 +136,7 @@ import ServiceVendorProjects from "@/pages/ServiceVendorProjects";
 import ServiceVendorMessages from "@/pages/ServiceVendorMessages";
 import ServiceVendorProfile from "@/pages/ServiceVendorProfile";
 import ServiceVendorServices from "@/pages/ServiceVendorServices";
+import VendorWorkflowDetails from "@/pages/VendorWorkflowDetails";
 
 // Product Vendor pages
 import ProductVendorRFQs from "@/pages/ProductVendorRFQs";
@@ -305,6 +307,10 @@ function App() {
                                     <Route
                                       path="industry-project-workflow/:id"
                                       element={<IndustryProjectWorkflow />}
+                                    />
+                                    <Route
+                                      path="workflow-details/:id"
+                                      element={<IndustryWorkflowDetails />}
                                     />
                                     <Route
                                       path="industry-stakeholders"
@@ -525,6 +531,10 @@ function App() {
                                     <Route
                                       path="service-vendor-projects"
                                       element={<ServiceVendorProjects />}
+                                    />
+                                    <Route
+                                      path="vendor/projects/:id"
+                                      element={<VendorWorkflowDetails />}
                                     />
                                     <Route
                                       path="service-vendor-messages"
