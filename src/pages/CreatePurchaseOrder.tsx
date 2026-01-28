@@ -3,9 +3,10 @@ import { useForm, UseFormReturn } from 'react-hook-form';
 import { format, differenceInDays } from 'date-fns';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CalendarIcon, Plus, Trash2, ArrowLeft, Eye } from 'lucide-react';
+import { CalendarIcon, Plus, Trash2, ArrowLeft, Eye, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,6 +19,8 @@ import PurchaseOrderStepIndicator from '@/components/purchase-order/PurchaseOrde
 import { ISO9001TermsSection } from '@/components/industry/workflow/ISO9001TermsSection';
 import POReviewStep from '@/components/purchase-order/POReviewStep';
 import SOWDocumentUpload from '@/components/purchase-order/SOWDocumentUpload';
+import { purchaseOrdersService } from '@/services/modules/purchase-orders';
+import { usePOPrefill } from '@/hooks/usePOFromQuotation';
 
 // Type for uploaded files
 interface UploadedFile {
@@ -150,11 +153,19 @@ const usePOValidation = (form: UseFormReturn<FormValues>) => {
 
 const CreatePurchaseOrder: React.FC = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const quotationId = searchParams.get('quotationId') || '';
+
   const [currentStep, setCurrentStep] = useState<POStepType>(3);
   const [selectedISOTerms, setSelectedISOTerms] = useState<string[]>([]);
   const [customISOTerms, setCustomISOTerms] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [sopDocuments, setSopDocuments] = useState<UploadedFile[]>([]);
+
+  // Fetch quotation data for pre-fill if quotationId is present
+  const { data: prefillData, isLoading: isPrefillLoading } = usePOPrefill(quotationId || undefined);
 
   // Generate unique PO number
   const generatePONumber = useCallback(() => {
@@ -307,42 +318,73 @@ const CreatePurchaseOrder: React.FC = () => {
   };
 
   // Handle save as draft - no validation required
-  const handleSaveAsDraft = () => {
+  const handleSaveAsDraft = async () => {
+    if (!quotationId) {
+      toast({
+        title: "Missing Quotation",
+        description: "Please create a PO from an approved quotation.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSavingDraft(true);
     try {
       const formValues = form.getValues();
+
+      // Prepare data matching CreatePORequest interface
       const draftData = {
-        poNumber: formValues.poNumber || '',
-        vendor: formValues.vendor || '',
+        quotationId,
         projectTitle: formValues.projectTitle || '',
-        orderValue: formValues.orderValue || 0,
-        taxPercentage: formValues.taxPercentage || 0,
-        totalValue: formValues.totalValue || 0,
-        startDate: formValues.startDate || new Date(),
-        endDate: formValues.endDate || new Date(),
-        paymentTerms: formValues.paymentTerms || '',
-        specialInstructions: formValues.specialInstructions || '',
         scopeOfWork: formValues.scopeOfWork || '',
-        deliverables: formValues.deliverables || [],
-        acceptanceCriteria: formValues.acceptanceCriteria || [],
-        isoTerms: selectedISOTerms,
-        customTerms: customISOTerms,
-        status: 'draft',
-        savedAt: new Date().toISOString(),
+        specialInstructions: formValues.specialInstructions || '',
+        startDate: formValues.startDate ? formValues.startDate.toISOString() : new Date().toISOString(),
+        endDate: formValues.endDate ? formValues.endDate.toISOString() : new Date().toISOString(),
+        paymentTerms: formValues.paymentTerms || '',
+        deliverables: (formValues.deliverables || []).map(del => ({
+          description: del.description || '',
+          quantity: 1,
+          unit: 'unit',
+          unitPrice: 0,
+        })),
+        paymentMilestones: (formValues.paymentMilestones || []).map(m => ({
+          name: m.description || '',
+          description: m.description || '',
+          percentage: m.percentage || 0,
+          dueDate: m.dueDate ? m.dueDate.toISOString() : new Date().toISOString(),
+        })),
+        acceptanceCriteria: (formValues.acceptanceCriteria || []).map(ac => ({
+          criteria: ac.criteria || '',
+        })),
+        isoCompliance: {
+          termsAndConditions: selectedISOTerms,
+          qualityRequirements: [],
+          warrantyPeriod: '',
+          penaltyClause: customISOTerms || '',
+        },
+        saveAsDraft: true,
       };
 
-      console.log("Saving draft:", draftData);
+      const response = await purchaseOrdersService.create(draftData);
 
       toast({
         title: "Draft Saved Successfully",
-        description: "Your purchase order has been saved as a draft."
+        description: `Purchase Order ${response.data.poNumber} has been saved as a draft.`
       });
-    } catch (error) {
+
+      // Navigate to the saved PO details page
+      if (response.data?.id) {
+        navigate(`/dashboard/purchase-orders/${response.data.id}`);
+      }
+    } catch (error: any) {
       console.error("Error saving draft:", error);
       toast({
         title: "Error Saving Draft",
-        description: "There was an error saving your draft. Please try again.",
+        description: error?.message || "There was an error saving your draft. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setIsSavingDraft(false);
     }
   };
 

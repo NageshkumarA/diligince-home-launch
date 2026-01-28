@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Eye, CheckCircle, XCircle, Download, Edit, MoreVertical } from 'lucide-react';
+import { Eye, CheckCircle, XCircle, Download, Edit, MoreVertical, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { POStatus } from '@/services/modules/purchase-orders';
 
@@ -16,6 +16,7 @@ interface POQuickActionsProps {
   onApprove?: () => void;
   onReject?: () => void;
   onExport?: () => void;
+  onSubmit?: () => void;
 }
 
 export const POQuickActions: React.FC<POQuickActionsProps> = ({
@@ -24,6 +25,7 @@ export const POQuickActions: React.FC<POQuickActionsProps> = ({
   onApprove,
   onReject,
   onExport,
+  onSubmit,
 }) => {
   const navigate = useNavigate();
 
@@ -32,6 +34,7 @@ export const POQuickActions: React.FC<POQuickActionsProps> = ({
   };
 
   const showApprovalActions = status === 'pending_approval';
+  const showSubmitAction = status === 'draft';
 
   return (
     <div className="flex items-center gap-2">
@@ -52,6 +55,12 @@ export const POQuickActions: React.FC<POQuickActionsProps> = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          {showSubmitAction && (
+            <DropdownMenuItem onClick={onSubmit} className="text-primary">
+              <Send className="h-4 w-4 mr-2" />
+              Submit to Vendor
+            </DropdownMenuItem>
+          )}
           {showApprovalActions && (
             <>
               <DropdownMenuItem onClick={onApprove}>

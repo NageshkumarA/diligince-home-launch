@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { Plus, FileText } from "lucide-react";
 import CustomTable from "@/components/CustomTable";
 import { ColumnConfig, FilterConfig } from "@/types/table";
 import { quotationService } from "@/services/modules/quotations";
 import type { Quotation } from "@/types/quotation";
 import { useToast } from "@/hooks/use-toast";
 import { TableSkeletonLoader } from "@/components/shared/loading";
+import { Button } from "@/components/ui/button";
 
 const QuotationsApproved = () => {
   const [selectedRows, setSelectedRows] = useState<Quotation[]>([]);
@@ -41,6 +43,7 @@ const QuotationsApproved = () => {
     approvedBy: q.approvedBy || "N/A",
     contractValue: `${q.currency} ${q.quotedAmount.toLocaleString()}`,
     status: q.status,
+    quotationId: q.id, // Add quotation ID for Create PO action
   }));
 
   const columns: ColumnConfig[] = [
@@ -106,6 +109,25 @@ const QuotationsApproved = () => {
       filterOptions: [
         { key: "approved", value: "Approved", color: "#dcfce7" },
       ],
+    },
+    {
+      name: "actions",
+      label: "Actions",
+      align: "center",
+      width: "120px",
+      render: (row) => (
+        <Button
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/dashboard/purchase-orders/create?quotationId=${row.quotationId}`);
+          }}
+          className="gap-1"
+        >
+          <Plus className="h-3 w-3" />
+          Create PO
+        </Button>
+      ),
     },
   ];
 

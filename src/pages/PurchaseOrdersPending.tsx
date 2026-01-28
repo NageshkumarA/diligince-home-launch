@@ -159,9 +159,8 @@ const PurchaseOrdersPending = () => {
             Purchase orders awaiting approval before being sent to vendors
           </p>
         </div>
-        <Button onClick={() => navigate('/dashboard/purchase-orders/create')} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Create Purchase Order
+        <Button onClick={() => navigate('/dashboard/quotations-approved')} variant="outline" className="gap-2">
+          View Approved Quotations
         </Button>
       </div>
 
@@ -169,7 +168,7 @@ const PurchaseOrdersPending = () => {
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         statusFilter="pending_approval"
-        onStatusChange={() => {}}
+        onStatusChange={() => { }}
         onClearFilters={() => setSearchTerm("")}
         showStatusFilter={false}
       />

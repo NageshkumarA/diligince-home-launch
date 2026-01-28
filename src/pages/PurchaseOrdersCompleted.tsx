@@ -144,9 +144,8 @@ const PurchaseOrdersCompleted = () => {
             View all successfully completed purchase orders
           </p>
         </div>
-        <Button onClick={() => navigate('/dashboard/purchase-orders/create')} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Create Purchase Order
+        <Button onClick={() => navigate('/dashboard/quotations-approved')} variant="outline" className="gap-2">
+          View Approved Quotations
         </Button>
       </div>
 
@@ -191,7 +190,7 @@ const PurchaseOrdersCompleted = () => {
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         statusFilter="completed"
-        onStatusChange={() => {}}
+        onStatusChange={() => { }}
         onClearFilters={() => setSearchTerm('')}
         showStatusFilter={false}
       />

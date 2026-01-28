@@ -55,6 +55,16 @@ const IndustryPurchaseOrders = () => {
     await purchaseOrdersService.exportToPDF(orderId);
   };
 
+  const { execute: executeSubmit } = useAsyncOperation({
+    showSuccessToast: true,
+    successMessage: 'Purchase order submitted to vendor',
+    onSuccess: () => refetch(),
+  });
+
+  const handleSubmit = async (orderId: string) => {
+    await executeSubmit(() => purchaseOrdersService.send(orderId));
+  };
+
   const handleRowClick = (row: any) => {
     navigate(`/dashboard/purchase-orders/${row.id}`);
   };
@@ -121,6 +131,7 @@ const IndustryPurchaseOrders = () => {
           onApprove={() => handleApprove(row.id)}
           onReject={() => handleReject(row.id)}
           onExport={() => handleExport(row.id)}
+          onSubmit={() => handleSubmit(row.id)}
         />
       ),
     },
@@ -174,9 +185,8 @@ const IndustryPurchaseOrders = () => {
             Manage and track all purchase orders
           </p>
         </div>
-        <Button onClick={() => navigate('/dashboard/purchase-orders/create')} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Create Purchase Order
+        <Button onClick={() => navigate('/dashboard/quotations-approved')} variant="outline" className="gap-2">
+          View Approved Quotations
         </Button>
       </div>
 

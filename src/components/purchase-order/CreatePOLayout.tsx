@@ -14,8 +14,10 @@ interface CreatePOLayoutProps {
   onNext: () => void;
   onPrevious: () => void;
   onSubmit: () => void;
+  onSaveDraft?: () => void;
   isEditMode?: boolean;
   isSubmitting?: boolean;
+  isSavingDraft?: boolean;
   progress: number;
   children: React.ReactNode;
   stepTitle: string;
@@ -30,8 +32,10 @@ export const CreatePOLayout: React.FC<CreatePOLayoutProps> = ({
   onNext,
   onPrevious,
   onSubmit,
+  onSaveDraft,
   isEditMode = false,
   isSubmitting = false,
+  isSavingDraft = false,
   progress,
   children,
   stepTitle,
