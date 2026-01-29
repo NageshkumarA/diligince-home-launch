@@ -40,7 +40,8 @@ export const purchaseOrderFormSchema = z.object({
   })).min(1, "At least one payment milestone is required"),
   acceptanceCriteria: z.array(z.object({
     id: z.string().optional(),
-    criteria: z.string().min(1, "Criteria is required")
+    criteria: z.string().min(1, "Criteria is required"),
+    documents: z.array(sowDocumentSchema).optional()
   })).min(1, "At least one acceptance criteria is required")
 }).refine(data => data.endDate >= data.startDate, {
   message: "End date must be after start date",

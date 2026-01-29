@@ -187,6 +187,15 @@ export interface PaymentMilestone {
   invoiceId?: string;
 }
 
+export interface AcceptanceCriteriaDocument {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  url: string;
+  uploadedAt?: string;
+}
+
 export interface AcceptanceCriteria {
   id: string;
   criteria: string;
@@ -194,6 +203,7 @@ export interface AcceptanceCriteria {
   verifiedAt?: string;
   verifiedBy?: string;
   notes?: string;
+  documents?: AcceptanceCriteriaDocument[];
 }
 
 export interface Invoice {
