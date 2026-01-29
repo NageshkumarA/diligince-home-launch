@@ -36,7 +36,9 @@ const QuotationsApproved = () => {
   const tableData = quotations.map((q) => ({
     id: q.quotationNumber,
     requirementId: q.requirementId,
+    requirementNumber: (q as any).requirementNumber, // Will be populated when backend adds this field
     requirementTitle: q.requirementTitle,
+    requirementDisplay: (q as any).requirementNumber || q.requirementTitle || 'N/A',
     vendorName: q.vendorName,
     quotedAmount: `${q.currency} ${q.quotedAmount.toLocaleString()}`,
     approvedDate: q.approvedDate ? new Date(q.approvedDate).toLocaleDateString() : "N/A",
@@ -59,12 +61,20 @@ const QuotationsApproved = () => {
       width: "120px",
     },
     {
-      name: "requirementId",
+      name: "requirementDisplay",
       label: "Requirement",
       isSortable: true,
       isSearchable: true,
       action: (row) => navigate(`/dashboard/requirements/${row.requirementId}`),
-      width: "120px",
+      width: "180px",
+      render: (row) => (
+        <span 
+          className="text-primary hover:underline cursor-pointer font-medium"
+          title={row.requirementTitle}
+        >
+          {row.requirementNumber || row.requirementTitle || 'N/A'}
+        </span>
+      ),
     },
     {
       name: "requirementTitle",
