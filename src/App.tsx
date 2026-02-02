@@ -34,7 +34,6 @@ import Legal from "@/pages/Legal";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
 import SignUp from "@/pages/SignUp";
-import SignIn from "@/pages/SignIn";
 import MultiStepLogin from "@/pages/MultiStepLogin";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
@@ -111,6 +110,7 @@ import PurchaseOrdersPending from "@/pages/PurchaseOrdersPending";
 import PurchaseOrdersInProgress from "@/pages/PurchaseOrdersInProgress";
 import PurchaseOrdersCompleted from "@/pages/PurchaseOrdersCompleted";
 import PurchaseOrderDetails from "@/pages/PurchaseOrderDetails";
+import VendorPurchaseOrderDetails from "@/pages/VendorPurchaseOrderDetails";
 
 // Workflow sub-pages
 import WorkflowsActive from "@/pages/WorkflowsActive";
@@ -218,7 +218,6 @@ function App() {
                                   {/* Auth Routes */}
                                   <Route path="/signup" element={<SignUp />} />
                                   <Route path="/login" element={<MultiStepLogin />} />
-                                  <Route path="/signin" element={<SignIn />} />
                                   <Route
                                     path="/forgot-password"
                                     element={<ForgotPassword />}
@@ -469,6 +468,10 @@ function App() {
                                     <Route
                                       path="purchase-orders/:id"
                                       element={<PurchaseOrderDetails />}
+                                    />
+                                    <Route
+                                      path="vendor/purchase-orders/:id"
+                                      element={<VendorPurchaseOrderDetails />}
                                     />
 
                                     {/* Workflow Sub-routes */}

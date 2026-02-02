@@ -131,8 +131,8 @@ export class POPDFGenerator {
 
     private addPOInformation(po: PurchaseOrderDetail): void {
         const infoStartY = 50;
-        const col1X = this.pageWidth - 80;
-        const col2X = this.pageWidth - 40;
+        const col1X = this.pageWidth - 90;
+        const col2X = this.pageWidth - 20;
 
         this.doc.setFontSize(10);
 
@@ -189,8 +189,10 @@ export class POPDFGenerator {
             item.description || 'N/A',
             item.quantity?.toString() || '1',
             item.unit || 'unit',
-            this.formatCurrency(item.rate || 0, po.currency),
-            this.formatCurrency(item.amount || 0, po.currency),
+            // Use unitPrice first, fallback to rate for backward compatibility
+            this.formatCurrency(item.unitPrice ?? item.rate ?? 0, po.currency),
+            // Use totalPrice first, fallback to amount for backward compatibility
+            this.formatCurrency(item.totalPrice ?? item.amount ?? 0, po.currency),
         ]);
 
         autoTable(this.doc, {

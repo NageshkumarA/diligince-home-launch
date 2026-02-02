@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Download, FileText, CheckCircle, XCircle, Edit } from 'lucide-react';
 import { purchaseOrdersService } from '@/services/modules/purchase-orders';
+import VendorPurchaseOrderDetails from './VendorPurchaseOrderDetails';
 import { DetailPageSkeleton } from '@/components/shared/loading';
 import { POOverviewTab } from '@/components/purchase-order/POOverviewTab';
 import { POLineItemsTab } from '@/components/purchase-order/POLineItemsTab';
@@ -17,15 +18,35 @@ import { POAcceptanceCriteriaTab } from '@/components/purchase-order/POAcceptanc
 import { POActivityTab } from '@/components/purchase-order/POActivityTab';
 import { exportPOToPDF } from '@/services/pdf-generator';
 import { useToast } from '@/hooks/use-toast';
+import { useUser } from '@/contexts/UserContext';
 
 const PurchaseOrderDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useUser();
+
+  // Debug logging
+  console.log('PurchaseOrderDetails - User:', user);
+  console.log('PurchaseOrderDetails - User Role:', user?.role);
+  console.log('PurchaseOrderDetails - Is Vendor?:', user?.role === 'vendor');
+
+  // If user is a vendor, use the vendor-specific component
+  if (user?.role === 'vendor') {
+    console.log('PurchaseOrderDetails - Redirecting to VendorPurchaseOrderDetails');
+    return <VendorPurchaseOrderDetails />;
+  }
+
+  console.log('PurchaseOrderDetails - Loading industry PO details');
+
+  // Otherwise, continue with industry PO details
 
   const { data: poDetail, isLoading, error } = useQuery({
     queryKey: ['purchase-order', id],
-    queryFn: () => purchaseOrdersService.getById(id!),
+    queryFn: async () => {
+      const response = await purchaseOrdersService.getById(id!);
+      return response.data;
+    },
     enabled: !!id,
   });
 
@@ -56,7 +77,7 @@ const PurchaseOrderDetails = () => {
 
     try {
       // Use client-side PDF generation
-      await exportPOToPDF(poDetail.data);
+      await exportPOToPDF(poDetail);
       toast({
         title: 'Success',
         description: 'PDF exported successfully',
@@ -94,9 +115,17 @@ const PurchaseOrderDetails = () => {
     );
   }
 
-  const po = poDetail.data;
-  const showApprovalActions = po.status === 'pending_approval';
-  const canEdit = po.status === 'draft' || po.status === 'cancelled';
+  const po = poDetail;
+
+  // Role-based access control
+  const isVendor = user?.role === 'vendor';
+  const isIndustry = user?.role === 'industry';
+
+  // Only vendors can approve/reject POs sent to them
+  const showApprovalActions = po.status === 'pending_approval' && isVendor;
+
+  // Only industry users can edit (not vendors)
+  const canEdit = (po.status === 'draft' || po.status === 'cancelled') && isIndustry;
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -106,11 +135,15 @@ const PurchaseOrderDetails = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/dashboard/industry-purchase-orders')}
+            onClick={() => navigate(
+              isVendor
+                ? '/dashboard/service-vendor'  // Vendor dashboard
+                : '/dashboard/industry-purchase-orders'  // Industry PO list
+            )}
             className="gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Purchase Orders
+            Back to {isVendor ? 'Dashboard' : 'Purchase Orders'}
           </Button>
         </div>
 
