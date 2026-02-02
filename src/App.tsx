@@ -33,6 +33,12 @@ import Careers from "@/pages/Careers";
 import Legal from "@/pages/Legal";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
+import Security from "@/pages/Security";
+import CookiePolicy from "@/pages/CookiePolicy";
+import HelpCenter from "@/pages/HelpCenter";
+import Documentation from "@/pages/Documentation";
+import Community from "@/pages/Community";
+import PressKit from "@/pages/PressKit";
 import SignUp from "@/pages/SignUp";
 import MultiStepLogin from "@/pages/MultiStepLogin";
 import ForgotPassword from "@/pages/ForgotPassword";
@@ -211,6 +217,16 @@ function App() {
                                   <Route path="/legal" element={<Legal />} />
                                   <Route path="/privacy" element={<Privacy />} />
                                   <Route path="/terms" element={<Terms />} />
+                                  <Route path="/security" element={<Security />} />
+                                  <Route path="/cookies" element={<CookiePolicy />} />
+                                  <Route path="/help" element={<HelpCenter />} />
+                                  <Route path="/documentation" element={<Documentation />} />
+                                  <Route path="/community" element={<Community />} />
+                                  <Route path="/press" element={<PressKit />} />
+                                  <Route path="/solutions/industries" element={<ComingSoon />} />
+                                  <Route path="/solutions/professionals" element={<ComingSoon />} />
+                                  <Route path="/solutions/vendors" element={<ComingSoon />} />
+                                  <Route path="/solutions/enterprise" element={<ComingSoon />} />
 
                                   {/* Coming Soon Route */}
                                   <Route path="/coming-soon" element={<ComingSoon />} />
