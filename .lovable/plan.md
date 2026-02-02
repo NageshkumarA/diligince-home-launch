@@ -1,308 +1,190 @@
 
-# Implementation Plan: Approved Quotations & PO Form Enhancements
-
----
+# Footer Dark Theme Redesign & Consolidation Plan
 
 ## Overview
 
-This plan addresses three user requests:
-1. Fix requirement ID display in Approved Quotations (showing hash instead of human-readable ID)
-2. Restrict "Create PO" menu item to be accessible only from Approved Quotations
-3. Add file upload support to Acceptance Criteria form section
+This plan addresses two requirements:
+1. Redesign the footer with a dark theme matching the Technology & Innovation section (corporate navy gradient background with appropriate text colors)
+2. Ensure the Footer component is used consistently across all pages without code duplication
 
 ---
 
-## Issue 1: Requirement ID Displaying Hash
+## Current State Analysis
 
-### Current Behavior
-The "Requirement" column in `QuotationsApproved.tsx` displays `q.requirementId` which is a MongoDB ObjectId (e.g., `#695c0638f0e6a8d036356fdb`).
+### Footer Usage Across Pages
+The `Footer` component from `src/components/Footer.tsx` is already imported in 12 files:
 
-### Root Cause
-The API returns `requirementId` (database ID) but no human-readable requirement number.
+| Page | Import Path |
+|------|-------------|
+| `src/pages/Index.tsx` | `Footer` |
+| `src/pages/About.tsx` | `Footer` |
+| `src/pages/Pricing.tsx` | `Footer` |
+| `src/pages/Contact.tsx` | `Footer` |
+| `src/pages/Privacy.tsx` | `Footer` |
+| `src/pages/Terms.tsx` | `Footer` |
+| `src/pages/Blog.tsx` | `Footer` |
+| `src/pages/BlogArticle.tsx` | `Footer` |
+| `src/pages/Legal.tsx` | `Footer` |
+| `src/pages/Careers.tsx` | `Footer` |
+| `src/pages/VendorProfile.tsx` | `Footer` |
+| `src/components/auth/AuthLayout.tsx` | `Footer` |
 
-### Solution Options
-
-| Option | Approach | Frontend Work | Backend Work |
-|--------|----------|---------------|--------------|
-| A | Display `requirementTitle` instead of ID | Change column data mapping | None |
-| B | Request `requirementNumber` from backend | Add new field to column | Add to API response |
-| C | Truncate hash and show title on hover | UI enhancement | None |
-
-### Recommended: Option B (with fallback to A)
-
-**Frontend Changes:**
-- Update `QuotationsApproved.tsx` column to display `requirementNumber` if available, fallback to `requirementTitle`
-- Add tooltip showing full requirement title
-
-**Files to Modify:**
-- `src/pages/QuotationsApproved.tsx`
-
-**Backend Requirement (see Backend Tasks section):**
-- Add `requirementNumber` field to quotation response
+All pages are already using the same shared `Footer` component - no duplication exists.
 
 ---
 
-## Issue 2: Restrict "Create PO" Menu Access
+## Design Reference
 
-### Current Behavior
-"Create PO" is accessible directly from sidebar, but it requires a `quotationId` parameter to function properly.
+The Technology & Innovation section uses:
+- Background: `bg-gradient-to-br from-corporate-navy-900 via-corporate-navy-800 to-corporate-navy-700`
+- Text colors: White headings, `text-gray-300` for descriptions, `text-gray-400` for secondary text
+- Accent colors: `text-primary-400` for highlights
+- Cards: `bg-white/5 backdrop-blur-sm border border-white/10`
+- Subtle grid pattern overlay with low opacity
 
-### Solution
-Make the menu item visually distinct and non-clickable, with a tooltip explaining the access path.
+---
 
-### Implementation
+## Implementation Tasks
 
-**File: `src/config/menuConfig.ts`**
-Add a `restricted` flag to the menu item:
+### Task 1: Redesign Footer Component with Dark Theme
 
-```typescript
-{
-  icon: Plus,
-  label: "Create PO",
-  path: "/dashboard/create-purchase-order",
-  restricted: true,
-  restrictedReason: "Create PO from Approved Quotations",
-}
-```
+**File:** `src/components/Footer.tsx`
 
-**File: `src/components/Sidebar.tsx`**
-Handle restricted menu items with:
-- Grayed out appearance
-- Tooltip with explanation
-- Prevent navigation on click
+**Color Changes:**
 
-**Visual Treatment:**
+| Element | Current | New |
+|---------|---------|-----|
+| Background | `bg-[#FAFAFA]` | `bg-gradient-to-br from-corporate-navy-900 via-corporate-navy-800 to-corporate-navy-700` |
+| Brand name | `text-[#153b60]` | `text-white` |
+| Description | `text-[#828282]` | `text-gray-300` |
+| Section headers | `text-[#333333]` | `text-white` |
+| Link text | `text-[#828282]` | `text-gray-400` |
+| Link hover | `hover:text-[#153b60]` | `hover:text-primary-400` |
+| Borders | `border-[#153b60]/10` | `border-white/10` |
+| Social icons bg | `bg-white` with neumorphic shadow | `bg-white/10 backdrop-blur-sm border border-white/20` |
+| Newsletter input | Light neumorphic | `bg-white/10 border border-white/20` |
+| Subscribe button | Current gradient (keep) | Keep gradient, adjust for dark bg |
+| Accent underlines | `bg-[#153b60]` | `bg-primary-400` |
+| Copyright text | `text-[#828282]` | `text-gray-400` |
+| Pulse indicator | `bg-[#153b60]` | `bg-primary-400` |
+
+**Background Pattern Update:**
+- Replace light pattern with subtle grid similar to TechnologyHub
+- Add glow orbs with `bg-primary-500/20` and `bg-purple-500/10`
+
+**Updated Structure:**
 ```text
-┌──────────────────────────────┐
-│ 📋 Purchase Orders      ▼   │
-├──────────────────────────────┤
-│   + Create PO    (grayed)   │  ← Shows tooltip: "Access from Approved Quotations"
-│   ☰ All Orders              │
-│   ⏱ Pending                 │
-│   ⚡ In Progress            │
-│   ✓ Completed               │
-└──────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  Dark gradient background (corporate-navy-900 → 800 → 700)                 │
+│  ╔═══════════════════════════════════════════════════════════════════════╗  │
+│  ║  [Logo] Diligince.ai          │        Stay Updated                  ║  │
+│  ║  Description (gray-300)       │        Description (gray-300)        ║  │
+│  ║  [Social icons - glass style] │        [Input] [Subscribe btn]       ║  │
+│  ╠═══════════════════════════════════════════════════════════════════════╣  │
+│  ║  Company     Solutions     Resources     Legal                       ║  │
+│  ║  (white)     (white)       (white)       (white)                     ║  │
+│  ║  Links...    Links...      Links...      Links...                    ║  │
+│  ║  (gray-400)  (gray-400)    (gray-400)    (gray-400)                  ║  │
+│  ╠═══════════════════════════════════════════════════════════════════════╣  │
+│  ║  © 2025 Diligince.ai        Made with AI-Powered Intelligence ●      ║  │
+│  ╚═══════════════════════════════════════════════════════════════════════╝  │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
-
-**Files to Modify:**
-- `src/config/menuConfig.ts` - Add interface for restricted flag
-- `src/components/Sidebar.tsx` - Handle restricted menu items
 
 ---
 
-## Issue 3: File Upload for Acceptance Criteria
+## Technical Details
 
-### Current Behavior
-Each acceptance criteria entry only has a text input field.
+### Updated Footer Component Classes
 
-### Solution
-Add file upload capability to each criteria item, similar to SOW documents.
-
-### Schema Update
-
-**File: `src/schemas/purchase-order-form.schema.ts`**
-
-```typescript
-acceptanceCriteria: z.array(z.object({
-  id: z.string().optional(),
-  criteria: z.string().min(1, "Criteria is required"),
-  documents: z.array(sowDocumentSchema).optional() // New field
-})).min(1, "At least one acceptance criteria is required")
+**Main container:**
+```tsx
+<footer className="bg-gradient-to-br from-corporate-navy-900 via-corporate-navy-800 to-corporate-navy-700 text-white py-20 relative overflow-hidden">
 ```
 
-### Component Update
-
-**File: `src/components/purchase-order/forms/POFormAcceptanceCriteria.tsx`**
-
-Add collapsible file upload section per criteria:
-
-```text
-┌────────────────────────────────────────────────────────────┐
-│  Acceptance Criteria                       + Add Criteria  │
-│  Define criteria for work acceptance                       │
-├────────────────────────────────────────────────────────────┤
-│  ┌──────────────────────────────────────────────────────┐ │
-│  │ 1 │ [Criteria text input...........................]  │🗑│
-│  │   ├──────────────────────────────────────────────────┤ │
-│  │   │ 📎 Attach Documents (Optional)          ▼       │ │
-│  │   │ ┌─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐       │ │
-│  │   │ │ Drag & drop or browse                 │       │ │
-│  │   │ └─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘       │ │
-│  └───┴──────────────────────────────────────────────────┘ │
-└────────────────────────────────────────────────────────────┘
+**Background pattern (grid style):**
+```tsx
+<div className="absolute inset-0 opacity-10">
+  <div className="absolute inset-0" style={{
+    backgroundImage: `
+      linear-gradient(90deg, currentColor 1px, transparent 1px),
+      linear-gradient(currentColor 1px, transparent 1px)
+    `,
+    backgroundSize: '60px 60px'
+  }} />
+</div>
 ```
 
-**Implementation Approach:**
-1. Create `AcceptanceCriteriaDocUpload.tsx` - lightweight file upload for each criteria
-2. Add collapsible section for document attachment
-3. Manage files per criteria entry
+**Glow effects:**
+```tsx
+<div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
+<div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl" />
+```
 
-**Files to Modify:**
-- `src/schemas/purchase-order-form.schema.ts`
-- `src/components/purchase-order/forms/POFormAcceptanceCriteria.tsx`
-- `src/services/modules/purchase-orders/purchase-orders.types.ts`
+**Social icons (glassmorphism):**
+```tsx
+<a href="#" className="group w-11 h-11 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl flex items-center justify-center hover:bg-white/20 hover:-translate-y-1 transition-all duration-300">
+  <Globe className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+</a>
+```
+
+**Newsletter input:**
+```tsx
+<input
+  type="email"
+  placeholder="Enter your email"
+  className="flex-1 px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-400/50 focus:border-primary-400/50 transition-all backdrop-blur-sm"
+/>
+```
+
+**Section headers:**
+```tsx
+<h4 className="text-lg font-bold text-white mb-4 relative inline-block">
+  Company
+  <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-primary-400"></span>
+</h4>
+```
+
+**Links:**
+```tsx
+<Link to="/about" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
+  About Us
+</Link>
+```
+
+**Borders:**
+```tsx
+// Top section border
+<div className="... border-b border-white/10">
+
+// Bottom section border  
+<div className="pt-8 border-t border-white/10">
+```
 
 ---
 
-## Files to Modify Summary
+## Files to Modify
 
-| File | Changes |
-|------|---------|
-| `src/pages/QuotationsApproved.tsx` | Update requirement column to show title/number instead of hash |
-| `src/config/menuConfig.ts` | Add `restricted` flag and interface updates |
-| `src/components/Sidebar.tsx` | Handle restricted menu items (styling + tooltip + click prevention) |
-| `src/schemas/purchase-order-form.schema.ts` | Add `documents` array to acceptance criteria schema |
-| `src/components/purchase-order/forms/POFormAcceptanceCriteria.tsx` | Add file upload per criteria item |
-| `src/services/modules/purchase-orders/purchase-orders.types.ts` | Add documents to AcceptanceCriteria type |
+| File | Action |
+|------|--------|
+| `src/components/Footer.tsx` | Major styling update to dark theme |
+
+No changes needed to pages - all already use the shared Footer component.
 
 ---
 
-## Backend Tasks Document
+## Visual Preview
 
-### Required Backend Changes
-
-#### 1. Add Requirement Number to Quotation Response
-
-**Endpoint:** `GET /api/v1/industry/quotations/approved`
-
-**Current Response:**
-```json
-{
-  "quotations": [{
-    "id": "...",
-    "requirementId": "695c0638f0e6a8d036356fdb",
-    "requirementTitle": "Testing",
-    ...
-  }]
-}
-```
-
-**Required Response:**
-```json
-{
-  "quotations": [{
-    "id": "...",
-    "requirementId": "695c0638f0e6a8d036356fdb",
-    "requirementNumber": "REQ-2026-01-0042",  // New field
-    "requirementTitle": "Testing",
-    ...
-  }]
-}
-```
-
-**Backend Implementation:**
-- Join/populate requirement data to include the human-readable `requirementNumber` field
-- Apply to all quotation list endpoints: `/pending`, `/approved`, `/all`
-
-**Estimated Effort:** 1-2 hours
+The redesigned footer will match the Technology & Innovation section style:
+- Deep navy gradient background
+- White headings with primary-400 accents
+- Gray-300/400 text for body content
+- Glassmorphism effects on interactive elements
+- Subtle grid pattern overlay
+- Soft glow orbs in background
 
 ---
 
-#### 2. Support Documents in Acceptance Criteria
+## Summary
 
-**Endpoint:** `POST /api/v1/industry/purchase-orders`
-
-**Current Request Body (acceptanceCriteria):**
-```json
-{
-  "acceptanceCriteria": [
-    { "criteria": "Criteria text" }
-  ]
-}
-```
-
-**Updated Request Body:**
-```json
-{
-  "acceptanceCriteria": [
-    {
-      "criteria": "Criteria text",
-      "documents": [
-        {
-          "name": "specification.pdf",
-          "size": 102400,
-          "type": "application/pdf",
-          "url": "https://storage.example.com/..." 
-        }
-      ]
-    }
-  ]
-}
-```
-
-**Backend Implementation:**
-1. Update Joi/Zod validation schema to accept optional `documents` array
-2. Store document references in acceptance_criteria collection/table
-3. Return documents in GET response
-
-**Database Schema Update:**
-```javascript
-// MongoDB example
-{
-  criteria: String,
-  documents: [{
-    name: String,
-    size: Number,
-    type: String,
-    url: String,
-    uploadedAt: Date
-  }],
-  status: { type: String, enum: ['pending', 'met', 'failed'] }
-}
-```
-
-**Estimated Effort:** 2-3 hours
-
----
-
-#### 3. File Upload Endpoint for Acceptance Criteria Documents
-
-**New Endpoint:** `POST /api/v1/industry/purchase-orders/:orderId/acceptance-criteria/:criteriaId/documents`
-
-**Request:** Multipart form-data with file
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "doc_123",
-    "name": "requirement_spec.pdf",
-    "size": 102400,
-    "type": "application/pdf",
-    "url": "https://storage.example.com/...",
-    "uploadedAt": "2026-01-29T10:00:00Z"
-  }
-}
-```
-
-**Alternative:** Use existing upload endpoint if available, store URL reference in criteria
-
-**Estimated Effort:** 2-3 hours
-
----
-
-### Backend Summary
-
-| Task | Priority | Estimated Time |
-|------|----------|----------------|
-| Add `requirementNumber` to quotation responses | High | 1-2 hours |
-| Update acceptance criteria schema for documents | Medium | 2-3 hours |
-| Create/reuse file upload for criteria documents | Medium | 2-3 hours |
-| **Total** | | **5-8 hours** |
-
----
-
-## Implementation Sequence
-
-1. **Phase 1 - Quick Wins (Frontend only)**
-   - Update requirement column to show `requirementTitle` as fallback
-   - Add restricted styling to "Create PO" menu item
-
-2. **Phase 2 - Acceptance Criteria Enhancement**
-   - Update schema with documents field
-   - Enhance POFormAcceptanceCriteria component with file upload
-
-3. **Phase 3 - Backend Integration**
-   - Integrate `requirementNumber` when backend provides it
-   - Wire up document upload for acceptance criteria
+This is a single-file update to `Footer.tsx` that transforms the light theme to a dark corporate navy theme. Since all pages already import and use this shared component, the change will automatically apply across the entire application without any code duplication.
