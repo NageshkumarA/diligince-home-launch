@@ -95,9 +95,9 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
+                <Link to="/press" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
                   Press Kit
-                </a>
+                </Link>
               </li>
               <li>
                 <Link to="/blog" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
@@ -115,24 +115,24 @@ const Footer = () => {
             </h4>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
+                <Link to="/solutions/industries" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
                   For Industries
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
+                <Link to="/solutions/professionals" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
                   For Professionals
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
+                <Link to="/solutions/vendors" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
                   For Vendors
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
+                <Link to="/solutions/enterprise" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
                   Enterprise
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -145,24 +145,19 @@ const Footer = () => {
             </h4>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
+                <Link to="/help" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
                   Help Center
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
+                <Link to="/documentation" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
                   Documentation
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
-                  API Reference
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
+                <Link to="/community" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
                   Community
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -185,14 +180,14 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
+                <Link to="/cookies" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
                   Cookie Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
+                <Link to="/security" className="text-gray-400 hover:text-primary-400 transition-colors duration-200 text-sm">
                   Security
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
