@@ -39,7 +39,7 @@ import type {
 
 class PurchaseOrdersService {
   // ============= List Operations =============
-  
+
   async getActive(params?: POListParams): Promise<POListResponse> {
     return apiService.get<POListResponse>(purchaseOrdersRoutes.getActive(params));
   }
@@ -61,13 +61,13 @@ class PurchaseOrdersService {
   }
 
   // ============= Subscription Limit =============
-  
+
   async checkLimit(): Promise<POLimitResponse> {
     return apiService.get<POLimitResponse>(purchaseOrdersRoutes.checkLimit);
   }
 
   // ============= Single PO Operations =============
-  
+
   async getById(orderId: string): Promise<PODetailResponse> {
     return apiService.get<PODetailResponse>(purchaseOrdersRoutes.getById(orderId));
   }
@@ -89,8 +89,12 @@ class PurchaseOrdersService {
     return apiService.post<PODetailResponse, CancelPORequest>(purchaseOrdersRoutes.cancel(orderId), payload);
   }
 
+  async delete(orderId: string): Promise<void> {
+    return apiService.remove<void>(`/api/v1/industry/purchase-orders/${orderId}`);
+  }
+
   // ============= Approval =============
-  
+
   async approve(orderId: string, comments?: string): Promise<PODetailResponse> {
     const payload: ApprovePORequest = { comments };
     return apiService.post<PODetailResponse, ApprovePORequest>(purchaseOrdersRoutes.approve(orderId), payload);
@@ -102,13 +106,13 @@ class PurchaseOrdersService {
   }
 
   // ============= Send to Vendor =============
-  
+
   async send(orderId: string, data?: SendPORequest): Promise<POSendResponse> {
     return apiService.post<POSendResponse, SendPORequest | {}>(purchaseOrdersRoutes.send(orderId), data || {});
   }
 
   // ============= Milestone Operations =============
-  
+
   async getMilestones(orderId: string): Promise<MilestoneListResponse> {
     return apiService.get<MilestoneListResponse>(purchaseOrdersRoutes.getMilestones(orderId));
   }
@@ -120,8 +124,8 @@ class PurchaseOrdersService {
   }
 
   async updateMilestone(
-    orderId: string, 
-    milestoneId: string, 
+    orderId: string,
+    milestoneId: string,
     data: MilestoneUpdateRequest
   ): Promise<{ success: boolean; data: PaymentMilestone }> {
     return apiService.put<{ success: boolean; data: PaymentMilestone }, MilestoneUpdateRequest>(
@@ -131,8 +135,8 @@ class PurchaseOrdersService {
   }
 
   async markMilestoneComplete(
-    orderId: string, 
-    milestoneId: string, 
+    orderId: string,
+    milestoneId: string,
     notes?: string
   ): Promise<{ success: boolean; data: PaymentMilestone }> {
     return apiService.post<{ success: boolean; data: PaymentMilestone }, { notes?: string }>(
@@ -142,8 +146,8 @@ class PurchaseOrdersService {
   }
 
   async uploadMilestoneProof(
-    orderId: string, 
-    milestoneId: string, 
+    orderId: string,
+    milestoneId: string,
     document: File
   ): Promise<{ success: boolean; data: PaymentMilestone }> {
     const formData = new FormData();
@@ -155,7 +159,7 @@ class PurchaseOrdersService {
   }
 
   // ============= Invoice Operations =============
-  
+
   async getInvoices(orderId: string): Promise<InvoiceListResponse> {
     return apiService.get<InvoiceListResponse>(purchaseOrdersRoutes.getInvoices(orderId));
   }
@@ -174,8 +178,8 @@ class PurchaseOrdersService {
   }
 
   async updateInvoice(
-    orderId: string, 
-    invoiceId: string, 
+    orderId: string,
+    invoiceId: string,
     data: InvoiceUpdateRequest
   ): Promise<{ success: boolean; data: Invoice }> {
     return apiService.put<{ success: boolean; data: Invoice }, InvoiceUpdateRequest>(
@@ -185,8 +189,8 @@ class PurchaseOrdersService {
   }
 
   async markInvoicePaid(
-    orderId: string, 
-    invoiceId: string, 
+    orderId: string,
+    invoiceId: string,
     paymentData: MarkInvoicePaidRequest
   ): Promise<{ success: boolean; data: Invoice }> {
     return apiService.post<{ success: boolean; data: Invoice }, MarkInvoicePaidRequest>(
@@ -203,7 +207,7 @@ class PurchaseOrdersService {
   }
 
   // ============= Delivery Operations =============
-  
+
   async getDeliveryTracking(orderId: string): Promise<DeliveryTrackingResponse> {
     return apiService.get<DeliveryTrackingResponse>(purchaseOrdersRoutes.getDeliveryTracking(orderId));
   }
@@ -229,13 +233,13 @@ class PurchaseOrdersService {
   }
 
   // ============= Activity Log =============
-  
+
   async getActivityLog(orderId: string): Promise<ActivityLogResponse> {
     return apiService.get<ActivityLogResponse>(purchaseOrdersRoutes.getActivityLog(orderId));
   }
 
   // ============= Export Operations =============
-  
+
   async exportToPDF(orderId: string, options?: ExportPDFOptions): Promise<Blob> {
     return apiService.get<Blob>(
       purchaseOrdersRoutes.exportToPDF(orderId, options),
@@ -252,7 +256,7 @@ class PurchaseOrdersService {
   }
 
   // ============= Vendor Methods =============
-  
+
   vendor = {
     getAll: async (params?: VendorPOListParams): Promise<VendorPOListResponse> => {
       return apiService.get<VendorPOListResponse>(purchaseOrdersRoutes.vendor.getAll(params));

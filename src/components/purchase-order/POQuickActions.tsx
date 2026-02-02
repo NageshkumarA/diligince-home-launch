@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Eye, CheckCircle, XCircle, Download, Edit, MoreVertical, Send } from 'lucide-react';
+import { Eye, CheckCircle, XCircle, Download, Edit, MoreVertical, Send, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { POStatus } from '@/services/modules/purchase-orders';
 
@@ -17,6 +17,8 @@ interface POQuickActionsProps {
   onReject?: () => void;
   onExport?: () => void;
   onSubmit?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 export const POQuickActions: React.FC<POQuickActionsProps> = ({
@@ -26,6 +28,8 @@ export const POQuickActions: React.FC<POQuickActionsProps> = ({
   onReject,
   onExport,
   onSubmit,
+  onEdit,
+  onDelete,
 }) => {
   const navigate = useNavigate();
 
@@ -35,6 +39,8 @@ export const POQuickActions: React.FC<POQuickActionsProps> = ({
 
   const showApprovalActions = status === 'pending_approval';
   const showSubmitAction = status === 'draft';
+  const canEdit = ['draft', 'cancelled'].includes(status);
+  const canDelete = ['draft', 'cancelled'].includes(status);
 
   return (
     <div className="flex items-center gap-2">
@@ -73,10 +79,18 @@ export const POQuickActions: React.FC<POQuickActionsProps> = ({
               </DropdownMenuItem>
             </>
           )}
-          <DropdownMenuItem onClick={handleView}>
-            <Edit className="h-4 w-4 mr-2" />
-            Edit
-          </DropdownMenuItem>
+          {canEdit && onEdit && (
+            <DropdownMenuItem onClick={onEdit}>
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
+            </DropdownMenuItem>
+          )}
+          {canDelete && onDelete && (
+            <DropdownMenuItem onClick={onDelete} className="text-destructive focus:text-destructive">
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={onExport}>
             <Download className="h-4 w-4 mr-2" />
             Export PDF

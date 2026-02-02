@@ -5,9 +5,6 @@ export type POStatus =
   | 'draft'
   | 'pending_approval'
   | 'approved'
-  | 'sent_to_vendor'
-  | 'vendor_accepted'
-  | 'vendor_rejected'
   | 'in_progress'
   | 'completed'
   | 'cancelled';
@@ -101,9 +98,19 @@ export interface PurchaseOrderDetail extends PurchaseOrder {
   documents: Document[];
   activityLog: ActivityLog[];
   approvalWorkflow: ApprovalWorkflow;
-  isoCompliance?: ISOCompliance;
+  isoCompliance?: ISOCompliance | null;
+
+  // Optional fields for backward compatibility and legacy support
+  poNumber?: string;  // Display-friendly PO number
+  milestones?: PaymentMilestone[];  // Legacy alias for paymentMilestones
+  vendorEmail?: string;  // Flattened vendor email
+  vendorPhone?: string;  // Flattened vendor phone
+  subtotal?: number;  // Pre-tax subtotal
+  gstRate?: number;  // GST/Tax rate percentage
+  termsConditions?: string;  // Terms and conditions text
   vendorResponse?: VendorResponse;
 }
+
 
 // ============= ISO Compliance =============
 export interface ISOCompliance {
@@ -172,6 +179,11 @@ export interface Deliverable {
   unitPrice: number;
   totalPrice: number;
   status: 'pending' | 'in_progress' | 'delivered';
+
+  // Legacy aliases for backward compatibility
+  rate?: number;  // Alias for unitPrice
+  amount?: number;  // Alias for totalPrice
+  specifications?: string;
 }
 
 export interface PaymentMilestone {
@@ -185,6 +197,10 @@ export interface PaymentMilestone {
   completedAt?: string;
   proofDocuments?: Document[];
   invoiceId?: string;
+
+  //Legacy aliases
+  milestoneName?: string;  // Alias for name
+  title?: string;  // Another alias for name
 }
 
 export interface AcceptanceCriteriaDocument {

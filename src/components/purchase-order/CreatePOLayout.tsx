@@ -133,18 +133,30 @@ export const CreatePOLayout: React.FC<CreatePOLayoutProps> = ({
           </div>
 
           {/* Footer */}
-          <footer className="flex-shrink-0 h-16 border-t border-border/60 bg-background/80 backdrop-blur-sm px-6 flex items-center justify-between">
-            <Button
-              variant="outline"
-              onClick={handlePrevious}
-              disabled={isFirstStep}
-              className="gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Previous
-            </Button>
-
+          <footer className="flex-shrink-0 h-16 border-t border-border/60 bg-background/80 backdrop-blur-sm px-6 flex items-center justify-center">
             <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={isFirstStep}
+                className="gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Previous
+              </Button>
+
+              {onSaveDraft && (
+                <Button
+                  variant="outline"
+                  onClick={onSaveDraft}
+                  disabled={isSavingDraft}
+                  className="gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  {isSavingDraft ? 'Saving...' : 'Save Draft'}
+                </Button>
+              )}
+
               {isLastStep ? (
                 <Button
                   onClick={onSubmit}
@@ -152,7 +164,7 @@ export const CreatePOLayout: React.FC<CreatePOLayoutProps> = ({
                   className="gap-2 bg-primary hover:bg-primary/90"
                 >
                   <Save className="w-4 h-4" />
-                  {isSubmitting ? 'Saving...' : (isEditMode ? 'Update PO' : 'Create PO')}
+                  {isSubmitting ? 'Saving...' : (isEditMode ? 'Update PO' : 'Submit for Approval')}
                 </Button>
               ) : (
                 <Button
@@ -209,35 +221,49 @@ export const CreatePOLayout: React.FC<CreatePOLayoutProps> = ({
         </div>
 
         {/* Mobile Footer */}
-        <footer className="flex-shrink-0 border-t border-border/60 bg-background p-4 flex items-center justify-between gap-3">
-          <Button
-            variant="outline"
-            onClick={handlePrevious}
-            disabled={isFirstStep}
-            className="flex-1"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Previous
-          </Button>
+        <footer className="flex-shrink-0 border-t border-border/60 bg-background p-4">
+          <div className="flex items-center justify-center gap-3">
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={isFirstStep}
+              className="flex-1"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Previous
+            </Button>
 
-          {isLastStep ? (
-            <Button
-              onClick={onSubmit}
-              disabled={isSubmitting}
-              className="flex-1 bg-primary hover:bg-primary/90"
-            >
-              <Save className="w-4 h-4 mr-2" />
-              {isSubmitting ? 'Saving...' : 'Save'}
-            </Button>
-          ) : (
-            <Button
-              onClick={handleNext}
-              className="flex-1 bg-primary hover:bg-primary/90"
-            >
-              Continue
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          )}
+            {onSaveDraft && (
+              <Button
+                variant="outline"
+                onClick={onSaveDraft}
+                disabled={isSavingDraft}
+                className="flex-1"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {isSavingDraft ? 'Draft' : 'Save'}
+              </Button>
+            )}
+
+            {isLastStep ? (
+              <Button
+                onClick={onSubmit}
+                disabled={isSubmitting}
+                className="flex-1 bg-primary hover:bg-primary/90"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {isSubmitting ? 'Saving...' : 'Submit'}
+              </Button>
+            ) : (
+              <Button
+                onClick={handleNext}
+                className="flex-1 bg-primary hover:bg-primary/90"
+              >
+                Continue
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            )}
+          </div>
         </footer>
       </div>
     </div>

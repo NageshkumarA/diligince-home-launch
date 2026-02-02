@@ -272,44 +272,36 @@ const CreatePurchaseOrder: React.FC = () => {
         throw new Error('Form data is incomplete');
       }
 
-      // Create the purchase order object
+      // Create the purchase order object with pending_approval status
       const purchaseOrder = {
         ...completePOData,
-        status: 'issued',
+        status: 'pending_approval', // Changed from 'issued' to 'pending_approval'
         createdAt: new Date().toISOString(),
-        deliveredToVendor: true,
+        deliveredToVendor: false, // Will be set to true after approval
         recordedInSystem: true,
       };
 
-      console.log("Creating and delivering Purchase Order:", purchaseOrder);
+      console.log("Creating Purchase Order for Approval:", purchaseOrder);
 
-      // Simulate PO creation and delivery process
+      // Simulate PO creation process
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Show success message
       toast({
-        title: "Purchase Order Created & Delivered!",
-        description: `PO ${completePOData.poNumber} has been created, saved to your records, 
-        and delivered to ${vendors.find(v => v.id === completePOData.vendor)?.name || 'the vendor'}.`,
+        title: "Purchase Order Submitted!",
+        description: `PO ${completePOData.poNumber} has been submitted for approval and will be sent to ${vendors.find(v => v.id === completePOData.vendor)?.name || 'the vendor'} after approval.`,
       });
 
-      // Navigate to Work Timeline page with "new" as the ID
+      // Navigate to Purchase Orders page
       setTimeout(() => {
-        const params = new URLSearchParams({
-          vendorId: completePOData.vendor,
-          vendorName: vendors.find(v => v.id === completePOData.vendor)?.name || 'Vendor',
-          amount: completePOData.totalValue.toString(),
-          projectTitle: completePOData.projectTitle,
-          requirementId: 'REQ-2024-001'
-        });
-        window.location.href = `/industry-project-workflow/new?${params.toString()}`;
-      }, 3000);
+        navigate('/dashboard/purchase-orders');
+      }, 2000);
 
     } catch (error) {
       console.error("Error creating purchase order:", error);
       toast({
-        title: "Error Creating Purchase Order",
-        description: "There was an error creating the purchase order. Please try again.",
+        title: "Error Submitting Purchase Order",
+        description: "There was an error submitting the purchase order. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -917,72 +909,79 @@ const CreatePurchaseOrder: React.FC = () => {
             {renderStepContent()}
 
             {/* Action Buttons */}
-            <div className="flex justify-between items-center">
-              <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleSaveAsDraft}
-                  className="border-gray-200 bg-blue-700 hover:bg-blue-600 text-gray-50"
-                >
-                  Save as Draft
-                </Button>
-
-                {currentStep === 4 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleBackToEdit}
-                    className="border-gray-200 text-gray-700 hover:bg-gray-50"
-                  >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Edit
-                  </Button>
-                )}
-              </div>
-
-              <div className="flex gap-3">
+            <div className="flex justify-center items-center gap-3">
+              {/* Previous Button - only show on steps 4 and 5 */}
+              {currentStep > 3 && (
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handlePrevious}
-                  disabled={currentStep === 3}
-                  className="border-gray-200 text-gray-50 bg-blue-700 hover:bg-blue-600"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
                 >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
                   Previous
                 </Button>
+              )}
 
-                {currentStep === 3 && (
-                  <Button
-                    type="button"
-                    onClick={handleNext}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
-                  >
-                    Review & Confirm
-                  </Button>
-                )}
+              {/* Save Draft Button - show on step 3 only */}
+              {currentStep === 3 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleSaveAsDraft}
+                  disabled={isSavingDraft}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                >
+                  {isSavingDraft ? "Saving..." : "Save Draft"}
+                </Button>
+              )}
 
-                {currentStep === 4 && (
-                  <Button
-                    type="button"
-                    onClick={handleNext}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
-                  >
-                    Approve & Proceed
-                  </Button>
-                )}
+              {/* Back to Edit Button - show on review step (4) */}
+              {currentStep === 4 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleBackToEdit}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Edit
+                </Button>
+              )}
 
-                {currentStep === 5 && (
-                  <Button
-                    type="button"
-                    onClick={handleCreatePurchaseOrder}
-                    disabled={isSubmitting}
-                    className="bg-green-600 hover:bg-green-700 text-white font-medium px-8"
-                  >
-                    {isSubmitting ? "Creating & Delivering..." : "Create & Deliver Purchase Order"}
-                  </Button>
-                )}
-              </div>
+              {/* Step 3: Review & Confirm button */}
+              {currentStep === 3 && (
+                <Button
+                  type="button"
+                  onClick={handleNext}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-8"
+                >
+                  Review & Confirm
+                </Button>
+              )}
+
+              {/* Step 4: Approve & Proceed button */}
+              {currentStep === 4 && (
+                <Button
+                  type="button"
+                  onClick={handleNext}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-8"
+                >
+                  Approve & Proceed
+                </Button>
+              )}
+
+              {/* Step 5: Submit button (changed from Create) */}
+              {currentStep === 5 && (
+                <Button
+                  type="button"
+                  onClick={handleCreatePurchaseOrder}
+                  disabled={isSubmitting}
+                  className="bg-green-600 hover:bg-green-700 text-white font-medium px-8"
+                >
+                  {isSubmitting ? "Submitting..." : "Submit for Approval"}
+                </Button>
+              )}
             </div>
           </div>
         </Form>

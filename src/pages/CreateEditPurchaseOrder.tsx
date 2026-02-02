@@ -35,6 +35,7 @@ const CreateEditPurchaseOrder: React.FC = () => {
   const isEditMode = !!id;
   const [currentStep, setCurrentStep] = useState(1);
   const [sowDocuments, setSowDocuments] = useState<UploadedFile[]>([]);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
 
   // Fetch existing PO data if in edit mode
   const { data: poDetail, isLoading: isLoadingPO } = useQuery({
@@ -52,6 +53,7 @@ const CreateEditPurchaseOrder: React.FC = () => {
 
   const form = useForm<PurchaseOrderFormData>({
     resolver: zodResolver(purchaseOrderFormSchema),
+    mode: 'onChange',
     defaultValues: {
       projectTitle: '',
       scopeOfWork: '',
@@ -167,71 +169,38 @@ const CreateEditPurchaseOrder: React.FC = () => {
   }, [form.watch()]);
 
   // Step validation
-  const validateStep = useCallback((step: number): boolean => {
-    const values = form.getValues();
+  const validateStep = useCallback(async (step: number): Promise<boolean> => {
+    let fieldsToValidate: any[] = [];
 
     switch (step) {
       case 1: // Basic Info
-        if (!values.projectTitle || values.projectTitle.length < 3) {
-          toast.error('Please enter a valid project title (at least 3 characters)');
-          return false;
-        }
-        if (!values.scopeOfWork || values.scopeOfWork.length < 10) {
-          toast.error('Please enter scope of work (at least 10 characters)');
-          return false;
-        }
-        if (!values.startDate || !values.endDate) {
-          toast.error('Please select start and end dates');
-          return false;
-        }
-        if (!values.paymentTerms || values.paymentTerms.length < 5) {
-          toast.error('Please enter payment terms');
-          return false;
-        }
-        return true;
-
+        fieldsToValidate = ['projectTitle', 'scopeOfWork', 'startDate', 'endDate', 'paymentTerms'];
+        break;
       case 2: // Deliverables
-        if (!values.deliverables || values.deliverables.length === 0) {
-          toast.error('Please add at least one deliverable');
-          return false;
-        }
-        for (const d of values.deliverables) {
-          if (!d.description || !d.quantity || !d.unit) {
-            toast.error('Please fill all required deliverable fields');
-            return false;
-          }
-        }
-        return true;
-
+        fieldsToValidate = ['deliverables'];
+        break;
       case 3: // Milestones
-        if (!values.paymentMilestones || values.paymentMilestones.length === 0) {
-          toast.error('Please add at least one payment milestone');
-          return false;
-        }
-        const totalPercentage = values.paymentMilestones.reduce(
-          (sum, m) => sum + Number(m.percentage || 0),
-          0
-        );
-        if (Math.abs(totalPercentage - 100) > 0.01) {
-          toast.error('Payment milestone percentages must total 100%');
-          return false;
-        }
-        return true;
-
+        fieldsToValidate = ['paymentMilestones'];
+        break;
       case 4: // Acceptance Criteria
-        if (!values.acceptanceCriteria || values.acceptanceCriteria.length === 0) {
-          toast.error('Please add at least one acceptance criteria');
-          return false;
-        }
-        return true;
-
+        fieldsToValidate = ['acceptanceCriteria'];
+        break;
       default:
         return true;
     }
+
+    const isValid = await form.trigger(fieldsToValidate);
+
+    if (!isValid) {
+      toast.error('Please fix the errors before continuing');
+      return false;
+    }
+
+    return true;
   }, [form]);
 
-  const handleNext = useCallback(() => {
-    if (validateStep(currentStep)) {
+  const handleNext = useCallback(async () => {
+    if (await validateStep(currentStep)) {
       setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
     }
   }, [currentStep, validateStep]);
@@ -240,20 +209,22 @@ const CreateEditPurchaseOrder: React.FC = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   }, []);
 
-  const handleStepChange = useCallback((step: number) => {
+  const handleStepChange = useCallback(async (step: number) => {
     // Allow going back freely, but validate when moving forward
     if (step < currentStep) {
       setCurrentStep(step);
-    } else if (step === currentStep + 1 && validateStep(currentStep)) {
+    } else if (step === currentStep + 1 && await validateStep(currentStep)) {
       setCurrentStep(step);
     }
   }, [currentStep, validateStep]);
 
   const onSubmit = async (data: PurchaseOrderFormData) => {
+    console.log('PO Form Data Submitted:', data);
     await execute(async () => {
       // Transform form data to API format
       const apiData = {
-        quotationId: data.quotationId || 'temp-quotation-id',
+        quotationId: data.quotationId || quotationId || 'temp-quotation-id',
+        vendorId: prefillData?.data?.vendor?.id,
         projectTitle: data.projectTitle,
         scopeOfWork: data.scopeOfWork,
         specialInstructions: data.specialInstructions,
@@ -276,6 +247,8 @@ const CreateEditPurchaseOrder: React.FC = () => {
         })),
       };
 
+      console.log('API Request Data:', apiData);
+
       if (isEditMode) {
         return await purchaseOrdersService.update(id!, apiData);
       } else {
@@ -284,11 +257,75 @@ const CreateEditPurchaseOrder: React.FC = () => {
     });
   };
 
-  const handleFormSubmit = useCallback(() => {
-    if (validateStep(TOTAL_STEPS)) {
-      form.handleSubmit(onSubmit)();
+  const onInvalid = useCallback((errors: any) => {
+    console.error('PO Form Validation Errors:', errors);
+    const errorFields = Object.keys(errors);
+    if (errorFields.length > 0) {
+      toast.error('Validation failed', {
+        description: `Please check: ${errorFields.join(', ')}`,
+      });
     }
-  }, [form, onSubmit, validateStep]);
+  }, []);
+
+  const handleFormSubmit = useCallback(async () => {
+    console.log('handleFormSubmit called');
+    if (await validateStep(TOTAL_STEPS)) {
+      form.handleSubmit(onSubmit, onInvalid)();
+    } else {
+      console.warn('Step validation failed for final step');
+    }
+  }, [form, onSubmit, onInvalid, validateStep]);
+
+  // Handle Save Draft - saves without validation
+  const handleSaveDraft = useCallback(async () => {
+    setIsSavingDraft(true);
+    try {
+      const formValues = form.getValues();
+      const apiData = {
+        quotationId: formValues.quotationId || quotationId || 'temp-quotation-id',
+        vendorId: prefillData?.data?.vendor?.id,
+        projectTitle: formValues.projectTitle || '',
+        scopeOfWork: formValues.scopeOfWork || '',
+        specialInstructions: formValues.specialInstructions || '',
+        startDate: formValues.startDate ? formValues.startDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        endDate: formValues.endDate ? formValues.endDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        paymentTerms: formValues.paymentTerms || '',
+        deliverables: (formValues.deliverables || []).map((d) => ({
+          description: d.description || '',
+          quantity: d.quantity || 1,
+          unit: d.unit || 'unit',
+          unitPrice: d.unitPrice || 0,
+        })),
+        paymentMilestones: (formValues.paymentMilestones || []).map((m) => ({
+          description: m.description || '',
+          percentage: m.percentage || 0,
+          dueDate: m.dueDate || new Date().toISOString().split('T')[0],
+        })),
+        acceptanceCriteria: (formValues.acceptanceCriteria || []).map((a) => ({
+          criteria: a.criteria || '',
+        })),
+        saveAsDraft: true,
+      };
+
+      const response = await purchaseOrdersService.create(apiData);
+
+      toast.success('Draft saved successfully', {
+        description: `Purchase Order ${response.data?.poNumber || ''} has been saved as a draft.`,
+      });
+
+      // Navigate to the saved PO details page
+      if (response.data?.id) {
+        navigate(`/dashboard/purchase-orders/${response.data.id}`);
+      }
+    } catch (error: any) {
+      console.error('Error saving draft:', error);
+      toast.error('Failed to save draft', {
+        description: error?.message || 'There was an error saving your draft. Please try again.',
+      });
+    } finally {
+      setIsSavingDraft(false);
+    }
+  }, [form, quotationId, prefillData, navigate]);
 
   // Render current step content
   const renderStepContent = () => {
@@ -339,8 +376,10 @@ const CreateEditPurchaseOrder: React.FC = () => {
           onNext={handleNext}
           onPrevious={handlePrevious}
           onSubmit={handleFormSubmit}
+          onSaveDraft={handleSaveDraft}
           isEditMode={isEditMode}
           isSubmitting={loading}
+          isSavingDraft={isSavingDraft}
           progress={progress}
           stepTitle={STEP_TITLES[currentStep - 1]}
         >

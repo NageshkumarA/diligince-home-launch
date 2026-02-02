@@ -13,12 +13,15 @@ import { POLineItemsTab } from '@/components/purchase-order/POLineItemsTab';
 import { POMilestonesTab } from '@/components/purchase-order/POMilestonesTab';
 import { PODeliveryTab } from '@/components/purchase-order/PODeliveryTab';
 import { POInvoicesTab } from '@/components/purchase-order/POInvoicesTab';
-import { PODocumentsTab } from '@/components/purchase-order/PODocumentsTab';
+import { POAcceptanceCriteriaTab } from '@/components/purchase-order/POAcceptanceCriteriaTab';
 import { POActivityTab } from '@/components/purchase-order/POActivityTab';
+import { exportPOToPDF } from '@/services/pdf-generator';
+import { useToast } from '@/hooks/use-toast';
 
 const PurchaseOrderDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { data: poDetail, isLoading, error } = useQuery({
     queryKey: ['purchase-order', id],
@@ -49,8 +52,23 @@ const PurchaseOrderDetails = () => {
   };
 
   const handleExportPDF = async () => {
-    if (!id) return;
-    await purchaseOrdersService.exportToPDF(id);
+    if (!poDetail) return;
+
+    try {
+      // Use client-side PDF generation
+      await exportPOToPDF(poDetail.data);
+      toast({
+        title: 'Success',
+        description: 'PDF exported successfully',
+      });
+    } catch (error) {
+      console.error('PDF export failed:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to export PDF',
+        variant: 'destructive',
+      });
+    }
   };
 
   if (isLoading) {
@@ -78,6 +96,7 @@ const PurchaseOrderDetails = () => {
 
   const po = poDetail.data;
   const showApprovalActions = po.status === 'pending_approval';
+  const canEdit = po.status === 'draft' || po.status === 'cancelled';
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -107,7 +126,7 @@ const PurchaseOrderDetails = () => {
               </div>
               <p className="text-muted-foreground">{po.projectTitle}</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Vendor: {po.vendorName || 'N/A'}
+                Vendor: {po.vendor?.name || po.vendorName || 'N/A'}
               </p>
             </div>
 
@@ -128,14 +147,16 @@ const PurchaseOrderDetails = () => {
                 <Download className="h-4 w-4" />
                 Export PDF
               </Button>
-              <Button 
-                variant="outline" 
-                className="gap-2"
-                onClick={() => navigate(`/dashboard/purchase-orders/${id}/edit`)}
-              >
-                <Edit className="h-4 w-4" />
-                Edit
-              </Button>
+              {canEdit && (
+                <Button
+                  variant="outline"
+                  className="gap-2"
+                  onClick={() => navigate(`/dashboard/purchase-orders/${id}/edit`)}
+                >
+                  <Edit className="h-4 w-4" />
+                  Edit
+                </Button>
+              )}
             </div>
           </div>
         </Card>
@@ -146,9 +167,9 @@ const PurchaseOrderDetails = () => {
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="items">Line Items</TabsTrigger>
             <TabsTrigger value="milestones">Milestones</TabsTrigger>
+            <TabsTrigger value="acceptance">Acceptance Criteria</TabsTrigger>
             <TabsTrigger value="delivery">Delivery</TabsTrigger>
             <TabsTrigger value="invoices">Invoices</TabsTrigger>
-            <TabsTrigger value="documents">Documents</TabsTrigger>
             <TabsTrigger value="activity">Activity Log</TabsTrigger>
           </TabsList>
 
@@ -164,16 +185,16 @@ const PurchaseOrderDetails = () => {
             <POMilestonesTab orderId={po.id} milestones={po.paymentMilestones} />
           </TabsContent>
 
+          <TabsContent value="acceptance">
+            <POAcceptanceCriteriaTab criteria={po.acceptanceCriteria || []} />
+          </TabsContent>
+
           <TabsContent value="delivery">
             <PODeliveryTab orderId={po.id} delivery={po.deliveryTracking} />
           </TabsContent>
 
           <TabsContent value="invoices">
-            <POInvoicesTab orderId={po.id} invoices={po.invoices} />
-          </TabsContent>
-
-          <TabsContent value="documents">
-            <PODocumentsTab orderId={po.id} documents={po.documents} />
+            <POInvoicesTab orderId={po.id} invoices={po.invoices || []} />
           </TabsContent>
 
           <TabsContent value="activity">

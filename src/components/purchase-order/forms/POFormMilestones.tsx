@@ -32,7 +32,7 @@ export const POFormMilestones: React.FC<POFormMilestonesProps> = ({ form }) => {
         <Button
           type="button"
           size="sm"
-          onClick={() => append({ description: '', percentage: 0, dueDate: '' })}
+          onClick={() => append({ description: '', percentage: '' as any, dueDate: '' })}
           className="gap-2 bg-primary hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" />
@@ -42,20 +42,28 @@ export const POFormMilestones: React.FC<POFormMilestonesProps> = ({ form }) => {
 
       {/* Percentage indicator */}
       {fields.length > 0 && (
-        <div
-          className={cn(
-            'flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium',
-            isValid
-              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400'
-              : 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400'
+        <div className="space-y-2">
+          <div
+            className={cn(
+              'flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium',
+              isValid
+                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400'
+                : 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400'
+            )}
+          >
+            {isValid ? (
+              <CheckCircle className="h-4 w-4" />
+            ) : (
+              <AlertCircle className="h-4 w-4" />
+            )}
+            <span>Total: {totalPercentage.toFixed(1)}% / 100%</span>
+          </div>
+          {form.formState.errors.paymentMilestones?.root && (
+            <p className="text-sm font-medium text-destructive flex items-center gap-1">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {form.formState.errors.paymentMilestones.root.message}
+            </p>
           )}
-        >
-          {isValid ? (
-            <CheckCircle className="h-4 w-4" />
-          ) : (
-            <AlertCircle className="h-4 w-4" />
-          )}
-          <span>Total: {totalPercentage.toFixed(1)}% / 100%</span>
         </div>
       )}
 
@@ -127,6 +135,23 @@ export const POFormMilestones: React.FC<POFormMilestonesProps> = ({ form }) => {
                         step="0.1"
                         className="h-10 rounded-lg border-border/80 focus:ring-2 focus:ring-primary/20"
                         {...field}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === '') {
+                            field.onChange('');
+                          } else {
+                            // Strip leading zeros visually if possible by parsing and converting back
+                            const parsed = parseFloat(val);
+                            field.onChange(isNaN(parsed) ? val : parsed);
+                          }
+                        }}
+                        onBlur={(e) => {
+                          const val = parseFloat(e.target.value);
+                          if (!isNaN(val)) {
+                            field.onChange(val);
+                          }
+                          field.onBlur();
+                        }}
                       />
                     </FormControl>
                     <FormMessage />

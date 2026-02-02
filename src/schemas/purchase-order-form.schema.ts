@@ -35,7 +35,9 @@ export const purchaseOrderFormSchema = z.object({
   paymentMilestones: z.array(z.object({
     id: z.string().optional(),
     description: z.string().min(1, "Description is required"),
-    percentage: z.coerce.number().min(1).max(100, "Percentage must be between 1 and 100"),
+    percentage: z.coerce.number()
+      .min(0.1, "Percentage must be greater than 0")
+      .max(100, "Percentage cannot exceed 100"),
     dueDate: z.string().min(1, "Due date is required")
   })).min(1, "At least one payment milestone is required"),
   acceptanceCriteria: z.array(z.object({
