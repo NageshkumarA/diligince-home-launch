@@ -123,6 +123,16 @@ class VendorPurchaseOrdersService {
     );
     return response.data;
   }
+
+  /**
+   * Export PO as PDF
+   */
+  async exportPOAsPDF(poId: string): Promise<any> {
+    const response = await apiService.get<{ success: boolean; data: any }>(
+      vendorPurchaseOrdersRoutes.export(poId)
+    );
+    return response.data;
+  }
 }
 
 export const vendorPurchaseOrdersService = new VendorPurchaseOrdersService();

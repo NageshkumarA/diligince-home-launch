@@ -26,11 +26,13 @@ import {
     Clock,
     Loader2,
     AlertCircle,
-    CheckCircle
+    CheckCircle,
+    Download
 } from 'lucide-react';
 import { vendorPurchaseOrdersService } from '@/services/modules/vendors/purchase-orders.service';
 import { DetailPageSkeleton } from '@/components/shared/loading';
 import { useToast } from '@/components/ui/use-toast';
+import { exportPOToPDF } from '@/services/pdf-generator';
 
 const VendorPurchaseOrderDetails = () => {
     const { id } = useParams<{ id: string }>();
@@ -38,6 +40,7 @@ const VendorPurchaseOrderDetails = () => {
     const { toast } = useToast();
     const queryClient = useQueryClient();
     const [isResponding, setIsResponding] = useState(false);
+    const [isExporting, setIsExporting] = useState(false);
 
     // Dialog states
     const [showAcceptDialog, setShowAcceptDialog] = useState(false);
@@ -136,11 +139,29 @@ const VendorPurchaseOrderDetails = () => {
             }, 1500);
         } catch (error: any) {
             console.error('Error accepting PO:', error);
-            toast({
-                title: 'Error',
-                description: error?.response?.data?.error?.message || 'Failed to accept purchase order',
-                variant: 'destructive',
-            });
+
+            // Handle PO_ALREADY_RESPONDED error specifically
+            const errorMessage = error?.response?.data?.error?.message || 'Failed to accept purchase order';
+            const errorCode = error?.response?.data?.error?.code;
+
+            if (errorCode === 'PO_ALREADY_RESPONDED') {
+                toast({
+                    title: 'Already Responded',
+                    description: 'This purchase order has already been responded to.',
+                    variant: 'default',
+                });
+
+                // Close dialog and refresh data to get current status
+                setShowAcceptDialog(false);
+                queryClient.invalidateQueries({ queryKey: ['vendor-purchase-order', id] });
+                queryClient.invalidateQueries({ queryKey: ['vendor-purchase-orders'] });
+            } else {
+                toast({
+                    title: 'Error',
+                    description: errorMessage,
+                    variant: 'destructive',
+                });
+            }
         } finally {
             setIsResponding(false);
         }
@@ -247,6 +268,38 @@ const VendorPurchaseOrderDetails = () => {
         }
     };
 
+    const handleExport = async () => {
+        if (!poDetail) return;
+
+        setIsExporting(true);
+        try {
+            const data = await vendorPurchaseOrdersService.exportPOAsPDF(poDetail.id);
+            if (data && data.success) {
+                await exportPOToPDF(data.data);
+                toast({
+                    title: 'Success',
+                    description: 'Purchase order exported as PDF successfully.',
+                    variant: 'default',
+                });
+            } else {
+                toast({
+                    title: 'Error',
+                    description: data?.error?.message || 'Failed to export purchase order',
+                    variant: 'destructive',
+                });
+            }
+        } catch (error) {
+            console.error('Export error:', error);
+            toast({
+                title: 'Error',
+                description: 'An unexpected error occurred during export.',
+                variant: 'destructive',
+            });
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
     if (isLoading) {
         return <DetailPageSkeleton />;
     }
@@ -273,7 +326,11 @@ const VendorPurchaseOrderDetails = () => {
         );
     }
 
-    const canRespond = poDetail.status === 'pending_approval' || poDetail.status === 'sent_to_vendor';
+    const canRespond = poDetail.status === 'pending' || poDetail.status === 'negotiating';
+
+    // Check if PO has already been responded to
+    const isAlreadyResponded = poDetail.status === 'accepted' ||
+        poDetail.status === 'rejected';
 
     return (
         <div className="container mx-auto p-6 space-y-6">
@@ -302,35 +359,55 @@ const VendorPurchaseOrderDetails = () => {
                     </div>
 
                     {/* Action Buttons - Top Right */}
-                    {canRespond && (
-                        <div className="flex gap-2">
-                            <Button
-                                variant="outline"
-                                onClick={handleNegotiateClick}
-                                disabled={isResponding}
-                                size="sm"
-                            >
-                                {isResponding ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                                Negotiate
-                            </Button>
-                            <Button
-                                variant="destructive"
-                                onClick={handleRejectClick}
-                                disabled={isResponding}
-                                size="sm"
-                            >
-                                {isResponding ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                                Reject
-                            </Button>
-                            <Button
-                                variant="default"
-                                onClick={handleAcceptClick}
-                                disabled={isResponding}
-                                size="sm"
-                            >
-                                {isResponding ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                                Accept
-                            </Button>
+                    <div className="flex gap-2">
+                        <Button
+                            variant="outline"
+                            onClick={handleExport}
+                            disabled={isExporting}
+                            size="sm"
+                        >
+                            {isExporting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Download className="h-4 w-4 mr-2" />}
+                            Export PO
+                        </Button>
+
+                        {canRespond && (
+                            <>
+                                <Button
+                                    variant="outline"
+                                    onClick={handleNegotiateClick}
+                                    disabled={isResponding}
+                                    size="sm"
+                                >
+                                    {isResponding ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                                    Negotiate
+                                </Button>
+                                <Button
+                                    variant="destructive"
+                                    onClick={handleRejectClick}
+                                    disabled={isResponding}
+                                    size="sm"
+                                >
+                                    {isResponding ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                                    Reject
+                                </Button>
+                                <Button
+                                    variant="default"
+                                    onClick={handleAcceptClick}
+                                    disabled={isResponding}
+                                    size="sm"
+                                >
+                                    {isResponding ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                                    Accept
+                                </Button>
+                            </>
+                        )}
+                    </div>
+
+                    {/* Already Responded Indicator */}
+                    {isAlreadyResponded && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mr-4">
+                            <CheckCircle2 className="h-4 w-4 text-green-600" />
+                            <span>Responded</span>
                         </div>
                     )}
                 </div>

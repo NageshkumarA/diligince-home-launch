@@ -25,4 +25,7 @@ export const vendorPurchaseOrdersRoutes = {
 
   // Get vendor PO statistics
   stats: `${BASE_PATH}/stats`,
+
+  // Export PO as PDF
+  export: (poId: string) => `${BASE_PATH}/${poId}/export/pdf`,
 };
