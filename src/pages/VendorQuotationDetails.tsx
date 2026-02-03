@@ -168,7 +168,7 @@ const VendorQuotationDetails: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {purchaseOrder && purchaseOrder.status !== 'rejected' && (
+            {purchaseOrder && purchaseOrder.status !== 'rejected' && purchaseOrder.status !== 'vendor_rejected' && (
               <Button
                 variant="default"
                 size="sm"

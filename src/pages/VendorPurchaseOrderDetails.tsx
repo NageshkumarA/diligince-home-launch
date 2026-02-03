@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,12 +27,14 @@ import {
     Loader2,
     AlertCircle,
     CheckCircle,
-    Download
+    Download,
+    MessageCircle
 } from 'lucide-react';
 import { vendorPurchaseOrdersService } from '@/services/modules/vendors/purchase-orders.service';
 import { DetailPageSkeleton } from '@/components/shared/loading';
 import { useToast } from '@/components/ui/use-toast';
 import { exportPOToPDF } from '@/services/pdf-generator';
+import { InlineChatPanel } from '@/components/chat/InlineChatPanel';
 
 const VendorPurchaseOrderDetails = () => {
     const { id } = useParams<{ id: string }>();
@@ -41,6 +43,19 @@ const VendorPurchaseOrderDetails = () => {
     const queryClient = useQueryClient();
     const [isResponding, setIsResponding] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
+    const [showChatPanel, setShowChatPanel] = useState(false);
+
+    // Hide chatbot icon when chat panel is open
+    useEffect(() => {
+        if (showChatPanel) {
+            document.body.classList.add('inline-chat-open');
+        } else {
+            document.body.classList.remove('inline-chat-open');
+        }
+        return () => {
+            document.body.classList.remove('inline-chat-open');
+        };
+    }, [showChatPanel]);
 
     // Dialog states
     const [showAcceptDialog, setShowAcceptDialog] = useState(false);
@@ -64,7 +79,10 @@ const VendorPurchaseOrderDetails = () => {
     const getStatusColor = (status: string) => {
         const colors: Record<string, string> = {
             sent_to_vendor: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+            pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+            pending_approval: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
             approved: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+            accepted: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
             rejected: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
             negotiating: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
             cancelled: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
@@ -75,7 +93,10 @@ const VendorPurchaseOrderDetails = () => {
     const getStatusLabel = (status: string) => {
         const labels: Record<string, string> = {
             sent_to_vendor: 'Pending Review',
+            pending: 'Pending Approval',
+            pending_approval: 'Pending Approval',
             approved: 'Approved',
+            accepted: 'Accepted',
             rejected: 'Rejected',
             negotiating: 'Under Negotiation',
             cancelled: 'Cancelled',
@@ -300,6 +321,8 @@ const VendorPurchaseOrderDetails = () => {
         }
     };
 
+
+
     if (isLoading) {
         return <DetailPageSkeleton />;
     }
@@ -326,11 +349,13 @@ const VendorPurchaseOrderDetails = () => {
         );
     }
 
-    const canRespond = poDetail.status === 'pending' || poDetail.status === 'negotiating';
+    const canRespond = poDetail.status === 'pending' || poDetail.status === 'pending_approval' || poDetail.status === 'negotiating';
 
     // Check if PO has already been responded to
     const isAlreadyResponded = poDetail.status === 'accepted' ||
-        poDetail.status === 'rejected';
+        poDetail.status === 'rejected' ||
+        poDetail.status === 'vendor_accepted' ||
+        poDetail.status === 'vendor_rejected';
 
     return (
         <div className="container mx-auto p-6 space-y-6">
@@ -370,16 +395,18 @@ const VendorPurchaseOrderDetails = () => {
                             Export PO
                         </Button>
 
+
+
                         {canRespond && (
                             <>
                                 <Button
                                     variant="outline"
-                                    onClick={handleNegotiateClick}
-                                    disabled={isResponding}
+                                    onClick={() => setShowChatPanel(true)}
                                     size="sm"
+                                    className="border-blue-500 text-blue-700 hover:bg-blue-50"
                                 >
-                                    {isResponding ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                                    Negotiate
+                                    <MessageCircle className="h-4 w-4 mr-2" />
+                                    Chat
                                 </Button>
                                 <Button
                                     variant="destructive"
@@ -872,6 +899,18 @@ const VendorPurchaseOrderDetails = () => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+
+            {/* Inline Chat Panel */}
+            <InlineChatPanel
+                isOpen={showChatPanel}
+                onClose={() => setShowChatPanel(false)}
+                relatedType="quote"
+                relatedId={poDetail.quotationId || poDetail.quoteId || poDetail._id}
+                relatedTitle={poDetail.poNumber}
+                companyId={poDetail.industry?._id || ''}
+                companyName={poDetail.industry?.name || poDetail.industry?.email || 'Industry'}
+            />
         </div>
     );
 };
