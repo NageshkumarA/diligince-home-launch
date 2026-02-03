@@ -26,18 +26,13 @@ const PurchaseOrderDetails = () => {
   const { toast } = useToast();
   const { user } = useUser();
 
-  // Debug logging
-  console.log('PurchaseOrderDetails - User:', user);
-  console.log('PurchaseOrderDetails - User Role:', user?.role);
-  console.log('PurchaseOrderDetails - Is Vendor?:', user?.role === 'vendor');
+  // Check user type for vendor detection (userType is more reliable than role)
+  const isVendorUser = user?.userType === 'Vendor';
 
   // If user is a vendor, use the vendor-specific component
-  if (user?.role === 'vendor') {
-    console.log('PurchaseOrderDetails - Redirecting to VendorPurchaseOrderDetails');
+  if (isVendorUser) {
     return <VendorPurchaseOrderDetails />;
   }
-
-  console.log('PurchaseOrderDetails - Loading industry PO details');
 
   // Otherwise, continue with industry PO details
 
@@ -117,9 +112,9 @@ const PurchaseOrderDetails = () => {
 
   const po = poDetail;
 
-  // Role-based access control
-  const isVendor = user?.role === 'vendor';
-  const isIndustry = user?.role === 'industry';
+  // Role-based access control - use userType for reliable vendor/industry detection
+  const isVendor = user?.userType === 'Vendor';
+  const isIndustry = user?.userType === 'Industry' || user?.role === 'industry';
 
   // Only vendors can approve/reject POs sent to them
   const showApprovalActions = po.status === 'pending_approval' && isVendor;

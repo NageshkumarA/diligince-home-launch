@@ -8,6 +8,7 @@ import { purchaseOrdersService, POStatus } from '@/services/modules/purchase-ord
 import { POStatusBadge } from '@/components/purchase-order/POStatusBadge';
 import { POQuickActions } from '@/components/purchase-order/POQuickActions';
 import { POFilters } from '@/components/purchase-order/POFilters';
+import AISearchBar from '@/components/shared/AISearchBar';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAsyncOperation } from '@/hooks/useAsyncOperation';
@@ -275,9 +276,16 @@ const IndustryPurchaseOrders = () => {
         </Card>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={setSearchTerm}
+        placeholder="Search purchase orders with AI..."
+        isLoading={isLoading}
+      />
+
+      {/* Filter Dropdowns */}
       <POFilters
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
         statusFilter={statusFilter}
         onStatusChange={(value) => setStatusFilter(value as POStatus | 'all')}
         onClearFilters={handleClearFilters}
@@ -289,7 +297,6 @@ const IndustryPurchaseOrders = () => {
         onRowClick={handleRowClick}
         selectable={true}
         onSelectionChange={setSelectedRows}
-        globalSearchPlaceholder="Search purchase orders..."
         pagination={{
           enabled: true,
           pageSize,
