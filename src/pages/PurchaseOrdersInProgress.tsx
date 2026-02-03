@@ -9,6 +9,7 @@ import { purchaseOrdersService } from '@/services/modules/purchase-orders';
 import { POStatusBadge } from '@/components/purchase-order/POStatusBadge';
 import { POQuickActions } from '@/components/purchase-order/POQuickActions';
 import { POFilters } from '@/components/purchase-order/POFilters';
+import AISearchBar from '@/components/shared/AISearchBar';
 import { format } from 'date-fns';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -158,9 +159,17 @@ const PurchaseOrdersInProgress = () => {
         </Button>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={setSearchTerm}
+        placeholder="Search in-progress purchase orders with AI..."
+        isLoading={isLoading}
+        className="mb-6"
+      />
+
+      {/* Filter Dropdowns - status is fixed to in_progress */}
       <POFilters
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
         statusFilter="in_progress"
         onStatusChange={() => { }}
         onClearFilters={() => setSearchTerm('')}
@@ -173,7 +182,6 @@ const PurchaseOrdersInProgress = () => {
         onRowClick={handleRowClick}
         selectable={true}
         onSelectionChange={setSelectedRows}
-        globalSearchPlaceholder="Search in-progress purchase orders..."
         pagination={{
           enabled: true,
           pageSize,

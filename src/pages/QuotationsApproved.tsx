@@ -9,6 +9,7 @@ import type { Quotation } from "@/types/quotation";
 import { useToast } from "@/hooks/use-toast";
 import { TableSkeletonLoader } from "@/components/shared/loading";
 import { Button } from "@/components/ui/button";
+import AISearchBar from "@/components/shared/AISearchBar";
 
 const QuotationsApproved = () => {
   const [selectedRows, setSelectedRows] = useState<Quotation[]>([]);
@@ -200,6 +201,15 @@ const QuotationsApproved = () => {
         </p>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={handleSearch}
+        placeholder="Search approved quotations with AI..."
+        isLoading={isLoading}
+        className="mb-6"
+      />
+
       {isLoading ? (
         <TableSkeletonLoader rows={8} columns={6} showFilters showActions />
       ) : (
@@ -207,14 +217,12 @@ const QuotationsApproved = () => {
           columns={columns}
           data={tableData}
           filterCallback={handleFilter}
-          searchCallback={handleSearch}
           onExport={{
             xlsx: handleExportXLSX,
             csv: handleExportCSV,
           }}
           selectable={true}
           onSelectionChange={handleSelectionChange}
-          globalSearchPlaceholder="Search approved quotations..."
           pagination={{
             enabled: true,
             pageSize: pageSize,
