@@ -40,9 +40,9 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // Lock logic: Document is locked if profile is locked AND document status is pending or verified
-  const isDocumentLocked = isProfileLocked && currentDocument && 
-                          (currentDocument.status === 'pending' || currentDocument.status === 'verified');
-  
+  const isDocumentLocked = isProfileLocked && currentDocument &&
+    (currentDocument.status === 'pending' || currentDocument.status === 'verified');
+
   const canEdit = !isDocumentLocked;
   const canDelete = !isDocumentLocked;
   const showActions = !isProfileLocked || currentDocument?.status === 'rejected';
@@ -51,7 +51,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
     // Prevent file selection when locked
     if (!canEdit) {
       toast.warning('Document locked', {
-        description: currentDocument?.status === 'verified' 
+        description: currentDocument?.status === 'verified'
           ? 'This document has been verified and cannot be changed.'
           : 'This document is pending verification and cannot be changed.',
       });
@@ -81,7 +81,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
 
   const performUpload = async (file: File) => {
     const loadingToast = toast.loading(`Uploading ${label}...`);
-    
+
     try {
       setIsUploading(true);
       setUploadProgress(20);
@@ -94,7 +94,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
 
       clearInterval(progressInterval);
       setUploadProgress(100);
-      
+
       toast.dismiss(loadingToast);
       toast.success(`${label} uploaded successfully`, {
         description: 'Document has been uploaded and is pending verification.',
@@ -144,7 +144,7 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
 
   const handleDelete = async () => {
     if (!currentDocument) return;
-    
+
     const loadingToast = toast.loading('Removing document...');
     try {
       await onDelete(currentDocument.id);
@@ -230,16 +230,16 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
                 </div>
               </div>
               <div className="flex gap-2 flex-col">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   onClick={handleConfirmSelection}
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-1" />
                 </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
+                <Button
+                  size="sm"
+                  variant="outline"
                   onClick={handleCancelSelection}
                   className="border-blue-300"
                 >
@@ -252,66 +252,61 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
       )}
 
       {currentDocument ? (
-        <div className={`border-2 rounded-lg p-4 ${
-          currentDocument.status === 'verified' 
-            ? 'bg-green-50 border-green-500 dark:bg-green-950/20 dark:border-green-700'
-            : currentDocument.status === 'rejected'
+        <div className={`border-2 rounded-lg p-4 ${currentDocument.status === 'verified'
+          ? 'bg-green-50 border-green-500 dark:bg-green-950/20 dark:border-green-700'
+          : currentDocument.status === 'rejected'
             ? 'bg-red-50 border-red-500 dark:bg-red-950/20 dark:border-red-700'
             : currentDocument.status === 'pending'
-            ? 'bg-blue-50 border-blue-500 dark:bg-blue-950/20 dark:border-blue-700'
-            : 'bg-green-50 border-green-500 dark:bg-green-950/20 dark:border-green-700'
-        } animate-in fade-in slide-in-from-top-2 duration-300`}>
+              ? 'bg-blue-50 border-blue-500 dark:bg-blue-950/20 dark:border-blue-700'
+              : 'bg-green-50 border-green-500 dark:bg-green-950/20 dark:border-green-700'
+          } animate-in fade-in slide-in-from-top-2 duration-300`}>
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
               <div>
                 <div>
-                  <p className={`text-sm font-semibold break-words ${
-                    currentDocument.status === 'verified' 
-                      ? 'text-green-900 dark:text-green-100'
-                      : currentDocument.status === 'rejected'
+                  <p className={`text-sm font-semibold break-words ${currentDocument.status === 'verified'
+                    ? 'text-green-900 dark:text-green-100'
+                    : currentDocument.status === 'rejected'
                       ? 'text-red-900 dark:text-red-100'
                       : currentDocument.status === 'pending'
-                      ? 'text-blue-900 dark:text-blue-100'
-                      : 'text-green-900 dark:text-green-100'
-                  }`}>
+                        ? 'text-blue-900 dark:text-blue-100'
+                        : 'text-green-900 dark:text-green-100'
+                    }`}>
                     {currentDocument.name}
                   </p>
                   {/* Show verification status badge */}
                   {currentDocument.status && (
-                    <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full font-medium ${
-                      currentDocument.status === 'verified' 
-                        ? 'bg-green-200 text-green-800 dark:bg-green-900/50 dark:text-green-300'
-                        : currentDocument.status === 'rejected'
+                    <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full font-medium ${currentDocument.status === 'verified'
+                      ? 'bg-green-200 text-green-800 dark:bg-green-900/50 dark:text-green-300'
+                      : currentDocument.status === 'rejected'
                         ? 'bg-red-200 text-red-800 dark:bg-red-900/50 dark:text-red-300'
                         : 'bg-blue-200 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300'
-                    }`}>
-                      {currentDocument.status === 'verified' ? '✓ Verified' : 
-                       currentDocument.status === 'rejected' ? '✗ Rejected' : 
-                       'Pending'}
+                      }`}>
+                      {currentDocument.status === 'verified' ? '✓ Verified' :
+                        currentDocument.status === 'rejected' ? '✗ Rejected' :
+                          'Pending'}
                     </span>
                   )}
                 </div>
-                <p className={`text-xs ${
-                  currentDocument.status === 'verified' 
-                    ? 'text-green-700 dark:text-green-400'
-                    : currentDocument.status === 'rejected'
+                <p className={`text-xs ${currentDocument.status === 'verified'
+                  ? 'text-green-700 dark:text-green-400'
+                  : currentDocument.status === 'rejected'
                     ? 'text-red-700 dark:text-red-400'
                     : currentDocument.status === 'pending'
-                    ? 'text-blue-700 dark:text-blue-400'
-                    : 'text-green-700 dark:text-green-400'
-                }`}>
+                      ? 'text-blue-700 dark:text-blue-400'
+                      : 'text-green-700 dark:text-green-400'
+                  }`}>
                   {formatFileSize(currentDocument.size)} • Uploaded successfully
                 </p>
                 {currentDocument.uploadedAt && (
-                  <p className={`text-xs mt-0.5 ${
-                    currentDocument.status === 'verified' 
-                      ? 'text-green-600 dark:text-green-500'
-                      : currentDocument.status === 'rejected'
+                  <p className={`text-xs mt-0.5 ${currentDocument.status === 'verified'
+                    ? 'text-green-600 dark:text-green-500'
+                    : currentDocument.status === 'rejected'
                       ? 'text-red-600 dark:text-red-500'
                       : currentDocument.status === 'pending'
-                      ? 'text-blue-600 dark:text-blue-500'
-                      : 'text-green-600 dark:text-green-500'
-                  }`}>
+                        ? 'text-blue-600 dark:text-blue-500'
+                        : 'text-green-600 dark:text-green-500'
+                    }`}>
                     {new Date(currentDocument.uploadedAt).toLocaleDateString()} at {new Date(currentDocument.uploadedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 )}
@@ -332,10 +327,32 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
             </div>
             <div className="flex items-center gap-2 self-start flex-shrink-0">
               {/* Always show preview button */}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => window.open(currentDocument.url, '_blank')}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={async () => {
+                  const loadingToast = toast.loading('Opening document...');
+                  try {
+                    // Import companyProfileService dynamically
+                    const { companyProfileService } = await import('@/services/modules/company-profile/company-profile.service');
+
+                    // Fetch file via secure proxy with caching
+                    const blob = await companyProfileService.viewDocument(currentDocument.url);
+
+                    // Create temporary URL and open in new tab
+                    const blobUrl = URL.createObjectURL(blob);
+                    window.open(blobUrl, '_blank');
+
+                    // Clean up blob URL after a delay
+                    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+
+                    toast.dismiss(loadingToast);
+                  } catch (error) {
+                    console.error('Failed to view document:', error);
+                    toast.dismiss(loadingToast);
+                    // Error is already handled by the service
+                  }
+                }}
                 className="hover:bg-muted"
               >
                 <Eye className="w-4 h-4" />
@@ -369,24 +386,23 @@ export const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
             variant="outline"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading || !canEdit}
-            className={`w-full ${
-              !canEdit
-                ? 'opacity-50 cursor-not-allowed'
-                : selectedFile 
-                ? 'border-blue-400 bg-blue-50 dark:bg-blue-950/20' 
-                : required && !currentDocument 
-                ? 'border-red-300' 
-                : ''
-            }`}
+            className={`w-full ${!canEdit
+              ? 'opacity-50 cursor-not-allowed'
+              : selectedFile
+                ? 'border-blue-400 bg-blue-50 dark:bg-blue-950/20'
+                : required && !currentDocument
+                  ? 'border-red-300'
+                  : ''
+              }`}
           >
             <Upload className="w-4 h-4 mr-2" />
-            {!canEdit 
+            {!canEdit
               ? 'Locked for Verification'
-              : isUploading 
-              ? 'Uploading...' 
-              : currentDocument 
-              ? 'Replace Document' 
-              : 'Upload Document'}
+              : isUploading
+                ? 'Uploading...'
+                : currentDocument
+                  ? 'Replace Document'
+                  : 'Upload Document'}
           </Button>
 
           {/* Show lock explanation when profile is locked */}

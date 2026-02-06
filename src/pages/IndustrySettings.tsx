@@ -22,6 +22,8 @@ import { ProfileCompletionBanner } from '@/components/verification/ProfileComple
 import { DocumentUploadField } from '@/components/verification/DocumentUploadField';
 import { industries } from '@/constants/Types';
 import PaymentSettingsTab from '@/components/companyProfile/PaymentSettingsTab';
+import { useAutoSave } from '@/hooks/useAutoSave';
+import { AutoSaveIndicator } from '@/components/shared/AutoSaveIndicator';
 
 const IndustrySettings = () => {
   const navigate = useNavigate();
@@ -73,6 +75,56 @@ const IndustrySettings = () => {
 
     fetchProfile();
   }, []);
+
+  // Initialize file cache on mount and cleanup on unmount
+  useEffect(() => {
+    const initCache = async () => {
+      try {
+        const { fileCacheService } = await import('@/services/fileCache.service');
+        await fileCacheService.init();
+        console.log('📦 File cache initialized');
+      } catch (error) {
+        console.warn('Failed to initialize file cache:', error);
+        // Non-critical error, continue without caching
+      }
+    };
+
+    initCache();
+
+    // Cleanup cache when component unmounts (user navigates away)
+    return () => {
+      const cleanupCache = async () => {
+        try {
+          const { fileCacheService } = await import('@/services/fileCache.service');
+          await fileCacheService.clear();
+          console.log('🧹 File cache cleaned up');
+        } catch (error) {
+          console.warn('Failed to cleanup file cache:', error);
+        }
+      };
+
+      cleanupCache();
+    };
+  }, []);
+
+  // Auto-save hook
+  const { saveStatus, restoreDraft, clearDraft } = useAutoSave({
+    data: profile,
+    saveKey: 'industry_profile_draft',
+    enabled: !isProfileLocked, // Disable when profile is locked
+    interval: 15000, // 15 seconds
+  });
+
+  // Restore draft on mount
+  useEffect(() => {
+    const draft = restoreDraft();
+    if (draft) {
+      setProfile(draft);
+      toast.info('Draft restored', {
+        description: 'Your previous changes have been restored.',
+      });
+    }
+  }, [restoreDraft]);
 
   // Field validation helpers
   const getFieldStatus = (fieldValue: any, required: boolean = true) => {
@@ -136,6 +188,9 @@ const IndustrySettings = () => {
 
       errorHandler.updateSuccess(loadingToast, 'Profile saved successfully');
 
+      // Clear draft after successful save
+      clearDraft();
+
       // Show info about missing documents if any
       if (savedProfile.documents && savedProfile.documents.length < 3) {
         setTimeout(() => {
@@ -191,6 +246,10 @@ const IndustrySettings = () => {
       );
 
       const estimatedTime = new Date(result.data.estimatedCompletionAt).toLocaleString();
+
+      // Clear draft after successful submission
+      clearDraft();
+
       setTimeout(() => {
         toast.info('Verification timeline', {
           description: `Estimated completion: ${estimatedTime}`,
@@ -293,6 +352,13 @@ const IndustrySettings = () => {
           <h1 className="text-3xl font-bold text-foreground mb-2">Settings</h1>
           <p className="text-muted-foreground">Manage your account and application preferences</p>
         </div>
+        {/* Auto-save indicator */}
+        {!isProfileLocked && (
+          <AutoSaveIndicator
+            status={saveStatus.status}
+            lastSaved={saveStatus.lastSaved}
+          />
+        )}
       </div>
 
       {isLoadingProfile ? (

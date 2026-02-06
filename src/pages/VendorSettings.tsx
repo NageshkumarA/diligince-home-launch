@@ -23,6 +23,8 @@ import {
 import { ConsentDialog } from '@/components/verification/ConsentDialog';
 import { vendorProfileService } from '@/services';
 import ServicesSkillsForm from '@/components/vendor/forms/ServicesSkillsForm';
+import { useAutoSave } from '@/hooks/useAutoSave';
+import { AutoSaveIndicator } from '@/components/shared/AutoSaveIndicator';
 
 const VENDOR_CATEGORIES = ['Service Vendor', 'Product Vendor', 'Logistics Vendor'] as const;
 
@@ -103,6 +105,25 @@ const VendorSettings = () => {
     fetchProfile();
   }, [user]);
 
+  // Auto-save hook
+  const { saveStatus, restoreDraft, clearDraft } = useAutoSave({
+    data: profile,
+    saveKey: 'vendor_profile_draft',
+    enabled: !isProfileLocked, // Disable when profile is locked
+    interval: 15000, // 15 seconds
+  });
+
+  // Restore draft on mount
+  useEffect(() => {
+    const draft = restoreDraft();
+    if (draft) {
+      setProfile(draft);
+      toast.info('Draft restored', {
+        description: 'Your previous changes have been restored.',
+      });
+    }
+  }, [restoreDraft]);
+
   // Field validation helpers
   const getFieldStatus = (fieldValue: any, required: boolean = true) => {
     if (!required) return 'optional';
@@ -144,6 +165,9 @@ const VendorSettings = () => {
         const savedProfile = 'profile' in response.data ? response.data.profile : response.data;
         setProfile(savedProfile);
         errorHandler.updateSuccess(loadingToast, 'Profile saved successfully');
+
+        // Clear draft after successful save
+        clearDraft();
       } else {
         errorHandler.updateError(loadingToast, response.message || 'Failed to save profile');
       }
@@ -237,6 +261,9 @@ const VendorSettings = () => {
 
         await refreshVerificationStatus();
 
+        // Clear draft after successful submission
+        clearDraft();
+
         setTimeout(() => {
           navigate('/verification-pending');
         }, 1500);
@@ -309,6 +336,13 @@ const VendorSettings = () => {
           <h1 className="text-3xl font-bold text-foreground mb-2">Business Profile</h1>
           <p className="text-muted-foreground">Manage your business profile and company details</p>
         </div>
+        {/* Auto-save indicator */}
+        {!isProfileLocked && (
+          <AutoSaveIndicator
+            status={saveStatus.status}
+            lastSaved={saveStatus.lastSaved}
+          />
+        )}
       </div>
 
       {isLoadingProfile ? (

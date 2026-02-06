@@ -143,6 +143,43 @@ class CompanyProfileService {
       throw error;
     }
   }
+
+  /**
+   * View document securely via proxy (with caching)
+   * Uses backend proxy to hide external S3 URLs
+   * Implements client-side caching to reduce API calls
+   */
+  async viewDocument(fileKey: string): Promise<Blob> {
+    try {
+      // Import cache service dynamically to avoid circular dependencies
+      const { fileCacheService } = await import('@/services/fileCache.service');
+
+      // Check cache first
+      const cachedBlob = await fileCacheService.get(fileKey);
+      if (cachedBlob) {
+        console.log('📦 Served from cache:', fileKey);
+        return cachedBlob;
+      }
+
+      // Cache miss - fetch from backend proxy
+      console.log('🌐 Fetching from server:', fileKey);
+      const encodedKey = encodeURIComponent(fileKey);
+      const blob = await apiService.get<Blob>(
+        `/industry/company-profile/documents/view/${encodedKey}`,
+        {
+          responseType: 'blob',
+        }
+      );
+
+      // Cache the blob for future use
+      await fileCacheService.set(fileKey, blob);
+
+      return blob;
+    } catch (error) {
+      errorHandler.handleApiError(error, 'Failed to load document');
+      throw error;
+    }
+  }
 }
 
 export const companyProfileService = new CompanyProfileService();
