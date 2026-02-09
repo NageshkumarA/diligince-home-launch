@@ -1,7 +1,7 @@
 //API Service tsx
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 // import { getAccessToken, getRefreshToken, setTokens, clearTokens } from '../utils/cookieService';
-const BASE_URL = 'http://192.168.1.4:5001';
+const BASE_URL = 'http://54.160.225.66:8000';
 
 const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,

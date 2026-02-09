@@ -145,6 +145,43 @@ class CompanyProfileService {
   }
 
   /**
+   * Save draft profile (for autosave functionality)
+   * No validation - saves whatever data is provided
+   */
+  async saveDraft(profile: Partial<CompanyProfile>): Promise<SaveProfileResponse> {
+    try {
+      return await apiService.post<SaveProfileResponse, Partial<CompanyProfile>>(
+        companyProfileRoutes.saveDraft,
+        profile
+      );
+    } catch (error) {
+      // Silent error handling - autosave failures should not disrupt user
+      console.error('Autosave failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get draft profile (for autosave restoration)
+   */
+  async getDraft(): Promise<CompanyProfile | null> {
+    try {
+      const response = await apiService.get<{
+        success: boolean;
+        data: {
+          draft: CompanyProfile | null;
+        }
+      }>(companyProfileRoutes.getDraft);
+
+      return response.data.draft;
+    } catch (error) {
+      // Silent error handling - draft retrieval failures should not block user
+      console.error('Failed to retrieve draft:', error);
+      return null;
+    }
+  }
+
+  /**
    * View document securely via proxy (with caching)
    * Uses backend proxy to hide external S3 URLs
    * Implements client-side caching to reduce API calls
@@ -163,9 +200,10 @@ class CompanyProfileService {
 
       // Cache miss - fetch from backend proxy
       console.log('🌐 Fetching from server:', fileKey);
-      const encodedKey = encodeURIComponent(fileKey);
+
+      // Use query parameter instead of path parameter
       const blob = await apiService.get<Blob>(
-        `/industry/company-profile/documents/view/${encodedKey}`,
+        `${companyProfileRoutes.viewDocument}?key=${encodeURIComponent(fileKey)}`,
         {
           responseType: 'blob',
         }

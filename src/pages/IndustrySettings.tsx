@@ -113,17 +113,40 @@ const IndustrySettings = () => {
     saveKey: 'industry_profile_draft',
     enabled: !isProfileLocked, // Disable when profile is locked
     interval: 15000, // 15 seconds
+    onSaveToServer: async (data) => {
+      try {
+        await companyProfileService.saveDraft(data);
+      } catch (error) {
+        // Error already logged in service, silently fail to not disrupt user
+        console.error('Server autosave failed:', error);
+      }
+    }
   });
 
-  // Restore draft on mount
+  // Restore draft on mount - try server first, fallback to localStorage
   useEffect(() => {
-    const draft = restoreDraft();
-    if (draft) {
-      setProfile(draft);
-      toast.info('Draft restored', {
-        description: 'Your previous changes have been restored.',
-      });
-    }
+    const loadDraft = async () => {
+      // Try to get draft from server first
+      const serverDraft = await companyProfileService.getDraft();
+      if (serverDraft) {
+        setProfile(serverDraft);
+        toast.info('Draft restored', {
+          description: 'Your previous changes have been restored from server.',
+        });
+        return;
+      }
+
+      // Fallback to localStorage if no server draft
+      const localDraft = restoreDraft();
+      if (localDraft) {
+        setProfile(localDraft);
+        toast.info('Draft restored', {
+          description: 'Your previous changes have been restored.',
+        });
+      }
+    };
+
+    loadDraft();
   }, [restoreDraft]);
 
   // Field validation helpers

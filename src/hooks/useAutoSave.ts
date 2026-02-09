@@ -7,6 +7,7 @@ export interface UseAutoSaveOptions<T> {
     enabled?: boolean; // Enable/disable auto-save
     interval?: number; // Debounce interval (ms)
     onSave?: (data: T) => void; // Optional callback when data is saved
+    onSaveToServer?: (data: T) => Promise<void>; // Optional callback to save to server
 }
 
 export interface SaveStatus {
@@ -21,6 +22,7 @@ export function useAutoSave<T>({
     enabled = true,
     interval = 15000, // 15 seconds default
     onSave,
+    onSaveToServer,
 }: UseAutoSaveOptions<T>) {
     const [saveStatus, setSaveStatus] = useState<SaveStatus>({
         status: 'idle',
@@ -34,14 +36,21 @@ export function useAutoSave<T>({
     const debouncedData = useDebounce(data, interval);
 
     /**
-     * Save draft to localStorage
+     * Save draft to localStorage and/or server
      */
-    const saveDraftNow = useCallback(() => {
+    const saveDraftNow = useCallback(async () => {
         if (!enabled) return;
 
         try {
             setSaveStatus({ status: 'saving', lastSaved: saveStatus.lastSaved });
 
+            // Prioritize server save if callback provided
+            if (onSaveToServer) {
+                await onSaveToServer(data);
+                console.log(`✅ Auto-saved to server: ${saveKey}`);
+            }
+
+            // Also save to localStorage as backup/cache
             const serializedData = JSON.stringify(data);
             localStorage.setItem(saveKey, serializedData);
 
@@ -53,7 +62,10 @@ export function useAutoSave<T>({
                 onSave(data);
             }
 
-            console.log(`✅ Auto-saved: ${saveKey}`, data);
+            if (!onSaveToServer) {
+                // Only log localStorage if not saving to server
+                console.log(`✅ Auto-saved to localStorage: ${saveKey}`, data);
+            }
         } catch (error) {
             console.error('❌ Auto-save failed:', error);
             setSaveStatus({
@@ -62,7 +74,7 @@ export function useAutoSave<T>({
                 error: error as Error,
             });
         }
-    }, [data, saveKey, enabled, onSave, saveStatus.lastSaved]);
+    }, [data, saveKey, enabled, onSave, onSaveToServer, saveStatus.lastSaved]);
 
     /**
      * Restore draft from localStorage

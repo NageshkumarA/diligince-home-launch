@@ -5,14 +5,19 @@ const BASE_PATH = `${API_BASE_PATH}/industry/company-profile`;
 export const companyProfileRoutes = {
   // Get company profile
   get: BASE_PATH,
-  
+
   // Save/Update company profile
   save: BASE_PATH,
-  
+
   // Document management
   uploadDocument: `${BASE_PATH}/documents/upload`,
   deleteDocument: (documentId: string) => `${BASE_PATH}/documents/${documentId}`,
-  
+  viewDocument: `${BASE_PATH}/documents/view`,
+
+  // Draft management (autosave)
+  saveDraft: `${BASE_PATH}/draft`,
+  getDraft: `${BASE_PATH}/draft`,
+
   // Verification
   submitVerification: `${BASE_PATH}/submit-verification`,
 };
