@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Clock, CheckCircle2, RefreshCw, Mail, Phone } from 'lucide-react';
+import { Clock, CheckCircle2, LogOut } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { VerificationStatus, VerificationStep } from '@/types/verification';
@@ -11,7 +11,7 @@ import { companyProfileService } from '@/services';
 import { getSettingsRoute, getDashboardRoute } from '@/types/shared';
 
 const VerificationPending = () => {
-  const { verificationStatus, refreshVerificationStatus, user } = useUser();
+  const { verificationStatus, refreshVerificationStatus, user, logout } = useUser();
   const navigate = useNavigate();
   const userRole = user?.role || 'industry';
   const [timeRemaining, setTimeRemaining] = useState('24h 0m');
@@ -140,12 +140,12 @@ const VerificationPending = () => {
               return (
                 <div key={idx} className="flex items-center gap-3">
                   <div className={`h-10 w-10 rounded-full flex items-center justify-center ${step.status === 'complete' ? 'bg-green-100 dark:bg-green-900/30' :
-                      step.status === 'in_progress' ? 'bg-orange-100 dark:bg-orange-900/30' :
-                        'bg-gray-100 dark:bg-gray-800'
+                    step.status === 'in_progress' ? 'bg-orange-100 dark:bg-orange-900/30' :
+                      'bg-gray-100 dark:bg-gray-800'
                     }`}>
                     <Icon className={`h-5 w-5 ${step.status === 'complete' ? 'text-green-600' :
-                        step.status === 'in_progress' ? 'text-orange-600' :
-                          'text-gray-400'
+                      step.status === 'in_progress' ? 'text-orange-600' :
+                        'text-gray-400'
                       }`} />
                   </div>
                   <div className="flex-1">
@@ -182,75 +182,17 @@ const VerificationPending = () => {
           </div>
         </Card>
 
-        {/* Contact Support */}
-        <Card className="p-6">
-          <h3 className="font-semibold mb-4">Need Help?</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            If you have questions or need to update information, contact our support team.
-          </p>
-          <div className="flex gap-4">
-            <Button variant="outline" className="flex-1">
-              <Mail className="h-4 w-4 mr-2" />
-              Email Support
-            </Button>
-            <Button variant="outline" className="flex-1">
-              <Phone className="h-4 w-4 mr-2" />
-              Call Support
-            </Button>
-          </div>
-        </Card>
-
-        {/* Developer Testing - Quick Approve Button */}
-        <Card className="p-6 bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800">
-          <h3 className="font-semibold mb-2 flex items-center gap-2">
-            <span>⚡</span> Developer Testing
-          </h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            For testing purposes only - instantly approve verification
-          </p>
-          <Button
-            variant="default"
-            className="bg-green-600 hover:bg-green-700 w-full"
-            onClick={async () => {
-              // Update localStorage to approved status
-              const stored = localStorage.getItem('company_profile');
-              if (stored) {
-                const profile = JSON.parse(stored);
-                const approvedProfile = {
-                  ...profile,
-                  verificationStatus: VerificationStatus.APPROVED,
-                  verificationCompletedAt: new Date().toISOString()
-                };
-                localStorage.setItem('company_profile', JSON.stringify(approvedProfile));
-                localStorage.setItem('verification_status', VerificationStatus.APPROVED);
-              }
-
-              // Refresh verification status in context
-              await refreshVerificationStatus();
-
-              // Show success message
-              toast.success('✅ Verification approved! Redirecting to dashboard...');
-
-              // Redirect to role-specific dashboard after 1 second
-              setTimeout(() => {
-                const dashboardPath = user ? getDashboardRoute(user) : '/dashboard/industry';
-                navigate(dashboardPath);
-              }, 1000);
-            }}
-          >
-            <CheckCircle2 className="w-4 h-4 mr-2" />
-            Quick Approve (Dev Only)
-          </Button>
-        </Card>
-
-        {/* Refresh Button */}
+        {/* Logout Button */}
         <div className="text-center">
           <Button
-            variant="outline"
-            onClick={() => refreshVerificationStatus()}
+            variant="destructive"
+            onClick={() => {
+              logout();
+              navigate('/');
+            }}
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Check Status
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
           </Button>
         </div>
 
