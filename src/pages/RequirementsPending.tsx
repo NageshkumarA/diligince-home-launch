@@ -9,6 +9,7 @@ import { TableSkeletonLoader } from "@/components/shared/loading";
 
 import { useUser } from "@/contexts/UserContext";
 import { CreatorFilterDropdown, Creator } from "@/components/shared/CreatorFilterDropdown";
+import AISearchBar from "@/components/shared/AISearchBar";
 import {
   Tooltip,
   TooltipContent,
@@ -262,9 +263,21 @@ const RequirementsPending = () => {
         </p>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={(val) => {
+          setSearchTerm(val);
+          setPagination(prev => ({ ...prev, currentPage: 1 }));
+        }}
+        placeholder="Search pending requirements with AI..."
+        isLoading={loading}
+      />
+
       <CustomTable
         columns={columns}
         data={data}
+        hideSearch
         onRowClick={(row) => navigate(`/dashboard/requirements/pending/${row.requirementId || row.id}`)}
         filterCallback={handleFilter}
         searchCallback={handleSearch}

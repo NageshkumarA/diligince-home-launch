@@ -216,6 +216,7 @@ const QuotationsApproved = () => {
         <CustomTable
           columns={columns}
           data={tableData}
+          hideSearch
           filterCallback={handleFilter}
           onExport={{
             xlsx: handleExportXLSX,

@@ -3,9 +3,11 @@ import CustomTable from '@/components/CustomTable';
 import { ColumnConfig, FilterConfig } from '@/types/table';
 import { Button } from '@/components/ui/button';
 import { Plus, UserPlus } from 'lucide-react';
+import AISearchBar from '@/components/shared/AISearchBar';
 
 const IndustryTeam = () => {
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const mockData = [
     {
@@ -203,9 +205,17 @@ const IndustryTeam = () => {
         </div>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={setSearchTerm}
+        placeholder="Search team members with AI..."
+      />
+
       <CustomTable
         columns={columns}
         data={mockData}
+        hideSearch
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{

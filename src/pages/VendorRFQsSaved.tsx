@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -8,9 +8,11 @@ import { RFQBrowseItem } from '@/types/rfq-browse';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Bookmark } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import AISearchBar from '@/components/shared/AISearchBar';
 
 const VendorRFQsSaved = () => {
     const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Fetch saved RFQs
     const {
@@ -75,6 +77,14 @@ const VendorRFQsSaved = () => {
                     Refresh
                 </Button>
             </div>
+
+            {/* AI Search Bar */}
+            <AISearchBar
+                value={searchQuery}
+                onChange={setSearchQuery}
+                placeholder="Search saved RFQs with AI..."
+                isLoading={isLoading}
+            />
 
             {/* RFQ Cards Grid */}
             {isLoading && !rfqs.length ? (

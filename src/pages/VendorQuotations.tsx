@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CustomTable, { ColumnConfig } from '@/components/CustomTable';
 import { TableSkeletonLoader } from '@/components/shared/loading';
-import AISearchBar from '@/components/vendor/shared/AISearchBar';
+import AISearchBar from '@/components/shared/AISearchBar';
 
 import { vendorQuotationsService } from '@/services';
 import type { VendorQuotation } from '@/types/vendor';

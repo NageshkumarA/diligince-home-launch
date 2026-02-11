@@ -5,13 +5,13 @@ import { ColumnConfig, FilterConfig } from "@/types/table";
 import requirementListService from "@/services/modules/requirements/lists.service";
 import { RequirementListItem, PaginationData } from "@/types/requirement-list";
 import { toast } from "sonner";
-import { Edit, Trash2, Eye, Plus, Search } from "lucide-react";
+import { Edit, Trash2, Eye, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableSkeletonLoader } from "@/components/shared/loading";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useUser } from "@/contexts/UserContext";
 import { CreatorFilterDropdown, Creator } from "@/components/shared/CreatorFilterDropdown";
-import { Input } from "@/components/ui/input";
+import AISearchBar from "@/components/shared/AISearchBar";
 
 const MODULE_ID = 'requirements-drafts';
 
@@ -389,21 +389,16 @@ const RequirementsDrafts = () => {
         </Button>
       </div>
 
-      {/* Filters Section */}
-      <div className="flex items-end gap-4 bg-muted/30 p-4 rounded-lg border mb-6">
-        <div className="flex-1 max-w-sm">
-          <label className="text-sm font-medium mb-1 block">Search</label>
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search drafts..."
-              className="pl-8 bg-background"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
-      </div>
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={(val) => {
+          setSearchTerm(val);
+          setPagination(prev => ({ ...prev, currentPage: 1 }));
+        }}
+        placeholder="Search draft requirements with AI..."
+        isLoading={isLoading}
+      />
 
       {selectedRows.length > 0 && (
         <div className="mb-4">
@@ -417,6 +412,7 @@ const RequirementsDrafts = () => {
       <CustomTable
         columns={columns}
         data={drafts}
+        hideSearch
         onRowClick={(row) => {
           const draftId = row.id || row.draftId;
           if (!draftId || draftId === 'undefined') {

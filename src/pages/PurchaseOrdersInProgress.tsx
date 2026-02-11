@@ -180,6 +180,7 @@ const PurchaseOrdersInProgress = () => {
         columns={columns}
         data={purchaseOrders}
         onRowClick={handleRowClick}
+        hideSearch
         selectable={true}
         onSelectionChange={setSelectedRows}
         pagination={{

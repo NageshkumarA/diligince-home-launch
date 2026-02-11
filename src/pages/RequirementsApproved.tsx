@@ -10,9 +10,8 @@ import { TableSkeletonLoader } from "@/components/shared/loading";
 import { Eye, Rocket } from "lucide-react";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useUser } from "@/contexts/UserContext";
-
-
 import { CreatorFilterDropdown, Creator } from "@/components/shared/CreatorFilterDropdown";
+import AISearchBar from "@/components/shared/AISearchBar";
 
 const MODULE_ID = 'requirements-approved';
 
@@ -308,6 +307,17 @@ const RequirementsApproved = () => {
         </p>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={(val) => {
+          setSearchTerm(val);
+          setPagination(prev => ({ ...prev, currentPage: 1 }));
+        }}
+        placeholder="Search approved requirements with AI..."
+        isLoading={loading}
+      />
+
       {selectedRows.length > 0 && (
         <div className="mb-4">
           <Button onClick={handlePublish}>
@@ -319,6 +329,7 @@ const RequirementsApproved = () => {
       <CustomTable
         columns={columns}
         data={data}
+        hideSearch
         onRowClick={(row) => navigate(`/dashboard/requirements/approved/${row.id}`)}
         filterCallback={handleFilter}
         searchCallback={handleSearch}

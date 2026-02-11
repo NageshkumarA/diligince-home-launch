@@ -272,6 +272,7 @@ const QuotationsForRequirement: React.FC = () => {
                     columns={columns}
                     data={tableData}
                     onRowClick={handleRowClick}
+                    hideSearch
                     globalSearchPlaceholder="Filter quotations..."
                     pagination={{
                         enabled: true,
