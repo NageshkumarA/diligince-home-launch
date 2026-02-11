@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import CustomTable from "@/components/CustomTable";
 import { ColumnConfig, FilterConfig } from "@/types/table";
+import AISearchBar from "@/components/shared/AISearchBar";
 
 interface Vendor {
   id: string;
@@ -16,6 +17,7 @@ interface Vendor {
 
 const StakeholdersVendors: React.FC = () => {
   const [selectedRows, setSelectedRows] = useState<Vendor[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Mock Data (replace with API data later)
   const mockData: Vendor[] = [
@@ -133,9 +135,17 @@ const StakeholdersVendors: React.FC = () => {
         </p>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={setSearchTerm}
+        placeholder="Search vendors with AI..."
+      />
+
       <CustomTable
         columns={columns}
         data={mockData}
+        hideSearch
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{ xlsx: handleExportXLSX, csv: handleExportCSV }}

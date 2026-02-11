@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { TableSkeletonLoader } from "@/components/shared/loading";
 import { useUser } from "@/contexts/UserContext";
 import { CreatorFilterDropdown, Creator } from "@/components/shared/CreatorFilterDropdown";
+import AISearchBar from "@/components/shared/AISearchBar";
 const RequirementsPublished = () => {
   const navigate = useNavigate();
   const { user } = useUser();
@@ -226,9 +227,21 @@ const RequirementsPublished = () => {
         </p>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={(val) => {
+          setSearchTerm(val);
+          setPagination(prev => ({ ...prev, currentPage: 1 }));
+        }}
+        placeholder="Search published requirements with AI..."
+        isLoading={loading}
+      />
+
       <CustomTable
         columns={columns}
         data={data}
+        hideSearch
         onRowClick={(row) => navigate(`/dashboard/requirements/published/${row.id || row.draftId}`)}
         filterCallback={handleFilter}
         searchCallback={handleSearch}

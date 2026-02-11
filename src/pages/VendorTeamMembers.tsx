@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, MoreVertical, Users, UserCheck, UserX, Mail, Phone, Eye, Edit, Trash2, RefreshCw } from 'lucide-react';
+import { Plus, MoreVertical, Users, UserCheck, UserX, Mail, Phone, Eye, Edit, Trash2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import AISearchBar from '@/components/shared/AISearchBar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -255,19 +256,18 @@ const VendorTeamMembers: React.FC = () => {
         </Card>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={filters.search || ''}
+        onChange={handleSearch}
+        placeholder="Search team members with AI..."
+        isLoading={loading}
+      />
+
       {/* Filters */}
       <Card>
         <CardContent className="pt-4">
           <div className="flex flex-wrap items-center gap-4">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search members..."
-                value={filters.search || ''}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-9"
-              />
-            </div>
             <Select
               value={filters.role || 'all'}
               onValueChange={(value) => handleFilterChange('role', value)}

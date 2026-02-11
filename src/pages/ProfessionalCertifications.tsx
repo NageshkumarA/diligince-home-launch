@@ -4,6 +4,7 @@ import { ColumnConfig, FilterConfig } from "@/types/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Award, AlertTriangle, Upload, Edit, Trash2 } from "lucide-react";
+import AISearchBar from "@/components/shared/AISearchBar";
 
 // ✅ Certification type (only once)
 interface Certification {
@@ -22,6 +23,7 @@ interface Certification {
 
 const ProfessionalCertifications = () => {
   const [selectedRows, setSelectedRows] = useState<Certification[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // ✅ Mock data
   const mockData: Certification[] = [
@@ -270,9 +272,17 @@ const ProfessionalCertifications = () => {
         </div>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={setSearchTerm}
+        placeholder="Search certifications with AI..."
+      />
+
       <CustomTable
         columns={columns}
         data={mockData}
+        hideSearch
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{ xlsx: handleExportXLSX, csv: handleExportCSV }}

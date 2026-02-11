@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CustomTable, { ColumnConfig, FilterConfig } from '@/components/CustomTable';
+import AISearchBar from '@/components/shared/AISearchBar';
 
 const IndustryApprovals = () => {
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const mockData = [
     {
@@ -169,9 +171,17 @@ const IndustryApprovals = () => {
         </div>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={setSearchTerm}
+        placeholder="Search approvals with AI..."
+      />
+
       <CustomTable
         columns={columns}
         data={mockData}
+        hideSearch
         filterCallback={handleFilterCallback}
         searchCallback={handleSearchCallback}
         onRowClick={handleRowClick}

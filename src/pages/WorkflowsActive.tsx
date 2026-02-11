@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import CustomTable from '@/components/CustomTable';
 import { ColumnConfig, FilterConfig } from '@/types/table';
+import AISearchBar from '@/components/shared/AISearchBar';
 
 const WorkflowsActive = () => {
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const mockData = [
     {
@@ -122,9 +124,17 @@ const WorkflowsActive = () => {
         </p>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={setSearchTerm}
+        placeholder="Search active workflows with AI..."
+      />
+
       <CustomTable
         columns={columns}
         data={mockData}
+        hideSearch
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{

@@ -26,17 +26,6 @@ const AISearchBar: React.FC<AISearchBarProps> = ({
         setLocalValue(value);
     }, [value]);
 
-    // Debounced search
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (localValue !== value) {
-                onChange(localValue);
-            }
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, [localValue, onChange, value]);
-
     const handleSubmit = useCallback((e: React.FormEvent) => {
         e.preventDefault();
         onChange(localValue);
@@ -46,11 +35,14 @@ const AISearchBar: React.FC<AISearchBarProps> = ({
         <form onSubmit={handleSubmit} className={cn('w-full', className)}>
             <div className="relative">
                 {/* AI Indicator */}
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
                     <Sparkles className={cn(
                         "h-4 w-4 text-violet-500",
                         isLoading && "animate-pulse"
                     )} />
+                    <span className="text-[10px] font-medium text-violet-500/70 uppercase tracking-wider hidden sm:inline">
+                        AI
+                    </span>
                 </div>
 
                 {/* Search Input */}
@@ -60,7 +52,7 @@ const AISearchBar: React.FC<AISearchBarProps> = ({
                     onChange={(e) => setLocalValue(e.target.value)}
                     placeholder={placeholder}
                     className={cn(
-                        "h-12 pl-12 pr-12 text-base",
+                        "h-12 pl-14 sm:pl-[4.5rem] pr-12 text-base",
                         "bg-background border-border",
                         "focus-visible:ring-1 focus-visible:ring-violet-500/50 focus-visible:border-violet-500/50",
                         "placeholder:text-muted-foreground/60"

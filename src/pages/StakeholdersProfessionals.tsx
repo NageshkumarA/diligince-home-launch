@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import CustomTable from "@/components/CustomTable";
 import { ColumnConfig, FilterConfig } from "@/types/table";
+import AISearchBar from "@/components/shared/AISearchBar";
 
 // Define the professional type
 interface Professional {
@@ -18,6 +19,7 @@ interface Professional {
 
 const StakeholdersProfessionals: React.FC = () => {
   const [selectedRows, setSelectedRows] = useState<Professional[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const mockData: Professional[] = [
     {
@@ -132,9 +134,17 @@ const StakeholdersProfessionals: React.FC = () => {
         </p>
       </div>
 
+      {/* AI Search Bar */}
+      <AISearchBar
+        value={searchTerm}
+        onChange={setSearchTerm}
+        placeholder="Search professionals with AI..."
+      />
+
       <CustomTable
         columns={columns}
         data={mockData}
+        hideSearch
         filterCallback={handleFilter}
         searchCallback={handleSearch}
         onExport={{ xlsx: handleExportXLSX, csv: handleExportCSV }}
