@@ -132,11 +132,12 @@ export const menuConfig: MenuConfig = {
           label: "Approved",
           path: "/dashboard/quotations/approved",
         },
-        {
-          icon: BarChart3,
-          label: "Comparison",
-          path: "/dashboard/quotations/comparison",
-        },
+        // HIDDEN: Comparison feature temporarily disabled
+        // {
+        //   icon: BarChart3,
+        //   label: "Comparison",
+        //   path: "/dashboard/quotations/comparison",
+        // },
       ],
     },
     {
