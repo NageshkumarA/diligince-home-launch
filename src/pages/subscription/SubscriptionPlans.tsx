@@ -13,7 +13,7 @@ import {
   Zap,
   Loader2
 } from 'lucide-react';
-import { CurrentPlanCard, ActiveAddOnsList } from '@/components/subscription';
+import { CurrentPlanCard, ActiveAddOnsList, CancelSubscriptionDialog } from '@/components/subscription';
 import { PlanCard, AddOnCard, PricingCalculator } from '@/components/pricing';
 import { formatCurrency } from '@/data/mockSubscriptionData';
 import {
@@ -37,6 +37,11 @@ const SubscriptionPlans = () => {
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   const [subscription, setSubscription] = useState<any>(null);
   const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [availablePlans, setAvailablePlans] = useState<Plan[]>([]);
+  const [isLoadingPlans, setIsLoadingPlans] = useState(false);
+  const [resolvedUserType, setResolvedUserType] = useState<UserType>('industry');
+
   const {
     selection,
     setSelectedPlan,
@@ -63,6 +68,33 @@ const SubscriptionPlans = () => {
     fetchSubscription();
   }, []);
 
+  // Fetch available plans from backend
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        setIsLoadingPlans(true);
+        const response = await subscriptionPurchaseService.getPlans();
+        if (response.success && response.data) {
+          setAvailablePlans(response.data.plans as any);
+          setResolvedUserType(response.data.userType as UserType);
+        }
+      } catch (error) {
+        console.error('Error fetching available plans:', error);
+        // Fallback to mock data based on role
+        if (user) {
+          const roleUserType = (user.userType?.toLowerCase() === 'vendor'
+            ? 'service_vendor'
+            : user.userType?.toLowerCase() || 'industry') as UserType;
+          setResolvedUserType(roleUserType);
+          setAvailablePlans(plansByUserType[roleUserType] || plansByUserType['industry']);
+        }
+      } finally {
+        setIsLoadingPlans(false);
+      }
+    };
+    fetchPlans();
+  }, [user]);
+
   // Load Razorpay script
   useEffect(() => {
     const script = document.createElement('script');
@@ -79,14 +111,32 @@ const SubscriptionPlans = () => {
   }, []);
 
   // For demo, we'll use the user type from current subscription
-  const userType: UserType = 'industry';
-  const plans = plansByUserType[userType];
+  const plans = availablePlans;
   const compatibleAddOns = allAddOns.filter(addon =>
-    addon.compatibleUserTypes.includes(userType)
+    addon.compatibleUserTypes.includes(resolvedUserType)
   );
 
+  // Fetch upgrade plans when tab switches to "available" and user has subscription
+  useEffect(() => {
+    if (activeTab === 'available' && subscription) {
+      fetchUpgradePlans();
+    }
+  }, [activeTab, subscription]);
+
+  const fetchUpgradePlans = async () => {
+    try {
+      const response = await subscriptionPurchaseService.getUpgradePlans();
+      if (response.success && response.data) {
+        setAvailablePlans(response.data.upgradePlans as any);
+      }
+    } catch (error) {
+      console.error('Error fetching upgrade plans:', error);
+      // Fallback already handled by availablePlans state
+    }
+  };
+
   const handlePlanSelect = (plan: Plan) => {
-    setSelectedPlan(userType, plan);
+    setSelectedPlan(resolvedUserType, plan);
   };
 
   const handleAddOnToggle = (addOn: AddOn) => {
@@ -123,12 +173,24 @@ const SubscriptionPlans = () => {
       let orderData: any;
 
       try {
-        const orderResponse = await subscriptionPurchaseService.createOrder({
-          planCode: selection.selectedPlan.code,
-          selectedPrice,
-          addOnCodes: selection.selectedAddOns?.map(a => a.code),
-          source: 'subscription_dashboard'
-        });
+        // Use upgradeSubscription if user has an active subscription, otherwise createOrder
+        let orderResponse;
+
+        if (subscription && subscription.status === 'active') {
+          orderResponse = await subscriptionPurchaseService.upgradeSubscription({
+            planCode: selection.selectedPlan.code,
+            selectedPrice,
+            addOnCodes: selection.selectedAddOns?.map(a => a.code),
+            source: 'subscription_upgrade'
+          });
+        } else {
+          orderResponse = await subscriptionPurchaseService.createOrder({
+            planCode: selection.selectedPlan.code,
+            selectedPrice,
+            addOnCodes: selection.selectedAddOns?.map(a => a.code),
+            source: 'subscription_dashboard'
+          });
+        }
 
         if (!orderResponse.success) {
           // Check if it's an ORDER_EXISTS error - fetch and reuse the existing order
@@ -199,11 +261,12 @@ const SubscriptionPlans = () => {
 
             if (verifyResponse.success) {
               toast.success('Payment successful!', {
-                description: 'Your subscription has been activated.'
+                description: subscription
+                  ? 'Your subscription has been upgraded.'
+                  : 'Your subscription has been activated.'
               });
               // Refresh to show updated subscription
-              navigate('/dashboard/subscription/plans');
-              setActiveTab('current');
+              window.location.reload();
             } else {
               toast.error('Payment verification failed', {
                 description: verifyResponse.error?.message || 'Unknown error'
@@ -237,6 +300,36 @@ const SubscriptionPlans = () => {
 
   const handleUpgrade = () => {
     setActiveTab('available');
+  };
+
+  // Cancel subscription handler
+  const handleCancel = async (data: { reason?: string; feedback?: string }) => {
+    try {
+      const payload = {
+        reason: data.reason || 'user_requested',
+        feedback: data.feedback,
+        immediateCancel: false
+      };
+      const response = await subscriptionPurchaseService.cancelSubscription(payload);
+      if (response.success) {
+        toast.success('Subscription cancelled', {
+          description: `Your plan will be active until ${new Date(response.data.effectiveDate).toLocaleDateString()}`
+        });
+        // Refresh subscription
+        const subResponse = await subscriptionPurchaseService.getSubscription();
+        if (subResponse.success) {
+          setSubscription(subResponse.data);
+        }
+      } else {
+        toast.error('Failed to cancel subscription', {
+          description: response.error?.message
+        });
+      }
+    } catch (error: any) {
+      toast.error('Cancellation failed', {
+        description: error.message || 'Something went wrong'
+      });
+    }
   };
 
   const handlePlanAction = (action: 'signup' | 'subscribe' | 'contact') => {
@@ -284,7 +377,7 @@ const SubscriptionPlans = () => {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <span className="ml-2 text-muted-foreground">Loading subscription...</span>
             </div>
-          ) : subscription ? (
+          ) : subscription && subscription.status === 'active' ? (
             <>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <CurrentPlanCard
@@ -306,55 +399,13 @@ const SubscriptionPlans = () => {
                     createdAt: subscription.createdAt || new Date().toISOString()
                   }}
                   onUpgrade={handleUpgrade}
+                  onCancel={() => setShowCancelDialog(true)}
                   onManage={() => toast.info('Subscription management coming soon!')}
                 />
                 <ActiveAddOnsList
                   addOns={subscription.addOns || []}
                   onAddMore={handleUpgrade}
                 />
-              </div>
-
-              {/* Quick Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
-                        <CheckCircle className="h-5 w-5 text-green-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Member Since</p>
-                        <p className="text-lg font-semibold">June 2025</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                        <CreditCard className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Total Spent</p>
-                        <p className="text-lg font-semibold">{formatCurrency(78500)}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                        <Zap className="h-5 w-5 text-purple-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">AI Credits Used</p>
-                        <p className="text-lg font-semibold">45 / 100</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
               </div>
             </>
           ) : (
@@ -417,56 +468,26 @@ const SubscriptionPlans = () => {
             {/* Pricing Calculator */}
             <div className="lg:col-span-1">
               <div className="sticky top-6">
-                {hasValidSelection ? (
-                  <Card className="border-2 border-primary/20">
-                    <CardHeader className="pb-4">
-                      <CardTitle className="text-lg">Order Summary</CardTitle>
-                      <CardDescription>Review your selection</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <PricingCalculator className="border-0 shadow-none p-0" />
-                      <Button
-                        className="w-full gap-2 mt-4"
-                        size="lg"
-                        onClick={handlePayment}
-                        disabled={isProcessing || !razorpayLoaded}
-                      >
-                        {isProcessing ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <CreditCard className="h-4 w-4" />
-                            Pay with Razorpay
-                            <ArrowRight className="h-4 w-4" />
-                          </>
-                        )}
-                      </Button>
-                      <p className="text-xs text-center text-muted-foreground">
-                        Secure payment powered by Razorpay
-                      </p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <Card className="border-dashed">
-                    <CardContent className="py-12 text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted/50 flex items-center justify-center">
-                        <Package className="h-8 w-8 text-muted-foreground" />
-                      </div>
-                      <h3 className="font-medium mb-1">Select a plan</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Choose a plan to see pricing details
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
+                <PricingCalculator
+                  className="border-2 border-primary/20"
+                  onPayment={handlePayment}
+                />
               </div>
             </div>
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Cancel Subscription Dialog */}
+      {subscription && (
+        <CancelSubscriptionDialog
+          open={showCancelDialog}
+          onOpenChange={setShowCancelDialog}
+          onConfirm={handleCancel}
+          planName={subscription.plan?.name || 'Your Plan'}
+          effectiveDate={subscription.billing?.currentPeriodEnd || new Date().toISOString()}
+        />
+      )}
     </div>
   );
 };

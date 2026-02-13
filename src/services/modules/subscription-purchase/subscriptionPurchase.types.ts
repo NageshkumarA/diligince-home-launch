@@ -168,7 +168,7 @@ export interface CreateOrderPayload {
   planCode: string;
   selectedPrice?: number;
   addOnCodes?: string[];
-  source: 'pricing_page' | 'subscription_dashboard' | 'upgrade';
+  source: 'pricing_page' | 'subscription_dashboard' | 'upgrade' | 'subscription_upgrade';
 }
 
 export interface VerifyPaymentPayload {
@@ -255,6 +255,18 @@ export interface CancelSubscriptionResponse {
 export interface GetSubscriptionResponse {
   success: boolean;
   data: Subscription | null;
+  error?: {
+    code: string;
+    message: string;
+  };
+}
+
+export interface GetPlansResponse {
+  success: boolean;
+  data: {
+    plans: any[];
+    userType: string;
+  };
   error?: {
     code: string;
     message: string;

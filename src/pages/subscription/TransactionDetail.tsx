@@ -11,7 +11,7 @@ import {
   Clock
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { formatCurrency } from '@/data/mockSubscriptionData';
+import { formatCurrency, convertPaiseToRupees } from '@/utils/pricingCalculations';
 import { subscriptionPurchaseService } from '@/services/modules/subscription-purchase/subscriptionPurchase.service';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
@@ -262,17 +262,15 @@ const TransactionDetail = () => {
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                   {/* Logo */}
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <span style={{ color: '#ffffff', fontWeight: 700, fontSize: '22px' }}>D</span>
-                  </div>
+                  <img
+                    src="/logo-main-no-bg.svg"
+                    alt="Diligince AI Logo"
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      objectFit: 'contain'
+                    }}
+                  />
                   <div>
                     <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#111827', margin: 0 }}>Diligince AI</h1>
                     <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>Procurement Intelligence Platform</p>

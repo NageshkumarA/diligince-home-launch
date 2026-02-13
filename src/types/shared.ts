@@ -43,6 +43,7 @@ export interface UserProfile {
   preferences?: UserPreferences;
   createdAt?: string;
   updatedAt?: string;
+  subscriptionFeatures?: string[];  // NEW: Array of enabled subscription feature codes
 }
 
 // UI Component Types

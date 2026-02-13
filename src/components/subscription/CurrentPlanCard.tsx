@@ -2,22 +2,24 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Crown, 
-  Calendar, 
-  CreditCard, 
-  CheckCircle, 
+import {
+  Crown,
+  Calendar,
+  CreditCard,
+  CheckCircle,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  XCircle
 } from 'lucide-react';
 import { format, differenceInDays, parseISO } from 'date-fns';
 import type { CurrentSubscription } from '@/data/mockSubscriptionData';
-import { formatCurrency } from '@/data/mockSubscriptionData';
+import { formatCurrency, convertPaiseToRupees } from '@/utils/pricingCalculations';
 import { cn } from '@/lib/utils';
 
 interface CurrentPlanCardProps {
   subscription: CurrentSubscription;
   onUpgrade?: () => void;
+  onCancel?: () => void;
   onManage?: () => void;
   className?: string;
 }
@@ -37,22 +39,23 @@ const statusConfig: Record<string, { label: string; color: string }> = {
   trial: { label: 'Trial', color: 'bg-blue-500' }
 };
 
-export const CurrentPlanCard = ({ 
-  subscription, 
+export const CurrentPlanCard = ({
+  subscription,
   onUpgrade,
+  onCancel,
   onManage,
-  className 
+  className
 }: CurrentPlanCardProps) => {
   const daysRemaining = differenceInDays(
     parseISO(subscription.currentPeriodEnd),
     new Date()
   );
-  
+
   const totalDays = differenceInDays(
     parseISO(subscription.currentPeriodEnd),
     parseISO(subscription.currentPeriodStart)
   );
-  
+
   const progressPercent = Math.max(0, Math.min(100, ((totalDays - daysRemaining) / totalDays) * 100));
 
   const status = statusConfig[subscription.status];
@@ -66,7 +69,7 @@ export const CurrentPlanCard = ({
     )}>
       {/* Decorative gradient */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-primary/5 to-transparent rounded-full -translate-y-32 translate-x-32" />
-      
+
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -88,7 +91,7 @@ export const CurrentPlanCard = ({
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold text-foreground">
-              {formatCurrency(subscription.amount)}
+              {formatCurrency(convertPaiseToRupees(subscription.amount))}
             </div>
             <span className="text-sm text-muted-foreground">
               /{subscription.billingCycle === 'monthly' ? 'mo' : 'yr'}
@@ -149,7 +152,7 @@ export const CurrentPlanCard = ({
         {/* Actions */}
         <div className="flex gap-3 pt-2">
           {subscription.tier !== 'enterprise' && (
-            <Button 
+            <Button
               onClick={onUpgrade}
               className="flex-1 gap-2"
             >
@@ -157,13 +160,16 @@ export const CurrentPlanCard = ({
               <ArrowRight className="h-4 w-4" />
             </Button>
           )}
-          <Button 
-            variant="outline" 
-            onClick={onManage}
-            className="flex-1"
-          >
-            Manage Subscription
-          </Button>
+          {subscription.status === 'active' && (
+            <Button
+              variant="outline"
+              onClick={onCancel}
+              className="flex-1 text-destructive hover:bg-destructive/10"
+            >
+              <XCircle className="h-4 w-4 mr-2" />
+              Cancel
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

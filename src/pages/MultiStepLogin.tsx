@@ -68,7 +68,7 @@ const MultiStepLogin: React.FC = () => {
     const account = selectedAccount || state.selectedAccount;
     const userType = account?.userType?.toLowerCase() || '';
     const isVendor = userType.includes('vendor') || userType === 'vendor';
-    
+
     switch (status) {
       case VerificationStatus.APPROVED:
       case 'approved':
@@ -98,7 +98,7 @@ const MultiStepLogin: React.FC = () => {
       if (response.success && response.data.accounts.length > 0) {
         // Filter out inactive accounts and check for active ones
         const activeAccounts = response.data.accounts.filter(acc => acc.isActive !== false);
-        
+
         if (activeAccounts.length === 0) {
           setError('No active accounts found. Please contact support.');
           return;
@@ -114,7 +114,7 @@ const MultiStepLogin: React.FC = () => {
         setError('No accounts found with this email address');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to lookup accounts. Please try again.');
+      setError(err.response?.data?.error?.message || err.response?.data?.message || 'Failed to lookup accounts. Please try again.');
     } finally {
       setLoading(false);
     }

@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Calculator, 
-  Sparkles, 
-  X, 
-  ArrowRight, 
+import {
+  Calculator,
+  Sparkles,
+  X,
+  ArrowRight,
   Check,
   Trash2,
   Info
@@ -22,25 +22,28 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { usePricingSelection } from '@/contexts/PricingSelectionContext';
-import { 
-  calculatePricingBreakdown, 
-  formatPriceValue, 
+import { useUser } from '@/contexts/UserContext';
+import {
+  calculatePricingBreakdown,
+  formatPriceValue,
   formatCurrency,
-  GST_RATE 
+  GST_RATE
 } from '@/utils/pricingCalculations';
 import { userTypes } from '@/data/pricingData';
 
 interface PricingCalculatorProps {
   className?: string;
+  onPayment?: () => void; // Optional payment handler for subscription dashboard
 }
 
-export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ className }) => {
+export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ className, onPayment }) => {
   const navigate = useNavigate();
-  const { 
-    selection, 
-    removeAddOn, 
-    clearSelection, 
-    hasValidSelection 
+  const { user } = useUser();
+  const {
+    selection,
+    removeAddOn,
+    clearSelection,
+    hasValidSelection
   } = usePricingSelection();
 
   const breakdown = calculatePricingBreakdown(
@@ -54,7 +57,7 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ className 
   // Map pricing user type to signup tab
   const getSignupPath = () => {
     if (!selection?.userType) return '/signup';
-    
+
     const mapping: Record<string, string> = {
       'industry': '/signup?tab=industry',
       'service_vendor': '/signup?tab=vendor&category=service',
@@ -62,13 +65,25 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ className 
       'logistics': '/signup?tab=vendor&category=logistics',
       'professional': '/signup?tab=professional',
     };
-    
+
     return mapping[selection.userType] || '/signup';
   };
 
   const handleSignUp = () => {
     navigate(getSignupPath());
   };
+
+  const handleContinue = () => {
+    // If onPayment is provided (subscription dashboard), use it
+    if (onPayment) {
+      onPayment();
+    } else {
+      // Otherwise navigate to subscription purchase page (pricing page)
+      navigate('/dashboard/subscription/plans');
+    }
+  };
+
+  const isAuthenticated = !!user;
 
   if (!hasValidSelection) {
     return (
@@ -113,9 +128,9 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ className 
               <p className="text-xs text-muted-foreground">Pricing Calculator</p>
             </div>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={clearSelection}
             className="text-muted-foreground hover:text-destructive"
           >
@@ -127,7 +142,7 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ className 
 
       <CardContent className="p-4 flex flex-col max-h-[calc(100vh-200px)] overflow-hidden">
         {/* Scrollable: Plan selection + Add-ons only */}
-        <div 
+        <div
           className="max-h-[200px] overflow-auto flex-shrink-0 pr-2"
           onWheel={(e) => e.stopPropagation()}
         >
@@ -171,7 +186,7 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ className 
               </div>
               <div className="space-y-2">
                 {selection.selectedAddOns.map(addon => (
-                  <div 
+                  <div
                     key={addon.code}
                     className="flex items-center justify-between p-2.5 rounded-lg bg-[hsl(210,64%,23%,0.03)] border border-[hsl(210,64%,23%,0.08)] group"
                   >
@@ -294,17 +309,20 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ className 
         {/* CTA Button - always visible */}
         <div className="mt-4 pt-4 border-t border-[hsl(210,64%,23%,0.1)]">
           <Button
-            onClick={handleSignUp}
+            onClick={isAuthenticated ? handleContinue : handleSignUp}
             className="w-full bg-gradient-to-r from-[hsl(210,64%,23%)] to-[hsl(210,64%,30%)] hover:from-[hsl(210,64%,18%)] hover:to-[hsl(210,64%,25%)] text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group"
           >
             <span className="flex items-center gap-2">
-              Sign Up & Get Started
+              {isAuthenticated ? 'Pay with Razorpay' : 'Sign Up & Get Started'}
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </span>
           </Button>
           <p className="text-xs text-center text-muted-foreground mt-2 flex items-center justify-center gap-1">
             <Info className="h-3 w-3" />
-            Profile verification required before purchase
+            {isAuthenticated
+              ? 'Secure payment powered by Razorpay'
+              : 'Profile verification required before purchase'
+            }
           </p>
         </div>
       </CardContent>

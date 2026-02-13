@@ -32,6 +32,8 @@ interface UserContextType {
   canAccessDashboard: boolean;
   refreshVerificationStatus: () => Promise<void>;
   updateVerificationStatus: (status: VerificationStatus) => void;
+  hasFeatureAccess: (featureCode: string) => boolean;  // NEW: Check subscription feature access
+  subscriptionFeatures: string[];  // NEW: Array of enabled feature codes
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -255,7 +257,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           },
           preferences: defaultPreferences,
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
+          subscriptionFeatures: apiUser.subscriptionFeatures || []  // NEW: Parse subscription features
         };
 
         setUser(userProfile);
@@ -404,6 +407,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     return user?.role === 'vendor' && user?.profile?.vendorCategory === category;
   };
 
+  const hasFeatureAccess = useCallback((featureCode: string): boolean => {
+    if (!user?.subscriptionFeatures) return false;
+    return user.subscriptionFeatures.includes(featureCode);
+  }, [user]);
+
   const updateVerificationStatus = useCallback((status: VerificationStatus) => {
     console.log('[UserContext] updateVerificationStatus called with:', status);
     console.log('[UserContext] Current verificationStatus:', verificationStatus);
@@ -465,6 +473,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     canAccessDashboard,
     refreshVerificationStatus,
     updateVerificationStatus,
+    hasFeatureAccess,  // NEW
+    subscriptionFeatures: user?.subscriptionFeatures || [],  // NEW
   };
 
   return (

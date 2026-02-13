@@ -23,10 +23,10 @@ import {
 import { format, parseISO, isWithinInterval } from 'date-fns';
 import { TransactionStatusBadge, TransactionFilters } from '@/components/subscription';
 import {
-  formatCurrency,
   type Transaction,
   type TransactionStatus
 } from '@/data/mockSubscriptionData';
+import { formatCurrency, convertPaiseToRupees } from '@/utils/pricingCalculations';
 import { subscriptionPurchaseService } from '@/services/modules/subscription-purchase/subscriptionPurchase.service';
 
 interface DateRange {

@@ -19,9 +19,21 @@ import {
   GetSubscriptionResponse,
   GetTransactionsResponse,
   SubscriptionOrder,
+  GetPlansResponse,
 } from './subscriptionPurchase.types';
 
 class SubscriptionPurchaseService {
+  /**
+   * Get available subscription plans filtered by authenticated user's type
+   */
+  async getPlans(): Promise<GetPlansResponse> {
+    const response = await api.get<GetPlansResponse>(
+      SUBSCRIPTION_PURCHASE_ROUTES.GET_PLANS
+    );
+
+    return response as unknown as GetPlansResponse;
+  }
+
   /**
    * Create a new subscription order
    * This calls the backend to create a Razorpay order
@@ -79,6 +91,39 @@ class SubscriptionPurchaseService {
     );
 
     return response as unknown as CancelSubscriptionResponse;
+  }
+
+  /**
+   * Upgrade subscription - cancels current and purchases new plan
+   */
+  async upgradeSubscription(payload: CreateOrderPayload): Promise<CreateOrderResponse> {
+    console.log('[SubscriptionPurchase] Upgrading subscription:', payload);
+
+    const response = await api.post<CreateOrderResponse, CreateOrderPayload>(
+      SUBSCRIPTION_PURCHASE_ROUTES.UPGRADE_SUBSCRIPTION,
+      payload
+    );
+
+    return response as unknown as CreateOrderResponse;
+  }
+
+  /**
+   * Get available upgrade plans (higher tiers only)
+   */
+  async getUpgradePlans(): Promise<{
+    success: boolean;
+    data: {
+      currentPlan: { code: string; name: string; tier: string } | null;
+      upgradePlans: any[];
+    };
+  }> {
+    console.log('[SubscriptionPurchase] Fetching upgrade plans');
+
+    const response = await api.get(
+      SUBSCRIPTION_PURCHASE_ROUTES.GET_UPGRADE_PLANS
+    );
+
+    return response as any;
   }
 
   /**

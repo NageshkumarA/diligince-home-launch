@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { usePermissions } from '@/hooks/usePermissions';
 
 const Sidebar: React.FC = () => {
-  const { user, logout, verificationStatus } = useUser();
+  const { user, logout, verificationStatus, hasFeatureAccess } = useUser();  // NEW: Added hasFeatureAccess
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
@@ -23,49 +23,36 @@ const Sidebar: React.FC = () => {
 
   if (!user) return null;
 
-  const menuKey = getMenuConfigKey(user) as keyof typeof menuConfig;
-  const rawMenuItems = menuConfig[menuKey] || [];
+  // Get the correct menu config key (handles vendor categories: service-vendor, product-vendor, etc.)
+  const menuConfigKey = getMenuConfigKey(user);
+  console.log('[Sidebar] User role:', user.role, 'Menu config key:', menuConfigKey);
+  const rawMenuItems = menuConfig[menuConfigKey] || [];
+  console.log('[Sidebar] Raw menu items count:', rawMenuItems.length);
 
-  // Filter menu items based on permissions - strict filtering (with Settings-path fallback)
+  // Filter menu items based on permissions AND subscription features
   const menuItems = useMemo(() => {
-    // If no hierarchical config, don't show any menu items
-    if (!hierarchicalConfig) {
+    // Check if user is a vendor (vendors don't use hierarchical permissions)
+    const isVendor = user?.role?.includes('vendor');
+
+    // If no hierarchical config and user is industry, don't show any menu items
+    // Vendors bypass permission checks as they don't use the hierarchical permission system
+    if (!isVendor && (!hierarchicalConfig || !permissionsMap || !pathToModuleMap)) {
       return [];
     }
 
-    const resolveModuleId = (path: string): string | undefined => {
-      const direct = pathToModuleMap.get(path);
-      if (direct) return direct;
-
-      // Fallback: when cached permissions still use legacy vendor profile paths,
-      // keep the Settings nav visible by mapping the new Settings route to the old ones.
-      const isVendorSettingsRoot =
-        path === '/dashboard/vendor-settings' || path === '/vendor-settings';
-
-      if (!isVendorSettingsRoot) return undefined;
-
-      const legacyRoots = [
-        '/dashboard/service-vendor-profile',
-        '/dashboard/product-vendor-profile',
-        '/dashboard/logistics-vendor-profile',
-      ];
-
-      for (const legacy of legacyRoots) {
-        const legacyId = pathToModuleMap.get(legacy);
-        if (legacyId) return legacyId;
+    const hasReadAccess = (path: string): boolean => {
+      // Vendors have access to all their menu items (no permission filtering)
+      if (isVendor) {
+        return true;
       }
 
-      return undefined;
-    };
-
-    const hasReadAccess = (path: string): boolean => {
       // Subscription paths bypass permission check - available to all authenticated users
       // This is a billing/account feature, not a module-specific permission
       if (path.includes('/subscription')) {
         return true;
       }
 
-      const moduleId = resolveModuleId(path);
+      const moduleId = pathToModuleMap?.get(path);
       if (!moduleId) return false;
       const perm = permissionsMap.get(moduleId);
       return perm?.permissions.read === true;
@@ -89,10 +76,19 @@ const Sidebar: React.FC = () => {
         if (!hasAccess && !hasAccessibleSubmenus) return false;
         if (isSettingsItem) return hasAccess || hasAccessibleSubmenus;
 
+        // NEW: Check subscription feature requirement
+        if (item.requiresFeature) {
+          const hasSubscriptionAccess = hasFeatureAccess(item.requiresFeature);
+          if (!hasSubscriptionAccess) {
+            console.log(`[Sidebar] Hiding ${item.label} - missing feature: ${item.requiresFeature}`);
+            return false;
+          }
+        }
+
         // For non-settings items, require either explicit access or accessible submenus.
         return hasAccess || hasAccessibleSubmenus;
       });
-  }, [rawMenuItems, permissionsMap, pathToModuleMap, hierarchicalConfig]);
+  }, [rawMenuItems, permissionsMap, pathToModuleMap, hierarchicalConfig, hasFeatureAccess, user?.role]);
 
   // Auto-expand menu containing active route on mount/route change
   useEffect(() => {
@@ -272,7 +268,7 @@ const Sidebar: React.FC = () => {
                         {item.submenu!.map((subItem, index) => {
                           const isRestricted = (subItem as any).restricted;
                           const restrictedReason = (subItem as any).restrictedReason;
-                          
+
                           if (isRestricted) {
                             return (
                               <TooltipProvider key={index}>
@@ -293,7 +289,7 @@ const Sidebar: React.FC = () => {
                               </TooltipProvider>
                             );
                           }
-                          
+
                           return (
                             <Link
                               key={index}

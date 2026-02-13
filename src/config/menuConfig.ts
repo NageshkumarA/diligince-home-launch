@@ -55,6 +55,7 @@ interface SubMenuItem {
   onClick?: () => void;
   restricted?: boolean;
   restrictedReason?: string;
+  requiresFeature?: string;  // NEW: Subscription feature code required to access
 }
 
 interface MenuItem {
@@ -62,6 +63,7 @@ interface MenuItem {
   label: string;
   path: string;
   submenu?: SubMenuItem[];
+  requiresFeature?: string;  // NEW: Subscription feature code required to access
 }
 
 interface MenuConfig {
@@ -215,6 +217,7 @@ export const menuConfig: MenuConfig = {
       icon: Target,
       label: "Diligince HUB",
       path: "/dashboard/industry-Diligince-hub",
+      requiresFeature: "DILIGENCE_HUB",  // NEW: Requires subscription to access
       submenu: [
         {
           icon: Building,
@@ -275,11 +278,11 @@ export const menuConfig: MenuConfig = {
           label: "Transactions",
           path: "/dashboard/subscription/transactions",
         },
-        {
-          icon: Wallet,
-          label: "Payment Methods",
-          path: "/dashboard/subscription/payment-methods",
-        },
+        // {
+        //   icon: Wallet,
+        //   label: "Payment Methods",
+        //   path: "/dashboard/subscription/payment-methods",
+        // },
       ],
     },
   ],

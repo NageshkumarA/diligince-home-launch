@@ -28,15 +28,15 @@ export const getPlanPrice = (plan: Plan | null): PriceValue => {
   if (!plan) {
     return { min: 0, max: 0, isRange: false };
   }
-  
+
   if (plan.isCustomPricing) {
     return { min: 0, max: 0, isRange: false };
   }
-  
+
   if (plan.priceRange) {
     return { min: plan.priceRange.min, max: plan.priceRange.max, isRange: true };
   }
-  
+
   const price = plan.price || 0;
   return { min: price, max: price, isRange: false };
 };
@@ -87,34 +87,34 @@ export const calculatePricingBreakdown = (
   const planMonthly = getPlanPrice(plan);
   const addOnsMonthly = calculateMonthlyAddOns(selectedAddOns);
   const addOnsOneTime = calculateOneTimeAddOns(selectedAddOns);
-  
+
   // Monthly subtotal = plan + monthly add-ons
   const subtotalMonthly: PriceValue = {
     min: planMonthly.min + addOnsMonthly,
     max: planMonthly.max + addOnsMonthly,
     isRange: planMonthly.isRange,
   };
-  
+
   // GST on monthly
   const gstMonthly = applyGST(subtotalMonthly);
-  
+
   // GST on one-time
   const gstOneTime = Math.round(addOnsOneTime * GST_RATE);
-  
+
   // First month total = monthly subtotal + monthly GST + one-time + one-time GST
   const firstMonthTotal: PriceValue = {
     min: subtotalMonthly.min + gstMonthly.min + addOnsOneTime + gstOneTime,
     max: subtotalMonthly.max + gstMonthly.max + addOnsOneTime + gstOneTime,
     isRange: planMonthly.isRange,
   };
-  
+
   // Recurring monthly = monthly subtotal + monthly GST (no one-time)
   const recurringMonthly: PriceValue = {
     min: subtotalMonthly.min + gstMonthly.min,
     max: subtotalMonthly.max + gstMonthly.max,
     isRange: planMonthly.isRange,
   };
-  
+
   return {
     planMonthly,
     addOnsMonthly,
@@ -136,13 +136,13 @@ export const formatPriceValue = (price: PriceValue, showZero = false): string =>
   if (price.min === 0 && price.max === 0 && !showZero) {
     return '—';
   }
-  
+
   const formatNum = (n: number) => `₹${n.toLocaleString('en-IN')}`;
-  
+
   if (price.isRange && price.min !== price.max) {
     return `${formatNum(price.min)} - ${formatNum(price.max)}`;
   }
-  
+
   return formatNum(price.min);
 };
 
@@ -151,4 +151,19 @@ export const formatPriceValue = (price: PriceValue, showZero = false): string =>
  */
 export const formatCurrency = (amount: number): string => {
   return `₹${amount.toLocaleString('en-IN')}`;
+};
+
+/**
+ * Convert paise to rupees
+ * Backend stores amounts in paise (for Razorpay), this converts to rupees for display
+ */
+export const convertPaiseToRupees = (paise: number): number => {
+  return Math.round(paise / 100);
+};
+
+/**
+ * Format amount from paise to rupees currency
+ */
+export const formatPaiseAsCurrency = (paise: number): string => {
+  return formatCurrency(convertPaiseToRupees(paise));
 };
