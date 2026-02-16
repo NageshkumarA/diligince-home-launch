@@ -42,6 +42,7 @@ import { ApproveQuotationModal } from "@/components/quotation/ApproveQuotationMo
 import { RejectQuotationModal } from "@/components/quotation/RejectQuotationModal";
 import { ClarificationModal } from "@/components/quotation/ClarificationModal";
 import { QuotationChatPanel } from "@/components/quotation/QuotationChatPanel";
+import { handleCreatePO } from "@/utils/purchaseOrderHelpers";
 
 export default function QuotationDetails() {
   const { id } = useParams<{ id: string }>();
@@ -278,8 +279,8 @@ export default function QuotationDetails() {
 
   const canApprove = quotation.status === 'pending_review' || quotation.status === 'under_evaluation';
   const canReject = quotation.status === 'pending_review' || quotation.status === 'under_evaluation';
-  const canRequestClarification = quotation.status !== 'approved' && quotation.status !== 'rejected' && quotation.status !== 'expired';
-  const canCreatePO = quotation.status === 'approved';
+  const canRequestClarification = quotation.status !== 'approved' && quotation.status !== 'accepted' && quotation.status !== 'rejected' && quotation.status !== 'expired';
+  const canCreatePO = quotation.status === 'approved' || quotation.status === 'accepted';
 
   return (
     <div className="min-h-screen bg-background">
@@ -349,7 +350,7 @@ export default function QuotationDetails() {
               Compare
             </Button>
             {canCreatePO && (
-              <Button onClick={() => navigate(`/dashboard/create-purchase-order?quotationId=${quotation.id}`)}>
+              <Button onClick={() => handleCreatePO(quotation.id, navigate)}>
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 Create PO
               </Button>

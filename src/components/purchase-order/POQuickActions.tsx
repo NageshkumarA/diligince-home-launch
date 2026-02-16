@@ -37,10 +37,12 @@ export const POQuickActions: React.FC<POQuickActionsProps> = ({
     navigate(`/dashboard/purchase-orders/${orderId}`);
   };
 
+  // Enhanced status checks with defensive programming
   const showApprovalActions = status === 'pending_approval';
   const showSubmitAction = status === 'draft';
-  const canEdit = ['draft', 'cancelled'].includes(status);
-  const canDelete = ['draft', 'cancelled'].includes(status);
+  const canEdit = status ? ['draft', 'cancelled'].includes(status) : false;
+  const canDelete = status ? ['draft', 'cancelled'].includes(status) : false;
+  const hasAnyActions = showApprovalActions || showSubmitAction || canEdit || canDelete || onExport;
 
   return (
     <div className="flex items-center gap-2">
@@ -61,7 +63,7 @@ export const POQuickActions: React.FC<POQuickActionsProps> = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {showSubmitAction && (
+          {showSubmitAction && onSubmit && (
             <DropdownMenuItem onClick={onSubmit} className="text-primary">
               <Send className="h-4 w-4 mr-2" />
               Submit to Vendor
@@ -69,14 +71,18 @@ export const POQuickActions: React.FC<POQuickActionsProps> = ({
           )}
           {showApprovalActions && (
             <>
-              <DropdownMenuItem onClick={onApprove}>
-                <CheckCircle className="h-4 w-4 mr-2" />
-                Approve
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={onReject}>
-                <XCircle className="h-4 w-4 mr-2" />
-                Reject
-              </DropdownMenuItem>
+              {onApprove && (
+                <DropdownMenuItem onClick={onApprove}>
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Approve
+                </DropdownMenuItem>
+              )}
+              {onReject && (
+                <DropdownMenuItem onClick={onReject}>
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Reject
+                </DropdownMenuItem>
+              )}
             </>
           )}
           {canEdit && onEdit && (
@@ -91,10 +97,17 @@ export const POQuickActions: React.FC<POQuickActionsProps> = ({
               Delete
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem onClick={onExport}>
-            <Download className="h-4 w-4 mr-2" />
-            Export PDF
-          </DropdownMenuItem>
+          {onExport && (
+            <DropdownMenuItem onClick={onExport}>
+              <Download className="h-4 w-4 mr-2" />
+              Export PDF
+            </DropdownMenuItem>
+          )}
+          {!hasAnyActions && (
+            <DropdownMenuItem disabled className="text-muted-foreground">
+              No actions available
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

@@ -165,18 +165,23 @@ const IndustryPurchaseOrders = () => {
       name: 'actions',
       label: 'Actions',
       align: 'right',
-      render: (value, row) => row?.id ? (
-        <POQuickActions
-          orderId={row.id}
-          status={row.status}
-          onApprove={() => handleApprove(row.id)}
-          onReject={() => handleReject(row.id)}
-          onExport={() => handleExport(row.id)}
-          onSubmit={() => handleSubmit(row.id)}
-          onEdit={() => handleEdit(row.id)}
-          onDelete={() => handleDelete(row.id)}
-        />
-      ) : null,
+      render: (value, row) => {
+        if (!row || !row.id) {
+          return <span className="text-xs text-muted-foreground">N/A</span>;
+        }
+        return (
+          <POQuickActions
+            orderId={row.id}
+            status={row.status || 'draft'}
+            onApprove={() => handleApprove(row.id)}
+            onReject={() => handleReject(row.id)}
+            onExport={() => handleExport(row.id)}
+            onSubmit={() => handleSubmit(row.id)}
+            onEdit={() => handleEdit(row.id)}
+            onDelete={() => handleDelete(row.id)}
+          />
+        );
+      },
     },
   ];
 

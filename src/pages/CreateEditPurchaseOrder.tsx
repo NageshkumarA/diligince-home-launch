@@ -30,11 +30,18 @@ const CreateEditPurchaseOrder: React.FC = () => {
   const [isSavingDraft, setIsSavingDraft] = useState(false);
 
   // Fetch existing PO data if in edit mode
+  console.log('CreateEditPurchaseOrder - id:', id, 'isEditMode:', isEditMode);
+
   const { data: poDetail, isLoading: isLoadingPO } = useQuery({
     queryKey: ['purchase-order', id],
-    queryFn: () => purchaseOrdersService.getById(id!),
+    queryFn: () => {
+      console.log('Fetching PO with id:', id);
+      return purchaseOrdersService.getById(id!);
+    },
     enabled: isEditMode,
   });
+
+  console.log('poDetail:', poDetail, 'isLoadingPO:', isLoadingPO);
 
   // Fetch prefill data from quotation if quotationId is provided
   const { data: prefillData, isLoading: isLoadingPrefill } = useQuery({
@@ -61,8 +68,11 @@ const CreateEditPurchaseOrder: React.FC = () => {
 
   // Populate form with existing data in edit mode
   useEffect(() => {
-    if (poDetail?.data && isEditMode) {
-      const po = poDetail.data;
+    // Handle both response structures: { data: {...} } and direct object
+    const po = poDetail?.data || poDetail;
+
+    if (po && isEditMode && po.projectTitle) {  // Check for actual PO data
+      console.log('✓ Populating form with PO data:', po.projectTitle);
       form.reset({
         quotationId: po.quotationId,
         projectTitle: po.projectTitle,
@@ -70,7 +80,9 @@ const CreateEditPurchaseOrder: React.FC = () => {
         specialInstructions: po.specialInstructions || '',
         startDate: new Date(po.startDate),
         endDate: new Date(po.endDate),
-        paymentTerms: po.paymentTerms,
+        paymentTerms: typeof po.paymentTerms === 'string'
+          ? po.paymentTerms
+          : ((po.paymentTerms as any)?.method || (po.paymentTerms as any)?.description || ''),
         deliverables: po.deliverables.map((d: any) => ({
           id: d.id,
           description: d.description,
@@ -92,15 +104,18 @@ const CreateEditPurchaseOrder: React.FC = () => {
 
       // Also populate the separate documents state
       if (po.documents) {
+        console.log('Documents from API:', po.documents);
         setSowDocuments(po.documents.map((d: any) => ({
           id: d._id || d.id,
           name: d.name,
-          size: d.size || 0,
+          size: d.size,  // Keep as undefined if not available
           type: d.type || '',
           url: d.url,
           status: 'success'
         })));
       }
+    } else {
+      console.log('✗ NOT populating - po exists:', !!po, 'isEditMode:', isEditMode, 'has projectTitle:', !!po?.projectTitle);
     }
   }, [poDetail, isEditMode, form]);
 
@@ -228,7 +243,9 @@ const CreateEditPurchaseOrder: React.FC = () => {
       // Transform form data to API format
       const apiData = {
         quotationId: data.quotationId || quotationId || 'temp-quotation-id',
-        vendorId: prefillData?.data?.vendor?.id,
+        vendorId: isEditMode
+          ? (poDetail?.data?.vendorId || (poDetail as any)?.vendorId)
+          : prefillData?.data?.vendor?.id,
         projectTitle: data.projectTitle,
         scopeOfWork: data.scopeOfWork,
         specialInstructions: data.specialInstructions,
@@ -250,9 +267,7 @@ const CreateEditPurchaseOrder: React.FC = () => {
           criteria: a.criteria,
         })),
         documents: sowDocuments.filter(f => f.status === 'success').map(f => ({
-          id: f.id,
           name: f.name,
-          size: f.size,
           type: f.type,
           url: f.url
         })),
@@ -295,7 +310,9 @@ const CreateEditPurchaseOrder: React.FC = () => {
       const formValues = form.getValues();
       const apiData = {
         quotationId: formValues.quotationId || quotationId || 'temp-quotation-id',
-        vendorId: prefillData?.data?.vendor?.id,
+        vendorId: isEditMode
+          ? (poDetail?.data?.vendorId || (poDetail as any)?.vendorId)
+          : prefillData?.data?.vendor?.id,
         projectTitle: formValues.projectTitle || '',
         scopeOfWork: formValues.scopeOfWork || '',
         specialInstructions: formValues.specialInstructions || '',
@@ -317,27 +334,23 @@ const CreateEditPurchaseOrder: React.FC = () => {
           criteria: a.criteria || '',
         })),
         documents: sowDocuments.filter(f => f.status === 'success').map(f => ({
-          id: f.id,
           name: f.name,
-          size: f.size,
           type: f.type,
           url: f.url
         })),
         saveAsDraft: true,
       };
 
-      const response = await purchaseOrdersService.create(apiData);
+      const response = id
+        ? await purchaseOrdersService.update(id, apiData)
+        : await purchaseOrdersService.create(apiData);
 
       toast.success('Draft saved successfully', {
         description: `Purchase Order ${response.data?.poNumber || ''} has been saved as a draft.`,
       });
 
-      // Navigate to the saved PO edit page to stay in the wizard
-      if (response.data?.id) {
-        createdId = response.data.id;
-        if (!id) {
-          navigate(`/dashboard/purchase-orders/${response.data.id}/edit`, { replace: true });
-        }
+      if (response.data?.id && !id) {
+        navigate(`/dashboard/purchase-orders/${response.data.id}/edit`, { replace: true });
       }
     } catch (error: any) {
       console.error('Error saving draft:', error);
@@ -368,7 +381,7 @@ const CreateEditPurchaseOrder: React.FC = () => {
       case 3:
         return <POFormMilestones form={form} />;
       case 4:
-        return <POFormAcceptanceCriteria form={form} />;
+        return <POFormAcceptanceCriteria form={form} poId={id} />;
       default:
         return null;
     }

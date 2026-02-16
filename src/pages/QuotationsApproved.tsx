@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { TableSkeletonLoader } from "@/components/shared/loading";
 import { Button } from "@/components/ui/button";
 import AISearchBar from "@/components/shared/AISearchBar";
+import { handleCreatePO } from "@/utils/purchaseOrderHelpers";
 
 const QuotationsApproved = () => {
   const [selectedRows, setSelectedRows] = useState<Quotation[]>([]);
@@ -69,7 +70,7 @@ const QuotationsApproved = () => {
       action: (row) => navigate(`/dashboard/requirements/${row.requirementId}`),
       width: "180px",
       render: (row) => (
-        <span 
+        <span
           className="text-primary hover:underline cursor-pointer font-medium"
           title={row.requirementTitle}
         >
@@ -126,19 +127,24 @@ const QuotationsApproved = () => {
       label: "Actions",
       align: "center",
       width: "120px",
-      render: (row) => (
-        <Button
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/dashboard/purchase-orders/create?quotationId=${row.quotationId}`);
-          }}
-          className="gap-1"
-        >
-          <Plus className="h-3 w-3" />
-          Create PO
-        </Button>
-      ),
+      render: (row) => {
+        if (!row || !row.quotationId) {
+          return null;
+        }
+        return (
+          <Button
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCreatePO(row.quotationId, navigate);
+            }}
+            className="gap-1"
+          >
+            <Plus className="h-3 w-3" />
+            Create PO
+          </Button>
+        );
+      },
     },
   ];
 

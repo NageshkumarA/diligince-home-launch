@@ -5,6 +5,9 @@ import { cn } from '@/lib/utils';
 import { purchaseOrdersService } from '@/services/modules/purchase-orders';
 import { toast } from 'sonner';
 
+// Base URL for API endpoints
+const BASE_URL = 'http://localhost:5001';
+
 // Allowed file types and max size
 const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -35,7 +38,7 @@ const formatFileSize = (bytes: number): string => {
 };
 
 const getFileExtension = (filename: string): string => {
-    return filename.slice(((filename.lastIndexOf('.') - 1) >>> 0) + 1).toLowerCase();
+    return filename.slice(((filename.lastIndexOf('.') - 1) >>> 0) + 2).toLowerCase();
 };
 
 const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
@@ -51,19 +54,27 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
     const [uploadingIds, setUploadingIds] = useState<string[]>([]);
 
     const validateFile = useCallback((file: File): { valid: boolean; error?: string } => {
-        const extension = `.${getFileExtension(file.name)}`;
-        if (!ALLOWED_EXTENSIONS.includes(extension)) {
+        // Case-insensitive extension check
+        const extension = `.${getFileExtension(file.name)}`.toLowerCase();
+        const allowedExtensions = ALLOWED_EXTENSIONS.map(ext => ext.toLowerCase());
+
+        if (!allowedExtensions.includes(extension)) {
             return {
                 valid: false,
-                error: `Invalid file type. Allowed: ${ALLOWED_EXTENSIONS.join(', ')}`
+                error: `Invalid file type "${extension}". Allowed: ${ALLOWED_EXTENSIONS.join(', ')}`
             };
         }
 
         if (file.size > MAX_FILE_SIZE) {
             return {
                 valid: false,
-                error: `File too large. Max size is 10MB.`
+                error: `File "${file.name}" is too large (${formatFileSize(file.size)}). Max size is 10MB.`
             };
+        }
+
+        // Additional MIME type validation for PDFs
+        if (extension === '.pdf' && file.type && !file.type.includes('pdf')) {
+            console.warn(`PDF file has unexpected MIME type: ${file.type}`);
         }
 
         return { valid: true };
@@ -81,24 +92,33 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
         }
 
         const filesToProcess = Array.from(fileList).slice(0, remainingSlots);
-        const newBatch: UploadedFile[] = filesToProcess.map((file, i) => {
+        const newBatch: UploadedFile[] = [];
+        const errors: string[] = [];
+
+        filesToProcess.forEach((file, i) => {
             const validation = validateFile(file);
             if (!validation.valid) {
-                toast.error(validation.error);
+                errors.push(`${file.name}: ${validation.error}`);
+            } else {
+                newBatch.push({
+                    id: `temp-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 9)}`,
+                    file,
+                    name: file.name,
+                    size: file.size,
+                    type: file.type || 'application/octet-stream',
+                    status: 'pending' as UploadedFile['status']
+                });
             }
-            return {
-                id: `temp-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 9)}`,
-                file,
-                name: file.name,
-                size: file.size,
-                type: file.type,
-                status: (validation.valid ? 'pending' : 'error') as UploadedFile['status'],
-                error: validation.error
-            };
-        }).filter(f => f.status !== 'error');
+        });
+
+        // Show all errors at once
+        if (errors.length > 0) {
+            errors.forEach(error => toast.error(error));
+        }
 
         if (newBatch.length > 0) {
             onFilesChange([...files, ...newBatch]);
+            toast.success(`${newBatch.length} file(s) selected successfully`);
         }
 
         // Reset input
@@ -106,7 +126,10 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
     }, [files, maxFiles, disabled, validateFile, onFilesChange]);
 
     const handleManualUpload = async (tempFile: UploadedFile) => {
-        if (!tempFile.file) return;
+        if (!tempFile.file) {
+            toast.error('No file data available');
+            return;
+        }
 
         let activeOrderId = orderId;
 
@@ -118,9 +141,10 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
                 toast.dismiss(loadingToast);
 
                 if (!activeOrderId) {
-                    toast.error('Failed to create purchase order link. Please try saving manually.');
+                    toast.error('Failed to create purchase order. Please save manually first.');
                     return;
                 }
+                toast.success('Draft saved successfully');
             } catch (err) {
                 console.error('Auto-save error:', err);
                 toast.error('Failed to auto-save draft. Please save manually first.');
@@ -135,15 +159,19 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
 
         try {
             setUploadingIds(prev => [...prev, tempFile.id]);
-            // Use the service to upload
+
+            const uploadToast = toast.loading(`Uploading ${tempFile.name}...`);
+
             const response = await purchaseOrdersService.uploadDocuments(activeOrderId, [tempFile.file]);
+
+            toast.dismiss(uploadToast);
 
             if (response.success && response.data.documents) {
                 const uploadedDocs = response.data.documents;
                 const uploadedDoc = uploadedDocs.find((d: any) => d.name === tempFile.name);
 
                 if (uploadedDoc) {
-                    toast.success('Document uploaded successfully');
+                    toast.success(`${tempFile.name} uploaded successfully`);
                     // @ts-ignore
                     onFilesChange(prev => prev.map(f =>
                         f.id === tempFile.id
@@ -159,11 +187,20 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
                     throw new Error('Document not found in response');
                 }
             } else {
-                throw new Error('Upload failed');
+                throw new Error((response as any).error?.message || 'Upload failed');
             }
         } catch (err: any) {
             console.error('Upload error:', err);
-            toast.error(err.message || 'Failed to upload document');
+            const errorMessage = err.response?.data?.error?.message || err.message || 'Failed to upload document';
+            toast.error(errorMessage);
+
+            // Mark file as error state
+            // @ts-ignore
+            onFilesChange(prev => prev.map(f =>
+                f.id === tempFile.id
+                    ? { ...f, status: 'error', error: errorMessage }
+                    : f
+            ));
         } finally {
             setUploadingIds(prev => prev.filter(id => id !== tempFile.id));
         }
@@ -272,9 +309,11 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
                                             {file.name}
                                         </p>
                                         <div className="flex items-center gap-2">
-                                            <p className="text-xs text-muted-foreground">
-                                                {formatFileSize(file.size)}
-                                            </p>
+                                            {file.size && file.size > 0 && (
+                                                <p className="text-xs text-muted-foreground">
+                                                    {formatFileSize(file.size)}
+                                                </p>
+                                            )}
                                             {isUploaded && (
                                                 <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-medium">
                                                     Uploaded
@@ -285,7 +324,7 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
                                 </div>
 
                                 <div className="flex items-center gap-1">
-                                    {!isUploaded && !isUploading && (
+                                    {(!isUploaded || (isUploaded && !file.url)) && !isUploading && (
                                         <>
                                             <Button
                                                 type="button"
@@ -325,7 +364,12 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
                                                     variant="ghost"
                                                     size="icon"
                                                     className="text-primary hover:text-primary hover:bg-primary/10"
-                                                    onClick={() => window.open(file.url, '_blank')}
+                                                    onClick={() => {
+                                                        const fullUrl = file.url?.startsWith('http')
+                                                            ? file.url
+                                                            : `${BASE_URL}/${file.url}`;
+                                                        window.open(fullUrl, '_blank');
+                                                    }}
                                                     title="View document"
                                                 >
                                                     <Eye className="w-4 h-4" />

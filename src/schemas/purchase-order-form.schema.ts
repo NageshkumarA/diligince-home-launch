@@ -2,12 +2,13 @@ import * as z from 'zod';
 
 // Schema for SOW uploaded files
 export const sowDocumentSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  size: z.number(),
-  type: z.string(),
-  status: z.enum(['pending', 'uploading', 'success', 'error']),
-  error: z.string().optional()
+  id: z.string().optional(),
+  name: z.string().optional(),
+  size: z.number().optional(),
+  type: z.string().optional(),
+  status: z.enum(['pending', 'uploading', 'success', 'error']).optional(),
+  error: z.string().optional(),
+  url: z.string().optional(), // S3 URL after upload
 });
 
 export type SOWDocument = z.infer<typeof sowDocumentSchema>;

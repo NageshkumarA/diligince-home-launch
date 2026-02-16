@@ -60,6 +60,10 @@ class PurchaseOrdersService {
     return apiService.get<POListResponse>(purchaseOrdersRoutes.getAll(params));
   }
 
+  async getByQuotationId(quotationId: string): Promise<POListResponse> {
+    return apiService.get<POListResponse>(purchaseOrdersRoutes.getAll({ quotationId } as any));
+  }
+
   // ============= Subscription Limit =============
 
   async checkLimit(): Promise<POLimitResponse> {

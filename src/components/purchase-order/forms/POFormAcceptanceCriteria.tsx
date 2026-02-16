@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import { UseFormReturn, useFieldArray } from 'react-hook-form';
 import { Plus, Trash2, CheckSquare } from 'lucide-react';
 import { FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { PurchaseOrderFormData } from '@/schemas/purchase-order-form.schema';
 import { AcceptanceCriteriaDocUpload } from './AcceptanceCriteriaDocUpload';
 
 interface POFormAcceptanceCriteriaProps {
   form: UseFormReturn<PurchaseOrderFormData>;
+  poId?: string; // Purchase Order ID for document uploads
 }
 
-export const POFormAcceptanceCriteria: React.FC<POFormAcceptanceCriteriaProps> = ({ form }) => {
+export const POFormAcceptanceCriteria: React.FC<POFormAcceptanceCriteriaProps> = ({ form, poId }) => {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "acceptanceCriteria",
@@ -73,9 +74,9 @@ export const POFormAcceptanceCriteria: React.FC<POFormAcceptanceCriteriaProps> =
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormControl>
-                        <Input
+                        <Textarea
                           placeholder={`Acceptance criteria ${index + 1}`}
-                          className="h-10 rounded-lg border-border/80 focus:ring-2 focus:ring-primary/20"
+                          className="min-h-[80px] rounded-lg border-border/80 focus:ring-2 focus:ring-primary/20 resize-y"
                           {...field}
                         />
                       </FormControl>
@@ -93,11 +94,12 @@ export const POFormAcceptanceCriteria: React.FC<POFormAcceptanceCriteriaProps> =
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
-              
+
               {/* Document Upload Section */}
               <AcceptanceCriteriaDocUpload
                 form={form}
                 criteriaIndex={index}
+                poId={poId}
                 isExpanded={expandedDocs[index] || false}
                 onToggleExpand={() => toggleDocExpand(index)}
               />

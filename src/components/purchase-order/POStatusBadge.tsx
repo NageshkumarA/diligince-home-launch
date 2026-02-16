@@ -37,7 +37,7 @@ export const POStatusBadge: React.FC<POStatusBadgeProps> = ({ status, className 
     };
 
     return configs[status] || {
-      label: status?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Unknown',
+      label: status ? status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Unknown',
       className: 'bg-gray-100 text-gray-800 border-gray-200',
     };
   };

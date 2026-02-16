@@ -16,6 +16,7 @@ import { PODeliveryTab } from '@/components/purchase-order/PODeliveryTab';
 import { POInvoicesTab } from '@/components/purchase-order/POInvoicesTab';
 import { POAcceptanceCriteriaTab } from '@/components/purchase-order/POAcceptanceCriteriaTab';
 import { POActivityTab } from '@/components/purchase-order/POActivityTab';
+import { PODocumentsTab } from '@/components/purchase-order/PODocumentsTab';
 import { exportPOToPDF } from '@/services/pdf-generator';
 import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/contexts/UserContext';
@@ -102,8 +103,8 @@ const PurchaseOrderDetails = () => {
       <div className="p-6">
         <Card className="p-8 text-center">
           <p className="text-muted-foreground">Purchase order not found</p>
-          <Button onClick={() => navigate(-1)} className="mt-4">
-            Go Back
+          <Button onClick={() => navigate('/dashboard/industry-purchase-orders')} className="mt-4">
+            Go to Purchase Orders
           </Button>
         </Card>
       </div>
@@ -149,7 +150,7 @@ const PurchaseOrderDetails = () => {
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-3xl font-bold">{po.orderNumber}</h1>
                 <Badge className={getStatusColor(po.status)}>
-                  {po.status.replace(/_/g, ' ').toUpperCase()}
+                  {po.status ? po.status.replace(/_/g, ' ').toUpperCase() : 'UNKNOWN'}
                 </Badge>
               </div>
               <p className="text-muted-foreground">{po.projectTitle}</p>
@@ -196,6 +197,7 @@ const PurchaseOrderDetails = () => {
             <TabsTrigger value="items">Line Items</TabsTrigger>
             <TabsTrigger value="milestones">Milestones</TabsTrigger>
             <TabsTrigger value="acceptance">Acceptance Criteria</TabsTrigger>
+            <TabsTrigger value="documents">Documents</TabsTrigger>
             <TabsTrigger value="delivery">Delivery</TabsTrigger>
             <TabsTrigger value="invoices">Invoices</TabsTrigger>
             <TabsTrigger value="activity">Activity Log</TabsTrigger>
@@ -215,6 +217,10 @@ const PurchaseOrderDetails = () => {
 
           <TabsContent value="acceptance">
             <POAcceptanceCriteriaTab criteria={po.acceptanceCriteria || []} />
+          </TabsContent>
+
+          <TabsContent value="documents">
+            <PODocumentsTab orderId={po.id} documents={po.documents || []} />
           </TabsContent>
 
           <TabsContent value="delivery">

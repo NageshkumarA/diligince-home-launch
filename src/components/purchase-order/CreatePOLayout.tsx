@@ -59,7 +59,7 @@ export const CreatePOLayout: React.FC<CreatePOLayoutProps> = ({
   }, [currentStep, onStepChange]);
 
   const handleExit = useCallback(() => {
-    navigate(-1);
+    navigate('/dashboard/industry-purchase-orders');
   }, [navigate]);
 
   // Swipe handlers for mobile
@@ -164,7 +164,7 @@ export const CreatePOLayout: React.FC<CreatePOLayoutProps> = ({
                   className="gap-2 bg-primary hover:bg-primary/90"
                 >
                   <Save className="w-4 h-4" />
-                  {isSubmitting ? 'Saving...' : (isEditMode ? 'Update PO' : 'Submit for Approval')}
+                  {isSubmitting ? 'Saving...' : (isEditMode ? 'Submit PO' : 'Submit for Approval')}
                 </Button>
               ) : (
                 <Button
