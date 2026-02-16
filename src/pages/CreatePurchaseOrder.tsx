@@ -18,20 +18,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PurchaseOrderStepIndicator from '@/components/purchase-order/PurchaseOrderStepIndicator';
 import { ISO9001TermsSection } from '@/components/industry/workflow/ISO9001TermsSection';
 import POReviewStep from '@/components/purchase-order/POReviewStep';
-import SOWDocumentUpload from '@/components/purchase-order/SOWDocumentUpload';
+import SOWDocumentUpload, { type UploadedFile } from '@/components/purchase-order/SOWDocumentUpload';
 import { purchaseOrdersService } from '@/services/modules/purchase-orders';
 import { usePOPrefill } from '@/hooks/usePOFromQuotation';
-
-// Type for uploaded files
-interface UploadedFile {
-  id: string;
-  file: File;
-  name: string;
-  size: number;
-  type: string;
-  status: 'pending' | 'uploading' | 'success' | 'error';
-  error?: string;
-}
 
 // Define step type
 export type POStepType = 1 | 2 | 3 | 4 | 5;
@@ -163,6 +152,7 @@ const CreatePurchaseOrder: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [sopDocuments, setSopDocuments] = useState<UploadedFile[]>([]);
+  const [orderId, setOrderId] = useState<string | undefined>(undefined);
 
   // Fetch quotation data for pre-fill if quotationId is present
   const { data: prefillData, isLoading: isPrefillLoading } = usePOPrefill(quotationId || undefined);
@@ -310,7 +300,7 @@ const CreatePurchaseOrder: React.FC = () => {
   };
 
   // Handle save as draft - no validation required
-  const handleSaveAsDraft = async () => {
+  const handleSaveAsDraft = async (shouldNavigate = true) => {
     if (!quotationId) {
       toast({
         title: "Missing Quotation",
@@ -359,15 +349,20 @@ const CreatePurchaseOrder: React.FC = () => {
 
       const response = await purchaseOrdersService.create(draftData);
 
+      if (response.data?.id) {
+        setOrderId(response.data.id);
+      }
+
       toast({
         title: "Draft Saved Successfully",
         description: `Purchase Order ${response.data.poNumber} has been saved as a draft.`
       });
 
-      // Navigate to the saved PO details page
-      if (response.data?.id) {
+      // Navigate to the saved PO details page only if requested
+      if (shouldNavigate && response.data?.id) {
         navigate(`/dashboard/purchase-orders/${response.data.id}`);
       }
+      return response.data?.id;
     } catch (error: any) {
       console.error("Error saving draft:", error);
       toast({
@@ -776,6 +771,7 @@ const CreatePurchaseOrder: React.FC = () => {
                   Upload scope of work documents, specifications, or other supporting files.
                 </p>
                 <SOWDocumentUpload
+                  orderId={orderId}
                   files={sopDocuments}
                   onFilesChange={setSopDocuments}
                   maxFiles={5}
@@ -928,7 +924,7 @@ const CreatePurchaseOrder: React.FC = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={handleSaveAsDraft}
+                  onClick={() => handleSaveAsDraft()}
                   disabled={isSavingDraft}
                   className="border-gray-300 text-gray-700 hover:bg-gray-100"
                 >

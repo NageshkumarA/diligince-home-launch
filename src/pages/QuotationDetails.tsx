@@ -32,6 +32,7 @@ import {
   AlertCircle,
   X,
   ShoppingCart,
+  ExternalLink,
 } from "lucide-react";
 import { DetailPageSkeleton } from "@/components/shared/loading";
 import { quotationService } from "@/services/quotation.service";
@@ -158,6 +159,18 @@ export default function QuotationDetails() {
       toast.success("Document downloaded");
     } catch (error) {
       toast.error("Failed to download document");
+      console.error(error);
+    }
+  };
+
+  const handleViewDocument = async (documentId: string) => {
+    if (!id) return;
+
+    try {
+      const viewUrl = await quotationService.viewDocument(id, documentId);
+      window.open(viewUrl, '_blank');
+    } catch (error) {
+      toast.error("Failed to view document");
       console.error(error);
     }
   };
@@ -618,13 +631,24 @@ export default function QuotationDetails() {
                           <TableCell>{(doc.size / 1024 / 1024).toFixed(2)} MB</TableCell>
                           <TableCell>{formatDate(doc.uploadedAt)}</TableCell>
                           <TableCell>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleDownloadDocument(doc.id, doc.name)}
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
+                            <div className="flex gap-1">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => handleViewDocument(doc.id)}
+                                title="View Document"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => handleDownloadDocument(doc.id, doc.name)}
+                                title="Download Document"
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}

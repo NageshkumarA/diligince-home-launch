@@ -128,6 +128,16 @@ class QuotationService {
   }
 
   /**
+   * Get document view URL for opening in new tab
+   */
+  async viewDocument(quotationId: string, documentId: string): Promise<string> {
+    const response = await apiService.get<{ url: string }>(
+      quotationsRoutes.viewDocument(quotationId, documentId)
+    );
+    return response.url;
+  }
+
+  /**
    * Validate if user can perform an action
    */
   async validateAction(quotationId: string, action: 'approve' | 'reject' | 'request_clarification'): Promise<ActionValidationResponse> {

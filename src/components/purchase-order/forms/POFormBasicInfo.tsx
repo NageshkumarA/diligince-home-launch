@@ -10,25 +10,24 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { PurchaseOrderFormData, SOWDocument } from '@/schemas/purchase-order-form.schema';
-import SOWDocumentUpload from '@/components/purchase-order/SOWDocumentUpload';
+import SOWDocumentUpload, { type UploadedFile } from '@/components/purchase-order/SOWDocumentUpload';
 
-interface UploadedFile {
-  id: string;
-  file: File;
-  name: string;
-  size: number;
-  type: string;
-  status: 'pending' | 'uploading' | 'success' | 'error';
-  error?: string;
-}
 
 interface POFormBasicInfoProps {
   form: UseFormReturn<PurchaseOrderFormData>;
   sowDocuments: UploadedFile[];
-  onSowDocumentsChange: (files: UploadedFile[]) => void;
+  onSowDocumentsChange: (files: UploadedFile[] | ((prev: UploadedFile[]) => UploadedFile[])) => void;
+  orderId?: string;
+  onEnsureOrderId?: () => Promise<string | undefined>;
 }
 
-export const POFormBasicInfo: React.FC<POFormBasicInfoProps> = ({ form, sowDocuments, onSowDocumentsChange }) => {
+export const POFormBasicInfo: React.FC<POFormBasicInfoProps> = ({
+  form,
+  sowDocuments,
+  onSowDocumentsChange,
+  orderId,
+  onEnsureOrderId
+}) => {
   return (
     <div className="space-y-6">
       {/* Project Title */}
@@ -86,8 +85,10 @@ export const POFormBasicInfo: React.FC<POFormBasicInfoProps> = ({ form, sowDocum
             Upload scope of work documents, specifications, or other supporting files.
           </p>
           <SOWDocumentUpload
+            orderId={orderId}
             files={sowDocuments}
             onFilesChange={onSowDocumentsChange}
+            onEnsureOrderId={onEnsureOrderId}
             maxFiles={5}
           />
         </div>

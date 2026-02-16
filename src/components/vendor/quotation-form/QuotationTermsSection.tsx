@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { UseFormReturn, useFieldArray } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,11 +18,16 @@ import {
   FormControl,
   FormMessage,
 } from '@/components/ui/form';
-import { Upload, FileText, Trash2, X } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { VendorQuotationFormData } from '@/schemas/vendor-quotation-form.schema';
+import { QuotationDocumentItem } from './QuotationDocumentItem';
+import { vendorQuotationsService } from '@/services';
+import { toast } from 'sonner';
 
 interface QuotationTermsSectionProps {
   form: UseFormReturn<VendorQuotationFormData>;
+  quotationId?: string;
+  onPendingFilesChange?: (hasPending: boolean) => void;
 }
 
 const warrantyOptions = [
@@ -55,11 +60,13 @@ const cancellationOptions = [
   { value: 'none', label: 'No Cancellation Allowed' },
 ];
 
-export const QuotationTermsSection: React.FC<QuotationTermsSectionProps> = ({ form }) => {
-  const { fields, append, remove } = useFieldArray({
+export const QuotationTermsSection: React.FC<QuotationTermsSectionProps> = ({ form, quotationId, onPendingFilesChange }) => {
+  const { fields, append, remove, update } = useFieldArray({
     control: form.control,
     name: 'documents',
   });
+
+  const [pendingFiles, setPendingFiles] = useState<{ file: File; tempId: string }[]>([]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -68,26 +75,55 @@ export const QuotationTermsSection: React.FC<QuotationTermsSectionProps> = ({ fo
     Array.from(files).forEach((file) => {
       // Validate file size (10MB max)
       if (file.size > 10 * 1024 * 1024) {
+        toast.error(`${file.name} is too large. Max size is 10MB.`);
         return;
       }
 
-      append({
-        id: `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        url: URL.createObjectURL(file),
-      });
+      setPendingFiles((prev) => [
+        ...prev,
+        { file, tempId: `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` },
+      ]);
     });
 
     // Reset input
     event.target.value = '';
   };
 
+  const handleDocumentDelete = async (index: number, documentId?: string) => {
+    if (documentId && quotationId) {
+      try {
+        await vendorQuotationsService.deleteDocument(quotationId, documentId);
+        toast.success('Document deleted');
+      } catch (error: any) {
+        toast.error(error.message || 'Failed to delete document');
+        return;
+      }
+    }
+    remove(index);
+  };
+
+  const handleUploadSuccess = (tempId: string, uploadedDoc: any) => {
+    append({
+      id: uploadedDoc.id || uploadedDoc.documentId,
+      name: uploadedDoc.name,
+      type: uploadedDoc.type,
+      size: uploadedDoc.size,
+      url: uploadedDoc.url,
+    });
+    setPendingFiles((prev) => prev.filter((p) => p.tempId !== tempId));
+  };
+
   const formatFileSize = (bytes: number) => {
     if (bytes >= 1048576) return `${(bytes / 1048576).toFixed(1)} MB`;
     return `${(bytes / 1024).toFixed(0)} KB`;
   };
+
+  // Notify parent when pending files state changes
+  React.useEffect(() => {
+    if (onPendingFilesChange) {
+      onPendingFilesChange(pendingFiles.length > 0);
+    }
+  }, [pendingFiles, onPendingFilesChange]);
 
   return (
     <div className="space-y-6">
@@ -105,7 +141,7 @@ export const QuotationTermsSection: React.FC<QuotationTermsSectionProps> = ({ fo
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Warranty Period *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select warranty period" />
@@ -131,7 +167,7 @@ export const QuotationTermsSection: React.FC<QuotationTermsSectionProps> = ({ fo
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Support Terms *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select support terms" />
@@ -158,7 +194,7 @@ export const QuotationTermsSection: React.FC<QuotationTermsSectionProps> = ({ fo
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Cancellation Policy *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select cancellation policy" />
@@ -230,45 +266,43 @@ export const QuotationTermsSection: React.FC<QuotationTermsSectionProps> = ({ fo
             </label>
           </div>
 
-          {/* Uploaded Files List */}
-          {fields.length > 0 && (
-            <div className="space-y-2">
+          {/* Uploaded & Pending Files List */}
+          {(fields.length > 0 || pendingFiles.length > 0) && (
+            <div className="space-y-3">
               <p className="text-sm font-medium text-muted-foreground mb-2">
-                Uploaded Documents ({fields.length})
+                Documents ({fields.length + pendingFiles.length})
               </p>
+
+              {/* Uploaded Files */}
               {fields.map((field, index) => (
-                <div
+                <QuotationDocumentItem
                   key={field.id}
-                  className="flex items-center justify-between p-3 border rounded-lg bg-muted/30"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <FileText className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium truncate max-w-[200px] md:max-w-[300px]">
-                        {field.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatFileSize(field.size)}
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    onClick={() => remove(index)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
+                  document={field as any}
+                  quotationId={quotationId}
+                  onRemove={() => handleDocumentDelete(index, field.id)}
+                  onUploadSuccess={() => { }} // Already uploaded
+                />
+              ))}
+
+              {/* Pending Files (Local only) */}
+              {pendingFiles.map((pending) => (
+                <QuotationDocumentItem
+                  key={pending.tempId}
+                  document={{
+                    name: pending.file.name,
+                    type: pending.file.type,
+                    size: pending.file.size,
+                  }}
+                  file={pending.file}
+                  quotationId={quotationId}
+                  onRemove={() => setPendingFiles(prev => prev.filter(p => p.tempId !== pending.tempId))}
+                  onUploadSuccess={(uploadedDoc) => handleUploadSuccess(pending.tempId, uploadedDoc)}
+                />
               ))}
             </div>
           )}
 
-          {fields.length === 0 && (
+          {fields.length === 0 && pendingFiles.length === 0 && (
             <p className="text-sm text-muted-foreground text-center py-4">
               No documents uploaded yet. Upload relevant documents like technical proposals,
               company profiles, or certifications.

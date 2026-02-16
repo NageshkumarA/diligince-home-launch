@@ -63,12 +63,19 @@ const VendorRFQDetail = () => {
     }
   }, [rfq]);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'N/A';
+      return date.toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+    } catch (e) {
+      return 'N/A';
+    }
   };
 
   const formatFileSize = (bytes: number) => {
@@ -196,6 +203,8 @@ const VendorRFQDetail = () => {
                     </div>
                     <span>•</span>
                     <span>{rfq.company.totalProjects} projects</span>
+                    <span>•</span>
+                    <span>{rfq.company.location && rfq.company.location !== 'N/A' ? rfq.company.location : 'Location not specified'}</span>
                   </div>
                 </div>
               </div>
@@ -207,7 +216,11 @@ const VendorRFQDetail = () => {
                     <MapPin className="w-4 h-4" />
                     Location
                   </div>
-                  <div className="font-medium">{rfq.location.city}, {rfq.location.state}</div>
+                  <div className="font-medium truncate" title={rfq.location.city || rfq.location.state || 'N/A'}>
+                    {rfq.location.city
+                      ? `${rfq.location.city}${rfq.location.state ? `, ${rfq.location.state}` : ''}`
+                      : (rfq.location.state || 'N/A')}
+                  </div>
                 </div>
                 <div className="p-3 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
@@ -409,13 +422,22 @@ const VendorRFQDetail = () => {
               <CardTitle>Evaluation Criteria</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className={cn(
+                "grid gap-4",
+                rfq.evaluation.criteria.some(c => rfq.evaluation.weightage[c])
+                  ? "grid-cols-2 md:grid-cols-4"
+                  : "grid-cols-1 md:grid-cols-2"
+              )}>
                 {rfq.evaluation.criteria.map((criterion) => (
-                  <div key={criterion} className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-primary mb-1">
-                      {rfq.evaluation.weightage[criterion]}%
-                    </div>
-                    <div className="text-sm text-muted-foreground">{criterion}</div>
+                  <div key={criterion} className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
+                    {rfq.evaluation.weightage[criterion] ? (
+                      <div className="text-xl font-bold text-primary shrink-0">
+                        {rfq.evaluation.weightage[criterion]}%
+                      </div>
+                    ) : (
+                      <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
+                    )}
+                    <div className="text-sm font-medium">{criterion}</div>
                   </div>
                 ))}
               </div>
@@ -424,7 +446,7 @@ const VendorRFQDetail = () => {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-6 sticky top-6 self-start">
           {/* Budget Card */}
           <Card>
             <CardHeader>
@@ -435,7 +457,7 @@ const VendorRFQDetail = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-foreground mb-1">
-                {rfq.budget.display}
+                {rfq.budget.display || 'Not specified'}
               </div>
               {rfq.budget.isNegotiable && (
                 <Badge variant="secondary" className="text-xs">
@@ -486,11 +508,13 @@ const VendorRFQDetail = () => {
             </CardHeader>
             <CardContent>
               <div className="text-sm">
-                {rfq.location.address}
+                {rfq.location.address || rfq.location.state || 'N/A'}
               </div>
-              <div className="text-sm text-muted-foreground mt-1">
-                {rfq.location.city}, {rfq.location.state}
-              </div>
+              {(rfq.location.city || (rfq.location.state && rfq.location.address)) && (
+                <div className="text-sm text-muted-foreground mt-1">
+                  {[rfq.location.city, rfq.location.state].filter(Boolean).join(', ')}
+                </div>
+              )}
               {rfq.location.isRemoteAllowed && (
                 <Badge variant="secondary" className="mt-2 text-xs">
                   Remote work allowed

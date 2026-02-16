@@ -116,7 +116,7 @@ export const QuotationPricingSection: React.FC<QuotationPricingSectionProps> = (
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Currency</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value || 'INR'}>
+                  <Select onValueChange={field.onChange} value={field.value || 'INR'}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select currency" />
@@ -141,7 +141,7 @@ export const QuotationPricingSection: React.FC<QuotationPricingSectionProps> = (
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Payment Terms</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select payment terms" />

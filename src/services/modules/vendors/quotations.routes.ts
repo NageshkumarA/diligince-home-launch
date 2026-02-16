@@ -33,6 +33,9 @@ export const vendorQuotationsRoutes = {
   // Get purchase order for quotation
   getPurchaseOrder: (quotationId: string) => `${BASE_PATH}/${quotationId}/purchase-order`,
 
+  // Remove quotation document
+  removeDocument: (quotationId: string, documentId: string) => `${BASE_PATH}/${quotationId}/documents/${documentId}`,
+
   // Get quotation statistics
   stats: `${BASE_PATH}/stats`,
 };

@@ -8,6 +8,7 @@ import { useAsyncOperation } from '@/hooks/useAsyncOperation';
 import { purchaseOrdersService } from '@/services/modules/purchase-orders';
 import { purchaseOrderFormSchema, PurchaseOrderFormData } from '@/schemas/purchase-order-form.schema';
 import { POFormBasicInfo } from '@/components/purchase-order/forms/POFormBasicInfo';
+import { type UploadedFile } from '@/components/purchase-order/SOWDocumentUpload';
 import { POFormDeliverables } from '@/components/purchase-order/forms/POFormDeliverables';
 import { POFormMilestones } from '@/components/purchase-order/forms/POFormMilestones';
 import { POFormAcceptanceCriteria } from '@/components/purchase-order/forms/POFormAcceptanceCriteria';
@@ -17,15 +18,6 @@ import { toast } from 'sonner';
 const TOTAL_STEPS = 4;
 const STEP_TITLES = ['Basic Info', 'Deliverables', 'Payment Milestones', 'Acceptance Criteria'];
 
-interface UploadedFile {
-  id: string;
-  file: File;
-  name: string;
-  size: number;
-  type: string;
-  status: 'pending' | 'uploading' | 'success' | 'error';
-  error?: string;
-}
 
 const CreateEditPurchaseOrder: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -97,6 +89,18 @@ const CreateEditPurchaseOrder: React.FC = () => {
           criteria: a.criteria,
         })),
       });
+
+      // Also populate the separate documents state
+      if (po.documents) {
+        setSowDocuments(po.documents.map((d: any) => ({
+          id: d._id || d.id,
+          name: d.name,
+          size: d.size || 0,
+          type: d.type || '',
+          url: d.url,
+          status: 'success'
+        })));
+      }
     }
   }, [poDetail, isEditMode, form]);
 
@@ -245,6 +249,13 @@ const CreateEditPurchaseOrder: React.FC = () => {
         acceptanceCriteria: data.acceptanceCriteria.map((a) => ({
           criteria: a.criteria,
         })),
+        documents: sowDocuments.filter(f => f.status === 'success').map(f => ({
+          id: f.id,
+          name: f.name,
+          size: f.size,
+          type: f.type,
+          url: f.url
+        })),
       };
 
       console.log('API Request Data:', apiData);
@@ -279,6 +290,7 @@ const CreateEditPurchaseOrder: React.FC = () => {
   // Handle Save Draft - saves without validation
   const handleSaveDraft = useCallback(async () => {
     setIsSavingDraft(true);
+    let createdId = id;
     try {
       const formValues = form.getValues();
       const apiData = {
@@ -304,6 +316,13 @@ const CreateEditPurchaseOrder: React.FC = () => {
         acceptanceCriteria: (formValues.acceptanceCriteria || []).map((a) => ({
           criteria: a.criteria || '',
         })),
+        documents: sowDocuments.filter(f => f.status === 'success').map(f => ({
+          id: f.id,
+          name: f.name,
+          size: f.size,
+          type: f.type,
+          url: f.url
+        })),
         saveAsDraft: true,
       };
 
@@ -313,9 +332,12 @@ const CreateEditPurchaseOrder: React.FC = () => {
         description: `Purchase Order ${response.data?.poNumber || ''} has been saved as a draft.`,
       });
 
-      // Navigate to the saved PO details page
+      // Navigate to the saved PO edit page to stay in the wizard
       if (response.data?.id) {
-        navigate(`/dashboard/purchase-orders/${response.data.id}`);
+        createdId = response.data.id;
+        if (!id) {
+          navigate(`/dashboard/purchase-orders/${response.data.id}/edit`, { replace: true });
+        }
       }
     } catch (error: any) {
       console.error('Error saving draft:', error);
@@ -325,7 +347,8 @@ const CreateEditPurchaseOrder: React.FC = () => {
     } finally {
       setIsSavingDraft(false);
     }
-  }, [form, quotationId, prefillData, navigate]);
+    return createdId;
+  }, [form, quotationId, prefillData, navigate, sowDocuments, id]);
 
   // Render current step content
   const renderStepContent = () => {
@@ -336,6 +359,8 @@ const CreateEditPurchaseOrder: React.FC = () => {
             form={form}
             sowDocuments={sowDocuments}
             onSowDocumentsChange={setSowDocuments}
+            orderId={id}
+            onEnsureOrderId={handleSaveDraft}
           />
         );
       case 2:

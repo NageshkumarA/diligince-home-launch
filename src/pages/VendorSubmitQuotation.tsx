@@ -29,6 +29,10 @@ const VendorSubmitQuotation: React.FC = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<QuotationStep>('pricing');
   const [completedSteps, setCompletedSteps] = useState<QuotationStep[]>([]);
+  const [hasPendingFiles, setHasPendingFiles] = useState(false);
+
+  // Debug logging
+  console.log('🔍 VendorSubmitQuotation State:', { currentStep, completedSteps, hasPendingFiles });
 
   const isEditMode = !!quotationId;
 
@@ -39,8 +43,8 @@ const VendorSubmitQuotation: React.FC = () => {
     enabled: isEditMode,
   });
 
-  // Effective RFQ ID (from params or from existing quotation's requirementId)
-  const effectiveRfqId = rfqId || existingQuotation?.requirementId;
+  // Effective RFQ ID (from params or from existing quotation's rfqId)
+  const effectiveRfqId = rfqId || existingQuotation?.rfqId;
 
   // Fetch RFQ details
   const { data: rfqDetail, isLoading: loadingRFQ } = useQuery({
@@ -94,7 +98,7 @@ const VendorSubmitQuotation: React.FC = () => {
       console.log('🔄 Mapped line items:', mappedLineItems);
 
       const formData = {
-        rfqId: existingQuotation.requirementId || '',
+        rfqId: existingQuotation.rfqId || '',
         lineItems: mappedLineItems,
         subtotal: existingQuotation.subtotal || 0,
         taxRate: existingQuotation.taxRate || 18,
@@ -109,7 +113,7 @@ const VendorSubmitQuotation: React.FC = () => {
         technicalSpecifications: existingQuotation.technicalSpecifications || '',
         qualityAssurance: existingQuotation.qualityAssurance || '',
         complianceCertifications: existingQuotation.complianceCertifications || [],
-        documents: existingQuotation.documents || [],
+        documents: existingQuotation.supportingDocuments || existingQuotation.documents || [],
         warrantyPeriod: existingQuotation.warrantyPeriod || '',
         supportTerms: existingQuotation.supportTerms || '',
         cancellationPolicy: existingQuotation.cancellationPolicy || '',
@@ -121,8 +125,15 @@ const VendorSubmitQuotation: React.FC = () => {
       form.reset(formData);
       console.log('✅ Form reset complete');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEditMode, existingQuotation]);
+  }, [isEditMode, existingQuotation, form]);
+
+  // Watch form errors
+  const formErrors = form.formState.errors;
+  useEffect(() => {
+    if (Object.keys(formErrors).length > 0) {
+      console.log('❌ Form Validation Errors:', formErrors);
+    }
+  }, [formErrors]);
 
   // Submit quotation mutation
   const submitMutation = useMutation({
@@ -163,8 +174,11 @@ const VendorSubmitQuotation: React.FC = () => {
         status: 'draft',
       } as any);
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       toast.success('Quotation saved as draft');
+      if (!isEditMode && data?.id) {
+        navigate(`/dashboard/vendor/quotations/${data.id}/edit`, { replace: true });
+      }
     },
     onError: (error: any) => {
       toast.error(error.message || 'Failed to save draft');
@@ -177,16 +191,33 @@ const VendorSubmitQuotation: React.FC = () => {
     setCurrentStep(step);
   }, []);
 
+  // Handle pending files change from QuotationTermsSection
+  const handlePendingFilesChange = useCallback((hasPending: boolean) => {
+    console.log('📎 Pending files changed:', hasPending);
+    setHasPendingFiles(hasPending);
+  }, []);
+
   const goNext = useCallback(() => {
+    console.log('🚀 goNext called:', { currentStep, hasPendingFiles });
+
+    // Check for pending files on terms step
+    if (currentStep === 'terms' && hasPendingFiles) {
+      console.log('❌ Blocked: Pending files detected');
+      toast.error('Please upload or remove all selected documents before proceeding');
+      return;
+    }
+
     const currentIndex = steps.indexOf(currentStep);
     if (currentIndex < steps.length - 1) {
       // Mark current step as completed
       if (!completedSteps.includes(currentStep)) {
         setCompletedSteps((prev) => [...prev, currentStep]);
       }
-      setCurrentStep(steps[currentIndex + 1]);
+      const nextStep = steps[currentIndex + 1];
+      console.log('✅ Moving to next step:', nextStep);
+      setCurrentStep(nextStep);
     }
-  }, [currentStep, completedSteps]);
+  }, [currentStep, completedSteps, hasPendingFiles]);
 
   const goPrevious = useCallback(() => {
     const currentIndex = steps.indexOf(currentStep);
@@ -201,16 +232,23 @@ const VendorSubmitQuotation: React.FC = () => {
   };
 
   const onSubmit = (data: VendorQuotationFormData) => {
+    console.log('📝 onSubmit triggered!', { data, isEditMode, quotationId });
     submitMutation.mutate(data);
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'N/A';
+      return new Date(dateString).toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
+    } catch (e) {
+      return 'N/A';
+    }
   };
 
   // Get category display
@@ -279,7 +317,14 @@ const VendorSubmitQuotation: React.FC = () => {
                   <Building2 className="w-4 h-4 text-muted-foreground" />
                   <div>
                     <p className="text-muted-foreground text-xs">Company</p>
-                    <p className="font-medium">{rfqDetail.company?.name || 'N/A'}</p>
+                    <p className="font-medium">
+                      {rfqDetail.company?.name || 'N/A'}
+                      {rfqDetail.company?.location && rfqDetail.company.location !== ',' && (
+                        <span className="text-muted-foreground font-normal text-xs ml-2">
+                          ({rfqDetail.company.location.replace(/^,|,$/, '').trim()})
+                        </span>
+                      )}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -301,7 +346,9 @@ const VendorSubmitQuotation: React.FC = () => {
                   <div>
                     <p className="text-muted-foreground text-xs">Location</p>
                     <p className="font-medium">
-                      {rfqDetail.location?.city || rfqDetail.location?.state || 'N/A'}
+                      {typeof rfqDetail.location === 'string'
+                        ? rfqDetail.location
+                        : (rfqDetail.location?.city || rfqDetail.location?.state || 'N/A')}
                     </p>
                   </div>
                 </div>
@@ -329,7 +376,13 @@ const VendorSubmitQuotation: React.FC = () => {
               {currentStep === 'pricing' && <QuotationPricingSection form={form} />}
               {currentStep === 'timeline' && <QuotationTimelineSection form={form} />}
               {currentStep === 'technical' && <QuotationTechnicalSection form={form} />}
-              {currentStep === 'terms' && <QuotationTermsSection form={form} />}
+              {currentStep === 'terms' && (
+                <QuotationTermsSection
+                  form={form}
+                  quotationId={quotationId}
+                  onPendingFilesChange={setHasPendingFiles}
+                />
+              )}
               {currentStep === 'review' && (
                 <QuotationReviewSection form={form} onEditSection={goToStep} />
               )}
@@ -374,27 +427,30 @@ const VendorSubmitQuotation: React.FC = () => {
                   </div>
 
                   {/* Next/Submit Button */}
-                  {currentStep === 'review' ? (
-                    <Button
-                      type="submit"
-                      disabled={submitMutation.isPending}
-                      className="gap-2"
-                    >
-                      {submitMutation.isPending && (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      )}
-                      Submit Quotation
-                    </Button>
-                  ) : (
-                    <Button
-                      type="button"
-                      onClick={goNext}
-                      className="gap-2"
-                    >
-                      Next
-                      <ChevronRight className="w-4 h-4" />
-                    </Button>
-                  )}
+                  {(() => {
+                    console.log('🎯 Button render:', { currentStep, isReview: currentStep === 'review' });
+                    return currentStep === 'review' ? (
+                      <Button
+                        type="submit"
+                        disabled={submitMutation.isPending}
+                        className="gap-2"
+                      >
+                        {submitMutation.isPending && (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
+                        Submit Quotation
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        onClick={goNext}
+                        className="gap-2"
+                      >
+                        Next
+                        <ChevronRight className="w-4 h-4" />
+                      </Button>
+                    );
+                  })()}
                 </div>
               </CardContent>
             </Card>

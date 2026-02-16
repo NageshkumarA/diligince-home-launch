@@ -278,6 +278,29 @@ class PurchaseOrdersService {
       return apiService.get<Blob>(purchaseOrdersRoutes.vendor.exportToPDF(poId, options), { responseType: 'blob' });
     },
   };
+
+  // ============= Document Operations =============
+
+  async uploadDocuments(orderId: string, files: File[]): Promise<{ success: boolean; data: any }> {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('documents', file));
+
+    return apiService.post<{ success: boolean; data: any }, FormData>(
+      purchaseOrdersRoutes.uploadDocuments(orderId),
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+  }
+
+  async deleteDocument(orderId: string, documentId: string): Promise<{ success: boolean; message: string }> {
+    return apiService.remove<{ success: boolean; message: string }>(
+      purchaseOrdersRoutes.deleteDocument(orderId, documentId)
+    );
+  }
 }
 
 export const purchaseOrdersService = new PurchaseOrdersService();

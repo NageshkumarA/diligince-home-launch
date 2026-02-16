@@ -100,6 +100,13 @@ class VendorQuotationsService {
   }
 
   /**
+   * Delete quotation document
+   */
+  async deleteDocument(quotationId: string, documentId: string): Promise<void> {
+    await apiService.remove(vendorQuotationsRoutes.removeDocument(quotationId, documentId));
+  }
+
+  /**
    * Get quotation statistics
    */
   async getQuotationStats(): Promise<VendorQuotationStats> {
