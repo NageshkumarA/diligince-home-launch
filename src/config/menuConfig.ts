@@ -425,11 +425,6 @@ export const menuConfig: MenuConfig = {
           label: "Completed Projects",
           path: "/dashboard/service-vendor-projects/completed",
         },
-        {
-          icon: Target,
-          label: "Milestones",
-          path: "/dashboard/service-vendor-projects/milestones",
-        },
       ],
     },
     {

@@ -156,7 +156,7 @@ const VendorPurchaseOrderDetails = () => {
 
             // Navigate to workflows page after a short delay
             setTimeout(() => {
-                navigate('/dashboard/vendor/workflows');
+                navigate('/dashboard/service-vendor-projects');
             }, 1500);
         } catch (error: any) {
             console.error('Error accepting PO:', error);

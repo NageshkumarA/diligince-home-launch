@@ -9,6 +9,7 @@ export interface ProjectWorkflow {
     projectTitle: string;
     poNumber?: string;
     quotationNumber?: string;
+    industryName?: string;
     status: WorkflowStatus;
     progress: number;
     totalValue: number;

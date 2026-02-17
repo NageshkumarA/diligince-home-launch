@@ -10,7 +10,7 @@ export const useSendPO = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ poId, data }: { poId: string; data?: SendPORequest }) => 
+    mutationFn: ({ poId, data }: { poId: string; data?: SendPORequest }) =>
       purchaseOrdersService.send(poId, data),
     onSuccess: (response) => {
       toast.success('Purchase order sent successfully', {
@@ -21,18 +21,18 @@ export const useSendPO = () => {
     },
     onError: (error: any) => {
       const errorCode = error?.response?.data?.error?.code;
-      
-      if (errorCode === 'PO_NOT_APPROVED') {
-        toast.error('PO not approved', {
-          description: 'Purchase order must be approved before sending.',
+
+      if (errorCode === 'PO_NOT_EDITABLE') {
+        toast.error('Cannot submit PO', {
+          description: 'Only draft or cancelled purchase orders can be submitted.',
         });
-      } else if (errorCode === 'PO_ALREADY_SENT') {
-        toast.error('Already sent', {
-          description: 'This purchase order has already been sent.',
+      } else if (errorCode === 'PO_NOT_FOUND') {
+        toast.error('PO not found', {
+          description: 'The purchase order could not be found.',
         });
       } else {
-        toast.error('Failed to send purchase order', {
-          description: error?.message || 'An unexpected error occurred.',
+        toast.error('Failed to submit purchase order', {
+          description: error?.response?.data?.error?.message || error?.message || 'An unexpected error occurred.',
         });
       }
     },

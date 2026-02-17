@@ -552,6 +552,14 @@ function App() {
                                       element={<ServiceVendorProjects />}
                                     />
                                     <Route
+                                      path="service-vendor-projects/active"
+                                      element={<ServiceVendorProjects />}
+                                    />
+                                    <Route
+                                      path="service-vendor-projects/completed"
+                                      element={<ServiceVendorProjects />}
+                                    />
+                                    <Route
                                       path="vendor/projects/:id"
                                       element={<VendorWorkflowDetails />}
                                     />

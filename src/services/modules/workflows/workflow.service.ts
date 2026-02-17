@@ -2,6 +2,7 @@ import { api } from '@/services/core/api.service';
 import {
     WorkflowListResponse,
     WorkflowDetailResponse,
+    WorkflowStatus,
     InitiatePaymentResponse,
     VerifyPaymentRequest,
     VerifyPaymentResponse,
@@ -23,6 +24,138 @@ export async function getIndustryWorkflows(params?: {
     const response = await api.get('/api/v1/industry/project-workflows', { params });
     return response.data;
 }
+
+/**
+ * Get workflow dashboard statistics
+ */
+export async function getWorkflowDashboardStats(): Promise<{
+    success: boolean;
+    data: {
+        overview: {
+            totalWorkflows: number;
+            activeWorkflows: number;
+            completedWorkflows: number;
+            pausedWorkflows: number;
+            cancelledWorkflows: number;
+            totalValue: number;
+            completedValue: number;
+            currency: string;
+        };
+        milestones: {
+            total: number;
+            pending: number;
+            paymentPending: number;
+            paid: number;
+            completed: number;
+        };
+        upcomingMilestones: Array<{
+            workflowId: string;
+            projectTitle: string;
+            milestoneName: string;
+            dueDate: string;
+            amount: number;
+            status: string;
+            currency: string;
+        }>;
+        recentActivity: Array<{
+            workflowId: string;
+            projectTitle: string;
+            type: string;
+            description: string;
+            timestamp: string;
+            performedBy: string;
+        }>;
+        progressDistribution: {
+            '0-25%': number;
+            '26-50%': number;
+            '51-75%': number;
+            '76-100%': number;
+        };
+    };
+}> {
+    const response = await api.get('/api/v1/industry/workflows/dashboard/stats');
+    return response.data;
+}
+
+/**
+ * Search workflows with advanced filters
+ */
+export async function searchWorkflows(params?: {
+    q?: string;
+    status?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    minProgress?: number;
+    maxProgress?: number;
+    stakeholderType?: string;
+    page?: number;
+    limit?: number;
+}): Promise<{
+    success: boolean;
+    data: {
+        workflows: Array<{
+            id: string;
+            workflowId: string;
+            projectTitle: string;
+            poNumber?: string;
+            vendor: {
+                id: string;
+                name: string;
+            };
+            status: WorkflowStatus;
+            progress: number;
+            totalValue: number;
+            currency: string;
+            startDate: string;
+            endDate: string;
+            createdAt: string;
+        }>;
+        pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+        };
+        filters: any;
+    };
+}> {
+    const response = await api.get('/api/v1/industry/workflows/search', { params });
+    return response.data;
+}
+
+/**
+ * Get requirement to workflow tracking
+ */
+export async function getRequirementTracking(requirementId: string): Promise<{
+    success: boolean;
+    data: {
+        requirement: {
+            id: string;
+            requirementNumber: string;
+            title: string;
+            status: string;
+            createdAt: string;
+            publishedAt: string;
+        };
+        quotations: Array<any>;
+        purchaseOrder: any;
+        workflow: any;
+        trackingStatus: {
+            requirementCreated: boolean;
+            quotationsReceived: boolean;
+            quotationApproved: boolean;
+            poCreated: boolean;
+            poSent: boolean;
+            poAccepted: boolean;
+            workflowCreated: boolean;
+            workflowActive: boolean;
+        };
+    };
+}> {
+    const response = await api.get(`/api/v1/industry/requirements/${requirementId}/workflow-tracking`);
+    return response.data;
+}
+
 
 /**
  * Get workflow details for industry

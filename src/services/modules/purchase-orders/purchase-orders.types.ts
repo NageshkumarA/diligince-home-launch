@@ -109,6 +109,15 @@ export interface PurchaseOrderDetail extends PurchaseOrder {
   gstRate?: number;  // GST/Tax rate percentage
   termsConditions?: string;  // Terms and conditions text
   vendorResponse?: VendorResponse;
+
+  // Permission flags for UI control
+  permissions?: {
+    canEdit: boolean;
+    canDelete: boolean;
+    canSubmit: boolean;
+    canView: boolean;
+    canExport: boolean;
+  };
 }
 
 
