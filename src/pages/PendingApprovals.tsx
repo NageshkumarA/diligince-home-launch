@@ -18,15 +18,15 @@ const PendingApprovals = () => {
   const navigate = useNavigate();
   const { user } = useUser();
   const currentUserId = user?.id || '';
-  
+
   const [selectedCreatorId, setSelectedCreatorId] = useState<string>('');
   const { approvals, statistics, creators, isLoading, refetch } = usePendingApprovals({
     createdById: selectedCreatorId || undefined,
   });
-  
+
   const { approve, isLoading: isApproving } = useApproveRequirement();
   const { reject, isLoading: isRejecting } = useRejectRequirement();
-  
+
   const [approveDialogOpen, setApproveDialogOpen] = useState(false);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [selectedApproval, setSelectedApproval] = useState<PendingApproval | null>(null);
@@ -80,7 +80,7 @@ const PendingApprovals = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <IndustryHeader />
+      {/* <IndustryHeader /> */}
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
           <div>
@@ -209,7 +209,7 @@ const PendingApprovals = () => {
                     <div className="flex flex-col items-end gap-2">
                       <div className="flex items-center gap-2">
                         <ApprovalProgressStepper progress={approval.approvalProgress} compact />
-                        <ApprovalInfoDropdownPanel 
+                        <ApprovalInfoDropdownPanel
                           approvalProgress={approval.approvalProgress as any}
                           status={approval.status}
                           triggerVariant="icon"

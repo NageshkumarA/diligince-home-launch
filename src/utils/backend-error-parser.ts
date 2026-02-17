@@ -11,7 +11,7 @@ const fieldToStepMap: Record<string, number> = {
   'title': 1,
   'category': 1,
   'priority': 1,
-  
+
   // Step 2: Details (varies by category)
   'productSpecifications': 2,
   'quantity': 2,
@@ -23,20 +23,20 @@ const fieldToStepMap: Record<string, number> = {
   'pickupLocation': 2,
   'deliveryLocation': 2,
   'duration': 2,
-  
+
   // Step 3: Documents
   'documents': 3,
-  
+
   // Step 4: Budget
   'estimatedBudget': 4,
   'budget': 4,
-  
+
   // Step 5: Timeline
   'deadline': 5,
   'productDeliveryDate': 5,
   'serviceStartDate': 5,
   'deliveryDate': 5,
-  
+
   // Step 6: Publish
   'submissionDeadline': 6,
   'evaluationCriteria': 6,
@@ -70,9 +70,10 @@ const fieldNameMap: Record<string, string> = {
   'documents': 'Documents',
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- External API errors have dynamic shapes
 export const parseBackendError = (error: any): ParsedBackendError => {
   const message = error?.message || error?.error?.message || error?.data?.message || '';
-  
+
   // Parse "field is not allowed to be empty" errors
   const emptyFieldMatch = message.match(/"([^"]+)" is not allowed to be empty/);
   if (emptyFieldMatch) {
@@ -85,7 +86,7 @@ export const parseBackendError = (error: any): ParsedBackendError => {
       message: `${fieldNameMap[field] || field} is required and cannot be empty`
     };
   }
-  
+
   // Parse "field must be a number" errors
   const numberFieldMatch = message.match(/"([^"]+)" must be a number/);
   if (numberFieldMatch) {
@@ -98,7 +99,7 @@ export const parseBackendError = (error: any): ParsedBackendError => {
       message: `${fieldNameMap[field] || field} must be a valid number`
     };
   }
-  
+
   // Parse "field must be greater than X" errors
   const greaterThanMatch = message.match(/"([^"]+)" must be greater than (\d+)/);
   if (greaterThanMatch) {
@@ -112,7 +113,7 @@ export const parseBackendError = (error: any): ParsedBackendError => {
       message: `${fieldNameMap[field] || field} must be greater than ${value}`
     };
   }
-  
+
   // Parse array/object validation errors
   const arrayFieldMatch = message.match(/"([^"]+)" must contain at least/);
   if (arrayFieldMatch) {
@@ -125,7 +126,7 @@ export const parseBackendError = (error: any): ParsedBackendError => {
       message: `At least one ${fieldNameMap[field] || field} is required`
     };
   }
-  
+
   // Generic validation error
   if (error?.statusCode === 422 || message.includes('validation')) {
     return {
@@ -133,7 +134,7 @@ export const parseBackendError = (error: any): ParsedBackendError => {
       message: message || 'Please check all required fields and try again'
     };
   }
-  
+
   // Generic error
   return {
     type: 'generic',

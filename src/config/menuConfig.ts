@@ -186,21 +186,22 @@ export const menuConfig: MenuConfig = {
           label: "All Projects",
           path: "/dashboard/industry-workflows",
         },
-        {
-          icon: Activity,
-          label: "Active Projects",
-          path: "/dashboard/workflows/active",
-        },
-        {
-          icon: Calendar,
-          label: "Timeline View",
-          path: "/dashboard/workflows/timeline",
-        },
-        {
-          icon: TrendingUp,
-          label: "Progress Reports",
-          path: "/dashboard/workflows/reports",
-        },
+        // HIDDEN: Simplified workflow view - using only All Projects
+        // {
+        //   icon: Activity,
+        //   label: "Active Projects",
+        //   path: "/dashboard/workflows/active",
+        // },
+        // {
+        //   icon: Calendar,
+        //   label: "Timeline View",
+        //   path: "/dashboard/workflows/timeline",
+        // },
+        // {
+        //   icon: TrendingUp,
+        //   label: "Progress Reports",
+        //   path: "/dashboard/workflows/reports",
+        // },
       ],
     },
     {

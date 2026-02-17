@@ -173,6 +173,6 @@ export interface ApiError {
   error: {
     code: string;
     message: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }

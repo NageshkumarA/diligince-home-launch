@@ -1,4 +1,4 @@
-export type QuotationStatus = 
+export type QuotationStatus =
   | 'draft'
   | 'submitted'
   | 'pending_review'
@@ -114,7 +114,7 @@ export interface QuotationListResponse {
     quotations: Quotation[];
     pagination: PaginationData;
     filters: {
-      applied: Record<string, any>;
+      applied: Record<string, unknown>;
       available: Record<string, FilterOption[]>;
     };
   };
@@ -238,7 +238,7 @@ export interface QuotationActivity {
   performedByName: string;
   performedByRole: string;
   timestamp: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ActivityResponse {

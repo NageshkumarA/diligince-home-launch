@@ -47,7 +47,7 @@ export interface VendorProduct {
   price: string;
   stock: number;
   images?: string[];
-  specifications?: Record<string, any>;
+  specifications?: Record<string, unknown>;
 }
 
 // Extended vendor sidebar types
@@ -66,28 +66,28 @@ export interface StandardizedMenuItem {
 }
 
 // Vendor-specific menu section types
-export type ServiceMenuSection = 
-  | "company-info" 
-  | "team-members" 
-  | "services-skills" 
-  | "certifications" 
-  | "projects-portfolio" 
-  | "payment-settings" 
+export type ServiceMenuSection =
+  | "company-info"
+  | "team-members"
+  | "services-skills"
+  | "certifications"
+  | "projects-portfolio"
+  | "payment-settings"
   | "account-settings";
 
-export type ProductMenuSection = 
-  | "company-info" 
-  | "product-catalog" 
-  | "brands-partners" 
-  | "certifications" 
-  | "shipping-returns" 
-  | "payment-settings" 
+export type ProductMenuSection =
+  | "company-info"
+  | "product-catalog"
+  | "brands-partners"
+  | "certifications"
+  | "shipping-returns"
+  | "payment-settings"
   | "account-settings";
 
-export type LogisticsMenuSection = 
-  | "company-info" 
-  | "fleet-equipment" 
-  | "service-areas" 
+export type LogisticsMenuSection =
+  | "company-info"
+  | "fleet-equipment"
+  | "service-areas"
   | "licenses-permits"
   | "drivers-personnel"
   | "payment-settings"

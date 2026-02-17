@@ -39,7 +39,7 @@ export interface UserProfile {
   userType?: 'Vendor' | 'Industry' | 'Professional';
   userSubType?: 'ServiceVendor' | 'ProductVendor' | 'LogisticVendor';
   initials?: string;
-  profile?: any;
+  profile?: Record<string, unknown>;
   preferences?: UserPreferences;
   createdAt?: string;
   updatedAt?: string;
@@ -99,7 +99,7 @@ export const getDashboardRoute = (user: UserProfile): string => {
       return '/dashboard/industry';
     case 'professional':
       return '/dashboard/professional';
-    case 'vendor':
+    case 'vendor': {
       // Prefer userSubType, fallback to profile.vendorCategory
       const vendorCategory = user.userSubType
         ? mapUserSubTypeToVendorCategory(user.userSubType)
@@ -109,6 +109,7 @@ export const getDashboardRoute = (user: UserProfile): string => {
       if (vendorCategory === 'product') return '/dashboard/product-vendor';
       if (vendorCategory === 'logistics') return '/dashboard/logistics-vendor';
       return '/dashboard';
+    }
     default:
       return '/login';
   }

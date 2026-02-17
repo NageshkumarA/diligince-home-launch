@@ -2,17 +2,17 @@ import { CompanyProfile, REQUIRED_FIELDS } from '@/types/verification';
 
 export const calculateProfileCompletion = (profile: Partial<CompanyProfile> | null): number => {
   if (!profile) return 0;
-  
+
   let filledCount = 0;
   const totalRequired = REQUIRED_FIELDS.length;
-  
+
   REQUIRED_FIELDS.forEach(field => {
     if (field === 'addresses') {
       if (profile.addresses && profile.addresses.length > 0) {
-        const hasCompleteAddress = profile.addresses.some(addr => 
-          addr.line1?.trim() && 
-          addr.city?.trim() && 
-          addr.state?.trim() && 
+        const hasCompleteAddress = profile.addresses.some(addr =>
+          addr.line1?.trim() &&
+          addr.city?.trim() &&
+          addr.state?.trim() &&
           addr.pincode?.trim()
         );
         if (hasCompleteAddress) filledCount++;
@@ -24,13 +24,13 @@ export const calculateProfileCompletion = (profile: Partial<CompanyProfile> | nu
       }
     }
   });
-  
+
   return Math.round((filledCount / totalRequired) * 100);
 };
 
 export const getMissingFields = (profile: Partial<CompanyProfile> | null): string[] => {
-  if (!profile) return [...REQUIRED_FIELDS] as any;
-  
+  if (!profile) return [...REQUIRED_FIELDS] as string[];
+
   const missing: string[] = [];
   const labels: Record<string, string> = {
     companyName: 'Company Name',
@@ -44,10 +44,10 @@ export const getMissingFields = (profile: Partial<CompanyProfile> | null): strin
     mobile: 'Mobile Number',
     addresses: 'Complete Address'
   };
-  
+
   REQUIRED_FIELDS.forEach(field => {
     if (field === 'addresses') {
-      const hasCompleteAddress = profile.addresses?.some(addr => 
+      const hasCompleteAddress = profile.addresses?.some(addr =>
         addr.line1?.trim() && addr.city?.trim() && addr.state?.trim() && addr.pincode?.trim()
       );
       if (!hasCompleteAddress) missing.push(labels[field]);
@@ -58,36 +58,36 @@ export const getMissingFields = (profile: Partial<CompanyProfile> | null): strin
       }
     }
   });
-  
+
   return missing;
 };
 
 export const canSubmitForVerification = (profile: Partial<CompanyProfile> | null): boolean => {
   if (calculateProfileCompletion(profile) !== 100) return false;
-  
+
   // Additional validation: Company Description must be at least 50 characters
   if (!profile?.companyDescription || profile.companyDescription.length < 50) {
     return false;
   }
-  
+
   // Required documents validation
   const documents = profile?.documents || [];
   const hasPANCard = documents.some(doc => doc.documentType === 'pan_card');
   const hasGSTCert = documents.some(doc => doc.documentType === 'gst_certificate');
   const hasRegCert = documents.some(doc => doc.documentType === 'registration_certificate');
   const hasAddressProof = documents.some(doc => doc.documentType === 'address_proof');
-  
+
   if (!hasPANCard || !hasGSTCert || !hasRegCert || !hasAddressProof) {
     return false;
   }
-  
+
   return true;
 };
 
 export const getMissingDocuments = (profile: Partial<CompanyProfile> | null): string[] => {
   const missing: string[] = [];
   const documents = profile?.documents || [];
-  
+
   if (!documents.some(doc => doc.documentType === 'pan_card')) {
     missing.push('PAN Card');
   }
@@ -100,6 +100,6 @@ export const getMissingDocuments = (profile: Partial<CompanyProfile> | null): st
   if (!documents.some(doc => doc.documentType === 'address_proof')) {
     missing.push('Address Proof');
   }
-  
+
   return missing;
 };

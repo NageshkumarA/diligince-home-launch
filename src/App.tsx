@@ -70,6 +70,7 @@ import IndustrySettings from "@/pages/IndustrySettings";
 import IndustryWorkflows from "@/pages/IndustryWorkflows";
 import IndustryProjectWorkflow from "@/pages/IndustryProjectWorkflow";
 import IndustryWorkflowDetails from "@/pages/IndustryWorkflowDetails";
+import WorkflowDetailsPage from "@/pages/WorkflowDetailsPage";
 import IndustryStakeholders from "@/pages/IndustryStakeholders";
 import IndustryDocuments from "@/pages/IndustryDocuments";
 import IndustryMessages from "@/pages/IndustryMessages";
@@ -321,7 +322,7 @@ function App() {
                                     />
                                     <Route
                                       path="industry-project-workflow/:id"
-                                      element={<IndustryProjectWorkflow />}
+                                      element={<WorkflowDetailsPage />}
                                     />
                                     <Route
                                       path="workflow-details/:id"

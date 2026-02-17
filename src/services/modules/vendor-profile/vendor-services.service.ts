@@ -47,6 +47,7 @@ class VendorServicesService {
         VENDOR_SERVICES_ROUTES.list
       );
       return response.data || [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Catch errors can have any shape
     } catch (error: any) {
       // Return empty array if no services exist yet (404)
       if (error?.response?.status === 404) {

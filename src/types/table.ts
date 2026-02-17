@@ -4,15 +4,15 @@ export interface FilterOption {
   color?: string;
 }
 
-export interface ColumnConfig {
+export interface ColumnConfig<T = Record<string, unknown>> {
   name: string;
   label: string;
   isSortable?: boolean;
   isSearchable?: boolean;
   isFilterable?: boolean;
   filterOptions?: FilterOption[];
-  action?: (row: any) => void;
-  render?: (value: any, row: any) => React.ReactNode;
+  action?: (row: T) => void;
+  render?: (value: unknown, row: T) => React.ReactNode;
   width?: string;
   align?: 'left' | 'center' | 'right';
 }
@@ -36,12 +36,12 @@ export interface PaginationConfig {
   onPageSizeChange?: (size: number) => void;
 }
 
-export interface TableProps {
-  columns: ColumnConfig[];
-  data: any[];
+export interface TableProps<T = Record<string, unknown>> {
+  columns: ColumnConfig<T>[];
+  data: T[];
   filterCallback?: (filters: FilterConfig) => void;
   searchCallback?: (searchTerm: string, selectedColumns: string[]) => void;
-  onRowClick?: (row: any) => void;
+  onRowClick?: (row: T) => void;
   onExport?: {
     xlsx?: () => void;
     csv?: () => void;
@@ -50,7 +50,7 @@ export interface TableProps {
   loading?: boolean;
   pagination?: PaginationConfig;
   selectable?: boolean;
-  onSelectionChange?: (selectedRows: any[]) => void;
+  onSelectionChange?: (selectedRows: T[]) => void;
   globalSearchPlaceholder?: string;
   className?: string;
   additionalFilters?: React.ReactNode;

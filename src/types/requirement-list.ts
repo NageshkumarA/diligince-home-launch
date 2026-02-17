@@ -63,7 +63,7 @@ export interface RequirementListResponse {
     items?: RequirementListItem[];
     pagination: PaginationData;
     filters?: {
-      applied: Record<string, any>;
+      applied: Record<string, unknown>;
       available: Record<string, FilterOption[]>;
       creators?: { id: string; name: string; email: string; count: number }[]; // Added creators
     };

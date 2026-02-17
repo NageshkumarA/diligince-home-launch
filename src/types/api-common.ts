@@ -13,7 +13,7 @@ export interface ApiEnvelope<T> {
   statusCode: number;
   message: string;
   data: T;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -26,7 +26,7 @@ export interface EnhancedValue<T = number> {
   change?: number;
   trend?: 'up' | 'down' | 'stable';
   status?: 'healthy' | 'warning' | 'critical';
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -42,19 +42,19 @@ export interface EnhancedValue<T = number> {
 export function extractValue<T>(input: T | EnhancedValue<T> | undefined | null): T | number {
   // Handle null/undefined
   if (input === null || input === undefined) {
-    return 0 as any;
+    return 0 as T;
   }
-  
+
   // If it's already a primitive number
   if (typeof input === 'number') {
     return input;
   }
-  
+
   // If it's an object with a value property
   if (input && typeof input === 'object' && 'value' in input) {
     return (input as EnhancedValue<T>).value;
   }
-  
+
   // Return as-is for other types
   return input as T;
 }
@@ -70,7 +70,7 @@ export function extractValue<T>(input: T | EnhancedValue<T> | undefined | null):
  *   console.log('Trend:', data.totalSpend.trend);
  * }
  */
-export function isEnhancedValue<T>(input: any): input is EnhancedValue<T> {
+export function isEnhancedValue<T>(input: unknown): input is EnhancedValue<T> {
   return (
     input !== null &&
     input !== undefined &&
@@ -94,16 +94,16 @@ export function isEnhancedValue<T>(input: any): input is EnhancedValue<T> {
  * };
  * extractAllValues(enhanced) // returns { total: 100, count: 5 }
  */
-export function extractAllValues<T extends Record<string, any>>(
+export function extractAllValues<T extends Record<string, unknown>>(
   obj: T
 ): { [K in keyof T]: T[K] extends EnhancedValue<infer U> ? U : T[K] } {
-  const result: any = {};
-  
+  const result = {} as { [K in keyof T]: T[K] extends EnhancedValue<infer U> ? U : T[K] };
+
   for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      result[key] = extractValue(obj[key]);
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      result[key] = extractValue(obj[key]) as T[Extract<keyof T, string>] extends EnhancedValue<infer U> ? U : T[Extract<keyof T, string>];
     }
   }
-  
+
   return result;
 }

@@ -117,5 +117,5 @@ export interface PurchaseOrderActivity {
   description: string;
   performedBy: string;
   performedAt: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }

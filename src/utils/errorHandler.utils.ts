@@ -5,7 +5,7 @@ interface ApiErrorResponse {
   error: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
     statusCode: number;
   };
 }
@@ -15,33 +15,30 @@ const ERROR_MESSAGES: Record<string, string> = {
   // Authentication Errors
   'USER_NOT_FOUND': 'User account not found. Please log in again.',
   'UNAUTHORIZED': 'Your session has expired. Please log in again.',
-  
+
   // Profile Errors
   'PROFILE_NOT_FOUND': 'Company profile not found. Please create one.',
   'PROFILE_LOCKED': 'Profile is locked and cannot be modified.',
   'ALREADY_SUBMITTED': 'Profile has already been submitted for verification.',
   'INCOMPLETE_PROFILE': 'Profile is incomplete. Please complete all required fields.',
-  
+
   // Document Errors
   'NO_FILE': 'Please select a file to upload.',
   'INVALID_FILE_TYPE': 'Invalid file type. Accepted formats: PDF, JPG, PNG',
   'FILE_TOO_LARGE': 'File size exceeds the maximum limit.',
   'DOCUMENT_NOT_FOUND': 'Document not found.',
   'INVALID_DOCUMENT_TYPE': 'Invalid document type.',
-  
+
   // Validation Errors
   'VALIDATION_ERROR': 'Please check your input and try again.',
   'CONFIRMATION_REQUIRED': 'Please confirm your submission.',
-  
+
   // System Errors
   'INTERNAL_ERROR': 'Server error. Please try again later.',
   'NETWORK_ERROR': 'Network connection error. Please check your internet.',
 };
 
 class ErrorHandler {
-  /**
-   * Handle API error and show appropriate toast
-   */
   handleApiError(error: any, customMessage?: string): void {
     console.error('API Error:', error);
 
@@ -63,15 +60,15 @@ class ErrorHandler {
     const statusCode = error.response?.status || response?.error?.statusCode;
 
     // Get user-friendly message
-    const friendlyMessage = errorCode 
-      ? ERROR_MESSAGES[errorCode] || errorMessage 
+    const friendlyMessage = errorCode
+      ? ERROR_MESSAGES[errorCode] || errorMessage
       : errorMessage || customMessage || 'An error occurred';
 
     // Choose toast type based on status code
     if (statusCode === 401 || statusCode === 403) {
       // Unauthorized/Forbidden - Warning
       toast.warning(friendlyMessage, {
-        description: response?.error?.details,
+        description: typeof response?.error?.details === 'string' ? response.error.details : undefined,
         duration: 5000,
       });
     } else if (statusCode === 404) {
@@ -94,9 +91,10 @@ class ErrorHandler {
       });
     } else if (statusCode === 409) {
       // Conflict - Warning
+      const detailsObj = response?.error?.details as Record<string, unknown> | undefined;
       toast.warning(friendlyMessage, {
-        description: response?.error?.details?.currentStatus 
-          ? `Current status: ${response.error.details.currentStatus}`
+        description: detailsObj?.currentStatus
+          ? `Current status: ${detailsObj.currentStatus}`
           : undefined,
         duration: 5000,
       });
@@ -109,7 +107,7 @@ class ErrorHandler {
     } else {
       // Generic Error
       toast.error(friendlyMessage, {
-        description: response?.error?.details,
+        description: typeof response?.error?.details === 'string' ? response.error.details : undefined,
         duration: 5000,
       });
     }
@@ -118,28 +116,31 @@ class ErrorHandler {
   /**
    * Format validation error details for display
    */
-  private formatValidationDetails(details: any): string | undefined {
+  private formatValidationDetails(details: unknown): string | undefined {
     if (!details) return undefined;
 
     if (typeof details === 'string') return details;
 
+    // Type guard for details object
+    const detailsObj = details as Record<string, any>;
+
     // Handle array of missing items
-    if (details.missingFields?.length > 0 || details.missingDocuments?.length > 0) {
+    if (detailsObj.missingFields?.length > 0 || detailsObj.missingDocuments?.length > 0) {
       const missing = [
-        ...(details.missingFields || []),
-        ...(details.missingDocuments || []),
+        ...(detailsObj.missingFields || []),
+        ...(detailsObj.missingDocuments || []),
       ];
       return `Missing: ${missing.join(', ')}`;
     }
 
     // Handle required actions
-    if (details.requiredActions?.length > 0) {
-      return details.requiredActions[0];
+    if (detailsObj.requiredActions?.length > 0) {
+      return detailsObj.requiredActions[0];
     }
 
     // Handle field-specific validation
-    if (details.field) {
-      return `${details.field}: ${details.message || 'Invalid value'}`;
+    if (detailsObj.field) {
+      return `${detailsObj.field}: ${detailsObj.message || 'Invalid value'}`;
     }
 
     return undefined;

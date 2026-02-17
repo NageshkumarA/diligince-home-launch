@@ -11,7 +11,11 @@ export async function handleCreatePO(quotationId: string, navigate: (path: strin
         const response = await purchaseOrdersService.getByQuotationId(quotationId);
 
         // Check if there's a draft PO
-        const draftPO = response.data?.find((po: any) => po.status === 'draft');
+        interface POResponse {
+            id: string;
+            status: string;
+        }
+        const draftPO = response.data?.find((po: POResponse) => po.status === 'draft');
 
         if (draftPO) {
             // Navigate to edit the existing draft

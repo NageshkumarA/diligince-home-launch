@@ -23,14 +23,48 @@ import {
     Building2
 } from 'lucide-react';
 
-import {
-    getVendorWorkflowDetails,
-    markMilestoneComplete,
-    formatCurrency,
-    getMilestoneStatusColor,
-    type WorkflowDetail,
-    type WorkflowMilestone
-} from '@/services/modules/workflows';
+
+import { workflowService } from '@/services/modules/workflows';
+
+// Helper functions
+const formatCurrency = (amount: number, currency: string) => `${currency} ${amount.toLocaleString()}`;
+const getMilestoneStatusColor = (status: string) => {
+    switch (status) {
+        case 'completed': return 'default';
+        case 'paid': return 'secondary';
+        default: return 'outline';
+    }
+};
+
+// Type definitions
+interface WorkflowDetail {
+    workflow: any;
+    linkedEntities: any;
+    stakeholder: any;
+    milestones: WorkflowMilestone[];
+    stats: any;
+}
+
+interface WorkflowMilestone {
+    id: string;
+    name?: string;
+    description: string;
+    amount: number;
+    percentage: number;
+    dueDate: string;
+    status: string;
+    payment?: any;
+    completedAt?: string;
+}
+
+// Mock API functions (to be replaced with actual service calls)
+const getVendorWorkflowDetails = async (id: string) => {
+    return workflowService.getWorkflowDetails(id);
+};
+
+const markMilestoneComplete = async (workflowId: string, milestoneId: string, data: any) => {
+    return workflowService.markMilestoneComplete(workflowId, milestoneId);
+};
 
 interface VendorMilestoneCardProps {
     milestone: WorkflowMilestone;
@@ -319,10 +353,10 @@ const VendorWorkflowDetails: React.FC = () => {
             <main className="container mx-auto px-4 py-8 pt-20">
                 {/* Header */}
                 <div className="mb-8">
-                    <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => navigate(-1)} 
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => navigate(-1)}
                         className="mb-4 hover:bg-muted/50 -ml-2"
                     >
                         <ArrowLeft className="h-4 w-4 mr-2" />
@@ -356,9 +390,9 @@ const VendorWorkflowDetails: React.FC = () => {
                         {/* Progress card */}
                         <Card className="bg-white/98 dark:bg-gray-950/98 backdrop-blur-xl border-border/60 shadow-sm rounded-xl overflow-hidden">
                             {/* Progress header with gradient accent */}
-                            <div 
-                                className="h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/40" 
-                                style={{ width: `${workflow.progress}%` }} 
+                            <div
+                                className="h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/40"
+                                style={{ width: `${workflow.progress}%` }}
                             />
                             <CardHeader className="pb-3">
                                 <CardTitle className="text-base font-semibold text-foreground">

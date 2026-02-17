@@ -1,9 +1,9 @@
 import { INDUSTRY_MODULES, INDUSTRY_PERMISSIONS_CONFIG } from '@/config/permissionsConfig';
-import { 
-  ModulePermission, 
+import {
+  ModulePermission,
   IndustryPermissionsConfig,
   ModulePermissionHierarchy,
-  PermissionFlags 
+  PermissionFlags
 } from '@/types/permissions';
 import { PermissionAction } from '@/types/roleManagement';
 
@@ -40,36 +40,36 @@ import { PermissionAction } from '@/types/roleManagement';
 export const getModuleIdFromPath = (path: string): string | null => {
   // Remove leading/trailing slashes
   const cleanPath = path.replace(/^\/|\/$/g, '');
-  
+
   // Try exact match first
   const exactMatch = INDUSTRY_MODULES.find((m) => {
     const modulePath = m.path.replace(/^\/|\/$/g, '');
     return modulePath === cleanPath;
   });
-  
+
   if (exactMatch) {
     return exactMatch.id;
   }
-  
+
   // Try pattern match for dynamic routes (e.g., /requirements/:id)
   const pathSegments = cleanPath.split('/');
   const patternMatch = INDUSTRY_MODULES.find((m) => {
     const modulePath = m.path.replace(/^\/|\/$/g, '');
     const moduleSegments = modulePath.split('/');
-    
+
     if (moduleSegments.length !== pathSegments.length) {
       return false;
     }
-    
+
     return moduleSegments.every((segment, index) => {
       return segment === pathSegments[index] || segment.startsWith(':');
     });
   });
-  
+
   if (patternMatch) {
     return patternMatch.id;
   }
-  
+
   console.warn(`No module found for path: ${path}`);
   return null;
 };
@@ -84,12 +84,12 @@ export const filterNavItemsByPermissions = <T extends { path: string }>(
 ): T[] => {
   return items.filter((item) => {
     const moduleId = getModuleIdFromPath(item.path);
-    
+
     if (!moduleId) {
       // If no module found, hide by default for security
       return false;
     }
-    
+
     const permission = permissionsMap.get(moduleId);
     return permission?.permissions.read || false;
   });
@@ -103,20 +103,20 @@ export const getAllowedActions = (
   permissionsMap: Map<string, ModulePermission>
 ): PermissionAction[] => {
   const permission = permissionsMap.get(moduleId);
-  
+
   if (!permission) {
     return [];
   }
-  
+
   const actions: PermissionAction[] = [];
   const perms = permission.permissions;
-  
+
   if (perms.read) actions.push('read');
   if (perms.write) actions.push('write');
   if (perms.edit) actions.push('edit');
   if (perms.delete) actions.push('delete');
   if (perms.download) actions.push('download');
-  
+
   return actions;
 };
 
@@ -139,11 +139,11 @@ export const createPermissionsMap = (
   permissions: ModulePermission[]
 ): Map<string, ModulePermission> => {
   const map = new Map<string, ModulePermission>();
-  
+
   permissions.forEach((permission) => {
     map.set(permission.module, permission);
   });
-  
+
   return map;
 };
 
@@ -155,17 +155,17 @@ export const mergePermissions = (
   userPerms: ModulePermission[]
 ): ModulePermission[] => {
   const merged = new Map<string, ModulePermission>();
-  
+
   // Start with defaults
   defaultPerms.forEach((perm) => {
     merged.set(perm.module, { ...perm });
   });
-  
+
   // Override with user-specific permissions
   userPerms.forEach((perm) => {
     merged.set(perm.module, { ...perm });
   });
-  
+
   return Array.from(merged.values());
 };
 
@@ -193,14 +193,14 @@ export const validatePermissions = (permissions: ModulePermission[]): boolean =>
  */
 export const flattenPermissions = (config: IndustryPermissionsConfig): ModulePermission[] => {
   const flattened: ModulePermission[] = [];
-  
+
   config.modules.forEach((module) => {
     // Add main module
     flattened.push({
       module: module.id,
       permissions: { ...module.permissions },
     });
-    
+
     // Add submodules
     if (module.submodules) {
       module.submodules.forEach((submodule) => {
@@ -211,7 +211,7 @@ export const flattenPermissions = (config: IndustryPermissionsConfig): ModulePer
       });
     }
   });
-  
+
   return flattened;
 };
 
@@ -260,7 +260,7 @@ export const setAllPermissions = (
     delete: value,
     download: value,
   };
-  
+
   return {
     ...config,
     modules: config.modules.map((module) => ({
@@ -286,18 +286,20 @@ export const getHierarchicalSubmodules = (moduleId: string): ModulePermissionHie
  * Transform API roleConfiguration permissions to flat array
  * Used for backward compatibility with existing permission checks
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- API response has dynamic module structure
 export const flattenAPIPermissions = (modules: any[]): ModulePermission[] => {
   const flat: ModulePermission[] = [];
-  
+
   modules.forEach((module) => {
     // Add main module
     flat.push({
       module: module.id,
       permissions: { ...module.permissions },
     });
-    
+
     // Add submodules
     if (module.submodules && Array.isArray(module.submodules)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Submodule structure from API
       module.submodules.forEach((sub: any) => {
         flat.push({
           module: sub.id,
@@ -306,7 +308,7 @@ export const flattenAPIPermissions = (modules: any[]): ModulePermission[] => {
       });
     }
   });
-  
+
   return flat;
 };
 
@@ -314,16 +316,19 @@ export const flattenAPIPermissions = (modules: any[]): ModulePermission[] => {
  * Transform API roleConfiguration to hierarchical config
  * Converts API response format to internal IndustryPermissionsConfig format
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- API role config has dynamic structure
 export const transformAPIToHierarchical = (roleConfig: any): IndustryPermissionsConfig => {
   return {
     version: '1.0.0',
     roleName: roleConfig.name || roleConfig.displayName,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Permission modules from API
     modules: roleConfig.permissions.map((m: any) => ({
       id: m.id,
       name: m.name,
       path: m.path,
       icon: m.icon,
       permissions: { ...m.permissions },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Submodule structure from API
       submodules: m.submodules?.map((s: any) => ({
         id: s.id,
         name: s.name,
@@ -340,14 +345,14 @@ export const transformAPIToHierarchical = (roleConfig: any): IndustryPermissions
  */
 export const createPathToModuleMap = (config: IndustryPermissionsConfig): Map<string, string> => {
   const map = new Map<string, string>();
-  
+
   config.modules.forEach(module => {
     map.set(module.path, module.id);
     module.submodules?.forEach(sub => {
       map.set(sub.path, sub.id);
     });
   });
-  
+
   return map;
 };
 
@@ -361,7 +366,7 @@ export const getPermissionsByPath = (
 ): PermissionFlags | null => {
   const moduleId = pathToModuleMap.get(path);
   if (!moduleId) return null;
-  
+
   const permission = permissionsMap.get(moduleId);
   return permission?.permissions || null;
 };
