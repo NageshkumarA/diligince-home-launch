@@ -123,7 +123,7 @@ class WorkflowService {
     async markMilestoneComplete(workflowId: string, milestoneId: string, notes?: string) {
         const response = await api.post(
             `/api/v1/industry/workflows/${workflowId}/milestones/${milestoneId}/complete`,
-            { notes }
+            { party: 'industry', notes }
         );
         return response.data;
     }

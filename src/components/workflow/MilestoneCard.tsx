@@ -11,7 +11,7 @@ interface Milestone {
     description?: string;
     amount: number;
     percentage: number;
-    status: 'pending' | 'in_progress' | 'paid' | 'completed';
+    status: 'pending' | 'in_progress' | 'payment_pending' | 'paid' | 'completed';
     dueDate?: string;
     completionStatus?: {
         industryMarkedComplete: {
@@ -55,8 +55,9 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({
     isProcessing = false
 }) => {
     const getStatusBadge = () => {
-        const statusConfig = {
+        const statusConfig: Record<string, { variant: 'outline' | 'secondary' | 'default'; className: string; label: string }> = {
             pending: { variant: 'outline' as const, className: 'bg-gray-50', label: 'Pending' },
+            payment_pending: { variant: 'secondary' as const, className: 'bg-amber-50 text-amber-700', label: 'Payment Pending' },
             in_progress: { variant: 'secondary' as const, className: 'bg-blue-50 text-blue-700', label: 'In Progress' },
             paid: { variant: 'secondary' as const, className: 'bg-green-50 text-green-700', label: 'Paid' },
             completed: { variant: 'default' as const, className: 'bg-green-600', label: 'Completed' }
@@ -70,12 +71,12 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({
         );
     };
 
-    const canPay = ['pending', 'in_progress'].includes(milestone.status) && userType === 'industry';
+    const canPay = ['pending', 'in_progress', 'payment_pending'].includes(milestone.status) && userType === 'industry' && milestone.amount > 0;
     const canDownloadInvoice = ['paid', 'completed'].includes(milestone.status) && milestone.invoiceUrl;
     const canMarkComplete = milestone.status === 'paid' && !milestone.completionStatus?.fullyCompleted;
 
-    const isIndustryComplete = milestone.completionStatus?.industryMarkedComplete.status || false;
-    const isVendorComplete = milestone.completionStatus?.vendorMarkedComplete.status || false;
+    const isIndustryComplete = milestone.completionStatus?.industryMarkedComplete?.status || false;
+    const isVendorComplete = milestone.completionStatus?.vendorMarkedComplete?.status || false;
     const currentUserComplete = userType === 'industry' ? isIndustryComplete : isVendorComplete;
 
     return (
@@ -152,8 +153,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({
                         <Button
                             onClick={() => onPaymentInitiate(milestone.id)}
                             disabled={isProcessing}
-                            className="flex items-center gap-2"
-                            variant="default"
+                            className="flex items-center gap-2 bg-[#153b60] hover:bg-[#1e4976] text-white"
                         >
                             <CreditCard className="h-4 w-4" />
                             Pay Now
@@ -184,8 +184,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({
                         <Button
                             onClick={() => onMarkComplete(milestone.id)}
                             disabled={isProcessing}
-                            variant="secondary"
-                            className="flex items-center gap-2 ml-auto"
+                            className="flex items-center gap-2 ml-auto bg-[#153b60] hover:bg-[#1e4976] text-white"
                         >
                             <CheckCircle2 className="h-4 w-4" />
                             Mark as Complete
