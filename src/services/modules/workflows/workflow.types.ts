@@ -86,7 +86,7 @@ export interface WorkflowDetail {
             title: string;
         };
     };
-    stakeholder: {
+    stakeholder?: {
         id: string;
         type: 'vendor' | 'professional';
         name: string;
@@ -95,14 +95,19 @@ export interface WorkflowDetail {
             phone?: string;
         };
     };
+    industry?: {
+        id: string;
+        name: string;
+        contact?: any;
+    };
     milestones: WorkflowMilestone[];
     stats: {
         totalMilestones: number;
         completedMilestones: number;
         paidMilestones: number;
-        pendingMilestones: number;
-        paidAmount: number;
-        remainingAmount: number;
+        awaitingCompletion: number;
+        receivedAmount: number;
+        pendingAmount: number;
     };
     events: Array<{
         type: string;

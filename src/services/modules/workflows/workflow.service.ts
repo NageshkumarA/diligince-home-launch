@@ -230,6 +230,9 @@ export async function getVendorWorkflows(params?: {
     status?: string;
     page?: number;
     limit?: number;
+    search?: string;
+    sortBy?: string;
+    order?: string;
 }): Promise<WorkflowListResponse> {
     const response = await api.get('/api/v1/vendors/workflows', { params });
     return response.data;
@@ -253,7 +256,7 @@ export async function markMilestoneComplete(
 ): Promise<MarkMilestoneCompleteResponse> {
     const response = await api.post(
         `/api/v1/vendors/workflows/${workflowId}/milestones/${milestoneId}/complete`,
-        data || {}
+        { party: 'vendor', ...(data || {}) }
     );
     return response.data;
 }

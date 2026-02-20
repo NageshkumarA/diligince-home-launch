@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 
 import { workflowService } from '@/services/modules/workflows';
+import { downloadPaymentReceipt, getIndustryWorkflowDetails, initiateMilestonePayment, openRazorpayCheckout, uploadPaymentReceipt, verifyMilestonePayment } from '@/services/modules/workflows/workflow.service';
 
 // Helper functions that can be defined locally if needed
 const formatCurrency = (currency: string, amount: number) => `${currency} ${amount.toLocaleString()}`;
@@ -208,7 +209,7 @@ const MilestoneCard: React.FC<MilestoneCardProps> = ({
                             </span>
                             <span className="flex items-center gap-1">
                                 <IndianRupee className="h-3.5 w-3.5" />
-                                {formatCurrency(milestone.amount, currency)}
+                                {formatCurrency(milestone.amount, parseInt(currency))}
                             </span>
                             <span className="text-muted-foreground/70">({milestone.percentage}%)</span>
                         </div>
