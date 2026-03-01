@@ -507,3 +507,144 @@ export async function getVendorCertificateViewUrl(workflowId: string): Promise<{
     const response = await api.get(`/api/v1/vendors/workflows/${workflowId}/certificate/view`);
     return response.data;
 }
+
+
+// ============= PHASE 2: PROJECT LIFECYCLE MANAGEMENT =============
+
+/**
+ * Pause a project workflow
+ */
+export async function pauseProject(workflowId: string, reason: string) {
+    const response = await api.post(`/api/v1/industry/project-workflows/${workflowId}/pause`, { reason });
+    return response.data;
+}
+
+/**
+ * Resume a paused project workflow
+ */
+export async function resumeProject(workflowId: string, newEndDate?: string, resumeNote?: string) {
+    const response = await api.post(`/api/v1/industry/project-workflows/${workflowId}/resume`, { 
+        newEndDate, 
+        resumeNote 
+    });
+    return response.data;
+}
+
+/**
+ * Terminate a project workflow
+ */
+export async function terminateProject(workflowId: string, reason: string, settlementNotes?: string) {
+    const response = await api.post(`/api/v1/industry/project-workflows/${workflowId}/terminate`, { 
+        reason, 
+        settlementNotes 
+    });
+    return response.data;
+}
+
+/**
+ * Revise project dates
+ */
+export async function reviseDates(workflowId: string, newEndDate: string, reason: string) {
+    const response = await api.post(`/api/v1/industry/project-workflows/${workflowId}/revise-dates`, { 
+        newEndDate, 
+        reason 
+    });
+    return response.data;
+}
+
+// ============= PHASE 3: DISPUTE MANAGEMENT =============
+
+/**
+ * Raise a dispute (Industry)
+ */
+export async function raiseDispute(workflowId: string, description: string, milestoneId?: string) {
+    const response = await api.post(`/api/v1/industry/project-workflows/${workflowId}/disputes`, { 
+        description, 
+        milestoneId 
+    });
+    return response.data;
+}
+
+/**
+ * Raise a dispute (Vendor)
+ */
+export async function raiseDisputeVendor(workflowId: string, description: string, milestoneId?: string) {
+    const response = await api.post(`/api/v1/vendors/workflows/${workflowId}/disputes`, { 
+        description, 
+        milestoneId 
+    });
+    return response.data;
+}
+
+/**
+ * Resolve a dispute (Industry only)
+ */
+export async function resolveDispute(workflowId: string, disputeId: string, resolution: string) {
+    const response = await api.post(`/api/v1/industry/project-workflows/${workflowId}/disputes/${disputeId}/resolve`, { 
+        resolution 
+    });
+    return response.data;
+}
+
+/**
+ * Get disputes for a workflow (Industry)
+ */
+export async function getDisputes(workflowId: string) {
+    const response = await api.get(`/api/v1/industry/project-workflows/${workflowId}/disputes`);
+    return response.data;
+}
+
+/**
+ * Get disputes for a workflow (Vendor)
+ */
+export async function getDisputesVendor(workflowId: string) {
+    const response = await api.get(`/api/v1/vendors/workflows/${workflowId}/disputes`);
+    return response.data;
+}
+
+// ============= PHASE 4: PROGRESS SUBMISSION =============
+
+/**
+ * Submit milestone progress (Vendor)
+ */
+export async function submitMilestoneProgress(workflowId: string, milestoneId: string, progressPercent: number, note?: string) {
+    const response = await api.post(`/api/v1/vendors/workflows/${workflowId}/milestones/${milestoneId}/progress`, { 
+        progressPercent, 
+        note 
+    });
+    return response.data;
+}
+
+/**
+ * Review milestone progress (Industry)
+ */
+export async function reviewMilestoneProgress(
+    workflowId: string, 
+    milestoneId: string, 
+    updateId: string, 
+    decision: 'acknowledge' | 'flag', 
+    reviewComment?: string
+) {
+    const response = await api.post(
+        `/api/v1/industry/project-workflows/${workflowId}/milestones/${milestoneId}/progress/${updateId}/review`, 
+        { decision, reviewComment }
+    );
+    return response.data;
+}
+
+/**
+ * Get milestone progress history (Industry)
+ */
+export async function getMilestoneProgressHistory(workflowId: string, milestoneId: string) {
+    const response = await api.get(`/api/v1/industry/project-workflows/${workflowId}/milestones/${milestoneId}/progress`);
+    return response.data;
+}
+
+/**
+ * Get milestone progress history (Vendor)
+ */
+export async function getMilestoneProgressHistoryVendor(workflowId: string, milestoneId: string) {
+    const response = await api.get(`/api/v1/vendors/workflows/${workflowId}/milestones/${milestoneId}/progress`);
+    return response.data;
+}
+

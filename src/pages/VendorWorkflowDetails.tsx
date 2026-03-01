@@ -24,11 +24,14 @@ import {
     Download,
 } from 'lucide-react';
 
-import { getVendorWorkflowDetails as fetchVendorWorkflowDetails, markMilestoneComplete as vendorMarkMilestoneComplete, getVendorCloseoutChecklist, uploadVendorCloseoutDocument, getVendorCloseoutDocumentViewUrl, getVendorCertificateViewUrl } from '@/services/modules/workflows/workflow.service';
+import { getVendorWorkflowDetails as fetchVendorWorkflowDetails, markMilestoneComplete as vendorMarkMilestoneComplete, getVendorCloseoutChecklist, uploadVendorCloseoutDocument, getVendorCloseoutDocumentViewUrl, getVendorCertificateViewUrl, raiseDisputeVendor, getDisputesVendor, submitMilestoneProgress, getMilestoneProgressHistoryVendor } from '@/services/modules/workflows/workflow.service';
 import type { WorkflowDetail, WorkflowMilestone } from '@/services/modules/workflows/workflow.types';
 import { MilestoneCard } from '@/components/workflow/MilestoneCard';
 import { MilestoneDetailsDialog } from '@/components/workflow/MilestoneDetailsDialog';
 import { CloseoutChecklist } from '@/components/industry/workflow/CloseoutChecklist';
+import { DisputeList } from '@/components/workflow/DisputeList';
+import { DisputeRaiseForm } from '@/components/workflow/DisputeRaiseForm';
+import { MilestoneProgressFeed } from '@/components/workflow/MilestoneProgressFeed';
 
 
 // Helper functions
@@ -45,6 +48,9 @@ const VendorWorkflowDetails: React.FC = () => {
     const [processingMilestone, setProcessingMilestone] = useState<string | null>(null);
     const [closeoutData, setCloseoutData] = useState<any>(null);
     const [viewCertLoading, setViewCertLoading] = useState(false);
+    const [disputes, setDisputes] = useState<any[]>([]);
+    const [disputesLoading, setDisputesLoading] = useState(false);
+    const [expandedMilestones, setExpandedMilestones] = useState<Set<string>>(new Set());
 
     // Milestone details dialog state
     const [selectedMilestoneId, setSelectedMilestoneId] = useState<string | null>(null);
@@ -72,6 +78,61 @@ const VendorWorkflowDetails: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
+
+    const fetchDisputes = async () => {
+        if (!id) return;
+        try {
+            setDisputesLoading(true);
+            const response = await getDisputesVendor(id);
+            if (response.success) {
+                setDisputes(response.data.disputes || []);
+            }
+        } catch (err) {
+            console.error('Failed to fetch disputes:', err);
+        } finally {
+            setDisputesLoading(false);
+        }
+    };
+
+    const handleRaiseDispute = async (description: string, milestoneId?: string) => {
+        if (!id) return;
+        try {
+            const response = await raiseDisputeVendor(id, description, milestoneId);
+            if (response.success) {
+                toast.success('Dispute raised successfully');
+                fetchDisputes();
+                fetchWorkflowDetails();
+            }
+        } catch (error: any) {
+            throw error;
+        }
+    };
+
+    const toggleMilestoneExpand = (milestoneId: string) => {
+        setExpandedMilestones(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(milestoneId)) {
+                newSet.delete(milestoneId);
+            } else {
+                newSet.add(milestoneId);
+            }
+            return newSet;
+        });
+    };
+
+    const handleSubmitProgress = async (milestoneId: string, progressPercent: number, note: string) => {
+        if (!id) return;
+        try {
+            const response = await submitMilestoneProgress(id, milestoneId, progressPercent, note);
+            if (response.success) {
+                toast.success('Progress submitted successfully');
+                fetchWorkflowDetails();
+            }
+        } catch (error: any) {
+            throw error;
+        }
+    };
+
     };
 
     useEffect(() => {
@@ -84,6 +145,8 @@ const VendorWorkflowDetails: React.FC = () => {
         getVendorCloseoutChecklist(id)
             .then(res => { if (res.success) setCloseoutData(res.data); })
             .catch(() => { });
+        // Fetch disputes
+        fetchDisputes();
     }, [workflowData]);
 
     // Milestone action handlers
@@ -304,18 +367,43 @@ const VendorWorkflowDetails: React.FC = () => {
                             <CardContent className="space-y-4">
                                 {milestones && milestones.length > 0 ? (
                                     milestones.map((milestone) => (
-                                        <MilestoneCard
-                                            key={milestone.id}
-                                            milestone={milestone as any}
-                                            workflowId={id!}
-                                            currency={workflow.currency || 'INR'}
-                                            onPaymentInitiate={handlePaymentInitiate}
-                                            onViewDetails={handleViewDetails}
-                                            onMarkComplete={handleMarkComplete}
-                                            onDownloadInvoice={handleDownloadInvoice}
-                                            userType="vendor"
-                                            isProcessing={processingMilestone === milestone.id}
-                                        />
+                                        <div key={milestone.id} className="space-y-3">
+                                            <MilestoneCard
+                                                milestone={milestone as any}
+                                                workflowId={id!}
+                                                currency={workflow.currency || 'INR'}
+                                                onPaymentInitiate={handlePaymentInitiate}
+                                                onViewDetails={handleViewDetails}
+                                                onMarkComplete={handleMarkComplete}
+                                                onDownloadInvoice={handleDownloadInvoice}
+                                                userType="vendor"
+                                                isProcessing={processingMilestone === milestone.id}
+                                            />
+                                            
+                                            {/* Collapsible Progress Feed */}
+                                            <div className="pl-4 border-l-2 border-blue-200">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => toggleMilestoneExpand(milestone.id)}
+                                                    className="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 mb-2"
+                                                >
+                                                    {expandedMilestones.has(milestone.id) ? '▼ Hide Progress' : '▶ Show Progress Updates'}
+                                                </Button>
+                                                
+                                                {expandedMilestones.has(milestone.id) && (
+                                                    <MilestoneProgressFeed
+                                                        workflowId={id!}
+                                                        milestoneId={milestone.id}
+                                                        milestoneName={milestone.name || milestone.description}
+                                                        progressUpdates={(milestone as any).progressUpdates || []}
+                                                        isVendor={true}
+                                                        onSubmitProgress={(percent, note) => handleSubmitProgress(milestone.id, percent, note)}
+                                                        onRefresh={fetchWorkflowDetails}
+                                                    />
+                                                )}
+                                            </div>
+                                        </div>
                                     ))
                                 ) : (
                                     <p className="text-center text-sm text-muted-foreground py-10">
@@ -524,6 +612,30 @@ const VendorWorkflowDetails: React.FC = () => {
                                 )}
                             </CardContent>
                         </Card>
+
+                        {/* Disputes Section */}
+                        <Card className="bg-white/98 dark:bg-gray-950/98 backdrop-blur-xl border-border/60 shadow-sm rounded-xl">
+                            <CardHeader className="pb-3">
+                                <div className="flex items-center justify-between">
+                                    <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                                        <AlertTriangle className="h-4 w-4 text-orange-600" />
+                                        Disputes
+                                    </CardTitle>
+                                    <DisputeRaiseForm
+                                        onSubmit={handleRaiseDispute}
+                                        loading={disputesLoading}
+                                    />
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <DisputeList
+                                    disputes={disputes}
+                                    isIndustry={false}
+                                    loading={disputesLoading}
+                                />
+                            </CardContent>
+                        </Card>
+
 
                     </div>
                 </div>

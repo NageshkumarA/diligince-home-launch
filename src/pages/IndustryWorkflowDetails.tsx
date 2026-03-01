@@ -25,10 +25,15 @@ import {
 } from 'lucide-react';
 
 import { workflowService } from '@/services/modules/workflows';
-import { downloadPaymentReceipt, getIndustryWorkflowDetails, getCloseoutChecklist, getIndustryCloseoutDocumentViewUrl, initiateMilestonePayment, openRazorpayCheckout, uploadPaymentReceipt, verifyMilestonePayment } from '@/services/modules/workflows/workflow.service';
+import { downloadPaymentReceipt, getIndustryWorkflowDetails, getCloseoutChecklist, getIndustryCloseoutDocumentViewUrl, initiateMilestonePayment, openRazorpayCheckout, uploadPaymentReceipt, verifyMilestonePayment, raiseDispute, resolveDispute, getDisputes, reviewMilestoneProgress, getMilestoneProgressHistory } from '@/services/modules/workflows/workflow.service';
 import { CloseoutChecklist } from '@/components/industry/workflow/CloseoutChecklist';
 import { CompletionCertificateCard } from '@/components/industry/workflow/CompletionCertificateCard';
 import { WorkflowClosureGate } from '@/components/industry/workflow/WorkflowClosureGate';
+import { ProjectStatusActions } from '@/components/workflow/ProjectStatusActions';
+import { DateRevisionTimeline } from '@/components/workflow/DateRevisionTimeline';
+import { DisputeList } from '@/components/workflow/DisputeList';
+import { DisputeRaiseForm } from '@/components/workflow/DisputeRaiseForm';
+import { MilestoneProgressFeed } from '@/components/workflow/MilestoneProgressFeed';
 
 // Helper functions that can be defined locally if needed
 const formatCurrency = (currency: string, amount: number) => `${currency} ${amount.toLocaleString()}`;
@@ -311,6 +316,9 @@ const IndustryWorkflowDetails: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [razorpayLoaded, setRazorpayLoaded] = useState(false);
     const [closeoutData, setCloseoutData] = useState<any>(null);
+    const [disputes, setDisputes] = useState<any[]>([]);
+    const [disputesLoading, setDisputesLoading] = useState(false);
+    const [expandedMilestones, setExpandedMilestones] = useState<Set<string>>(new Set());
 
     // Load Razorpay script
     useEffect(() => {
@@ -361,6 +369,76 @@ const IndustryWorkflowDetails: React.FC = () => {
         }
     };
 
+
+    const fetchDisputes = async () => {
+        if (!id) return;
+        try {
+            setDisputesLoading(true);
+            const response = await getDisputes(id);
+            if (response.success) {
+                setDisputes(response.data.disputes || []);
+            }
+        } catch (err) {
+            console.error('Failed to fetch disputes:', err);
+        } finally {
+            setDisputesLoading(false);
+        }
+    };
+
+    const handleRaiseDispute = async (description: string, milestoneId?: string) => {
+        if (!id) return;
+        try {
+            const response = await raiseDispute(id, description, milestoneId);
+            if (response.success) {
+                toast.success('Dispute raised successfully');
+                fetchDisputes();
+                fetchWorkflowDetails();
+            }
+        } catch (error: any) {
+            throw error;
+        }
+    };
+
+    const handleResolveDispute = async (disputeId: string, resolution: string) => {
+        if (!id) return;
+        try {
+            const response = await resolveDispute(id, disputeId, resolution);
+            if (response.success) {
+                toast.success('Dispute resolved successfully');
+                fetchDisputes();
+                fetchWorkflowDetails();
+            }
+
+    const toggleMilestoneExpand = (milestoneId: string) => {
+        setExpandedMilestones(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(milestoneId)) {
+                newSet.delete(milestoneId);
+            } else {
+                newSet.add(milestoneId);
+            }
+            return newSet;
+        });
+    };
+
+    const handleReviewProgress = async (milestoneId: string, updateIndex: number, decision: 'acknowledge' | 'flag', reviewComment?: string) => {
+        if (!id) return;
+        try {
+            const response = await reviewMilestoneProgress(id, milestoneId, updateIndex.toString(), decision, reviewComment);
+            if (response.success) {
+                toast.success(`Progress ${decision}d successfully`);
+                fetchWorkflowDetails();
+            }
+        } catch (error: any) {
+            throw error;
+        }
+    };
+
+        } catch (error: any) {
+            throw error;
+        }
+    };
+
     useEffect(() => {
         fetchWorkflowDetails();
     }, [id]);
@@ -369,6 +447,7 @@ const IndustryWorkflowDetails: React.FC = () => {
     useEffect(() => {
         if (workflowData?.workflow) {
             fetchCloseoutData();
+            fetchDisputes();
         }
     }, [workflowData]);
 
@@ -429,18 +508,25 @@ const IndustryWorkflowDetails: React.FC = () => {
                                 Workflow ID: <span className="font-mono">{workflow.workflowId}</span>
                             </p>
                         </div>
-                        <Badge className={cn(
-                            "text-xs font-medium px-3 py-1",
-                            workflow.status === 'completed' && 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-                            workflow.status === 'active' && 'bg-primary/10 text-primary',
-                            workflow.status === 'paused' && 'bg-yellow-100 text-yellow-700',
-                            workflow.status === 'cancelled' && 'bg-red-100 text-red-700',
-                            workflow.status === 'awaiting_closeout' && 'bg-purple-100 text-purple-700',
-                            workflow.status === 'closed' && 'bg-slate-100 text-slate-600',
-                            workflow.status === 'disputed' && 'bg-orange-100 text-orange-700'
-                        )}>
-                            {workflow.status.toUpperCase()}
-                        </Badge>
+                        <div className="flex flex-col items-end gap-3">
+                            <Badge className={cn(
+                                "text-xs font-medium px-3 py-1",
+                                workflow.status === 'completed' && 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+                                workflow.status === 'active' && 'bg-primary/10 text-primary',
+                                workflow.status === 'paused' && 'bg-yellow-100 text-yellow-700',
+                                workflow.status === 'cancelled' && 'bg-red-100 text-red-700',
+                                workflow.status === 'awaiting_closeout' && 'bg-purple-100 text-purple-700',
+                                workflow.status === 'closed' && 'bg-slate-100 text-slate-600',
+                                workflow.status === 'disputed' && 'bg-orange-100 text-orange-700'
+                            )}>
+                                {workflow.status.toUpperCase()}
+                            </Badge>
+                            <ProjectStatusActions
+                                workflowId={workflow.workflowId}
+                                status={workflow.status}
+                                onUpdate={fetchWorkflowDetails}
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -493,14 +579,41 @@ const IndustryWorkflowDetails: React.FC = () => {
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 {milestones.map((milestone) => (
-                                    <MilestoneCard
-                                        key={milestone.id}
-                                        milestone={milestone}
-                                        workflowId={workflow.id}
-                                        currency={workflow.currency}
-                                        razorpayLoaded={razorpayLoaded}
-                                        onPaymentComplete={fetchWorkflowDetails}
-                                    />
+                                    <div key={milestone.id} className="space-y-3">
+                                        <MilestoneCard
+                                            milestone={milestone}
+                                            workflowId={workflow.id}
+                                            currency={workflow.currency}
+                                            razorpayLoaded={razorpayLoaded}
+                                            onPaymentComplete={fetchWorkflowDetails}
+                                        />
+                                        
+                                        {/* Collapsible Progress Feed */}
+                                        <div className="pl-4 border-l-2 border-blue-200">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => toggleMilestoneExpand(milestone.id)}
+                                                className="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 mb-2"
+                                            >
+                                                {expandedMilestones.has(milestone.id) ? '▼ Hide Progress' : '▶ Show Progress Updates'}
+                                            </Button>
+                                            
+                                            {expandedMilestones.has(milestone.id) && (
+                                                <MilestoneProgressFeed
+                                                    workflowId={workflow.id}
+                                                    milestoneId={milestone.id}
+                                                    milestoneName={milestone.name || milestone.description}
+                                                    progressUpdates={(milestone as any).progressUpdates || []}
+                                                    isVendor={false}
+                                                    onReviewProgress={(updateIdx, decision, comment) => 
+                                                        handleReviewProgress(milestone.id, updateIdx, decision, comment)
+                                                    }
+                                                    onRefresh={fetchWorkflowDetails}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
                                 ))}
                             </CardContent>
                         </Card>
@@ -568,6 +681,40 @@ const IndustryWorkflowDetails: React.FC = () => {
                                             : `${workflow.daysRemaining} days`}
                                     </span>
                                 </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Date Revision Timeline */}
+                        {workflow.dateRevisions && workflow.dateRevisions.length > 0 && (
+                            <DateRevisionTimeline
+                                originalStartDate={workflow.startDate}
+                                originalEndDate={workflow.dateRevisions[0]?.previousEndDate || workflow.endDate}
+                                currentEndDate={workflow.endDate}
+                                revisions={workflow.dateRevisions}
+                            />
+                        )}
+
+                        {/* Disputes Section */}
+                        <Card className="bg-white/98 dark:bg-gray-950/98 backdrop-blur-xl border-border/60 shadow-sm rounded-xl">
+                            <CardHeader className="pb-3">
+                                <div className="flex items-center justify-between">
+                                    <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                                        <AlertTriangle className="h-4 w-4 text-orange-600" />
+                                        Disputes
+                                    </CardTitle>
+                                    <DisputeRaiseForm
+                                        onSubmit={handleRaiseDispute}
+                                        loading={disputesLoading}
+                                    />
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <DisputeList
+                                    disputes={disputes}
+                                    isIndustry={true}
+                                    onResolve={handleResolveDispute}
+                                    loading={disputesLoading}
+                                />
                             </CardContent>
                         </Card>
 

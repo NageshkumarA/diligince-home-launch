@@ -1,7 +1,7 @@
 //API Service tsx
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 // import { getAccessToken, getRefreshToken, setTokens, clearTokens } from '../utils/cookieService';
-const BASE_URL = 'http://localhost:5001';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 /**
  * API Connection Status Tracker
