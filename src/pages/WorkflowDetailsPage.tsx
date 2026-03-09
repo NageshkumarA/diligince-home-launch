@@ -20,18 +20,41 @@ import {
     CheckCircle2,
     AlertTriangle,
     ExternalLink,
-    TrendingUp
+    TrendingUp,
+    Settings,
+    ShieldAlert
 } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { workflowService } from '@/services/modules/workflows';
 import { TableSkeletonLoader } from '@/components/shared/loading';
 import MilestoneCard from '@/components/workflow/MilestoneCard';
 import MilestoneDetailsDialog from '@/components/workflow/MilestoneDetailsDialog';
 import { useRazorpay } from '@/hooks/useRazorpay';
 import { useToast } from '@/hooks/use-toast';
-import { getCloseoutChecklist, getIndustryCloseoutDocumentViewUrl } from '@/services/modules/workflows/workflow.service';
+import {
+    getCloseoutChecklist,
+    getIndustryCloseoutDocumentViewUrl,
+    getDisputes,
+    raiseDispute,
+    resolveDispute,
+} from '@/services/modules/workflows/workflow.service';
 import { WorkflowClosureGate } from '@/components/industry/workflow/WorkflowClosureGate';
 import { CloseoutChecklist } from '@/components/industry/workflow/CloseoutChecklist';
 import { CompletionCertificateCard } from '@/components/industry/workflow/CompletionCertificateCard';
+import { ProjectStatusActions } from '@/components/workflow/ProjectStatusActions';
+import { DisputeList } from '@/components/workflow/DisputeList';
+import { DisputeRaiseForm } from '@/components/workflow/DisputeRaiseForm';
 
 interface WorkflowDetailsPageProps { }
 
@@ -42,6 +65,13 @@ const WorkflowDetailsPage: React.FC<WorkflowDetailsPageProps> = () => {
     const [selectedMilestone, setSelectedMilestone] = useState<any | null>(null);
     const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
     const [closeoutData, setCloseoutData] = useState<any>(null);
+
+    // Settings dialogs
+    const [projectSettingsOpen, setProjectSettingsOpen] = useState(false);
+    const [disputeDialogOpen, setDisputeDialogOpen] = useState(false);
+    const [disputes, setDisputes] = useState<any[]>([]);
+    const [disputesLoading, setDisputesLoading] = useState(false);
+
     const { toast } = useToast();
     const { isLoaded, loadScript } = useRazorpay();
 
@@ -75,6 +105,40 @@ const WorkflowDetailsPage: React.FC<WorkflowDetailsPageProps> = () => {
         } catch (err) {
             console.warn('[Closeout] Could not fetch closeout checklist:', err);
         }
+    };
+
+    const fetchDisputes = async () => {
+        if (!id) return;
+        setDisputesLoading(true);
+        try {
+            const res = await getDisputes(id);
+            if (res.success) setDisputes(res.data?.disputes || res.data || []);
+        } catch (err) {
+            console.warn('[Disputes] Could not fetch disputes:', err);
+        } finally {
+            setDisputesLoading(false);
+        }
+    };
+
+    const handleOpenDisputeDialog = () => {
+        setDisputeDialogOpen(true);
+        fetchDisputes();
+    };
+
+    const handleRaiseDispute = async (description: string, milestoneId?: string) => {
+        if (!id) return;
+        await raiseDispute(id, description, milestoneId);
+        toast({ title: 'Dispute raised', description: 'Your dispute has been submitted.' });
+        fetchDisputes();
+        refetch();
+    };
+
+    const handleResolveDispute = async (disputeId: string, resolution: string) => {
+        if (!id) return;
+        await resolveDispute(id, disputeId, resolution);
+        toast({ title: 'Dispute resolved', description: 'The dispute has been resolved.' });
+        fetchDisputes();
+        refetch();
     };
 
     useEffect(() => {
@@ -236,7 +300,7 @@ const WorkflowDetailsPage: React.FC<WorkflowDetailsPageProps> = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <>
             <Helmet>
                 <title>{workflow.workflowId} - Workflow Details | Diligince.ai</title>
             </Helmet>
@@ -260,12 +324,41 @@ const WorkflowDetailsPage: React.FC<WorkflowDetailsPageProps> = () => {
                                 {workflow.projectTitle}
                             </p>
                         </div>
-                        <Badge
-                            variant={workflow.status === 'active' ? 'default' : 'secondary'}
-                            className="text-sm px-4 py-1.5"
-                        >
-                            {workflow.status.toUpperCase()}
-                        </Badge>
+
+                        {/* Status badge + Settings dropdown */}
+                        <div className="flex items-center gap-2">
+                            <Badge
+                                variant={workflow.status === 'active' ? 'default' : 'secondary'}
+                                className="text-sm px-4 py-1.5"
+                            >
+                                {workflow.status.toUpperCase()}
+                            </Badge>
+
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" size="sm" className="gap-1.5">
+                                        <Settings className="h-4 w-4" />
+                                        Settings
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-52">
+                                    <DropdownMenuItem
+                                        className="gap-2 cursor-pointer"
+                                        onClick={() => setProjectSettingsOpen(true)}
+                                    >
+                                        <Settings className="h-4 w-4 text-muted-foreground" />
+                                        Project Settings
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className="gap-2 cursor-pointer"
+                                        onClick={handleOpenDisputeDialog}
+                                    >
+                                        <ShieldAlert className="h-4 w-4 text-muted-foreground" />
+                                        Dispute Management
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                     </div>
 
                     {/* Quick Stats Cards */}
@@ -647,8 +740,64 @@ const WorkflowDetailsPage: React.FC<WorkflowDetailsPageProps> = () => {
                     </TabsContent>
                 </Tabs>
             </div>
-        </div>
+
+            {/* ===== PROJECT SETTINGS DIALOG ===== */}
+            <Dialog open={projectSettingsOpen} onOpenChange={setProjectSettingsOpen}>
+                <DialogContent className="max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Settings className="h-5 w-5" />
+                            Project Settings
+                        </DialogTitle>
+                    </DialogHeader>
+                    <div className="py-2">
+                        <p className="text-sm text-muted-foreground mb-4">
+                            Manage the lifecycle of this project. You can pause, resume, or terminate the project.
+                        </p>
+                        <ProjectStatusActions
+                            workflowId={id!}
+                            status={workflow.status}
+                            onUpdate={() => { refetch(); setProjectSettingsOpen(false); }}
+                        />
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* ===== DISPUTE MANAGEMENT DIALOG ===== */}
+            <Dialog open={disputeDialogOpen} onOpenChange={setDisputeDialogOpen}>
+                <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <ShieldAlert className="h-5 w-5" />
+                            Dispute Management
+                        </DialogTitle>
+                    </DialogHeader>
+                    <div className="py-2 space-y-4">
+                        <div className="flex items-center justify-between">
+                            <p className="text-sm text-muted-foreground">
+                                {disputes.length} dispute{disputes.length !== 1 ? 's' : ''} for this project
+                            </p>
+                            <DisputeRaiseForm
+                                onSubmit={handleRaiseDispute}
+                                loading={disputesLoading}
+                            />
+                        </div>
+                        {disputesLoading ? (
+                            <p className="text-sm text-center text-muted-foreground py-6">Loading disputes...</p>
+                        ) : (
+                            <DisputeList
+                                disputes={disputes}
+                                isIndustry={true}
+                                onResolve={handleResolveDispute}
+                                loading={disputesLoading}
+                            />
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 };
 
 export default WorkflowDetailsPage;
+

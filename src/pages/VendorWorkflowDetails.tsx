@@ -22,7 +22,21 @@ import {
     Info,
     Award,
     Download,
+    Settings,
+    ShieldAlert,
 } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
 import { getVendorWorkflowDetails as fetchVendorWorkflowDetails, markMilestoneComplete as vendorMarkMilestoneComplete, getVendorCloseoutChecklist, uploadVendorCloseoutDocument, getVendorCloseoutDocumentViewUrl, getVendorCertificateViewUrl, raiseDisputeVendor, getDisputesVendor, submitMilestoneProgress, getMilestoneProgressHistoryVendor } from '@/services/modules/workflows/workflow.service';
 import type { WorkflowDetail, WorkflowMilestone } from '@/services/modules/workflows/workflow.types';
@@ -51,6 +65,7 @@ const VendorWorkflowDetails: React.FC = () => {
     const [disputes, setDisputes] = useState<any[]>([]);
     const [disputesLoading, setDisputesLoading] = useState(false);
     const [expandedMilestones, setExpandedMilestones] = useState<Set<string>>(new Set());
+    const [disputeDialogOpen, setDisputeDialogOpen] = useState(false);
 
     // Milestone details dialog state
     const [selectedMilestoneId, setSelectedMilestoneId] = useState<string | null>(null);
@@ -78,6 +93,7 @@ const VendorWorkflowDetails: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
+    };
 
     const fetchDisputes = async () => {
         if (!id) return;
@@ -131,8 +147,6 @@ const VendorWorkflowDetails: React.FC = () => {
         } catch (error: any) {
             throw error;
         }
-    };
-
     };
 
     useEffect(() => {
@@ -265,9 +279,31 @@ const VendorWorkflowDetails: React.FC = () => {
                                 Project ID: <span className="font-mono">{workflow.workflowId}</span>
                             </p>
                         </div>
-                        <Badge className={cn('text-xs font-medium px-3 py-1 border', currentStatus.className)}>
-                            {currentStatus.label}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                            <Badge className={cn('text-xs font-medium px-3 py-1 border', currentStatus.className)}>
+                                {currentStatus.label}
+                            </Badge>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" size="sm" className="gap-1.5">
+                                        <Settings className="h-4 w-4" />
+                                        Settings
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-52">
+                                    <DropdownMenuItem
+                                        className="gap-2 cursor-pointer"
+                                        onClick={() => {
+                                            setDisputeDialogOpen(true);
+                                            fetchDisputes();
+                                        }}
+                                    >
+                                        <ShieldAlert className="h-4 w-4 text-muted-foreground" />
+                                        Dispute Management
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                     </div>
                 </div>
 
@@ -379,7 +415,7 @@ const VendorWorkflowDetails: React.FC = () => {
                                                 userType="vendor"
                                                 isProcessing={processingMilestone === milestone.id}
                                             />
-                                            
+
                                             {/* Collapsible Progress Feed */}
                                             <div className="pl-4 border-l-2 border-blue-200">
                                                 <Button
@@ -390,7 +426,7 @@ const VendorWorkflowDetails: React.FC = () => {
                                                 >
                                                     {expandedMilestones.has(milestone.id) ? '▼ Hide Progress' : '▶ Show Progress Updates'}
                                                 </Button>
-                                                
+
                                                 {expandedMilestones.has(milestone.id) && (
                                                     <MilestoneProgressFeed
                                                         workflowId={id!}
@@ -613,29 +649,7 @@ const VendorWorkflowDetails: React.FC = () => {
                             </CardContent>
                         </Card>
 
-                        {/* Disputes Section */}
-                        <Card className="bg-white/98 dark:bg-gray-950/98 backdrop-blur-xl border-border/60 shadow-sm rounded-xl">
-                            <CardHeader className="pb-3">
-                                <div className="flex items-center justify-between">
-                                    <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
-                                        <AlertTriangle className="h-4 w-4 text-orange-600" />
-                                        Disputes
-                                    </CardTitle>
-                                    <DisputeRaiseForm
-                                        onSubmit={handleRaiseDispute}
-                                        loading={disputesLoading}
-                                    />
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <DisputeList
-                                    disputes={disputes}
-                                    isIndustry={false}
-                                    loading={disputesLoading}
-                                />
-                            </CardContent>
-                        </Card>
-
+                        {/* End of Sidebar */}
 
                     </div>
                 </div>
@@ -657,6 +671,38 @@ const VendorWorkflowDetails: React.FC = () => {
                     currentUserId=""
                 />
             )}
+
+            {/* ===== DISPUTE MANAGEMENT DIALOG ===== */}
+            <Dialog open={disputeDialogOpen} onOpenChange={setDisputeDialogOpen}>
+                <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <ShieldAlert className="h-5 w-5" />
+                            Dispute Management
+                        </DialogTitle>
+                    </DialogHeader>
+                    <div className="py-2 space-y-4">
+                        <div className="flex items-center justify-between">
+                            <p className="text-sm text-muted-foreground">
+                                {disputes.length} dispute{disputes.length !== 1 ? 's' : ''} for this project
+                            </p>
+                            <DisputeRaiseForm
+                                onSubmit={handleRaiseDispute}
+                                loading={disputesLoading}
+                            />
+                        </div>
+                        {disputesLoading ? (
+                            <p className="text-sm text-center text-muted-foreground py-6">Loading disputes...</p>
+                        ) : (
+                            <DisputeList
+                                disputes={disputes}
+                                isIndustry={false}
+                                loading={disputesLoading}
+                            />
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

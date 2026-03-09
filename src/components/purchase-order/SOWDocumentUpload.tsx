@@ -167,8 +167,13 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
             toast.dismiss(uploadToast);
 
             if (response.success && response.data.documents) {
-                const uploadedDocs = response.data.documents;
-                const uploadedDoc = uploadedDocs.find((d: any) => d.name === tempFile.name);
+                const allDocs = response.data.documents;
+                const addedCount: number = response.data.addedCount ?? 1;
+
+                // The newly uploaded document(s) are the last `addedCount` items
+                // in the full documents array. Grab the last one for this single-file upload.
+                const newlyAdded = allDocs.slice(-addedCount);
+                const uploadedDoc = newlyAdded[newlyAdded.length - 1];
 
                 if (uploadedDoc) {
                     toast.success(`${tempFile.name} uploaded successfully`);
@@ -178,13 +183,14 @@ const SOWDocumentUpload: React.FC<SOWDocumentUploadProps> = ({
                             ? {
                                 ...f,
                                 id: uploadedDoc._id || uploadedDoc.id,
+                                name: uploadedDoc.name || f.name, // keep server name
                                 status: 'success',
                                 url: uploadedDoc.url
                             }
                             : f
                     ));
                 } else {
-                    throw new Error('Document not found in response');
+                    throw new Error('Upload succeeded but document not found in API response');
                 }
             } else {
                 throw new Error((response as any).error?.message || 'Upload failed');

@@ -39,7 +39,7 @@ const ServiceVendorProjects: React.FC = () => {
   // Derive status filter from route:
   // 'active' page = all in-flight statuses (not yet formally closed)
   // 'completed' page = only formally closed projects
-  const ACTIVE_STATUSES = "active,completed,awaiting_closeout,paused";
+  const ACTIVE_STATUSES = "active,disputed,completed,awaiting_closeout,paused";
   const COMPLETED_STATUSES = "closed";
 
   const routeStatus = location.pathname.includes("/completed")
@@ -126,6 +126,7 @@ const ServiceVendorProjects: React.FC = () => {
       width: "120px",
       filterOptions: [
         { key: "active", value: "Active", color: "#dcfce7" },
+        { key: "disputed", value: "Disputed", color: "#ffedd5" },
         { key: "paused", value: "Paused", color: "#fef3c7" },
         { key: "completed", value: "Milestones Complete", color: "#dbeafe" },
         { key: "awaiting_closeout", value: "Closure In Progress", color: "#ede9fe" },
